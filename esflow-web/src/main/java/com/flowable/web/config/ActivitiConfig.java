@@ -22,6 +22,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.flowable.common.exception.ServiceException;
 
+/**
+ * @author lukew
+ */
 @Component
 public class ActivitiConfig {
 	
