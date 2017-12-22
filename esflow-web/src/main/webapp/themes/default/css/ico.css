@@ -1,0 +1,26 @@
+@charset "UTF-8";
+/* CSS Document */
+
+.head-member-ico{display:inline-block;background:url(../images/member-head.png) no-repeat;width:28px;height:28px;vertical-align:middle;}
+.head-ico1{display:inline-block;background:url(../images/ico.png) no-repeat 0px 0px;width:20px;height:20px;vertical-align:middle;}
+.head-ico2{display:inline-block;background:url(../images/ico.png) no-repeat -30px 0px;width:20px;height:20px;vertical-align:middle;}
+.head-ico3{display:inline-block;background:url(../images/ico.png) no-repeat -60px 0px;width:20px;height:20px;vertical-align:middle;}
+
+.ico-ac-shopping{display:block;width:72px;height:72px;background:url(../images/big-ico.png) no-repeat 0px 0px;}
+.ico-ac-control{display:block;width:72px;height:72px;background:url(../images/big-ico.png) no-repeat 0px -82px;}
+.ico-ac-event{display:block;width:72px;height:72px;background:url(../images/big-ico.png) no-repeat 0px -164px;}
+
+.ico-index{display:inline-block;width:14px;height: 20px;background: url(../images/ico.png) no-repeat 0px -27px;vertical-align:middle;}
+
+.ico-index-l1{display:inline-block;width: 20px;height: 20px;background: url(../images/ico.png) no-repeat -88px 1px;vertical-align:middle;}
+.ico-index-l2{display:inline-block;width: 25px;height:20px;background: url(../images/ico.png) no-repeat -116px 0;vertical-align:middle;}
+.ico-index-l3{display:inline-block;width: 20px;height:20px;background: url(../images/ico.png) no-repeat -151px 0;vertical-align:middle;}
+.ico-index-l4{display:inline-block;width: 20px;height:20px;background: url(../images/ico.png) no-repeat -173px 1px;vertical-align:middle;}
+
+.ico-menu{display:inline-block;width: 16px;height:20px;background: url(../images/ico.png) no-repeat -24px -26px;vertical-align:middle;}
+.ico-dot{display:inline-block;width:6px;height:20px;background: url(../images/ico.png) no-repeat -49px -22px;vertical-align:middle;}
+.ico-dot2{display:inline-block;background: url(../images/ico.png) no-repeat -193px 0px;width: 8px;height: 25px;vertical-align:middle;}
+
+.ico-pro-artical{display:inline-block;width:16px;height:16px;background:url(../images/ico.png) no-repeat 0px -52px;vertical-align:middle;}
+.ico-pro-function{display:inline-block;width:16px;height:16px;background:url(../images/ico.png) no-repeat -26px -52px;vertical-align:middle;}
+.ico-pro-scene{display:inline-block;width:16px;height:16px;background:url(../images/ico.png) no-repeat -52px -52px;vertical-align:middle;}
