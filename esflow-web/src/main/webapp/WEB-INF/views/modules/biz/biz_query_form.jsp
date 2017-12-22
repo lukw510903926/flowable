@@ -1,8 +1,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <%
-	String path = request.getContextPath();
-	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 	String action = request.getParameter("action");
 %>
 <%-- 定义各组件的名称及ID --%>
@@ -28,19 +26,19 @@
 				<div class="row">
 					<div class="col-md-11">
 						<div class="col-md-4 form-group" style="margin-bottom: 5px">
-							<label for="ud_name" class="col-md-4 control-label">工单号：</label>
+							<label class="col-md-4 control-label">工单号：</label>
 							<div class="col-md-8">
 								<input type="text" class="form-control" id="bizId" name="bizId" placeholder="工单号">
 							</div>
 						</div>
 						<div class="col-md-4 form-group" style="margin-bottom: 5px">
-							<label for="ud_alias" class="col-md-4 control-label">工单标题：</label>
+							<label class="col-md-4 control-label">工单标题：</label>
 							<div class="col-md-8">
 								<input type="text" class="form-control" id="title" name="title" placeholder="工单标题">
 							</div>
 						</div>
 						<div class="col-md-4 form-group" style="margin-bottom: 5px">
-							<label for="ud_alias" class="col-md-4 control-label">工单类型：</label>
+							<label class="col-md-4 control-label">工单类型：</label>
 							<div class="col-md-8">
 								<select class="form-control" name="bizType" id="bizType" placeholder="工单类型">
 									<option value="">--所有--</option>
@@ -184,7 +182,7 @@
 			</tr>
 		</c:if>
 		<tr>
-			<td align='center' colspan='6'><a class="btn1" href="javascript:void(0)" id="query_OK">查询<span /></span></a> <a class="btn1" href="javascript:void(0)" id="query_reset">重 置<span></span></a></td>
+			<td align='center' colspan='6'><a class="btn1" href="javascript:void(0)" id="query_OK">查询<span /></a> <a class="btn1" href="javascript:void(0)" id="query_reset">重 置<span></span></a></td>
 		</tr>
 	</table>
 
