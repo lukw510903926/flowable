@@ -720,14 +720,17 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		page.setRows(-1);
 		PageHelper<BizInfo> subResult = bizInfoService.getBizInfoList(queryParam, page);
 		String curreOp = null;
-		if (!subResult.getList().isEmpty())
+		if (!subResult.getList().isEmpty()){
 			result.put("subBizInfo", subResult.getList());
-		if (StringUtils.isNotEmpty(taskId))
+		}
+		if (StringUtils.isNotEmpty(taskId)){
 			curreOp = processDefinitionService.getWorkAccessTask(taskId, loginUser);
+		}
 		result.put("CURRE_OP", curreOp);
 		Task task = processDefinitionService.getTaskBean(workBean.getTaskId());
-		if (task != null)
+		if (task != null){
 			result.put("$currentTaskName", task.getName());
+		}
 		list = loadHandleProcessValBean(workBean, taskId);
 		// 加载当前编辑的业务字段,只有当前操作为HANDLE的时候才加载
 		if (Constants.HANDLE.equalsIgnoreCase(curreOp)) {
