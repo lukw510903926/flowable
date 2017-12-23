@@ -70,17 +70,14 @@ public class ProcessExecuteController {
 	@ResponseBody
 	@RequestMapping(value = "/loadWorkLogInput")
 	public Map<String, Object> loadWorkLogInput(String logId) {
-		Map<String, Object> map = processExecuteService.loadBizLogInput(logId);
-		return map == null ? new HashMap<String, Object>(0) : map;
+		return processExecuteService.loadBizLogInput(logId);
 	}
 
 	@RequestMapping(value = "index")
 	public String index(Model model) {
 
-		Map<String, Object> list = processExecuteService.loadProcessList();
-		model.addAttribute("ProcessMapJson", list == null ? "" : JSONObject.toJSON(list).toString());
-		List<Map<String, Object>> notices = new ArrayList<Map<String, Object>>();
-		model.addAttribute("notices", notices);
+		Map<String, Object> map = processExecuteService.loadProcessList();
+		model.addAttribute("ProcessMapJson", JSONObject.toJSONString(map));
 		return "work/index";
 	}
 
@@ -104,10 +101,8 @@ public class ProcessExecuteController {
 		String action = (String) params.get("action");
 		PageHelper<BizInfo> helper = processExecuteService.queryMyBizInfos(action, params, page);
 		DataGrid grid = new DataGrid();
-		if (helper != null) {
-			grid.setRows(helper.getList());
-			grid.setTotal(helper.getCount());
-		}
+		grid.setRows(helper.getList());
+		grid.setTotal(helper.getCount());
 		return grid;
 	}
 
@@ -127,8 +122,7 @@ public class ProcessExecuteController {
 			String proDefId = pd.getId();
 			data.put("base_tempID", proDefId);
 			List<AbstractVariable> list = processExecuteService.loadHandleProcessVariables(proDefId);
-			Map<String, String> buttons = processExecuteService.loadStartButtons(proDefId);
-			data.put("SYS_BUTTON", buttons);
+			data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
 			Map<String, Object> map = groupProcessValBean(list, null);
 			if (map.get(IProcessExecuteService.systemFormType) != null) {
 				AbstractVariable pva = (AbstractVariable) map.get(IProcessExecuteService.systemFormType);
@@ -210,7 +204,7 @@ public class ProcessExecuteController {
 		json.setSuccess(true);
 		if (startProc) {
 			json.setMsg("/biz/" + bean.getId());
-		} else{
+		} else {
 			json.setMsg("/biz?action=myWork");
 		}
 		return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
@@ -250,7 +244,8 @@ public class ProcessExecuteController {
 	 * @return
 	 */
 	@RequestMapping(value = "/submit")
-	public ResponseEntity<String> submit(@RequestParam Map<String, Object> params,MultipartHttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<String> submit(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request,
+			HttpServletResponse response) {
 
 		Json json = new Json();
 		HttpHeaders responseHeaders = new HttpHeaders();
@@ -265,7 +260,8 @@ public class ProcessExecuteController {
 			}
 			processExecuteService.submit(params, request.getMultiFileMap());
 		} catch (Exception e) {
-			logger.error("表单提交失败 : {}",e);;
+			logger.error("表单提交失败 : {}", e);
+			;
 			json.setSuccess(false);
 			String message = e.getLocalizedMessage();
 			if (max) {
@@ -277,7 +273,7 @@ public class ProcessExecuteController {
 
 		json.setSuccess(true);
 		json.setMsg("操作成功");
-		return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders,HttpStatus.OK);
+		return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
 	}
 
 	private boolean validateFileSize(MultipartHttpServletRequest request) {
@@ -306,6 +302,7 @@ public class ProcessExecuteController {
 		try {
 			bizInfoService.updateBizByIds(ids);
 		} catch (ServiceException e) {
+			logger.error("操作失败 : {}",e);
 			json.setSuccess(false);
 			json.setMsg("操作失败: " + e.getLocalizedMessage());
 			return json;
@@ -394,7 +391,8 @@ public class ProcessExecuteController {
 
 	@ResponseBody
 	@RequestMapping(value = "/interface/update")
-	public String update(@RequestParam Map<String, Object> params, HttpServletRequest request,HttpServletResponse response) {
+	public String update(@RequestParam Map<String, Object> params, HttpServletRequest request,
+			HttpServletResponse response) {
 
 		String loginUser = (String) params.get("loginUser");
 		LoginUser user = WebUtil.getLoginUser(request, response);
@@ -405,6 +403,7 @@ public class ProcessExecuteController {
 		try {
 			processExecuteService.update(params);
 		} catch (Exception e) {
+			logger.error("操作失败 : {}",e);
 			return "ERROR:处理失败-" + e.getMessage();
 		}
 		return "true";
@@ -416,8 +415,9 @@ public class ProcessExecuteController {
 
 		try {
 			BizInfo mapInfo = processExecuteService.getBizInfo(bizId);
-			return JSONObject.toJSON(mapInfo).toString();
+			return JSONObject.toJSONString(mapInfo);
 		} catch (Exception e) {
+			logger.error("操作失败 : {}",e);
 			return "ERROR:获取数据失败:" + e.getMessage();
 		}
 	}

@@ -13,6 +13,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,6 +48,8 @@ public class BizController {
 
 	@Autowired
 	private IBizFileService bizFileService;
+
+	private Logger logger = LoggerFactory.getLogger(BizController.class);
 
 	@ResponseBody
 	@RequestMapping("/biz/process/status")
@@ -127,19 +131,18 @@ public class BizController {
 	public void download(String id, HttpServletResponse response) {
 		try {
 			BizFile bizFile = bizFileService.getBizFileById(id);
+			response.setContentType("application/octet-stream;charset=UTF-8");
 			File file = new File("/home/ipnet/esflowFilePath/" + bizFile.getPath());
 			if (file.exists()) {
-				response.setContentType("application/octet-stream;charset=UTF-8");
 				response.setHeader("Content-Disposition",
 						"attachment;filename=" + new String(bizFile.getName().getBytes("gb2312"), "ISO-8859-1"));
 				FileUtils.copyFile(file, response.getOutputStream());
 			} else {
-				response.setContentType("application/octet-stream;charset=UTF-8");
 				response.setHeader("Content-Disposition",
 						"attachment;filename=" + new String("文件不存在".getBytes("gb2312"), "ISO-8859-1"));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(" 下载失败 : {}", e);
 		}
 	}
 
@@ -154,9 +157,7 @@ public class BizController {
 	@RequestMapping(value = "biz/getDraftBiz")
 	public Map<String, Object> getDraftBiz(String id, HttpServletRequest request, HttpServletResponse response) {
 		WebUtil.getLoginUser(request, response);
-		Map<String, Object> workOrder = processExecuteService.queryWorkOrder(id);
-		workOrder.remove("workLoad");
-		return workOrder;
+		return processExecuteService.queryWorkOrder(id);
 	}
 
 }
