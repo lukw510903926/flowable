@@ -53,8 +53,8 @@ public class BizTemplateFileController {
 		return "process/config/bizTemplateFileList";
 	}
 	
-	@RequestMapping("/list")
 	@ResponseBody
+	@RequestMapping("/list")
 	public Map<String,Object> list(PageHelper<BizTemplateFile> page,BizTemplateFile file){
 		
 		PageHelper<BizTemplateFile> helper = bizTemplateFileService.findTemplateFlies(page,file,true);
