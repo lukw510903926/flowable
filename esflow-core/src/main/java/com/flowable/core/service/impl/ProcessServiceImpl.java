@@ -541,10 +541,10 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 						for (String group : list) {
 							groups.append(group + ",");
 						}
-						if(StringUtils.isNotBlank(groups.toString())){
-							taskInfo.setAssignee(groups.deleteCharAt(groups.lastIndexOf(",")).toString());
+						if (StringUtils.isNotBlank(groups.toString())) {
+							taskInfo.setAssignee(Constants.BIZ_GROUP + groups.deleteCharAt(groups.lastIndexOf(",")));
 						}
-					}else{
+					} else {
 						taskInfo.setAssignee(task.getAssignee());
 					}
 					taskList.add(taskInfo);

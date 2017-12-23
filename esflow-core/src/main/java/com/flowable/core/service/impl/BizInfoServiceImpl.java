@@ -277,7 +277,7 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 			userCache.put(username, loginUser);
 			return loginUser.getName();
 		}
-		return null;
+		return username;
 	}
 
 	@Override

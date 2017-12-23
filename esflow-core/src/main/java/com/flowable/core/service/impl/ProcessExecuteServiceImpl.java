@@ -694,7 +694,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		String loginUser = WebUtil.getLoginUser().getUsername();
 		Map<String, Object> result = new HashMap<String, Object>();
 		// 加载工单对象
-		BizInfo workBean = bizInfoService.getBizInfo(id, loginUser);
+		BizInfo workBean = bizInfoService.get(id);
 		if (workBean == null) {
 			throw new ServiceException("找不到工单:" + id);
 		}
