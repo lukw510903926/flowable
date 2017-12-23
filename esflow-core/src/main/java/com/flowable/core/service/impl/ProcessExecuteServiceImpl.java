@@ -215,6 +215,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		processDefinitionService.claimTask(bizInfo, taskId, username);
 		bizInfoConf.setTaskAssignee(username);
 		bizInfoService.updateBizInfo(bizInfo);
+		bizInfo.setTaskAssignee(username);
 		this.bizInfoConfService.saveOrUpdate(bizInfoConf);
 		return bizInfo;
 	}
@@ -361,7 +362,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		variables.put("SYS_BUTTON_VALUE", params.get("base.buttonId"));
 		variables.put("SYS_BIZ_CREATEUSER", bizInfo.getCreateUser());
 		variables.put(Constants.SYS_BIZ_ID, bizInfo.getId());
-		ProcessInstance instance = processDefinitionService.newProcessInstance(WebUtil.getLoginUser(), procDefId,variables);
+		ProcessInstance instance = processDefinitionService.newProcessInstance(WebUtil.getLoginUser(), procDefId,
+				variables);
 		bizInfo.setProcessInstanceId(instance.getId());
 		this.processDefinitionService.autoClaim(instance.getId());// TODO任务创建时的自动签收
 
@@ -484,9 +486,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			bizInfo.setTaskName(taskInfo.getTaskName());
 			bizInfo.setTaskDefKey(taskInfo.getTaskDefinitionKey());
 			bizInfoConf.setTaskAssignee(taskInfo.getAssignee());
-			if (StringUtils.isEmpty(bizInfoConf.getTaskAssignee()) && StringUtils.isNotBlank(taskInfo.getGroup())) {
-				bizInfoConf.setTaskAssignee(Constants.BIZ_GROUP + taskInfo.getGroup());
-			}
+			String taskIds = taskInfo.getTaskId() + ",";
+			String taskAssignee = taskInfo.getAssignee() + ",";
 			BizInfoConf bizConf = null;
 			if (taskList.size() > 1) {
 				for (int i = 1; i < taskList.size(); i++) {
@@ -494,14 +495,14 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 					taskInfo = taskList.get(i);
 					bizConf.setTaskId(taskInfo.getTaskId());
 					bizConf.setTaskAssignee(taskInfo.getAssignee());
-					if (StringUtils.isEmpty(bizInfoConf.getTaskAssignee())
-							&& StringUtils.isNotBlank(taskInfo.getGroup())) {
-						bizInfoConf.setTaskAssignee(Constants.BIZ_GROUP + taskInfo.getGroup());
-					}
 					bizConf.setBizInfo(bizInfo);
 					this.bizInfoConfService.saveOrUpdate(bizConf);
+					taskIds = taskIds + taskInfo.getTaskId() + ",";
+					taskAssignee = taskAssignee + taskInfo.getAssignee() + ",";
 				}
 			}
+			bizInfo.setTaskId(taskIds.substring(0, taskIds.lastIndexOf(",")));
+			bizInfo.setTaskAssignee(taskAssignee.substring(0, taskAssignee.lastIndexOf(",")));
 		}
 	}
 
@@ -575,26 +576,24 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 */
 	private void saveFile(MultiValueMap<String, MultipartFile> fileMap, Date now, BizInfo bizInfo, Task task) {
 
-		BizFile bizFile = null;
 		if (MapUtils.isNotEmpty(fileMap)) {
 			for (String fileCatalog : fileMap.keySet()) {
 				List<MultipartFile> files = (List<MultipartFile>) fileMap.get(fileCatalog);
 				if (CollectionUtils.isNotEmpty(files)) {
-					for (MultipartFile file : files) {
-						bizFile = UploadFileUtil.saveFile(file);
-						if (bizFile == null) {
-							continue;
+					files.forEach(file -> {
+						BizFile bizFile = UploadFileUtil.saveFile(file);
+						if (bizFile != null) {
+							bizFile.setCreateDate(now);
+							bizFile.setFileCatalog(fileCatalog);
+							bizFile.setCreateUser(WebUtil.getLoginUser().getUsername());
+							if (null != task) {
+								bizFile.setTaskName(task.getName());
+								bizFile.setTaskId(task.getId());
+							}
+							bizFile.setBizInfo(bizInfo);
+							bizFileService.addBizFile(bizFile);
 						}
-						bizFile.setCreateDate(now);
-						bizFile.setFileCatalog(fileCatalog);
-						bizFile.setCreateUser(WebUtil.getLoginUser().getUsername());
-						if (null != task) {
-							bizFile.setTaskName(task.getName());
-							bizFile.setTaskId(task.getId());
-						}
-						bizFile.setBizInfo(bizInfo);
-						bizFileService.addBizFile(bizFile);
-					}
+					});
 				}
 			}
 		}
@@ -634,7 +633,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		logBean.setTaskName(task.getName());
 		logBean.setBizInfo(bizInfo);
 		logBean.setHandleDescription((String) params.get("base.handleMessage"));
-
 		logBean.setHandleResult((String) params.get("base.handleResult"));
 		if (WebUtil.getLoginUser() != null) {
 			logBean.setHandleUser(WebUtil.getLoginUser().getUsername());
@@ -713,22 +711,14 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		extInfo.put("base_taskID", taskId);
 
 		// 子工单信息
-		Map<String, Object> queryParam = new HashMap<String, Object>(1);
-		queryParam.put("parentId", workBean.getId());
-		PageHelper<BizInfo> page = new PageHelper<BizInfo>();
-		page.setPage(-1);
-		page.setRows(-1);
-		PageHelper<BizInfo> subResult = bizInfoService.getBizInfoList(queryParam, page);
+		result.put("subBizInfo", bizInfoService.getBizByParentId(id));
 		String curreOp = null;
-		if (!subResult.getList().isEmpty()){
-			result.put("subBizInfo", subResult.getList());
-		}
-		if (StringUtils.isNotEmpty(taskId)){
+		if (StringUtils.isNotEmpty(taskId)) {
 			curreOp = processDefinitionService.getWorkAccessTask(taskId, loginUser);
 		}
 		result.put("CURRE_OP", curreOp);
 		Task task = processDefinitionService.getTaskBean(workBean.getTaskId());
-		if (task != null){
+		if (task != null) {
 			result.put("$currentTaskName", task.getName());
 		}
 		list = loadHandleProcessValBean(workBean, taskId);

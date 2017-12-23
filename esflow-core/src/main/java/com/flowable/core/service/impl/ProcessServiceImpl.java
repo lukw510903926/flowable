@@ -535,14 +535,19 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 			if (!CollectionUtils.isEmpty(tasks)) {
 				for (Task task : tasks) {
 					StringBuffer groups = new StringBuffer();
+					TaskInfo taskInfo = new TaskInfo(task.getId(), task.getTaskDefinitionKey(), task.getName());
 					if (StringUtils.isEmpty(task.getAssignee())) {
 						List<String> list = getTaskCandidateGroup(task);
 						for (String group : list) {
 							groups.append(group + ",");
 						}
+						if(StringUtils.isNotBlank(groups.toString())){
+							taskInfo.setAssignee(groups.deleteCharAt(groups.lastIndexOf(",")).toString());
+						}
+					}else{
+						taskInfo.setAssignee(task.getAssignee());
 					}
-					taskList.add(new TaskInfo(task.getId(), task.getTaskDefinitionKey(), task.getName(),
-							task.getAssignee(), groups.toString()));
+					taskList.add(taskInfo);
 				}
 			}
 			return taskList;
