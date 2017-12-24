@@ -64,13 +64,10 @@
 
 </style>
 <script type="text/javascript">
-$(document).ready(function() {
-  $(".js-example-basic-single").select2();
-});
 </script>
 <script>
-//add by suhj 20160606
 $(document).ready(function () {
+  	 $(".js-example-basic-single").select2();
 	 var stepLiLength=$("#step_log li").length;
 	 var stepTxtLiLength=$("#step_text li").length;
 	 var stepLogWidth=140*(stepLiLength-1);
@@ -94,8 +91,7 @@ $(document).ready(function () {
 		<input type="hidden" name="base.handleName" />
 		<input type="hidden" name="base.bizId" />
 		<div>
-			<h5>工单状态</h5>
-			<h6 id="stepPicBizId" class="gray">工单号：</h6>
+			<h5 style="margin: 10px 0px;" id="biz_detail_info">工单状态</h5>
 			<div class="stepwrap" id="stepwrap">
 				<div id="stepPic" class="logistics clearfix"></div>
 				<div id="stepPic2" class="clearfix logistics-text"></div>
@@ -116,6 +112,5 @@ $(document).ready(function () {
 			</div>
 			<div id="workLogs"></div>
 		</div>
-	
 	</form>
 </body>
