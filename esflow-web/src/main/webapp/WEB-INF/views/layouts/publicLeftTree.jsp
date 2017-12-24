@@ -32,7 +32,7 @@ $(function() {
       <li>
 		<a class="mu collapsed" data-toggle="collapse" href="#ul4"><span class="pull-right"><i class="icon-chevron-down"></i></span><i class="ico-menu mrr5"></i>运维流程创建</a>
 		<ul id="ul4" class="list-unstyled sidebar-nav2 collapse">
-			<li><a class="mu2" href="${pageContext.request.contextPath}/biz/create/eventManagement" ><i class="ico-dot mrr5"></i>事件管理</a></li>
+			<li><a class="mu2" href="${pageContext.request.contextPath}/biz/create/eventManagement" target="_blank"><i class="ico-dot mrr5"></i>事件管理</a></li>
 		</ul>
       </li>
 	  <li>
