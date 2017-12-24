@@ -181,7 +181,7 @@ public class ProcessExecuteController {
 		if (startProc) {
 			json.setMsg("/biz/" + bean.getId());
 		} else {
-			json.setMsg("/biz?action=myWork");
+			json.setMsg("/biz/list/myWork");
 		}
 		return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
 	}
