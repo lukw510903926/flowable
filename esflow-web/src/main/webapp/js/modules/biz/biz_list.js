@@ -125,7 +125,7 @@ biz.query.form = {
 	
 	init : function() {
 		var queryFormList = [ {
-			name : "bizId",
+			name : "workNum",
 			align : 'center',
 			text : "工单号",
 			type : "text"

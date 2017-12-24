@@ -61,7 +61,7 @@ biz.create = {
 		case "eventManagement":
 			$("#msgtitle").text("报障人信息");
 			var list = [ {
-				id : "bizId",
+				id : "workNum",
 				alias : "工单号"
 			}, {
 				id : "status",
@@ -90,7 +90,7 @@ biz.create = {
 		case "networkManagement":
 			$("#msgtitle").text("报障人信息");
 			var list = [ {
-				id : "bizId",
+				id : "workNum",
 				alias : "工单号"
 			}, {
 				id : "status",
@@ -119,7 +119,7 @@ biz.create = {
 		case "problemManagement":
 			$("#msgtitle").text("报障人信息");
 			var list = [ {
-				id : "bizId",
+				id : "workNum",
 				alias : "工单号"
 			}, {
 				id : "status",
@@ -148,7 +148,7 @@ biz.create = {
 		default:
 			$("#msgtitle").text("申请人信息");
 			var list = [ {
-				id : "bizId",
+				id : "workNum",
 				alias : "工单号"
 			}, {
 				id : "status",

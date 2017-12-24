@@ -180,7 +180,7 @@ biz.detail = {
 				case "eventManagement":
 					$("#msgtitle").text("报障人信息");
 					var list = [{
-					            	name:"bizId",
+					            	name:"workNum",
 					            	alias:"工单号"
 					            },{
 					            	name:"status",
@@ -212,7 +212,7 @@ biz.detail = {
 				case "maintainManagement":
 					$("#msgtitle").text("发起人信息");
 					var list = [{
-					            	name:"bizId",
+					            	name:"workNum",
 					            	alias:"交维工单号"
 					            },{
 					            	name:"status",
@@ -235,7 +235,7 @@ biz.detail = {
                    case "problemManagement":
                         $("#msgtitle").text("发起人信息");
                         var list = [{
-                                    name:"bizId",
+                                    name:"workNum",
                                     alias:"工单号"
                                 },{
                                     name:"status",
@@ -264,39 +264,10 @@ biz.detail = {
 					            }];
                         biz.detail.setStatic(list, workInfo, createUser);
                         break;
-                  case "faultManagement":
-                        $("#msgtitle").text("发起人信息");
-                        var list = [{
-                                    name:"bizId",
-                                    alias:"工单号"
-                                },{
-                                    name:"status",
-                                    alias:"当前状态"
-                                },{
-                                    name:"dep",
-                                    alias:"填报部门"
-                                },{
-                                    name:"createUser",
-                                    alias:"填报人姓名"
-                                },{
-                                    name:"mobile",
-                                    alias:"填报人联系方式"
-                                },{
-                                    name:"email",
-                                    alias:"邮箱地址"
-                                },{
-                                    name:"city",
-                                    alias:"填报地市"
-                                },{
-                                    name:"createTime",
-                                    alias:"填报时间"
-                                }];
-                        biz.detail.setStatic(list, workInfo, createUser);
-                        break;
     				default:
     					$("#msgtitle").text("申请人信息");
                         var list = [{
-                                        name:"bizId",
+                                        name:"workNum",
                                         alias:"工单号"
                                     },{
                                         name:"status",

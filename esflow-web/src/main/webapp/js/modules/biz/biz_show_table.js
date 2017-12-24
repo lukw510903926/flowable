@@ -623,7 +623,7 @@ biz.show.table.sonBiz = {
 				data : data,
 				classes:"table-no-bordered",
 				columns : [ {
-					field : "bizId",
+					field : "workNum",
 					title : "工单号",
 					align : "left",
 					formatter : function(value, row, index) {
