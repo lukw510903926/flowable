@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -256,9 +257,9 @@ public class ProcessExecuteController {
 		long fileSize = 0L;
 		MultiValueMap<String, MultipartFile> multiValueMap = request.getMultiFileMap();
 		if (MapUtils.isNotEmpty(multiValueMap)) {
-			for (String fileCatalog : multiValueMap.keySet()) {
-				List<MultipartFile> filesLists = (List<MultipartFile>) multiValueMap.get(fileCatalog);
-				for (MultipartFile multipartFile : filesLists) {
+			Collection<List<MultipartFile>> files = multiValueMap.values();
+			for (List<MultipartFile> list : files) {
+				for (MultipartFile multipartFile : list) {
 					fileSize += multipartFile.getSize();
 				}
 			}
