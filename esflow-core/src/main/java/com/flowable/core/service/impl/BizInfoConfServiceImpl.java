@@ -28,8 +28,9 @@ public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> impleme
 	@Transactional(readOnly = false)
 	public void saveOrUpdate(BizInfoConf bizInfoConf){
 		
-		if(this.check(bizInfoConf))
+		if(this.check(bizInfoConf)){
 			this.bizInfoConfDao.saveOrUpdate(bizInfoConf);
+		}
 	}
 	
 	@Transactional(readOnly = true)
@@ -53,9 +54,9 @@ public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> impleme
 	
 	@Override
 	@Transactional(readOnly = true)
-	public BizInfoConf getBizInfoConfByBizId(String bizId){
+	public BizInfoConf getMyWork(String bizId){
 		
-		return this.bizInfoConfDao.getBizInfoConfByBizId(bizId);
+		return this.bizInfoConfDao.getMyWork(bizId);
 	}
 	
 	@Override

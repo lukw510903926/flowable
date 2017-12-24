@@ -206,7 +206,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 */
 	private BizInfo sign(BizInfo bizInfo, String loginUser) {
 
-		BizInfoConf bizInfoConf = this.bizInfoConfService.getBizInfoConfByBizId(bizInfo.getId());
+		BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(bizInfo.getId());
 		String taskId = bizInfoConf.getTaskId();
 		if (StringUtils.isEmpty(taskId)) {
 			throw new ServiceException("找不到任务ID");
@@ -332,7 +332,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			boolean startProc) {
 
 		BizInfo bizInfo = bizInfoService.get(id);
-		BizInfoConf bizInfoConf = this.bizInfoConfService.getBizInfoConfByBizId(id);
+		BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(id);
 		Date now = new Date();
 		saveFile(fileMap, now, bizInfo, null);
 		if (StringUtils.isNotBlank(bizInfo.getProcessInstanceId()) && StringUtils.isNotBlank(bizInfoConf.getTaskId())) {
@@ -473,7 +473,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		List<TaskInfo> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
 		// 如果nextTaskInfo返回null，标示流程已结束
 		if (CollectionUtils.isEmpty(taskList)) {
-			bizInfoConf = this.bizInfoConfService.getBizInfoConfByBizId(bizInfo.getId());
+			bizInfoConf = this.bizInfoConfService.getMyWork(bizInfo.getId());
 			bizInfoConf.setTaskId("END");
 			bizInfo.setTaskName("已结束");
 			bizInfo.setStatus(Constants.BIZ_END);
@@ -529,7 +529,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		if (null == bizInfo) {
 			throw new ServiceException("工单不存在");
 		}
-		bizInfoConf = this.bizInfoConfService.getBizInfoConfByBizId(bizInfo.getId());
+		bizInfoConf = this.bizInfoConfService.getMyWork(bizInfo.getId());
 		if (bizInfoConf == null) {
 			throw new ServiceException("请确认是否有提交工单权限");
 		}
@@ -694,21 +694,22 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		String loginUser = WebUtil.getLoginUser().getUsername();
 		Map<String, Object> result = new HashMap<String, Object>();
 		// 加载工单对象
-		BizInfo workBean = bizInfoService.get(id);
-		if (workBean == null) {
+		BizInfo bizInfo = bizInfoService.get(id);
+		if (bizInfo == null) {
 			throw new ServiceException("找不到工单:" + id);
 		}
-		result.put("workInfo", workBean);
-		String taskId = workBean.getTaskId();
+		result.put("workInfo", bizInfo);
+		BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(id);
+		String taskId = bizInfoConf == null ? null : bizInfoConf.getTaskId();
 		// 加载工单详情字段
-		List<AbstractVariable> list = loadProcessValBean(workBean);
+		List<AbstractVariable> list = loadProcessValBean(bizInfo);
 		result.put("ProcessValBeanMap", list);
 
 		// 处理扩展信息
 		Map<String, Object> extInfo = new HashMap<String, Object>();
-		result.put("extInfo", extInfo);
-		extInfo.put("createUser", sysUserService.getUserByUsername(workBean.getCreateUser()));
+		extInfo.put("createUser", sysUserService.getUserByUsername(bizInfo.getCreateUser()));
 		extInfo.put("base_taskID", taskId);
+		result.put("extInfo", extInfo);
 
 		// 子工单信息
 		result.put("subBizInfo", bizInfoService.getBizByParentId(id));
@@ -717,18 +718,18 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			curreOp = processDefinitionService.getWorkAccessTask(taskId, loginUser);
 		}
 		result.put("CURRE_OP", curreOp);
-		Task task = processDefinitionService.getTaskBean(workBean.getTaskId());
+		Task task = processDefinitionService.getTaskBean(taskId);
 		if (task != null) {
 			result.put("$currentTaskName", task.getName());
 		}
-		list = loadHandleProcessValBean(workBean, taskId);
+		list = loadHandleProcessValBean(bizInfo, taskId);
 		// 加载当前编辑的业务字段,只有当前操作为HANDLE的时候才加载
 		if (Constants.HANDLE.equalsIgnoreCase(curreOp)) {
 			result.put("ProcessTaskValBeans", list);
 			extInfo.put("handleUser", sysUserService.getUserByUsername(loginUser));
 			Map<String, String> buttons = processDefinitionService.findOutGoingTransNames(taskId, false);
-			if (buttons == null || buttons.size() <= 0) {
-				buttons = buttons == null ? new HashMap<String, String>() : buttons;
+			if (MapUtils.isEmpty(buttons)) {
+				buttons = new HashMap<String, String>();
 				buttons.put("submit", "提交");
 			}
 			result.put("SYS_BUTTON", buttons);
@@ -737,41 +738,23 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			buttons.put(Constants.SIGN, "签收");
 			result.put("SYS_BUTTON", buttons);
 		}
-		// 加载工单参数
-		List<AbstractVariableInstance> list4 = instanceService.loadInstances(workBean);
-		if (list4 != null) {
-			result.put("serviceInfo", list4);
-		}
-		// 加载附件列表
-		List<BizFile> list2 = bizFileService.loadBizFilesByBizId(workBean.getId(), null);
-		result.put("annexs", list2 == null || list2.size() <= 0 ? null : list2);
+		// 加载工单流程参数
+		result.put("serviceInfo", instanceService.loadInstances(bizInfo));
+		// 加载流程参数附件
+		result.put("annexs", bizFileService.loadBizFilesByBizId(bizInfo.getId(), null));
 		// 加载日志
-		List<BizLog> list3 = logService.loadBizLogs(workBean.getId());
+		List<BizLog> bizLogs = logService.loadBizLogs(bizInfo.getId());
 		Map<String, List<AbstractVariableInstance>> logVars = new HashMap<String, List<AbstractVariableInstance>>(0);
 		Map<String, Object> fileMap = new HashMap<String, Object>();
-		if (list3 != null && !list3.isEmpty()) {
-			for (BizLog bizLog : list3) {
-				List<BizFile> fileList = bizFileService.loadBizFilesByBizId(bizLog.getBizInfo().getId(),
-						bizLog.getTaskID());
-				fileMap.put(bizLog.getId(), fileList);
-				List<AbstractVariableInstance> values = instanceService.loadValueByLog(bizLog);
-				if (values != null && !values.isEmpty()) {
-					logVars.put(bizLog.getId(), values);
-				}
+		if (CollectionUtils.isNotEmpty(bizLogs)) {
+			for (BizLog bizLog : bizLogs) {
+				fileMap.put(bizLog.getId(), bizFileService.loadBizFilesByBizId(id, bizLog.getTaskID()));
+				logVars.put(bizLog.getId(), instanceService.loadValueByLog(bizLog));
 			}
 		}
 		result.put("files", fileMap);
-		result.put("workLogs", list3 == null || list3.size() <= 0 ? null : list3);
+		result.put("workLogs", bizLogs);
 		result.put("logVars", logVars);
-		// 工作量评估
-		String processInstanceId = workBean.getProcessInstanceId();
-		if (StringUtils.isNotBlank(processInstanceId) && StringUtils.isNotBlank(taskId)) {
-			Map<String, String> queryParams = new HashMap<String, String>();
-			queryParams.put("processInstanceId", processInstanceId);
-			queryParams.put("taskId", taskId);
-			List<TaskVariableInstance> workLoads = this.instanceService.findTaskVariableInstance(queryParams);
-			result.put("workLoad", workLoads);
-		}
 		return result;
 	}
 

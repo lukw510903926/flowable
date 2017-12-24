@@ -15,7 +15,12 @@ public interface BizInfoConfService extends IBaseService<BizInfoConf> {
 
 	public List<BizInfoConf> findBizInfoConf(BizInfoConf bizInfoConf);
 	
-	public BizInfoConf getBizInfoConfByBizId(String bizId);
+	/**
+	 * 当前工单中我的待办
+	 * @param bizId
+	 * @return
+	 */
+	public BizInfoConf getMyWork(String bizId);
 	
 	public void saveOrUpdate(BizInfoConf bizInfoConf);
 	
