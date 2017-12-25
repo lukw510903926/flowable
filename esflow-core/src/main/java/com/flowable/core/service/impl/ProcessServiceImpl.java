@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -39,9 +38,11 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.flowable.common.exception.ServiceException;
 import com.flowable.common.utils.LoginUser;
+import com.flowable.common.utils.ReflectionUtils;
 import com.flowable.core.bean.BizInfo;
 import com.flowable.core.bean.auth.SystemRole;
 import com.flowable.core.dao.IProcessModelDao;
@@ -50,7 +51,6 @@ import com.flowable.core.service.auth.ISystemUserService;
 import com.flowable.core.util.Constants;
 import com.flowable.core.util.WebUtil;
 import com.flowable.core.util.flowable.HistroyActivitiFlow;
-import com.flowable.core.util.flowable.TaskInfo;
 
 @Service
 @Transactional(readOnly = true)
@@ -287,6 +287,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 			executeCommand(processInstanceId, user, userTask, variables);
 			autoClaim(processInstanceId);
 		} catch (Exception e) {
+			logger.error("任务提交失败 : {}", e);
 			throw new ServiceException("任务提交失败!");
 		}
 		return true;
@@ -332,8 +333,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 			if (pi == null) {
 				return true;// 流程已结束
 			}
-			TaskInfo taskInfo = this.getNextTaskInfo(processInstanceId).get(0);
-			Task nextTask = this.getTaskBean(taskInfo.getTaskId());
+			Task nextTask = this.getNextTaskInfo(processInstanceId).get(0);
 			List<SequenceFlow> outgoingFlows = this.getOutgoingFlows(userTask);
 
 			for (SequenceFlow pvmTransition : outgoingFlows) {
@@ -346,16 +346,16 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 					if (docv.startsWith("command:fallback")) {
 						List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
 								.processInstanceId(processInstanceId).finished().orderByHistoricTaskInstanceEndTime()
-								.desc().taskDefinitionKey(taskInfo.getTaskDefinitionKey()).list();
+								.desc().taskDefinitionKey(nextTask.getTaskDefinitionKey()).list();
 						if (!CollectionUtils.isEmpty(list)) {
 							HistoricTaskInstance hti = list.get(0);
 							if (StringUtils.isNotBlank(hti.getAssignee())) {
-								taskService.claim(taskInfo.getTaskId(), hti.getAssignee());
+								taskService.claim(nextTask.getId(), hti.getAssignee());
 							}
 						}
 						// 如果该线为循环，则将新的任务转派给当前用户 // 如果该线为转派，则将新的任务转派给制定的用户或组
 					} else if (docv.startsWith("command:repeat")) {
-						taskService.claim(taskInfo.getTaskId(), loginUser.getUsername());
+						taskService.claim(nextTask.getId(), loginUser.getUsername());
 					} else if (docv.startsWith("command:transfer")) {
 						assignmentTask(nextTask, loginUser, transfer_value, transfer_type);
 					}
@@ -523,35 +523,32 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	}
 
 	@Override
-	public List<TaskInfo> getNextTaskInfo(String processInstanceId) {
+	public List<Task> getNextTaskInfo(String processInstanceId) {
 
-		List<TaskInfo> taskList = new ArrayList<TaskInfo>();
+		List<Task> taskList = new ArrayList<Task>();
 		// 由于逻辑问题，当前先不处理下一步任务，只处理该任务是否已经结束
 		ProcessInstance processInstance = this.getProceInstance(processInstanceId);
-		if (processInstance == null) {// 已经结束
-			return taskList;
-		} else {
+		if (processInstance != null) {// 已经结束
 			List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
 			if (!CollectionUtils.isEmpty(tasks)) {
 				for (Task task : tasks) {
 					StringBuffer groups = new StringBuffer();
-					TaskInfo taskInfo = new TaskInfo(task.getId(), task.getTaskDefinitionKey(), task.getName());
+					Task copy = new TaskEntityImpl();
+					ReflectionUtils.copyBean(task, copy);
 					if (StringUtils.isEmpty(task.getAssignee())) {
 						List<String> list = getTaskCandidateGroup(task);
 						for (String group : list) {
 							groups.append(group + ",");
 						}
 						if (StringUtils.isNotBlank(groups.toString())) {
-							taskInfo.setAssignee(Constants.BIZ_GROUP + groups.deleteCharAt(groups.lastIndexOf(",")));
+							copy.setAssignee(Constants.BIZ_GROUP + groups.deleteCharAt(groups.lastIndexOf(",")));
 						}
-					} else {
-						taskInfo.setAssignee(task.getAssignee());
 					}
-					taskList.add(taskInfo);
+					taskList.add(copy);
 				}
 			}
-			return taskList;
 		}
+		return taskList;
 	}
 
 	@Override

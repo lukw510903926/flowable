@@ -10,7 +10,7 @@ import org.flowable.task.api.Task;
 
 import com.flowable.common.utils.LoginUser;
 import com.flowable.core.bean.BizInfo;
-import com.flowable.core.util.flowable.TaskInfo;
+
 /**
  * 流程处理<br>
  * 与流程引擎交互
@@ -24,20 +24,19 @@ public interface IProcessDefinitionService {
 	 * 
 	 * @param bean
 	 * @param user
-	 * @return
-	 * @
+	 * @return @
 	 */
-	public Map<String, Object> getActivityTask(BizInfo bean, LoginUser user) ;
+	public Map<String, Object> getActivityTask(BizInfo bean, LoginUser user);
 
 	/**
 	 * 获取当前任务的前一个任务 KEY <br>
-	 *            当前任务ID
-	 * @return
-	 * @
+	 * 当前任务ID
+	 * 
+	 * @return @
 	 */
-	public String getParentTask(String taskId) ;
+	public String getParentTask(String taskId);
 
-	public Map<String, String> loadStartButtons(String processDefinitionId) ;
+	public Map<String, String> loadStartButtons(String processDefinitionId);
 
 	/**
 	 * 获取某个任务的外出线名，用于动态生成提交按钮，逻辑如下<br>
@@ -45,18 +44,16 @@ public interface IProcessDefinitionService {
 	 * 2. 否则取任务所有出口名
 	 * 
 	 * @param taskID
-	 * @return
-	 * @
+	 * @return @
 	 */
-	public Map<String, String> findOutGoingTransNames(String taskID, boolean def) ;
+	public Map<String, String> findOutGoingTransNames(String taskID, boolean def);
 
 	/**
 	 * 显示流程实例图片
 	 * 
-	 * @return
-	 * @
+	 * @return @
 	 */
-	public InputStream viewProcessImage(BizInfo bean) ;
+	public InputStream viewProcessImage(BizInfo bean);
 
 	/**
 	 * 新增流程实例
@@ -65,11 +62,9 @@ public interface IProcessDefinitionService {
 	 *            模板ID
 	 * @param variables
 	 *            流程变量
-	 * @return
-	 * @
+	 * @return @
 	 */
-	public ProcessInstance newProcessInstance(LoginUser user, String id, Map<String, Object> variables)
-			;
+	public ProcessInstance newProcessInstance(LoginUser user, String id, Map<String, Object> variables);
 
 	/**
 	 * 处理流程
@@ -80,21 +75,18 @@ public interface IProcessDefinitionService {
 	 *            任务ID
 	 * @param variables
 	 *            流程变量
-	 * @return
-	 * @
+	 * @return @
 	 */
-	public boolean completeTask(BizInfo bean, String taskID, LoginUser user, Map<String, Object> variables)
-			;
+	public boolean completeTask(BizInfo bean, String taskID, LoginUser user, Map<String, Object> variables);
 
 	/**
 	 * 签收任务
 	 * 
 	 * @param bean
 	 * @param taskID
-	 * @return
-	 * @
+	 * @return @
 	 */
-	public boolean claimTask(BizInfo bean, String taskID, String username) ;
+	public boolean claimTask(BizInfo bean, String taskID, String username);
 
 	/**
 	 * 转派任务
@@ -106,30 +98,27 @@ public interface IProcessDefinitionService {
 	 *            需要转派的人或组
 	 * @param assignmentType
 	 *            标记为人或组取值为：group|user
-	 * @return
-	 * @
+	 * @return @
 	 */
 	public boolean assignmentTask(BizInfo bean, String taskID, LoginUser user, String toAssignment,
-			String assignmentType) ;
+			String assignmentType);
 
 	/**
 	 * 获取下一步正在处理的任务信息,如果返回null标示流程已结束
 	 * 
 	 * @param bean
-	 * @return [任务ID,任务KEY,任务名,待签收人/角色]
-	 * @
+	 * @return [任务ID,任务KEY,任务名,待签收人/角色] @
 	 */
-	List<TaskInfo> getNextTaskInfo(String processInstanceId);
+	List<Task> getNextTaskInfo(String processInstanceId);
 
 	/**
 	 * 获取任务信息
 	 * 
 	 * @param taskID
 	 *            任务ID
-	 * @return 任务对象
-	 * @
+	 * @return 任务对象 @
 	 */
-	public Task getTaskBean(String taskID) ;
+	public Task getTaskBean(String taskID);
 
 	/**
 	 * 获取当前用户对工单有权限处理的任务，并返回操作权限 返回HANDLE，表示可以进行处理，SIGN表示可以进行签收，其他无权限<br>
@@ -137,20 +126,18 @@ public interface IProcessDefinitionService {
 	 * 
 	 * @param bean
 	 *            工单对象
-	 * @return
-	 * @
+	 * @return @
 	 */
-	public String getWorkAccessTask(BizInfo bean, String username) ;
+	public String getWorkAccessTask(BizInfo bean, String username);
 
 	/**
 	 * 判断用户对当前任务的权限，返回权限值<br>
 	 * 返回HANDLE，表示可以进行处理，SIGN表示可以进行签收，其他无权限<br>
 	 * 
 	 * @param taskID
-	 * @return
-	 * @
+	 * @return @
 	 */
-	public String getWorkAccessTask(String taskID, String username) ;
+	public String getWorkAccessTask(String taskID, String username);
 
 	/**
 	 * 根据工单对象获取到当前工单所运行的模板版本
@@ -158,16 +145,16 @@ public interface IProcessDefinitionService {
 	 * @param bean
 	 * @return
 	 */
-	public int getWorkOrderVersion(BizInfo bean) ;
+	public int getWorkOrderVersion(BizInfo bean);
 
 	/**
 	 * 获取到工单所处理过的历史环节（任务ID）
 	 * 
 	 * @return
 	 */
-	public String[] getWorkOrderHistoryTask(String processInstanceId) ;
+	public String[] getWorkOrderHistoryTask(String processInstanceId);
 
-	public Map<String, Object> loadProcessList() ;
+	public Map<String, Object> loadProcessList();
 
 	/**
 	 * @param id
@@ -184,33 +171,34 @@ public interface IProcessDefinitionService {
 	 * @return
 	 */
 	public ProcessDefinition getLatestProcDefByKey(String key);
-	
+
 	/**
 	 * 部署流程之后,根据上一版本的流程对象,拷贝上次的参数配置到最新的流程中
+	 * 
 	 * @param processDefinition
 	 * @throws Exception
 	 */
-	public boolean copyVariables(ProcessDefinition processDefinition) throws Exception ;
+	public boolean copyVariables(ProcessDefinition processDefinition) throws Exception;
 
 	/**
 	 * 
 	 * @param nextTaskId
-	 * @return
-	 * @
-	 * 备注: 分派子单 返回目标任务节点的上个节点的处理
+	 * @return @ 备注: 分派子单 返回目标任务节点的上个节点的处理
 	 */
-	public String[] getNextTaskInfo(String nextTaskId, Map<String,Object> params);
+	public String[] getNextTaskInfo(String nextTaskId, Map<String, Object> params);
 
 	public boolean autoClaim(String processInstanceID);
 
 	/**
 	 * 任务拦截
+	 * 
 	 * @param taskId
 	 */
 	public void interceptTask(String taskId);
 
 	/**
 	 * 任务代办组
+	 * 
 	 * @param task
 	 * @return
 	 */

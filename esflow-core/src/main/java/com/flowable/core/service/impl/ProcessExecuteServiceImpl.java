@@ -54,7 +54,6 @@ import com.flowable.core.util.Constants;
 import com.flowable.core.util.UploadFileUtil;
 import com.flowable.core.util.WebUtil;
 import com.flowable.core.util.WorkOrderUtil;
-import com.flowable.core.util.flowable.TaskInfo;
 
 @Service
 @Transactional(readOnly = true)
@@ -470,7 +469,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	@Override
 	public void updateBizTaskInfo(BizInfo bizInfo, BizInfoConf bizInfoConf) {
 
-		List<TaskInfo> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
+		List<Task> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
 		// 如果nextTaskInfo返回null，标示流程已结束
 		if (CollectionUtils.isEmpty(taskList)) {
 			bizInfoConf = this.bizInfoConfService.getMyWork(bizInfo.getId());
@@ -480,24 +479,24 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			bizInfo.setTaskDefKey(Constants.BIZ_END);
 			bizInfoConf.setTaskAssignee("-");
 		} else {
-			TaskInfo taskInfo = taskList.get(0);
-			bizInfo.setStatus(taskInfo.getTaskName());
-			bizInfoConf.setTaskId(taskInfo.getTaskId());
-			bizInfo.setTaskName(taskInfo.getTaskName());
+			Task taskInfo = taskList.get(0);
+			bizInfo.setStatus(taskInfo.getName());
+			bizInfoConf.setTaskId(taskInfo.getId());
+			bizInfo.setTaskName(taskInfo.getName());
 			bizInfo.setTaskDefKey(taskInfo.getTaskDefinitionKey());
 			bizInfoConf.setTaskAssignee(taskInfo.getAssignee());
-			String taskIds = taskInfo.getTaskId() + ",";
+			String taskIds = taskInfo.getId() + ",";
 			String taskAssignee = taskInfo.getAssignee() + ",";
 			BizInfoConf bizConf = null;
 			if (taskList.size() > 1) {
 				for (int i = 1; i < taskList.size(); i++) {
 					bizConf = new BizInfoConf();
 					taskInfo = taskList.get(i);
-					bizConf.setTaskId(taskInfo.getTaskId());
+					bizConf.setTaskId(taskInfo.getId());
 					bizConf.setTaskAssignee(taskInfo.getAssignee());
 					bizConf.setBizInfo(bizInfo);
 					this.bizInfoConfService.saveOrUpdate(bizConf);
-					taskIds = taskIds + taskInfo.getTaskId() + ",";
+					taskIds = taskIds + taskInfo.getId() + ",";
 					taskAssignee = taskAssignee + taskInfo.getAssignee() + ",";
 				}
 			}
