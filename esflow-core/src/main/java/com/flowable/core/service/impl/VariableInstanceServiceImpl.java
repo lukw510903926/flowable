@@ -32,6 +32,7 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
 	@Override
 	@Transactional
 	public void addProcessInstance(AbstractVariableInstance... beans)  {
+		
 		for (AbstractVariableInstance bean : beans) {
 			if (bean instanceof ProcessVariableInstance)
 				processInstanceDao.save((ProcessVariableInstance) bean);
@@ -43,6 +44,7 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
 	
 	@Override
 	public void updateProcessInstance(AbstractVariableInstance... beans)  {
+		
 		for (AbstractVariableInstance bean : beans) {
 			if (bean.getId() == null)
 				continue;
@@ -102,15 +104,4 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
 		return taskInstanceDao.loadValueByLog(logBean);
 	}
 
-	@Override
-	public List<TaskVariableInstance> findTaskVariableInstance(Map<String, String> params) {
-		
-		return this.taskInstanceDao.findTaskVariableInstance(params);
-	}
-	
-	@Override
-	public TaskVariableInstance getTaskVarInstanceByVarName(Map<String,String> params){
-		
-		return this.taskInstanceDao.getTaskVarInstanceByVarName(params);
-	}
 }

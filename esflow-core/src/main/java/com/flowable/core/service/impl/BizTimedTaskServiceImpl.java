@@ -66,8 +66,6 @@ public class BizTimedTaskServiceImpl extends BaseServiceImpl<BizTimedTask> imple
 					params.put("base.workNumber", bizTask.getBizId());
 					params.put("treatment", "确认");
 					params.put("result", "好");
-					params.put("complain", "否");
-					params.put("isShuffle", "否");
 					params.put("handleMessage", "3天未处理,自动提交工单");
 					params.put("base.handleName", "用户确认");
 					params.put("base.handleResult", "提交");

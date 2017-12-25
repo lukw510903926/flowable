@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.flowable.common.exception.ServiceException;
 import com.flowable.common.service.BaseServiceImpl;
 import com.flowable.common.utils.PageHelper;
 import com.flowable.core.bean.BizFile;
@@ -92,7 +93,8 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("获取工单状态失败 : {}",e);
+			throw new ServiceException("获取工单状态失败!");
 		}
 	}
 
@@ -126,7 +128,7 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 		List<BizInfo> list = this.getBizInfoList(params, page).getList();
 		BizInfo newBiz = oldBiz.clone();
 		newBiz.setId(null);
-		if (list == null) {
+		if (CollectionUtils.isEmpty(list)) {
 			newBiz.setWorkNum(newBiz.getWorkNum() + "-00" + 1);
 		} else {
 			newBiz.setWorkNum(newBiz.getWorkNum() + "-00" + (list.size() + 1));
@@ -279,16 +281,4 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 		}
 		return username;
 	}
-
-	@Override
-	public void sendEmail(List<String> bizIds) {
-
-	}
-
-	@Override
-	public List<BizInfo> getBizInfos(List<String> list) {
-
-		return this.dao.getBizInfos(list);
-	}
-
 }

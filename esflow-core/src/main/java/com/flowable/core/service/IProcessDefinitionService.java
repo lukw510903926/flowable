@@ -64,7 +64,7 @@ public interface IProcessDefinitionService {
 	 *            流程变量
 	 * @return @
 	 */
-	public ProcessInstance newProcessInstance(LoginUser user, String id, Map<String, Object> variables);
+	public ProcessInstance newProcessInstance(String id, Map<String, Object> variables);
 
 	/**
 	 * 处理流程
@@ -179,13 +179,6 @@ public interface IProcessDefinitionService {
 	 * @throws Exception
 	 */
 	public boolean copyVariables(ProcessDefinition processDefinition) throws Exception;
-
-	/**
-	 * 
-	 * @param nextTaskId
-	 * @return @ 备注: 分派子单 返回目标任务节点的上个节点的处理
-	 */
-	public String[] getNextTaskInfo(String nextTaskId, Map<String, Object> params);
 
 	public boolean autoClaim(String processInstanceID);
 

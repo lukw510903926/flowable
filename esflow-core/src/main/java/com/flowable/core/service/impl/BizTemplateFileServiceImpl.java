@@ -1,13 +1,12 @@
 package com.flowable.core.service.impl;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.flowable.common.exception.ServiceException;
@@ -56,12 +56,12 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
 	public BizTemplateFile getBizTemplateFile(Map<String, String> params) {
 
 		BizInfo bizInfo = null;
-		logger.info("params :{}",params);
+		logger.info("params :{}", params);
 		BizTemplateFile templateFile = new BizTemplateFile();
 		templateFile.setFileName(params.get("fileName"));
 		String bizType = params.get("bizType");
 		if (StringUtils.isNotBlank(bizType)) {
-			templateFile.setFlowName("");
+			templateFile.setFlowName(null);
 		}
 		if (StringUtils.isNotBlank(params.get("bizId"))) {
 			bizInfo = this.bizInfoService.get(params.get("bizId"));
@@ -71,17 +71,24 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
 		page.setRows(-1);
 		page.setPage(-1);
 		List<BizTemplateFile> list = this.bizTemplateFileDao.findTemplateFlies(page, templateFile, false).getList();
-		if (list != null && !list.isEmpty())
-			return list.get(0);
-		return null;
+		if (CollectionUtils.isEmpty(list)) {
+			return null;
+		}
+		return list.get(0);
 	}
 
 	@Override
 	public List<BizTemplateFile> findFileByIds(List<String> ids) {
 
 		List<BizTemplateFile> list = new ArrayList<BizTemplateFile>();
+		BizTemplateFile file = null;
 		for (String id : ids) {
-			list.add(this.get(id));
+			if(StringUtils.isNotBlank(id)) {
+				file = this.get(id);
+				if(file != null) {
+					list.add(file);
+				}
+			}
 		}
 		return list;
 	}
@@ -93,7 +100,7 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
 		String fileName = file.getOriginalFilename();
 		dataFile.setFileName(fileName);
 		String dataId = null;
-		if (!this.check(dataFile)){
+		if (!this.check(dataFile)) {
 			throw new ServiceException(" 相同名称模版已存在,请将原模板文件删除后再上传,所属流程+文件名唯一");
 		}
 		if (StringUtils.isBlank(dataFile.getId())) {
@@ -112,35 +119,25 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
 		page.setPage(-1);
 		page.setRows(-1);
 		List<BizTemplateFile> list = this.findTemplateFlies(page, file, false).getList();
-		if (list != null && !list.isEmpty())
+		if (!CollectionUtils.isEmpty(list)) {
 			return false;
+		}
 		return true;
 
 	}
 
 	private void saveFile(MultipartFile file, String filePath, String fileName, String dataId) {
 
-		File path = new File(filePath);
-		if (!path.exists()) {
-			path.mkdir();
-		}
 		String suffix = "";
 		if (fileName.lastIndexOf(".") != -1) {
 			suffix = fileName.substring(fileName.lastIndexOf("."));
 		}
-		File newFile = new File(path, dataId + suffix);
-		FileOutputStream out;
 		try {
-			out = new FileOutputStream(newFile);
-			InputStream in = file.getInputStream();
-			byte[] buff = new byte[1024];
-			while (in.read(buff) != -1) {
-				out.write(buff);
-			}
-			out.close();
-			in.close();
+			File newFile = new File(filePath, dataId + suffix);
+			FileUtils.copyInputStreamToFile(file.getInputStream(), newFile);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("模板保存失败 :{}",e);
+			throw new ServiceException("模板保存失败!");
 		}
 	}
 

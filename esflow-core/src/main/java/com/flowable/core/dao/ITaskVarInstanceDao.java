@@ -1,7 +1,6 @@
 package com.flowable.core.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import com.flowable.common.dao.IBaseDao;
 import com.flowable.core.bean.AbstractVariableInstance;
@@ -18,15 +17,6 @@ public interface ITaskVarInstanceDao extends IBaseDao<TaskVariableInstance> {
 	public List<AbstractVariableInstance> loadValueByLog(BizLog logBean) ;
 
 	public List<TaskVariableInstance> findByTaskId(String taskId) ;
-
-	/**
-	 * 
-	 * @param params
-	 * @return
-	 */
-	public List<TaskVariableInstance> findTaskVariableInstance(Map<String, String> params);
-
-	public TaskVariableInstance getTaskVarInstanceByVarName(Map<String, String> params);
 
 	/**
 	 * 

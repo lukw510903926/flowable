@@ -74,18 +74,10 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
 	 * @param list
 	 */
 	public void updateBizByIds(List<String> list);
-	
-	/**
-	 * 批量查询工单
-	 * @param list
-	 * @return
-	 */
-	public List<BizInfo> getBizInfos(List<String> list);
 
 	public List<String> loadBizInfoStatus(String processId);
 
 	public List<BizInfo> getBizByParentId(String parentId);
 
-	public void sendEmail(List<String> bizIds);
 
 }
