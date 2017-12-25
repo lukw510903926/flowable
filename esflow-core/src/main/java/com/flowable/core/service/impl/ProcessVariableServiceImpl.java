@@ -25,23 +25,24 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 
 	@Autowired
 	private IProcessVariableDao processVariableDao;
-	
+
 	@Autowired
 	private IProcessVarInstanceDao processVarInstanceDao;
 
 	@Autowired
 	private ITaskVariableDao taskVariableDao;
-	
+
 	@Autowired
 	private ITaskVarInstanceDao taskVarInstanceDao;
 
-	public int getProcessOrder(AbstractVariable bean)  {
+	public int getProcessOrder(AbstractVariable bean) {
+
 		if (bean == null || bean.getProcessDefinitionId() == null) {
 			return 0;
 		}
 		if (bean instanceof TaskVariable) {
-			TaskVariable bean2 = (TaskVariable) bean;
-			if (bean2.getTaskId() == null) {
+			TaskVariable taskVariable = (TaskVariable) bean;
+			if (taskVariable.getTaskId() == null) {
 				return 0;
 			}
 			return taskVariableDao.getProcessOrder((TaskVariable) bean);
@@ -52,7 +53,8 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 
 	@Override
 	@Transactional
-	public void addVariable(AbstractVariable... beans)  {
+	public void addVariable(AbstractVariable... beans) {
+
 		for (AbstractVariable bean : beans) {
 			if (bean instanceof TaskVariable) {
 				taskVariableDao.save((TaskVariable) bean);
@@ -64,10 +66,10 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 
 	@Override
 	@Transactional
-	public void updateVariable(AbstractVariable... beans)  {
+	public void updateVariable(AbstractVariable... beans) {
+
 		for (AbstractVariable bean : beans) {
 			if (bean.getId() == null) {
-
 				continue;
 			}
 			if (bean instanceof TaskVariable) {
@@ -80,9 +82,9 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 
 	@Override
 	@Transactional
-	public void deleteVariable(AbstractVariable... beans)  {
-		
-		Map<String,String> params = new HashMap<String, String>();
+	public void deleteVariable(AbstractVariable... beans) {
+
+		Map<String, String> params = new HashMap<String, String>();
 		for (AbstractVariable bean : beans) {
 			params.put("variableId", bean.getId());
 			if (bean.getId() == null) {
@@ -91,14 +93,15 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 			if (bean instanceof TaskVariable) {
 				this.taskVarInstanceDao.deleteByVarId(bean.getId());
 				taskVariableDao.delete((TaskVariable) bean);
-			}else{
+			} else {
 				this.processVarInstanceDao.deleteByVarId(bean.getId());
 				this.processVariableDao.deleteById(bean.getId());
 			}
 		}
 	}
 
-	public AbstractVariable getVariableById(String id)  {
+	public AbstractVariable getVariableById(String id) {
+
 		AbstractVariable bean = getVariable(id, ProcessVariable.class);
 		if (bean == null) {
 			bean = getVariable(id, TaskVariable.class);
@@ -106,14 +109,14 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 		return bean;
 	}
 
-	public AbstractVariable getVariable(String id, Class<? extends AbstractVariable> type)  {
-		if (type == null) {
-			return null;
-		}
-		if (type == ProcessVariable.class) {
-			return processVariableDao.getById(id);
-		} else if (type == TaskVariable.class) {
-			return taskVariableDao.getById(id);
+	public AbstractVariable getVariable(String id, Class<? extends AbstractVariable> type) {
+
+		if (type != null) {
+			if (type == ProcessVariable.class) {
+				return processVariableDao.getById(id);
+			} else if (type == TaskVariable.class) {
+				return taskVariableDao.getById(id);
+			}
 		}
 		return null;
 	}
@@ -121,48 +124,44 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 	/**
 	 * 根据流程模板ID，获取模板的公共属性列表<br>
 	 * 版本号，如果为空则去最新的版本
-	 * @return
-	 * @
+	 * 
+	 * @return @
 	 */
-	public List<ProcessVariable> loadVariables(String processDefinitionId, int version)  {
-			
+	public List<ProcessVariable> loadVariables(String processDefinitionId, int version) {
+
 		return processVariableDao.loadProcessVariables(processDefinitionId, version);
 	}
-	
+
 	@Override
-	public PageHelper<ProcessVariable> loadProcessVariables(String processDefinitionId, int version,PageHelper<ProcessVariable> page){
-		
-		return processVariableDao.loadProcessVariables(processDefinitionId, version,page);
+	public PageHelper<ProcessVariable> loadProcessVariables(String processDefinitionId, int version,
+			PageHelper<ProcessVariable> page) {
+
+		return processVariableDao.loadProcessVariables(processDefinitionId, version, page);
 	}
 
 	/**
 	 * 根据流程模板ID，任务ID加载某个模板的指定流程任务ID，如果任务ID为空，则加载所有的任务ID对应的属性<br>
 	 * 版本号，如果为空则去最新的版本<br>
 	 * 此处模板必须对应模板的版本ID
-	 * @return
-	 * @
+	 * 
+	 * @return @
 	 */
-	public List<TaskVariable> loadTaskVariables(String processDefinitionId, int version, String... taskIds)  {
-			
+	public List<TaskVariable> loadTaskVariables(String processDefinitionId, int version, String... taskIds) {
+
 		return taskVariableDao.loadTaskVariables(processDefinitionId, version, taskIds);
 	}
-	
-	@Override
-	public PageHelper<TaskVariable> loadTaskVariables(String processDefinitionId, int version,PageHelper<TaskVariable> page, String taskIds){
 
-		return taskVariableDao.loadTaskVariables(processDefinitionId, version,page, taskIds);
+	@Override
+	public PageHelper<TaskVariable> loadTaskVariables(String processDefinitionId, int version,
+			PageHelper<TaskVariable> page, String taskIds) {
+
+		return taskVariableDao.loadTaskVariables(processDefinitionId, version, page, taskIds);
 	}
 
 	@Override
 	public List<ProcessVariableInstance> getProcessVariableInstances(Map<String, String> params) {
-		
+
 		return this.processVarInstanceDao.getProcessVariableInstances(params);
-	}
-	
-	@Override
-	public List<Map<String,String>> getBizInfo(String bizId){
-		
-		return this.processVarInstanceDao.getBizInfo(bizId);
 	}
 
 }

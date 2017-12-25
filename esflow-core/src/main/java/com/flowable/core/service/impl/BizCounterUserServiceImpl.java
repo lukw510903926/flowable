@@ -3,6 +3,7 @@ package com.flowable.core.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,27 +42,23 @@ public class BizCounterUserServiceImpl extends BaseServiceImpl<BizCounterUser> i
 		PageHelper<BizCounterUser> page = new PageHelper<BizCounterUser>();
 		page.setPage(-1);
 		page.setRows(-1);
-		List<BizCounterUser> list = this.findBizCounterUser(page, user).getList();
-		if (list != null && !list.isEmpty()) {
-			this.delete(list);
-		}
+		this.delete(this.findBizCounterUser(page, user).getList());
 	}
 
 	@Override
 	@Transactional(readOnly = false)
 	public void saveUser(List<Map<String, String>> list, String bizId, String taskId) {
 
-		BizCounterUser user = null;
-		if (list != null && !list.isEmpty()) {
-			for (Map<String, String> map : list) {
-				user = new BizCounterUser();
+		if (!CollectionUtils.isNotEmpty(list)) {
+			list.forEach(map -> {
+				BizCounterUser user = new BizCounterUser();
 				user.setBizId(bizId);
 				user.setTaskId(StringUtils.isBlank(taskId) ? "START" : taskId);
 				user.setName(map.get("name"));
 				user.setUsername(map.get("username"));
 				user.setDeptmentName(map.get("deptmentName"));
 				this.bizCounterUserDao.save(user);
-			}
+			});
 		}
 	}
 

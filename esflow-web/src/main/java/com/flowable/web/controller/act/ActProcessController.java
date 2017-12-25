@@ -1,6 +1,3 @@
-/**
- * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
- */
 package com.flowable.web.controller.act;
 
 import java.io.IOException;
@@ -8,14 +5,12 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
@@ -23,8 +18,9 @@ import org.flowable.engine.impl.persistence.entity.DeploymentEntity;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,12 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.flowable.common.utils.DataGrid;
-import com.flowable.common.utils.DateUtils;
 import com.flowable.common.utils.Json;
 import com.flowable.common.utils.PageHelper;
+import com.flowable.common.utils.ReflectionUtils;
 import com.flowable.core.service.IProcessDefinitionService;
 import com.flowable.core.service.act.ActProcessService;
 
@@ -55,42 +50,35 @@ public class ActProcessController {
 
 	@Autowired
 	private ActProcessService actProcessService;
-	
+
 	@Autowired
-	private IProcessDefinitionService processDefinitionService ;
-	
+	private IProcessDefinitionService processDefinitionService;
+
+	private Logger logger = LoggerFactory.getLogger(ActProcessController.class);
+
 	/**
 	 * 流程定义列表
 	 */
 	@ResponseBody
 	@RequestMapping(value = "list")
-	public DataGrid processList(PageHelper<Object[]> page,@RequestParam Map<String, Object> params) {
+	public DataGrid processList(PageHelper<Object[]> page, @RequestParam Map<String, Object> params) {
 
 		DataGrid grid = new DataGrid();
 		try {
 			List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 			page = actProcessService.processList(page, null);
 			List<Object[]> tempResult = page.getList();
-			if (CollectionUtils.isNotEmpty(tempResult)) {
-				for (Object[] objects : tempResult) {
-					ProcessDefinitionEntity process = (ProcessDefinitionEntity) objects[0];
-					DeploymentEntity deployment = (DeploymentEntity) objects[1];
-					Map<String, Object> item = new HashMap<String, Object>();
-					item.put("id", process.getId());
-					item.put("key", process.getKey());
-					item.put("name", process.getName());
-					item.put("version", process.getVersion());
-					item.put("deploymentId", process.getDeploymentId());
-					item.put("resourceName", process.getResourceName());
-					item.put("diagramResourceName", process.getDiagramResourceName());
-					item.put("deploymentTime", DateUtils.formatDateTime(deployment.getDeploymentTime()));
-					result.add(item);
-				}
+			for (Object[] objects : tempResult) {
+				ProcessDefinitionEntity process = (ProcessDefinitionEntity) objects[0];
+				DeploymentEntity deployment = (DeploymentEntity) objects[1];
+				Map<String, Object> item = ReflectionUtils.beanToMap(process);
+				item.put("deploymentTime", deployment.getDeploymentTime());
+				result.add(item);
 			}
 			grid.setRows(result);
 			grid.setTotal(page.getCount());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(" 流程列表获取失败 : {}", e);
 		}
 		return grid;
 	}
@@ -101,7 +89,7 @@ public class ActProcessController {
 	@ResponseBody
 	@RequestMapping(value = "processTaskList")
 	public DataGrid processTaskList(@RequestParam Map<String, Object> params) {
-		
+
 		DataGrid grid = new DataGrid();
 		try {
 			String processId = (String) params.get("processId");
@@ -109,7 +97,7 @@ public class ActProcessController {
 			grid.setRows(result);
 			grid.setTotal((long) result.size());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("流程所有任务列表失败 :{}", e);
 		}
 		return grid;
 	}
@@ -119,25 +107,13 @@ public class ActProcessController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "running")
-	public DataGrid runningList(PageHelper<ProcessInstance> page,String procInsId, String procDefKey) {
-		
+	public DataGrid runningList(PageHelper<ProcessInstance> page, String procInsId, String procDefKey) {
+
 		DataGrid grid = new DataGrid();
 		try {
-			List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 			PageHelper<ProcessInstance> helper = actProcessService.runningList(page, procInsId, procDefKey);
-			List<ProcessInstance> tempResult = helper.getList();
-			if (CollectionUtils.isNotEmpty(tempResult)) {
-				for (ProcessInstance processInstance : tempResult) {
-					Map<String, Object> item = new HashMap<String, Object>();
-					item.put("id", processInstance.getId());
-					item.put("processInstanceId", processInstance.getProcessInstanceId());
-					item.put("processDefinitionId", processInstance.getProcessDefinitionId());
-					item.put("activityId", processInstance.getActivityId());
-					item.put("suspended", processInstance.isSuspended());
-				}
-			}
-			grid.setRows(result);
-			grid.setTotal((long) result.size());
+			grid.setRows(helper.getList());
+			grid.setTotal(helper.getCount());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -155,7 +131,8 @@ public class ActProcessController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "resource/read")
-	public void resourceRead(String processDefinitionId, String processInstanceId, String type, HttpServletResponse response) throws Exception {
+	public void resourceRead(String processDefinitionId, String processInstanceId, String type,
+			HttpServletResponse response) throws Exception {
 		InputStream resourceAsStream = actProcessService.resourceRead(processDefinitionId, processInstanceId, type);
 		if (type.equals("image")) {
 			byte[] b = new byte[1024];
@@ -172,10 +149,9 @@ public class ActProcessController {
 					stringBuffer.append(line);
 					stringBuffer.append("\n");
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("读取资源失败 : {}", e);
 				}
 			}
-
 			response.setContentType("text/plain;charset=utf-8");
 			PrintWriter out = response.getWriter();
 			out.println(stringBuffer.toString());
@@ -189,10 +165,9 @@ public class ActProcessController {
 	 * @return
 	 */
 	@RequestMapping(value = "/deploy", method = RequestMethod.POST)
-	public String deploy(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes, Model model) throws Exception {
-		
-		MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-		MultipartFile file = multiRequest.getFile("file");
+	public String deploy(MultipartHttpServletRequest request, Model model) throws Exception {
+
+		MultipartFile file = request.getFile("file");
 		String fileName = file.getOriginalFilename();
 		String exportDir = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 				+ request.getContextPath() + "/deployments/";
@@ -211,20 +186,20 @@ public class ActProcessController {
 		model.addAttribute("message", message);
 		return "process/process_deploy";
 	}
-	
+
 	/**
 	 * 挂起、激活流程实例
 	 */
 	@ResponseBody
 	@RequestMapping(value = "update/{state}")
-	public Json updateState(@PathVariable("state") String state, @RequestParam String processDefinitionId ) {
+	public Json updateState(@PathVariable("state") String state, @RequestParam String processDefinitionId) {
 		Json json = new Json();
 		try {
 			String message = actProcessService.updateState(state, processDefinitionId);
 			json.setSuccess(true);
 			json.setMsg(message);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("流程挂起,激活失败 : {}", e);
 			json.setSuccess(false);
 			json.setMsg("操作失败!");
 		}
@@ -242,8 +217,8 @@ public class ActProcessController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "convert")
-	public Json convertToModel(@RequestParam String processDefinitionId )  {
-		
+	public Json convertToModel(@RequestParam String processDefinitionId) {
+
 		Json json = new Json();
 		try {
 			org.flowable.engine.repository.Model modelData = actProcessService.convertToModel(processDefinitionId);
@@ -261,11 +236,16 @@ public class ActProcessController {
 	/**
 	 * 导出图片文件到硬盘
 	 */
-	@RequestMapping(value = "export/diagrams")
 	@ResponseBody
-	public List<String> exportDiagrams(@Value("#{APP_PROP['activiti.export.diagram.path']}") String exportDir) throws IOException {
-		
-		return actProcessService.exportDiagrams(exportDir);
+	@RequestMapping(value = "export/diagrams")
+	public List<String> exportDiagrams(String exportDir){
+
+		try {
+			return actProcessService.exportDiagrams(exportDir);
+		} catch (IOException e) {
+			logger.error("图片导出失败");
+		}
+		return null;
 	}
 
 	/**
@@ -283,7 +263,7 @@ public class ActProcessController {
 			json.setSuccess(true);
 			json.setMsg("删除成功--" + deploymentId);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("流程删除失败 : {}", e);
 			json.setSuccess(false);
 			json.setMsg("操作失败!");
 		}
@@ -300,16 +280,15 @@ public class ActProcessController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "deleteProcIns")
-	public Json deleteProcIns(String procInsId, String reason ) {
+	public Json deleteProcIns(String procInsId, String reason) {
+
 		Json json = new Json();
 		try {
-			if (StringUtils.isNotBlank(reason)) {
-				actProcessService.deleteProcIns(procInsId, reason);
-			}
+			actProcessService.deleteProcIns(procInsId, reason);
 			json.setSuccess(true);
 			json.setMsg("操作成功");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("实例删除失败 : {}", e);
 			json.setSuccess(false);
 			json.setMsg("操作失败!");
 		}

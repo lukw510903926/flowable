@@ -98,7 +98,7 @@ public class ActProcessService {
 
 		ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery().latestVersion().orderByProcessDefinitionKey().asc();
 		page.setCount(processDefinitionQuery.count());
-		List<ProcessDefinition> processDefinitionList = processDefinitionQuery.listPage(0, 20);
+		List<ProcessDefinition> processDefinitionList = processDefinitionQuery.listPage(page.getFirstRow(), page.getMaxRow());
 		for (ProcessDefinition processDefinition : processDefinitionList) {
 			String deploymentId = processDefinition.getDeploymentId();
 			Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
@@ -351,7 +351,6 @@ public class ActProcessService {
 			@SuppressWarnings("unused")
 			int len = -1;
 			resourceAsStream.read(b, 0, b.length);
-
 			// create file if not exist
 			String diagramDir = exportDir + "/" + key + "/" + version;
 			File diagramDirFile = new File(diagramDir);
@@ -360,25 +359,18 @@ public class ActProcessService {
 			}
 			diagramPath = diagramDir + "/" + diagramResourceName;
 			File file = new File(diagramPath);
-
 			// 文件存在退出
 			if (file.exists()) {
 				// 文件大小相同时直接返回否则重新创建文件(可能损坏)
 				logger.debug("diagram exist, ignore... : {}", diagramPath);
-
 				files.add(diagramPath);
 			} else {
 				file.createNewFile();
 				logger.debug("export diagram to : {}", diagramPath);
-
-				// wirte bytes to file
 				FileUtils.writeByteArrayToFile(file, b, true);
-
 				files.add(diagramPath);
 			}
-
 		}
-
 		return files;
 	}
 

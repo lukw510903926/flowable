@@ -74,7 +74,7 @@ public class ProcessModelMgrController{
 				grid.setTotal(processTaskValBeans.getCount());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("操作失败 : {}",e);
 		}
 		return grid;
 	}
@@ -103,7 +103,7 @@ public class ProcessModelMgrController{
 			ajaxJson.setObj(processValAbs);
 			ajaxJson.setSuccess(true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("操作失败 : {}",e);
 			ajaxJson.setMsg("查询失败");
 			ajaxJson.setSuccess(false);
 		}
@@ -133,7 +133,7 @@ public class ProcessModelMgrController{
 			json.setSuccess(true);
 			json.setMsg("删除成功!");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("操作失败 : {}",e);
 			json.setSuccess(false);
 			json.setMsg("删除失败!");
 		}
@@ -218,11 +218,10 @@ public class ProcessModelMgrController{
 			} else {
 				processValService.addVariable(processValAbs);
 			}
-
 			json.setSuccess(true);
 			json.setMsg("操作成功");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("操作失败 : {}",e);
 			json.setSuccess(false);
 			json.setMsg("操作失败!");
 		}
@@ -282,7 +281,7 @@ public class ProcessModelMgrController{
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("操作失败 : {}",e);
 		}
 		return list;
 	}

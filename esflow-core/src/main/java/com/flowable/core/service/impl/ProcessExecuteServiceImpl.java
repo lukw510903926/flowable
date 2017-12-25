@@ -54,7 +54,6 @@ import com.flowable.core.util.Constants;
 import com.flowable.core.util.UploadFileUtil;
 import com.flowable.core.util.WebUtil;
 import com.flowable.core.util.WorkOrderUtil;
-import com.flowable.core.util.flowable.TaskInfo;
 
 @Service
 @Transactional(readOnly = true)
@@ -206,7 +205,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 */
 	private BizInfo sign(BizInfo bizInfo, String loginUser) {
 
-		BizInfoConf bizInfoConf = this.bizInfoConfService.getBizInfoConfByBizId(bizInfo.getId());
+		BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(bizInfo.getId());
 		String taskId = bizInfoConf.getTaskId();
 		if (StringUtils.isEmpty(taskId)) {
 			throw new ServiceException("找不到任务ID");
@@ -215,6 +214,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		processDefinitionService.claimTask(bizInfo, taskId, username);
 		bizInfoConf.setTaskAssignee(username);
 		bizInfoService.updateBizInfo(bizInfo);
+		bizInfo.setTaskAssignee(username);
 		this.bizInfoConfService.saveOrUpdate(bizInfoConf);
 		return bizInfo;
 	}
@@ -331,7 +331,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			boolean startProc) {
 
 		BizInfo bizInfo = bizInfoService.get(id);
-		BizInfoConf bizInfoConf = this.bizInfoConfService.getBizInfoConfByBizId(id);
+		BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(id);
 		Date now = new Date();
 		saveFile(fileMap, now, bizInfo, null);
 		if (StringUtils.isNotBlank(bizInfo.getProcessInstanceId()) && StringUtils.isNotBlank(bizInfoConf.getTaskId())) {
@@ -361,7 +361,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		variables.put("SYS_BUTTON_VALUE", params.get("base.buttonId"));
 		variables.put("SYS_BIZ_CREATEUSER", bizInfo.getCreateUser());
 		variables.put(Constants.SYS_BIZ_ID, bizInfo.getId());
-		ProcessInstance instance = processDefinitionService.newProcessInstance(WebUtil.getLoginUser(), procDefId,variables);
+		ProcessInstance instance = processDefinitionService.newProcessInstance(procDefId,variables);
 		bizInfo.setProcessInstanceId(instance.getId());
 		this.processDefinitionService.autoClaim(instance.getId());// TODO任务创建时的自动签收
 
@@ -468,40 +468,39 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	@Override
 	public void updateBizTaskInfo(BizInfo bizInfo, BizInfoConf bizInfoConf) {
 
-		List<TaskInfo> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
+		List<Task> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
 		// 如果nextTaskInfo返回null，标示流程已结束
 		if (CollectionUtils.isEmpty(taskList)) {
-			bizInfoConf = this.bizInfoConfService.getBizInfoConfByBizId(bizInfo.getId());
+			bizInfoConf = this.bizInfoConfService.getMyWork(bizInfo.getId());
 			bizInfoConf.setTaskId("END");
 			bizInfo.setTaskName("已结束");
 			bizInfo.setStatus(Constants.BIZ_END);
 			bizInfo.setTaskDefKey(Constants.BIZ_END);
 			bizInfoConf.setTaskAssignee("-");
 		} else {
-			TaskInfo taskInfo = taskList.get(0);
-			bizInfo.setStatus(taskInfo.getTaskName());
-			bizInfoConf.setTaskId(taskInfo.getTaskId());
-			bizInfo.setTaskName(taskInfo.getTaskName());
+			Task taskInfo = taskList.get(0);
+			bizInfo.setStatus(taskInfo.getName());
+			bizInfoConf.setTaskId(taskInfo.getId());
+			bizInfo.setTaskName(taskInfo.getName());
 			bizInfo.setTaskDefKey(taskInfo.getTaskDefinitionKey());
 			bizInfoConf.setTaskAssignee(taskInfo.getAssignee());
-			if (StringUtils.isEmpty(bizInfoConf.getTaskAssignee()) && StringUtils.isNotBlank(taskInfo.getGroup())) {
-				bizInfoConf.setTaskAssignee(Constants.BIZ_GROUP + taskInfo.getGroup());
-			}
+			String taskIds = taskInfo.getId() + ",";
+			String taskAssignee = taskInfo.getAssignee() + ",";
 			BizInfoConf bizConf = null;
 			if (taskList.size() > 1) {
 				for (int i = 1; i < taskList.size(); i++) {
 					bizConf = new BizInfoConf();
 					taskInfo = taskList.get(i);
-					bizConf.setTaskId(taskInfo.getTaskId());
+					bizConf.setTaskId(taskInfo.getId());
 					bizConf.setTaskAssignee(taskInfo.getAssignee());
-					if (StringUtils.isEmpty(bizInfoConf.getTaskAssignee())
-							&& StringUtils.isNotBlank(taskInfo.getGroup())) {
-						bizInfoConf.setTaskAssignee(Constants.BIZ_GROUP + taskInfo.getGroup());
-					}
 					bizConf.setBizInfo(bizInfo);
 					this.bizInfoConfService.saveOrUpdate(bizConf);
+					taskIds = taskIds + taskInfo.getId() + ",";
+					taskAssignee = taskAssignee + taskInfo.getAssignee() + ",";
 				}
 			}
+			bizInfo.setTaskId(taskIds.substring(0, taskIds.lastIndexOf(",")));
+			bizInfo.setTaskAssignee(taskAssignee.substring(0, taskAssignee.lastIndexOf(",")));
 		}
 	}
 
@@ -528,7 +527,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		if (null == bizInfo) {
 			throw new ServiceException("工单不存在");
 		}
-		bizInfoConf = this.bizInfoConfService.getBizInfoConfByBizId(bizInfo.getId());
+		bizInfoConf = this.bizInfoConfService.getMyWork(bizInfo.getId());
 		if (bizInfoConf == null) {
 			throw new ServiceException("请确认是否有提交工单权限");
 		}
@@ -575,26 +574,24 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 */
 	private void saveFile(MultiValueMap<String, MultipartFile> fileMap, Date now, BizInfo bizInfo, Task task) {
 
-		BizFile bizFile = null;
 		if (MapUtils.isNotEmpty(fileMap)) {
 			for (String fileCatalog : fileMap.keySet()) {
 				List<MultipartFile> files = (List<MultipartFile>) fileMap.get(fileCatalog);
 				if (CollectionUtils.isNotEmpty(files)) {
-					for (MultipartFile file : files) {
-						bizFile = UploadFileUtil.saveFile(file);
-						if (bizFile == null) {
-							continue;
+					files.forEach(file -> {
+						BizFile bizFile = UploadFileUtil.saveFile(file);
+						if (bizFile != null) {
+							bizFile.setCreateDate(now);
+							bizFile.setFileCatalog(fileCatalog);
+							bizFile.setCreateUser(WebUtil.getLoginUser().getUsername());
+							if (null != task) {
+								bizFile.setTaskName(task.getName());
+								bizFile.setTaskId(task.getId());
+							}
+							bizFile.setBizInfo(bizInfo);
+							bizFileService.addBizFile(bizFile);
 						}
-						bizFile.setCreateDate(now);
-						bizFile.setFileCatalog(fileCatalog);
-						bizFile.setCreateUser(WebUtil.getLoginUser().getUsername());
-						if (null != task) {
-							bizFile.setTaskName(task.getName());
-							bizFile.setTaskId(task.getId());
-						}
-						bizFile.setBizInfo(bizInfo);
-						bizFileService.addBizFile(bizFile);
-					}
+					});
 				}
 			}
 		}
@@ -634,7 +631,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		logBean.setTaskName(task.getName());
 		logBean.setBizInfo(bizInfo);
 		logBean.setHandleDescription((String) params.get("base.handleMessage"));
-
 		logBean.setHandleResult((String) params.get("base.handleResult"));
 		if (WebUtil.getLoginUser() != null) {
 			logBean.setHandleUser(WebUtil.getLoginUser().getUsername());
@@ -696,46 +692,42 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		String loginUser = WebUtil.getLoginUser().getUsername();
 		Map<String, Object> result = new HashMap<String, Object>();
 		// 加载工单对象
-		BizInfo workBean = bizInfoService.getBizInfo(id, loginUser);
-		if (workBean == null) {
+		BizInfo bizInfo = bizInfoService.get(id);
+		if (bizInfo == null) {
 			throw new ServiceException("找不到工单:" + id);
 		}
-		result.put("workInfo", workBean);
-		String taskId = workBean.getTaskId();
+		result.put("workInfo", bizInfo);
+		BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(id);
+		String taskId = bizInfoConf == null ? null : bizInfoConf.getTaskId();
 		// 加载工单详情字段
-		List<AbstractVariable> list = loadProcessValBean(workBean);
+		List<AbstractVariable> list = loadProcessValBean(bizInfo);
 		result.put("ProcessValBeanMap", list);
 
 		// 处理扩展信息
 		Map<String, Object> extInfo = new HashMap<String, Object>();
-		result.put("extInfo", extInfo);
-		extInfo.put("createUser", sysUserService.getUserByUsername(workBean.getCreateUser()));
+		extInfo.put("createUser", sysUserService.getUserByUsername(bizInfo.getCreateUser()));
 		extInfo.put("base_taskID", taskId);
+		result.put("extInfo", extInfo);
 
 		// 子工单信息
-		Map<String, Object> queryParam = new HashMap<String, Object>(1);
-		queryParam.put("parentId", workBean.getId());
-		PageHelper<BizInfo> page = new PageHelper<BizInfo>();
-		page.setPage(-1);
-		page.setRows(-1);
-		PageHelper<BizInfo> subResult = bizInfoService.getBizInfoList(queryParam, page);
+		result.put("subBizInfo", bizInfoService.getBizByParentId(id));
 		String curreOp = null;
-		if (!subResult.getList().isEmpty())
-			result.put("subBizInfo", subResult.getList());
-		if (StringUtils.isNotEmpty(taskId))
+		if (StringUtils.isNotEmpty(taskId)) {
 			curreOp = processDefinitionService.getWorkAccessTask(taskId, loginUser);
+		}
 		result.put("CURRE_OP", curreOp);
-		Task task = processDefinitionService.getTaskBean(workBean.getTaskId());
-		if (task != null)
+		Task task = processDefinitionService.getTaskBean(taskId);
+		if (task != null) {
 			result.put("$currentTaskName", task.getName());
-		list = loadHandleProcessValBean(workBean, taskId);
+		}
+		list = loadHandleProcessValBean(bizInfo, taskId);
 		// 加载当前编辑的业务字段,只有当前操作为HANDLE的时候才加载
 		if (Constants.HANDLE.equalsIgnoreCase(curreOp)) {
 			result.put("ProcessTaskValBeans", list);
 			extInfo.put("handleUser", sysUserService.getUserByUsername(loginUser));
 			Map<String, String> buttons = processDefinitionService.findOutGoingTransNames(taskId, false);
-			if (buttons == null || buttons.size() <= 0) {
-				buttons = buttons == null ? new HashMap<String, String>() : buttons;
+			if (MapUtils.isEmpty(buttons)) {
+				buttons = new HashMap<String, String>();
 				buttons.put("submit", "提交");
 			}
 			result.put("SYS_BUTTON", buttons);
@@ -744,41 +736,23 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			buttons.put(Constants.SIGN, "签收");
 			result.put("SYS_BUTTON", buttons);
 		}
-		// 加载工单参数
-		List<AbstractVariableInstance> list4 = instanceService.loadInstances(workBean);
-		if (list4 != null) {
-			result.put("serviceInfo", list4);
-		}
-		// 加载附件列表
-		List<BizFile> list2 = bizFileService.loadBizFilesByBizId(workBean.getId(), null);
-		result.put("annexs", list2 == null || list2.size() <= 0 ? null : list2);
+		// 加载工单流程参数
+		result.put("serviceInfo", instanceService.loadInstances(bizInfo));
+		// 加载流程参数附件
+		result.put("annexs", bizFileService.loadBizFilesByBizId(bizInfo.getId(), null));
 		// 加载日志
-		List<BizLog> list3 = logService.loadBizLogs(workBean.getId());
+		List<BizLog> bizLogs = logService.loadBizLogs(bizInfo.getId());
 		Map<String, List<AbstractVariableInstance>> logVars = new HashMap<String, List<AbstractVariableInstance>>(0);
 		Map<String, Object> fileMap = new HashMap<String, Object>();
-		if (list3 != null && !list3.isEmpty()) {
-			for (BizLog bizLog : list3) {
-				List<BizFile> fileList = bizFileService.loadBizFilesByBizId(bizLog.getBizInfo().getId(),
-						bizLog.getTaskID());
-				fileMap.put(bizLog.getId(), fileList);
-				List<AbstractVariableInstance> values = instanceService.loadValueByLog(bizLog);
-				if (values != null && !values.isEmpty()) {
-					logVars.put(bizLog.getId(), values);
-				}
+		if (CollectionUtils.isNotEmpty(bizLogs)) {
+			for (BizLog bizLog : bizLogs) {
+				fileMap.put(bizLog.getId(), bizFileService.loadBizFilesByBizId(id, bizLog.getTaskID()));
+				logVars.put(bizLog.getId(), instanceService.loadValueByLog(bizLog));
 			}
 		}
 		result.put("files", fileMap);
-		result.put("workLogs", list3 == null || list3.size() <= 0 ? null : list3);
+		result.put("workLogs", bizLogs);
 		result.put("logVars", logVars);
-		// 工作量评估
-		String processInstanceId = workBean.getProcessInstanceId();
-		if (StringUtils.isNotBlank(processInstanceId) && StringUtils.isNotBlank(taskId)) {
-			Map<String, String> queryParams = new HashMap<String, String>();
-			queryParams.put("processInstanceId", processInstanceId);
-			queryParams.put("taskId", taskId);
-			List<TaskVariableInstance> workLoads = this.instanceService.findTaskVariableInstance(queryParams);
-			result.put("workLoad", workLoads);
-		}
 		return result;
 	}
 

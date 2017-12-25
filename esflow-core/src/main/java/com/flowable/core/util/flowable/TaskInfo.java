@@ -18,27 +18,27 @@ public class TaskInfo {
 	private String taskName;
 	
 	/**
-	 * 待办人
+	 * 待办人/组
 	 */
 	private String assignee;
 	
-	/**
-	 * 待办组
-	 */
-	private String group;
-
 	public TaskInfo() {
 	}
 	
-	public TaskInfo(String taskId, String taskDefinitionKey, String taskName, String assignee, String group) {
+	public TaskInfo(String taskId, String taskDefinitionKey, String taskName, String assignee) {
 		super();
 		this.taskId = taskId;
 		this.taskDefinitionKey = taskDefinitionKey;
 		this.taskName = taskName;
 		this.assignee = assignee;
-		this.group = group;
 	}
 
+	public TaskInfo(String taskId, String taskDefinitionKey, String taskName) {
+		this.taskId = taskId;
+		this.taskDefinitionKey = taskDefinitionKey;
+		this.taskName = taskName;
+	}
+	
 	public String getTaskId() {
 		return taskId;
 	}
@@ -69,14 +69,6 @@ public class TaskInfo {
 
 	public void setAssignee(String assignee) {
 		this.assignee = assignee;
-	}
-
-	public String getGroup() {
-		return group;
-	}
-
-	public void setGroup(String group) {
-		this.group = group;
 	}
 	
 }

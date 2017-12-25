@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +26,17 @@ import com.flowable.core.service.IProcessModelService;
 
 /**
  * 流程模型相关Controller
+ * 
  * @author ThinkGem
  * @version 2013-11-03
  */
 @Controller
 @RequestMapping(value = "/act/model")
-public class ActModelController{
+public class ActModelController {
 
 	@Autowired
 	private IProcessModelService processModelService;
-	
+
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
@@ -44,7 +44,7 @@ public class ActModelController{
 	 */
 	@ResponseBody
 	@RequestMapping("/list")
-	public DataGrid modelList(PageHelper<Model> page ,String category) {
+	public DataGrid modelList(PageHelper<Model> page, String category) {
 
 		DataGrid grid = new DataGrid();
 		try {
@@ -66,7 +66,7 @@ public class ActModelController{
 			grid.setRows(result);
 			grid.setTotal(helper.getCount());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("流程列表获取失败 : {}", e);
 		}
 		return grid;
 	}
@@ -75,7 +75,8 @@ public class ActModelController{
 	 * 创建模型
 	 */
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-	public String create(String name, String key, String description, String category,org.springframework.ui.Model model) {
+	public String create(String name, String key, String description, String category,
+			org.springframework.ui.Model model) {
 		try {
 			Model modelData = processModelService.create(name, key, description, category);
 			model.addAttribute("message", "success");
@@ -92,19 +93,16 @@ public class ActModelController{
 	@ResponseBody
 	@RequestMapping(value = "deploy")
 	public Json deploy(String id) {
+		
 		Json json = new Json();
 		try {
 			String procdefId = processModelService.deploy(id);
 			json.setSuccess(true);
-			if (StringUtils.isNotBlank(procdefId)) {
-				json.setMsg("部署成功," + procdefId);
-			} else {
-				json.setMsg("部署失败");
-			}
+			json.setMsg("部署成功:" + procdefId);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("流程部署失败 : {}", e);
 			json.setSuccess(false);
-			json.setMsg("操作失败!");
+			json.setMsg("部署失败");
 		}
 		return json;
 	}
@@ -129,6 +127,7 @@ public class ActModelController{
 
 	/**
 	 * 删除Model
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -142,6 +141,7 @@ public class ActModelController{
 			json.setSuccess(true);
 			json.setMsg("删除成功!");
 		} catch (Exception e) {
+			logger.error("删除失败 : {}",e);
 			json.setSuccess(false);
 			json.setMsg("删除失败!");
 		}

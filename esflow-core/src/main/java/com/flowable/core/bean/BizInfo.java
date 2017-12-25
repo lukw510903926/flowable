@@ -15,7 +15,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.flowable.core.util.Constants;
 
 /**
  * 工单对象
@@ -81,7 +80,7 @@ public class BizInfo implements java.io.Serializable, Cloneable {
 	private Date createTime;
 	
 	@Column(nullable = false, length = 32, name = "BIZ_STATUS")
-	private String status = Constants.BIZ_TEMP;
+	private String status ;
 
 	@Column(nullable = false, length = 128, name = "SOURCE")
 	private String source;
@@ -92,12 +91,6 @@ public class BizInfo implements java.io.Serializable, Cloneable {
 	@Column(nullable = true, length = 256, name = "PARENT_TASKNAME")
 	private String parentTaskName;
 
-	/**
-	 * 工单催办次数
-	 */
-	@Column(nullable = false, name = "PRESS_COUNT")
-	private Integer pressCount = 0;
-	
 	public BizInfo() {
 	}
 
@@ -235,14 +228,6 @@ public class BizInfo implements java.io.Serializable, Cloneable {
 
 	public void setParentTaskName(String parentTaskName) {
 		this.parentTaskName = parentTaskName;
-	}
-	
-	public Integer getPressCount() {
-		return pressCount;
-	}
-
-	public void setPressCount(Integer pressCount) {
-		this.pressCount = pressCount;
 	}
 	
 	public BizInfo clone() {

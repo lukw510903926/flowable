@@ -72,12 +72,6 @@ public interface IProcessVariableService {
 	 */
 	public List<ProcessVariableInstance> getProcessVariableInstances(Map<String, String> params);
 
-	/**
-	 * 获取工单流程参数
-	 * @param bizId
-	 * @return
-	 */
-	public List<Map<String, String>> getBizInfo(String bizId);
 
 	public PageHelper<TaskVariable> loadTaskVariables(String processDefinitionId, int version,PageHelper<TaskVariable> page, String taskIds) ;
 

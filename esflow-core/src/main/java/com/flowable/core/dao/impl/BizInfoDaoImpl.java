@@ -50,24 +50,23 @@ public class BizInfoDaoImpl extends BaseDaoImpl<BizInfo> implements IBizInfoDao 
 		StringBuilder sql = this.buildSql();
 		List<Object> list = new ArrayList<Object>();
 		String taskAssignee = this.bizInfoConfDao.getTaskAssignee(id);
-		sql.append(" left join (select c.biz_id as bizId,group_concat(c.task_assignee) as task_Assignee,");
-		sql.append(" group_concat(c.task_id) as task_Id	from esflow.act_biz_info_conf c where c.biz_id = ? ");
+		sql.append(" WHERE BEAN.ID = ? AND EXISTS (SELECT C.BIZ_ID FROM ESFLOW.ACT_BIZ_INFO_CONF C WHERE C.BIZ_ID= ? ");
+		list.add(id);
 		list.add(id);
 		if (StringUtils.isNotBlank(taskAssignee) && StringUtils.isNotBlank(loginUser)) {
-			sql.append(" and (c.task_assignee = ? ");
+			SystemUser systemUser = this.systemUserDao.getUserByUsername(loginUser);
+			sql.append(" AND (C.TASK_ASSIGNEE = ? ");
 			list.add(loginUser);
-			SystemUser user = this.systemUserDao.getUserByUsername(loginUser);
-			if (user != null) {
-				Set<SystemRole> roles = user.getRoles();
+			if (systemUser != null) {
+				Set<SystemRole> roles = systemUser.getRoles();
 				for (SystemRole role : roles) {
-					sql.append("or c.task_assignee like ? ");
-					list.add("%," + role.getNameCn() + ",%");
+					sql.append("OR C.TASK_ASSIGNEE LIKE ? ");
+					list.add("%" + role.getNameCn() + "%");
 				}
 			}
 			sql.append(" )");
 		}
-		sql.append(" group by c.biz_id limit 0,1 ) conf on bean.id = conf.bizId where 1 = 1 and bean.id = ?");
-		list.add(id);
+		sql.append(" AND BEAN.ID = C.BIZ_ID )");
 		List<BizInfo> result = this.findBySql(sql.toString(), list.toArray(), BizInfo.class);
 		return result.size() > 0 ? result.get(0) : null;
 	}
@@ -92,45 +91,11 @@ public class BizInfoDaoImpl extends BaseDaoImpl<BizInfo> implements IBizInfoDao 
 		StringBuilder sql = this.buildSql();
 		String loginUser = this.getLoginUser(params);
 		List<Object> args = new ArrayList<Object>();
-		sql.append(" join (select c.biz_id as bizId,group_concat(c.task_assignee) as task_Assignee,");
-		sql.append(" group_concat(c.task_id) as task_Id from esflow.act_biz_info_conf c where 1=1 ");
-		String taskAssignee = (String) params.get("taskAssignee");
-		if (params.containsKey("checkAssignee")) {
-			sql.append(" and ( c.task_assignee = ? ");
-			args.add(loginUser);
-			SystemUser user = this.systemUserDao.getUserByUsername(loginUser);
-			if (user != null) {
-				Set<SystemRole> roles = user.getRoles();
-				for (SystemRole role : roles) {
-					sql.append("or c.task_assignee like ? ");
-					args.add("%," + role.getNameCn() + ",%");
-				}
-			}
-			sql.append(")");
-		}
-		if (StringUtils.isNotEmpty(taskAssignee)) {
-			List<SystemUser> list = this.systemUserDao.findSystemUser(new SystemUser(null, taskAssignee));
-			if (CollectionUtils.isNotEmpty(list)) {
-				sql.append(" and  c.task_assignee in (");
-				for (SystemUser systemUser : list) {
-					String username = systemUser.getUsername();
-					if (StringUtils.isNotBlank(username)) {
-						sql.append("?,");
-						args.add(username);
-					}
-				}
-				sql = sql.deleteCharAt(sql.length() - 1).append(")");
-			} else {
-				sql.append(" and c.task_assignee like ? ");
-				args.add("%" + taskAssignee + "%");
-			}
-		}
-		sql.append(" group by c.biz_id) conf on bean.id = conf.bizId ");
-		sql.append(" where bean.biz_status <> ? ");
+		sql.append(" WHERE BEAN.BIZ_STATUS <> ? ");
 		args.add(Constants.BIZ_DELETE);
 		String bizId = (String) params.get("bizId");
 		if (StringUtils.isNotEmpty(bizId)) {
-			sql.append(" and bean.work_num like ?");
+			sql.append(" AND BEAN.WORK_NUM LIKE ?");
 			args.add("%" + bizId + "%");
 		}
 		String title = (String) params.get("title");
@@ -142,7 +107,7 @@ public class BizInfoDaoImpl extends BaseDaoImpl<BizInfo> implements IBizInfoDao 
 		if (StringUtils.isNotEmpty(createUser)) {
 			List<SystemUser> list = this.systemUserDao.findSystemUser(new SystemUser(null, createUser));
 			if (CollectionUtils.isNotEmpty(list)) {
-				sql.append(" and bean.create_user in (");
+				sql.append(" AND BEAN.CREATE_USER IN (");
 				for (SystemUser systemUser : list) {
 					String username = systemUser.getUsername();
 					if (StringUtils.isNotBlank(username)) {
@@ -152,78 +117,102 @@ public class BizInfoDaoImpl extends BaseDaoImpl<BizInfo> implements IBizInfoDao 
 				}
 				sql = sql.deleteCharAt(sql.length() - 1).append(")");
 			} else {
-				sql.append(" and bean.create_user like ? ");
+				sql.append(" AND BEAN.CREATE_USER LIKE ? ");
 				args.add("%" + createUser + "%");
 			}
 		}
 		String parentId = (String) params.get("parentId");
 		if (StringUtils.isNotEmpty(parentId)) {
-			sql.append(" and bean.parent_id = ?");
+			sql.append(" AND BEAN.PARENT_ID = ?");
 			args.add(parentId);
 		}
 		String parentTaskName = (String) params.get("parentTaskName");
 		if (StringUtils.isNotEmpty(parentTaskName)) {
-			sql.append(" and bean.parent_taskname = ?");
+			sql.append(" AND BEAN.PARENT_TASKNAME = ?");
 			args.add(parentTaskName);
 		}
 		String bizType = (String) params.get("bizType");
 		if (StringUtils.isNotEmpty(bizType)) {
-			sql.append(" and bean.biz_type = ?");
+			sql.append(" AND BEAN.BIZ_TYPE = ?");
 			args.add(bizType);
 		}
 		String status = (String) params.get("status");
 		if (StringUtils.isNotEmpty(status)) {
-			sql.append(" and bean.biz_status = ? ");
+			sql.append(" AND BEAN.BIZ_STATUS = ? ");
 			args.add(status);
 		}
 		String action = (String) params.get("action");
 		if ("myHandle".equalsIgnoreCase(action)) {
-			sql.append(" and bean.id in (");
-			sql.append("select distinct bean.work_num FROM act_biz_log bean WHERE bean.handle_user =? )");
+			sql.append(" AND EXISTS (SELECT LOG.BIZ_ID FROM");
+			sql.append(" ACT_BIZ_LOG LOG WHERE LOG.HANDLE_USER =? AND BEAN.ID =LOG.BIZ_ID)");
 			args.add(loginUser);
 		}
 		if ("myWork".equalsIgnoreCase(action)) {
-			sql.append(" and (bean.biz_status <> ? )");
+			sql.append(" AND BEAN.BIZ_STATUS <> ? ");
 			args.add(Constants.BIZ_TEMP);
+			sql.append(" and EXISTS (SELECT c.biz_id FROM esflow.act_biz_info_conf c WHERE c.task_assignee = ? ");
+			args.add(loginUser);
+			SystemUser user = this.systemUserDao.getUserByUsername(loginUser);
+			if (user != null) {
+				Set<SystemRole> roles = user.getRoles();
+				for (SystemRole role : roles) {
+					sql.append("OR C.TASK_ASSIGNEE LIKE ? ");
+					args.add("%," + role.getNameCn() + ",%");
+				}
+			}
+			sql.append(" AND BEAN.ID = C.BIZ_ID )");
+		}
+		String taskAssignee = (String) params.get("taskAssignee");
+		if (StringUtils.isNotEmpty(taskAssignee)) {
+			sql.append(" AND EXISTS (SELECT C.BIZ_ID FROM ESFLOW.ACT_BIZ_INFO_CONF C WHERE ");
+			sql.append(" C.TASK_ASSIGNEE LIKE ? ");
+			args.add("%" + taskAssignee + "%");
+			List<SystemUser> list = this.systemUserDao.findSystemUser(new SystemUser(null, taskAssignee));
+			if (CollectionUtils.isNotEmpty(list)) {
+				sql.append(" OR C.TASK_ASSIGNEE IN (");
+				for (SystemUser systemUser : list) {
+					String username = systemUser.getUsername();
+					if (StringUtils.isNotBlank(username)) {
+						sql.append("?,");
+						args.add(username);
+					}
+				}
+				sql = sql.deleteCharAt(sql.length() - 1).append(")");
+			}
+			sql.append(" AND BEAN.ID = C.BIZ_ID )");
 		}
 		if ("myTemp".equalsIgnoreCase(action) || "myCreate".equalsIgnoreCase(action)) {
-			sql.append(" and bean.create_user = ? ");
+			sql.append(" AND BEAN.CREATE_USER = ? ");
 			args.add(loginUser);
 		}
 		String taskDefKey = (String) params.get("taskDefKey");
 		if (StringUtils.isNotEmpty(taskDefKey)) {
-			sql.append(" and bean.task_def_key = ?");
+			sql.append(" AND BEAN.TASK_DEF_KEY = ?");
 			args.add(taskDefKey);
 		}
 		if (params.get("createTime") != null && params.get("createTime2") != null) {
-			if (StringUtils.isNotBlank(params.get("createTime").toString())
-					&& StringUtils.isNotBlank(params.get("createTime2").toString())) {
-				sql.append(" and bean.create_time between ? and ? ");
-				args.add(params.get("createTime"));
-				args.add(params.get("createTime2"));
-			}
+			sql.append(" AND BEAN.CREATE_TIME BETWEEN ? AND ? ");
+			args.add(params.get("createTime"));
+			args.add(params.get("createTime2"));
 		}
-		sql.append(" order by bean.create_time desc ");
+		sql.append(" ORDER BY BEAN.CREATE_TIME DESC ");
 		logger.info("args : " + args);
-		return this.findBySql(page, sql.toString(), args.toArray(), BizInfo.class);
+		return this.findBySql(page, sql.toString().toUpperCase(), args.toArray(), BizInfo.class);
 	}
 
 	private String getLoginUser(Map<String, Object> params) {
 
-		LoginUser user = WebUtil.getLoginUser();
-		String loginUser = user == null ? (String) params.get("loginUser") : user.getUsername();
-		return loginUser;
+		LoginUser loginUser = WebUtil.getLoginUser();
+		return loginUser == null ? (String) params.get("loginUser") : loginUser.getUsername();
 	}
 
 	private StringBuilder buildSql() {
 
-		StringBuilder sql = new StringBuilder(" select bean.id as id,bean.work_num ,bean.title as title,");
-		sql.append(
-				" bean.biz_Type,bean.process_Definition_Id,bean.process_Instance_Id,conf.task_Id,conf.task_Assignee,");
-		sql.append(
-				" bean.task_Name,bean.task_Def_Key,bean.press_Count,bean.create_User,bean.limit_Time,bean.create_Time,");
-		sql.append(" bean.biz_status,bean.source,bean.parent_Id,bean.parent_TaskName from esflow.act_biz_info bean ");
+		StringBuilder sql = new StringBuilder(" SELECT BEAN.ID AS ID,BEAN.WORK_NUM ,BEAN.TITLE AS TITLE,");
+		sql.append(" BEAN.BIZ_TYPE,BEAN.PROCESS_DEFINITION_ID,BEAN.PROCESS_INSTANCE_ID,");
+		sql.append(" BEAN.TASK_ASSIGNEE,BEAN.TASK_ID, BEAN.TASK_NAME,BEAN.TASK_DEF_KEY,");
+		sql.append(" BEAN.CREATE_USER,BEAN.LIMIT_TIME,BEAN.CREATE_TIME,BEAN.BIZ_STATUS,");
+		sql.append(" BEAN.SOURCE,BEAN.PARENT_ID,BEAN.PARENT_TASKNAME FROM ESFLOW.ACT_BIZ_INFO BEAN ");
 		return sql;
 	}
-
 }

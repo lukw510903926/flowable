@@ -69,7 +69,9 @@ public class BizFileServiceImpl implements IBizFileService {
 		return dao.findBizFile(bizFile);
 	}
 
+	@Override
 	public BizFile getBizFileById(String id) {
+		
 		return dao.getById(id);
 	}
 

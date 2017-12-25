@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -39,9 +38,11 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.flowable.common.exception.ServiceException;
 import com.flowable.common.utils.LoginUser;
+import com.flowable.common.utils.ReflectionUtils;
 import com.flowable.core.bean.BizInfo;
 import com.flowable.core.bean.auth.SystemRole;
 import com.flowable.core.dao.IProcessModelDao;
@@ -50,7 +51,6 @@ import com.flowable.core.service.auth.ISystemUserService;
 import com.flowable.core.util.Constants;
 import com.flowable.core.util.WebUtil;
 import com.flowable.core.util.flowable.HistroyActivitiFlow;
-import com.flowable.core.util.flowable.TaskInfo;
 
 @Service
 @Transactional(readOnly = true)
@@ -71,7 +71,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	private RepositoryService repositoryService;
 
 	@Autowired
-	private IProcessModelDao processDao;
+	private IProcessModelDao processModelDao;
 
 	@Autowired
 	private ProcessEngineConfiguration engineConfiguration;
@@ -90,14 +90,10 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 		String curreOp = null;
 		Task task = null;
 		if (!CollectionUtils.isEmpty(taskList)) {
-			if (taskList.size() > 1) {
-				StringBuffer temp = new StringBuffer();
-				temp.append("(HANDLE)listSize:" + taskList.size() + "==>");
-				for (Task t : taskList) {
-					temp.append(t.getId() + "::" + t.getTaskDefinitionKey() + " || ");
-				}
-				logger.debug("=========" + temp.toString());
-			}
+			StringBuffer temp = new StringBuffer();
+			temp.append("(HANDLE)listSize:" + taskList.size() + "==>");
+			taskList.forEach(t -> temp.append(t.getId() + "::" + t.getTaskDefinitionKey() + " || "));
+			logger.debug("=========" + temp.toString());
 			task = taskList.get(0);
 			curreOp = Constants.HANDLE;
 		} else {
@@ -105,14 +101,10 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 			if (!CollectionUtils.isEmpty(roles)) {
 				taskList = taskService.createTaskQuery().taskCandidateGroupIn(roles).list();
 				if (!CollectionUtils.isEmpty(taskList)) {
-					if (taskList.size() > 1) {
-						StringBuffer temp = new StringBuffer();
-						temp.append("(SIGN)listSize:" + taskList.size() + "==>");
-						for (Task t : taskList) {
-							temp.append(t.getId() + "::" + t.getTaskDefinitionKey() + " || ");
-						}
-						logger.debug("=========" + temp.toString());
-					}
+					StringBuffer temp = new StringBuffer();
+					temp.append("(SIGN)listSize:" + taskList.size() + "==>");
+					taskList.forEach(t -> temp.append(t.getId() + "::" + t.getTaskDefinitionKey() + " || "));
+					logger.debug("=========" + temp.toString());
 					task = taskList.get(0);
 					curreOp = Constants.SIGN;
 				}
@@ -130,8 +122,8 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
 		Map<String, String> result = null;
 		/*
-		 * ActivityImpl activity = getStartActivityImpl(tempId); if (activity !=
-		 * null) { ProcessDefinitionEntity pde = (ProcessDefinitionEntity)
+		 * ActivityImpl activity = getStartActivityImpl(tempId); if (activity != null) {
+		 * ProcessDefinitionEntity pde = (ProcessDefinitionEntity)
 		 * activity.getProcessDefinition(); result = findOutGoingTransNames(pde,
 		 * activity); }
 		 */
@@ -171,8 +163,8 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
 		UserTask crrretnTask = null;
 		TaskEntityImpl task = (TaskEntityImpl) taskService.createTaskQuery().taskId(taskId).singleResult();
-		ProcessInstance pi = this.getProceInstance(task.getProcessInstanceId());
-		String processDefinitionId = pi.getProcessDefinitionId();
+		ProcessInstance processInstance = this.getProceInstance(task.getProcessInstanceId());
+		String processDefinitionId = processInstance.getProcessDefinitionId();
 		BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
 		Process process = bpmnModel.getProcesses().get(0);
 		Collection<FlowElement> flowElements = process.getFlowElements();
@@ -196,6 +188,9 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	private List<SequenceFlow> getOutgoingFlows(UserTask userTask) {
 
 		List<SequenceFlow> list = new ArrayList<SequenceFlow>();
+		if(userTask == null) {
+			return list;
+		}
 		List<SequenceFlow> outgoingFlows = userTask.getOutgoingFlows();
 		if (!CollectionUtils.isEmpty(outgoingFlows)) {
 			outgoingFlows.forEach(sequenceFlow -> {
@@ -213,7 +208,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	}
 
 	@Transactional
-	public ProcessInstance newProcessInstance(LoginUser user, String id, Map<String, Object> variables) {
+	public ProcessInstance newProcessInstance(String id, Map<String, Object> variables) {
 
 		return runtimeService.startProcessInstanceById(id, variables);
 	}
@@ -280,13 +275,14 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 			variables.put("SYS_CURRENT_WORKNUMBER", bizInfo.getWorkNum());
 			variables.put("SYS_CURRENT_WORKID", bizInfo.getId());
 			variables.put("SYS_CURRENT_TASKID", taskID);
-			Task task = getTaskBean(taskID);
+			Task task = this.getTaskBean(taskID);
 			UserTask userTask = this.getCurrentTask(taskID);
 			taskService.complete(task.getId(), variables);
 			variables.put("SYS_CURRENT_TASKKEY", task == null ? null : task.getTaskDefinitionKey());
 			executeCommand(processInstanceId, user, userTask, variables);
 			autoClaim(processInstanceId);
 		} catch (Exception e) {
+			logger.error("任务提交失败 : {}", e);
 			throw new ServiceException("任务提交失败!");
 		}
 		return true;
@@ -303,7 +299,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
 		List<Task> list = taskService.createTaskQuery().processInstanceId(processInstanceID).list();
 		for (Task task : list) {
-			if (!StringUtils.isEmpty(task.getAssignee())) {
+			if (StringUtils.isNotEmpty(task.getAssignee())) {
 				continue;
 			}
 			List<String> groups = getTaskCandidateGroup(task);
@@ -312,10 +308,9 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 			}
 			// TODO 只处理了一个角色的情况 未处理有候选角色的情况
 			String username = this.systemUserService.findOnlyUser(new SystemRole(null, groups.get(0)));
-			if (StringUtils.isEmpty(username)) {
-				continue;
+			if (StringUtils.isNotEmpty(username)) {
+				taskService.claim(task.getId(), username);
 			}
-			taskService.claim(task.getId(), username);
 		}
 		return true;
 	}
@@ -328,12 +323,11 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 		String buttonValue = (String) variables.get("SYS_BUTTON_VALUE");
 
 		if (StringUtils.isNotEmpty(buttonValue)) { // 获取当前任务的流出，并判断是否为当前活动任务
-			ProcessInstance pi = this.getProceInstance(processInstanceId);
-			if (pi == null) {
+			ProcessInstance processInstance = this.getProceInstance(processInstanceId);
+			if (processInstance == null) {
 				return true;// 流程已结束
 			}
-			TaskInfo taskInfo = this.getNextTaskInfo(processInstanceId).get(0);
-			Task nextTask = this.getTaskBean(taskInfo.getTaskId());
+			Task nextTask = this.getNextTaskInfo(processInstanceId).get(0);
 			List<SequenceFlow> outgoingFlows = this.getOutgoingFlows(userTask);
 
 			for (SequenceFlow pvmTransition : outgoingFlows) {
@@ -346,16 +340,16 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 					if (docv.startsWith("command:fallback")) {
 						List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
 								.processInstanceId(processInstanceId).finished().orderByHistoricTaskInstanceEndTime()
-								.desc().taskDefinitionKey(taskInfo.getTaskDefinitionKey()).list();
+								.desc().taskDefinitionKey(nextTask.getTaskDefinitionKey()).list();
 						if (!CollectionUtils.isEmpty(list)) {
 							HistoricTaskInstance hti = list.get(0);
 							if (StringUtils.isNotBlank(hti.getAssignee())) {
-								taskService.claim(taskInfo.getTaskId(), hti.getAssignee());
+								taskService.claim(nextTask.getId(), hti.getAssignee());
 							}
 						}
 						// 如果该线为循环，则将新的任务转派给当前用户 // 如果该线为转派，则将新的任务转派给制定的用户或组
 					} else if (docv.startsWith("command:repeat")) {
-						taskService.claim(taskInfo.getTaskId(), loginUser.getUsername());
+						taskService.claim(nextTask.getId(), loginUser.getUsername());
 					} else if (docv.startsWith("command:transfer")) {
 						assignmentTask(nextTask, loginUser, transfer_value, transfer_type);
 					}
@@ -367,6 +361,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
 	@Override
 	public ProcessInstance getProceInstance(String processInstanceID) {
+
 		return runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceID).singleResult();
 	}
 
@@ -393,9 +388,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 			List<String> list = getTaskCandidateGroup(task);
 			StringBuilder roles = new StringBuilder();
 			if (!CollectionUtils.isEmpty(list)) {
-				for (String role : list) {
-					roles.append(role).append(" ");
-				}
+				list.forEach(role -> roles.append(role).append(" "));
 			}
 			throw new ServiceException("没有权限签收该任务,当前任务代办角色为 :" + roles.toString());
 		}
@@ -442,21 +435,21 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	 * 
 	 * @param bean
 	 * @param taskID
-	 * @param user
+	 * @param loginUser
 	 * @param toUser
 	 * @return @
 	 */
-	public boolean assignmentTask(BizInfo bean, String taskID, LoginUser user, String toAssignment,
-			String assignmentType) {
+	@Override
+	public boolean assignmentTask(String taskID, LoginUser loginUser, String toAssignment, String assignmentType) {
 
 		if (!("group".equalsIgnoreCase(assignmentType) || "user".equalsIgnoreCase(assignmentType))) {
 			throw new ServiceException("参数错误");
 		}
 		Task task = getTaskBean(taskID);
-		if (!user.getUsername().equals(task.getAssignee())) {
+		if (!loginUser.getUsername().equals(task.getAssignee())) {
 			throw new ServiceException("没有权限处理该任务");
 		}
-		return assignmentTask(task, user, toAssignment, assignmentType);
+		return assignmentTask(task, loginUser, toAssignment, assignmentType);
 	}
 
 	@Override
@@ -481,12 +474,11 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 		List<String> groups = this.getTaskCandidateGroup(task);
-		if (groups != null) {
+		if (!CollectionUtils.isEmpty(groups)) {
 			for (String group : groups) {
-				if (group == null) {
-					continue;
+				if (StringUtils.isNotBlank(group)) {
+					taskService.deleteCandidateGroup(task.getId(), group);
 				}
-				taskService.deleteCandidateGroup(task.getId(), group);
 			}
 		}
 		taskService.addCandidateUser(task.getId(), WebUtil.getLoginUser().getUsername());
@@ -502,83 +494,52 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 		if (!CollectionUtils.isEmpty(groups)) {
 			try {
 				for (String group : groups) {
-					if (group == null) {
-						continue;
+					if (StringUtils.isNotBlank(group)) {
+						taskService.deleteCandidateGroup(task.getId(), group);
 					}
-					taskService.deleteCandidateGroup(task.getId(), group);
 				}
 				taskService.unclaim(task.getId());
 			} catch (Exception e) {
 				logger.error("任务签收失败 : {}", e);
+				throw new ServiceException("任务签收失败 !");
 			}
 		}
 		String[] temps = toAssignment.split(",");
 		for (String t : temps) {
-			if (StringUtils.isEmpty(t)) {
-				continue;
+			if (StringUtils.isNotEmpty(t)) {
+				taskService.addCandidateGroup(task.getId(), t);
 			}
-			taskService.addCandidateGroup(task.getId(), t);
 		}
 		return true;
 	}
 
 	@Override
-	public List<TaskInfo> getNextTaskInfo(String processInstanceId) {
+	public List<Task> getNextTaskInfo(String processInstanceId) {
 
-		List<TaskInfo> taskList = new ArrayList<TaskInfo>();
+		List<Task> taskList = new ArrayList<Task>();
 		// 由于逻辑问题，当前先不处理下一步任务，只处理该任务是否已经结束
 		ProcessInstance processInstance = this.getProceInstance(processInstanceId);
-		if (processInstance == null) {// 已经结束
-			return taskList;
-		} else {
+		if (processInstance != null) {// 已经结束
 			List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
 			if (!CollectionUtils.isEmpty(tasks)) {
 				for (Task task : tasks) {
 					StringBuffer groups = new StringBuffer();
+					Task taskCopy = new TaskEntityImpl();
+					ReflectionUtils.copyBean(task, taskCopy);
 					if (StringUtils.isEmpty(task.getAssignee())) {
 						List<String> list = getTaskCandidateGroup(task);
 						for (String group : list) {
 							groups.append(group + ",");
 						}
+						if (StringUtils.isNotBlank(groups.toString())) {
+							taskCopy.setAssignee(Constants.BIZ_GROUP + groups.deleteCharAt(groups.lastIndexOf(",")));
+						}
 					}
-					taskList.add(new TaskInfo(task.getId(), task.getTaskDefinitionKey(), task.getName(),
-							task.getAssignee(), groups.toString()));
+					taskList.add(taskCopy);
 				}
 			}
-			return taskList;
 		}
-	}
-
-	@Override
-	public String[] getNextTaskInfo(String nextTaskId, Map<String, Object> params) {
-
-		// 由于逻辑问题，当前先不处理下一步任务，只处理该任务是否已经结束
-		Task task = taskService.createTaskQuery().taskId(nextTaskId).singleResult();
-		taskService.complete(nextTaskId, params);
-		List<Task> tasks = taskService.createTaskQuery().processInstanceId(task.getProcessInstanceId()).list();
-		if (tasks != null && !tasks.isEmpty()) {
-			StringBuffer sb = new StringBuffer();
-			task = tasks.get(0);// TODO 分派子单流程任务代办人设置为当前登录人员
-			List<String> groups = getTaskCandidateGroup(task);
-			if (groups != null) {
-				for (String group : groups) {
-					if (group == null) {
-						continue;
-					}
-					taskService.deleteCandidateGroup(task.getId(), group);
-				}
-			}
-			taskService.addCandidateUser(task.getId(), WebUtil.getLoginUser().getUsername());
-			if (StringUtils.isEmpty(task.getAssignee())) {
-				List<String> list = getTaskCandidateGroup(task);
-				for (String s : list) {
-					sb.append(s + ",");
-				}
-			}
-			return new String[] { task.getId(), task.getTaskDefinitionKey(), task.getName(), task.getAssignee(),
-					sb.toString() };
-		}
-		return new String[] {};
+		return taskList;
 	}
 
 	@Override
@@ -682,40 +643,43 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	 */
 	public InputStream viewProcessImage(BizInfo bean) {
 
-		ProcessInstance bean2 = this.getProceInstance(bean.getProcessInstanceId());
-		String pdid = null;
-		if (bean2 == null) {
-			HistoricProcessInstance hpi = historyService.createHistoricProcessInstanceQuery()
+		ProcessInstance processInstance = this.getProceInstance(bean.getProcessInstanceId());
+		String processDefinitionId = null;
+		if (processInstance == null) {
+			HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
 					.processInstanceId(bean.getProcessInstanceId()).singleResult();
-			if (hpi != null)
-				pdid = hpi.getProcessDefinitionId();
+			if (historicProcessInstance != null) {
+				processDefinitionId = historicProcessInstance.getProcessDefinitionId();
+			}
 		} else {
-			pdid = bean2.getProcessDefinitionId();
+			processDefinitionId = processInstance.getProcessDefinitionId();
 		}
 		List<HistoricActivityInstance> list = historyService.createHistoricActivityInstanceQuery()
 				.processInstanceId(bean.getProcessInstanceId()).orderByHistoricActivityInstanceStartTime().asc().list();
 		ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
-				.getDeployedProcessDefinition(pdid);
-		BpmnModel bm = repositoryService.getBpmnModel(pdid);
+				.getDeployedProcessDefinition(processDefinitionId);
+		BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
 		HistroyActivitiFlow histroyActivitiFlow = getHighLightedElement(processDefinition, list);
 		try {
 			ProcessDiagramGenerator processDiagramGenerator = engineConfiguration.getProcessDiagramGenerator();
-			return processDiagramGenerator.generateDiagram(bm, "PNG", histroyActivitiFlow.getActivitys(),
+			return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", histroyActivitiFlow.getActivitys(),
 					histroyActivitiFlow.getHighFlows());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(" 显示流程实例图片失败 : {}", e);
+			throw new ServiceException("显示流程实例图片失败!");
 		}
-		return null;
 	}
 
 	@Override
 	public ProcessDefinition getProcDefById(String id) {
+
 		return repositoryService.getProcessDefinition(id);
 	}
 
 	@Override
 	public ProcessDefinition getLatestProcDefByKey(String key) {
+
 		return repositoryService.createProcessDefinitionQuery().processDefinitionKey(key).latestVersion()
 				.singleResult();
 	}
@@ -727,7 +691,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 		boolean flag = false;
 		if (processDefinition != null) {
 			ProcessDefinition newProcessDefinition = getLatestProcDefByKey(processDefinition.getKey());
-			processDao.copyVariables(processDefinition, newProcessDefinition);
+			processModelDao.copyVariables(processDefinition, newProcessDefinition);
 			flag = true;
 		}
 		return flag;

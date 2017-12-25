@@ -32,6 +32,7 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
 	@Override
 	@Transactional
 	public void addProcessInstance(AbstractVariableInstance... beans)  {
+		
 		for (AbstractVariableInstance bean : beans) {
 			if (bean instanceof ProcessVariableInstance)
 				processInstanceDao.save((ProcessVariableInstance) bean);
@@ -43,6 +44,7 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
 	
 	@Override
 	public void updateProcessInstance(AbstractVariableInstance... beans)  {
+		
 		for (AbstractVariableInstance bean : beans) {
 			if (bean.getId() == null)
 				continue;
@@ -86,31 +88,19 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
 			tList = taskInstanceDao.findByTaskId(bizInfoConf.getTaskId());
 			break;
 		}
-		if (null != pList)
-			for (ProcessVariableInstance var : pList) {
-				map.put(var.getVariable().getName(), var);
-			}
-		if (null != tList)
-			for (TaskVariableInstance var : tList) {
-				map.put(var.getVariable().getName()	+ (type == VariableLoadType.ALL ? ('-' + bizInfoConf.getTaskId()) : ""), var);
-			}
+		if (null != pList){
+			pList.forEach(var ->map.put(var.getVariable().getName(), var));
+		}
+		if (null != tList){
+			tList.forEach(var ->map.put(var.getVariable().getName()	+ (type == VariableLoadType.ALL ? ('-' + bizInfoConf.getTaskId()) : ""), var));
+		}
 		return map;
 	}
 
 	@Override
 	public List<AbstractVariableInstance> loadValueByLog(BizLog logBean)  {
+		
 		return taskInstanceDao.loadValueByLog(logBean);
 	}
 
-	@Override
-	public List<TaskVariableInstance> findTaskVariableInstance(Map<String, String> params) {
-		
-		return this.taskInstanceDao.findTaskVariableInstance(params);
-	}
-	
-	@Override
-	public TaskVariableInstance getTaskVarInstanceByVarName(Map<String,String> params){
-		
-		return this.taskInstanceDao.getTaskVarInstanceByVarName(params);
-	}
 }

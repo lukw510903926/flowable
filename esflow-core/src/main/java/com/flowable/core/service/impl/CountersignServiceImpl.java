@@ -24,5 +24,4 @@ public class CountersignServiceImpl extends BaseServiceImpl<Countersign> impleme
 
 		return this.countersignDao.findCountersign(countersign);
 	}
-
 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,31 +58,30 @@ public class BizTimedTaskServiceImpl extends BaseServiceImpl<BizTimedTask> imple
 		Date date = new Date();
 		bizTimedTask.setEndTime(DateUtils.formatDate(date, "yyyy-MM-dd"));
 		List<BizTimedTask> list = this.bizTimedTaskDao.findBizTimedTask(bizTimedTask);
-		try {
-			if (list != null && !list.isEmpty()) {
-				for (BizTimedTask bizTask : list) {
-
+		if (!CollectionUtils.isEmpty(list)) {
+			for (BizTimedTask bizTask : list) {
+				try {
 					Map<String, Object> params = new HashMap<String, Object>();
 					params.put("base.buttonId", bizTask.getButtonId());
 					params.put("base.workNumber", bizTask.getBizId());
 					params.put("treatment", "确认");
 					params.put("result", "好");
-					params.put("complain", "否");
-					params.put("isShuffle", "否");
 					params.put("handleMessage", "3天未处理,自动提交工单");
 					params.put("base.handleName", "用户确认");
 					params.put("base.handleResult", "提交");
 					processExecuteService.submit(params, null);
 					this.deleteTimedTask(bizTask.getId());
+				} catch (Exception e) {
+					logger.error("sumitBizTimedTask 工单id : {}, 异常信息 : {}", bizTask.getBizId(), e);
 				}
 			}
-		} catch (Exception e) {
-			logger.error("sumitBizTimedTask  ", e);
 		}
+
 	}
 
 	@Transactional(readOnly = false)
 	public void deleteTimedTask(String id) {
+
 		this.bizTimedTaskDao.deleteTimedTask(id);
 	}
 

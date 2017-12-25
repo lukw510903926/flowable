@@ -47,33 +47,30 @@ public class LoginController {
 		}
 		return "/login/login";
 	}
-	
-	private LoginUser copySysUser(SystemUser systemUser){
-		
+
+	private LoginUser copySysUser(SystemUser systemUser) {
+
 		LoginUser loginUser = new LoginUser();
 		ReflectionUtils.copyBean(systemUser, loginUser);
 		Set<SystemRole> set = systemUser.getRoles();
 		if (CollectionUtils.isNotEmpty(set)) {
 			Set<String> roles = new HashSet<String>();
-			for (SystemRole role : set) {
-				roles.add(role.getNameCn());
-			}
+			set.forEach(role -> roles.add(role.getNameCn()));
 			loginUser.setRoles(roles);
 		}
 		return loginUser;
 	}
-	
+
 	@RequestMapping("loginOut")
-	public String loginOut(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String loginOut(HttpServletRequest request, HttpServletResponse response) {
 
 		HttpSession session = request.getSession();
 		session.invalidate();
 		return "/login/login";
 	}
-	
-	
+
 	@RequestMapping("index")
-	public String index(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String index(HttpServletRequest request, HttpServletResponse response) {
 
 		logger.info("----------------------");
 		return "redirect:/biz/aaaaa";

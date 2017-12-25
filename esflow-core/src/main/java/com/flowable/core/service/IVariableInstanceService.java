@@ -7,7 +7,6 @@ import com.flowable.core.bean.AbstractVariableInstance;
 import com.flowable.core.bean.BizInfo;
 import com.flowable.core.bean.BizInfoConf;
 import com.flowable.core.bean.BizLog;
-import com.flowable.core.bean.TaskVariableInstance;
 
 /**
  * 流程实例、流程任务实例数据处理
@@ -44,17 +43,9 @@ public interface IVariableInstanceService {
 	 */
 	public List<AbstractVariableInstance> loadValueByLog(BizLog logBean) ;
 	
-	public List<TaskVariableInstance> findTaskVariableInstance(Map<String, String> params);
 
 	enum VariableLoadType {
 		ALL, UPDATABLE
 	}
-
-	/**
-	 * 获取指定参数 最新实例
-	 * @param params
-	 * @return
-	 */
-	public TaskVariableInstance getTaskVarInstanceByVarName(Map<String, String> params);
 
 }
