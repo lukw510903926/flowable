@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/pages/include/taglib.jsp"%>
-<%@ include file="/pages/include/param.jsp"%>
 <c:set var="ctx2" value="${ctx}/"/>
+
 <nav class="navbar navbar-default active" role="navigation">
    <div class="navbar-header">
       <a class="navbar-brand">CMDB</a>
