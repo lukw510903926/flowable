@@ -76,24 +76,6 @@ public class SSOUtil {
 		return cacheMap;
 	}
 	
-	public static String list2ConvertToString(List<String> bussinessList2, String bussinessCol, 
-			List<String> regionList2, String regionCol) {
-		return list2ConvertToStringBuffer(bussinessList2, bussinessCol, regionList2, regionCol).toString();
-	}
-	
-	public static StringBuffer list2ConvertToStringBuffer(List<String> bussinessList2, String bussinessCol, 
-			List<String> regionList2, String regionCol) {
-		StringBuffer buffer = new StringBuffer(" (");
-		Map<String, List<String>> bMap = constructMapByList2(bussinessList2);
-		Map<String, List<String>> rMap = constructMapByList2(regionList2);
-		for (String role : bMap.keySet()) {
-			buffer.append( "( "+bussinessCol).append(constructSqlIn(bMap.get(role))).append(" and ")
-			.append(regionCol).append(constructSqlIn(rMap.get(role))).append(") or ");
-		}
-		int len = buffer.length();
-		return buffer.delete(len - 4, len).append(")");
-	}
-	
 	private static Map<String, List<String>> constructMapByList2(List<String> list) {
 		String[] array;
 		List<String> l;
@@ -110,12 +92,5 @@ public class SSOUtil {
 		}
 		return map;
 	}
-	
-	private static StringBuffer constructSqlIn(List<String> list) {
-		StringBuffer buffer = new StringBuffer();
-		for (String str : list)
-			buffer.append(",'").append(str).append("'");
-		return buffer.deleteCharAt(0).insert(0, " in (").append(")");
-	}
-	
+
 }
