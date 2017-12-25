@@ -19,23 +19,22 @@ import com.flowable.core.service.BizInfoConfService;
  */
 @Service
 @Transactional(readOnly = true)
-public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> implements BizInfoConfService{
+public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> implements BizInfoConfService {
 
 	@Autowired
 	private BizInfoConfDao bizInfoConfDao;
-	
+
 	@Override
 	@Transactional(readOnly = false)
-	public void saveOrUpdate(BizInfoConf bizInfoConf){
+	public void saveOrUpdate(BizInfoConf bizInfoConf) {
 		
-		if(this.check(bizInfoConf)){
-			this.bizInfoConfDao.saveOrUpdate(bizInfoConf);
-		}
+		this.check(bizInfoConf);
+		this.bizInfoConfDao.saveOrUpdate(bizInfoConf);
 	}
-	
+
 	@Transactional(readOnly = true)
-	private boolean check(BizInfoConf bizInfoConf){
-		
+	private boolean check(BizInfoConf bizInfoConf) {
+
 		BizInfoConf example = new BizInfoConf();
 		example.setBizInfo(bizInfoConf.getBizInfo());
 		example.setTaskAssignee(bizInfoConf.getTaskAssignee());
@@ -44,25 +43,25 @@ public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> impleme
 		this.delete(list);
 		return true;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
-	public List<BizInfoConf> findBizInfoConf(BizInfoConf bizInfoConf){
-		
+	public List<BizInfoConf> findBizInfoConf(BizInfoConf bizInfoConf) {
+
 		return this.bizInfoConfDao.findBizInfoConf(bizInfoConf);
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
-	public BizInfoConf getMyWork(String bizId){
-		
+	public BizInfoConf getMyWork(String bizId) {
+
 		return this.bizInfoConfDao.getMyWork(bizId);
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
-	public void turnTask(Map<String, Object> map){
-		
+	public void turnTask(Map<String, Object> map) {
+
 		this.bizInfoConfDao.turnTask(map);
 	}
 }

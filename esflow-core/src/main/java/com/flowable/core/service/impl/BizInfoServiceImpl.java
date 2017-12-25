@@ -155,12 +155,12 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 				.loadProcessInstances(oldBiz.getProcessInstanceId());
 		if (CollectionUtils.isNotEmpty(processInstances)) {
 			processInstances.forEach(oldInstance -> {
-				ProcessVariableInstance newInstance = oldInstance.clone();
-				newInstance.setId(null);
-				newInstance.setBizId(newBiz.getId());
-				newInstance.setProcessInstanceId(processInstanceId);
-				newInstance.setCreateTime(new Date());
-				processInstanceDao.save(newInstance);
+				ProcessVariableInstance processVariableInstance = oldInstance.clone();
+				processVariableInstance.setId(null);
+				processVariableInstance.setBizId(newBiz.getId());
+				processVariableInstance.setProcessInstanceId(processInstanceId);
+				processVariableInstance.setCreateTime(new Date());
+				processInstanceDao.save(processVariableInstance);
 			});
 		}
 	}

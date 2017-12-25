@@ -81,14 +81,15 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
 	public List<BizTemplateFile> findFileByIds(List<String> ids) {
 
 		List<BizTemplateFile> list = new ArrayList<BizTemplateFile>();
-		BizTemplateFile file = null;
-		for (String id : ids) {
-			if(StringUtils.isNotBlank(id)) {
-				file = this.get(id);
-				if(file != null) {
-					list.add(file);
+		if (!CollectionUtils.isEmpty(ids)) {
+			ids.forEach(id -> {
+				if (StringUtils.isNotBlank(id)) {
+					BizTemplateFile file = this.get(id);
+					if (file != null) {
+						list.add(file);
+					}
 				}
-			}
+			});
 		}
 		return list;
 	}
@@ -136,7 +137,7 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
 			File newFile = new File(filePath, dataId + suffix);
 			FileUtils.copyInputStreamToFile(file.getInputStream(), newFile);
 		} catch (Exception e) {
-			logger.error("模板保存失败 :{}",e);
+			logger.error("模板保存失败 :{}", e);
 			throw new ServiceException("模板保存失败!");
 		}
 	}

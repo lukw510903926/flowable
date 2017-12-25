@@ -361,8 +361,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		variables.put("SYS_BUTTON_VALUE", params.get("base.buttonId"));
 		variables.put("SYS_BIZ_CREATEUSER", bizInfo.getCreateUser());
 		variables.put(Constants.SYS_BIZ_ID, bizInfo.getId());
-		ProcessInstance instance = processDefinitionService.newProcessInstance(WebUtil.getLoginUser(), procDefId,
-				variables);
+		ProcessInstance instance = processDefinitionService.newProcessInstance(procDefId,variables);
 		bizInfo.setProcessInstanceId(instance.getId());
 		this.processDefinitionService.autoClaim(instance.getId());// TODO任务创建时的自动签收
 

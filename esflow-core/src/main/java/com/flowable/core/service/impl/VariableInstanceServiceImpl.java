@@ -88,14 +88,12 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
 			tList = taskInstanceDao.findByTaskId(bizInfoConf.getTaskId());
 			break;
 		}
-		if (null != pList)
-			for (ProcessVariableInstance var : pList) {
-				map.put(var.getVariable().getName(), var);
-			}
-		if (null != tList)
-			for (TaskVariableInstance var : tList) {
-				map.put(var.getVariable().getName()	+ (type == VariableLoadType.ALL ? ('-' + bizInfoConf.getTaskId()) : ""), var);
-			}
+		if (null != pList){
+			pList.forEach(var ->map.put(var.getVariable().getName(), var));
+		}
+		if (null != tList){
+			tList.forEach(var ->map.put(var.getVariable().getName()	+ (type == VariableLoadType.ALL ? ('-' + bizInfoConf.getTaskId()) : ""), var));
+		}
 		return map;
 	}
 

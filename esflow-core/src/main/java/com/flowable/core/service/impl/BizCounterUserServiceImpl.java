@@ -49,17 +49,16 @@ public class BizCounterUserServiceImpl extends BaseServiceImpl<BizCounterUser> i
 	@Transactional(readOnly = false)
 	public void saveUser(List<Map<String, String>> list, String bizId, String taskId) {
 
-		BizCounterUser user = null;
 		if (!CollectionUtils.isNotEmpty(list)) {
-			for (Map<String, String> map : list) {
-				user = new BizCounterUser();
+			list.forEach(map -> {
+				BizCounterUser user = new BizCounterUser();
 				user.setBizId(bizId);
 				user.setTaskId(StringUtils.isBlank(taskId) ? "START" : taskId);
 				user.setName(map.get("name"));
 				user.setUsername(map.get("username"));
 				user.setDeptmentName(map.get("deptmentName"));
 				this.bizCounterUserDao.save(user);
-			}
+			});
 		}
 	}
 

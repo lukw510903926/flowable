@@ -111,13 +111,12 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 
 	public AbstractVariable getVariable(String id, Class<? extends AbstractVariable> type) {
 
-		if (type == null) {
-			return null;
-		}
-		if (type == ProcessVariable.class) {
-			return processVariableDao.getById(id);
-		} else if (type == TaskVariable.class) {
-			return taskVariableDao.getById(id);
+		if (type != null) {
+			if (type == ProcessVariable.class) {
+				return processVariableDao.getById(id);
+			} else if (type == TaskVariable.class) {
+				return taskVariableDao.getById(id);
+			}
 		}
 		return null;
 	}

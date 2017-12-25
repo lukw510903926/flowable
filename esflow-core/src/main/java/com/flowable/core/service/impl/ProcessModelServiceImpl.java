@@ -120,7 +120,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
 			if (!StringUtils.endsWith(processName, ".bpmn20.xml")) {
 				processName += ".bpmn20.xml";
 			}
-			// System.out.println("========="+processName+"============"+modelData.getName());
+			logger.info("========="+processName+"============"+modelData.getName());
 			ByteArrayInputStream in = new ByteArrayInputStream(bpmnBytes);
 			Deployment deployment = repositoryService.createDeployment().name(modelData.getName())
 					.addInputStream(processName, in).deploy();

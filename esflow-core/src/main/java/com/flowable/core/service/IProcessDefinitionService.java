@@ -64,7 +64,7 @@ public interface IProcessDefinitionService {
 	 *            流程变量
 	 * @return @
 	 */
-	public ProcessInstance newProcessInstance(LoginUser user, String id, Map<String, Object> variables);
+	public ProcessInstance newProcessInstance(String id, Map<String, Object> variables);
 
 	/**
 	 * 处理流程

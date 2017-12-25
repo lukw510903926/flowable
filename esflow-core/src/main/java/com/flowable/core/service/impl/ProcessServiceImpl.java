@@ -213,7 +213,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	}
 
 	@Transactional
-	public ProcessInstance newProcessInstance(LoginUser user, String id, Map<String, Object> variables) {
+	public ProcessInstance newProcessInstance(String id, Map<String, Object> variables) {
 
 		return runtimeService.startProcessInstanceById(id, variables);
 	}
