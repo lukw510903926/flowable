@@ -3,7 +3,6 @@ package com.flowable.core.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.shape.HLineTo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
