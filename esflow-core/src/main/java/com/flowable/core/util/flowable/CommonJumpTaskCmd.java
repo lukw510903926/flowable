@@ -9,11 +9,13 @@ import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.ExecutionEntityManager;
 import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.impl.util.ProcessDefinitionUtil;
+import org.flowable.identitylink.service.IdentityLinkService;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 import org.flowable.task.service.impl.persistence.entity.TaskEntityManager;
 
 /**
  * 节点跳转指令
+ * 
  * @project : esflow-core
  * @createTime : 2017年12月22日 : 下午2:10:09
  * @author : lukewei
@@ -25,7 +27,7 @@ public class CommonJumpTaskCmd implements Command<Void> {
 	 * 任务id
 	 */
 	private String taskId;
-	
+
 	/**
 	 * 目标节点Id
 	 */
@@ -43,14 +45,17 @@ public class CommonJumpTaskCmd implements Command<Void> {
 		ExecutionEntityManager executionEntityManager = CommandContextUtil.getExecutionEntityManager();
 		TaskEntityManager taskEntityManager = org.flowable.task.service.impl.util.CommandContextUtil
 				.getTaskEntityManager();
+		
 		TaskEntity taskEntity = taskEntityManager.findById(taskId);
-		ExecutionEntity ee = executionEntityManager.findById(taskEntity.getExecutionId());
-		Process process = ProcessDefinitionUtil.getProcess(ee.getProcessDefinitionId());
+		ExecutionEntity executionEntity = executionEntityManager.findById(taskEntity.getExecutionId());
+		IdentityLinkService identityLinkService = CommandContextUtil.getIdentityLinkService();
+		identityLinkService.deleteIdentityLinksByTaskId(taskId);
+		Process process = ProcessDefinitionUtil.getProcess(executionEntity.getProcessDefinitionId());
 		FlowElement targetFlowElement = process.getFlowElement(targetNodeKey);
-		ee.setCurrentFlowElement(targetFlowElement);
+		executionEntity.setCurrentFlowElement(targetFlowElement);
 		FlowableEngineAgenda agenda = CommandContextUtil.getAgenda();
-		agenda.planContinueProcessInCompensation(ee);
-		taskEntityManager.delete(taskId);
+		agenda.planContinueProcessInCompensation(executionEntity);
+		taskEntityManager.delete(taskEntity, true);
 		return null;
 	}
 }
