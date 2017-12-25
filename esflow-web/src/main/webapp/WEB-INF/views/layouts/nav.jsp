@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
-<%@ include file="/pages/include/taglib.jsp"%>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <c:set var="ctx2" value="${ctx}/"/>
 
 <nav class="navbar navbar-default active" role="navigation">
