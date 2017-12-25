@@ -13,6 +13,7 @@ import com.flowable.core.dao.IBizFileDao;
 @Repository
 public class BizFileDaoImpl extends BaseDaoImpl<BizFile> implements IBizFileDao {
 
+	@Override
 	public List<BizFile> findBizFile(BizFile bizFile){
 		
 		List<Object> list = new ArrayList<Object>();

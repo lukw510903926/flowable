@@ -6,5 +6,5 @@ import com.flowable.core.bean.BizTemplateFile;
 
 public interface BizTemplateFileDao extends IBaseDao<BizTemplateFile>{
 
-	public PageHelper<BizTemplateFile> findTemplateFlies(PageHelper<BizTemplateFile> page,BizTemplateFile file,boolean islike);
+	PageHelper<BizTemplateFile> findTemplateFlies(PageHelper<BizTemplateFile> page,BizTemplateFile file,boolean islike);
 }

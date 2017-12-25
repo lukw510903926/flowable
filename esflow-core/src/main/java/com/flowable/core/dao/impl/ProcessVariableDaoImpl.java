@@ -52,6 +52,7 @@ public class ProcessVariableDaoImpl extends BaseDaoImpl<ProcessVariable> impleme
 		return this.find(page, hql.toString(), args);
 	}
 
+	@Override
 	public List<ProcessVariable> getRefList(Map<String, Object> params) {
 		StringBuffer hql = new StringBuffer();
 		hql.append(" from ProcessVariable where processDefinitionId=? ");

@@ -14,6 +14,7 @@ import com.flowable.core.dao.ITaskVarInstanceDao;
 @Repository
 public class TaskVarInstanceDaoImpl extends BaseDaoImpl<TaskVariableInstance> implements ITaskVarInstanceDao {
 
+	@Override
 	public List<TaskVariableInstance> findByProcInstId(String processInstanceId)  {
 		
 		String hql = " from TaskVariableInstance where processInstanceId = ? order by createTime asc";

@@ -14,6 +14,6 @@ import com.flowable.core.bean.BizCounterUser;
  */
 public interface BizCounterUserDao extends IBaseDao<BizCounterUser>{
 
-	public PageHelper<BizCounterUser> findBizCounterUser(PageHelper<BizCounterUser> page, BizCounterUser user);
+	PageHelper<BizCounterUser> findBizCounterUser(PageHelper<BizCounterUser> page, BizCounterUser user);
 
 }

@@ -11,18 +11,19 @@ import com.flowable.core.bean.ProcessVariableInstance;
  */
 public interface IProcessVarInstanceDao extends IBaseDao<ProcessVariableInstance> {
 
-	public List<ProcessVariableInstance> loadProcessInstances(String processInstanceId);
+    List<ProcessVariableInstance> loadProcessInstances(String processInstanceId);
 
-	public List<ProcessVariableInstance> loadProcessInstancesByBizId(String bizId) ;
+    List<ProcessVariableInstance> loadProcessInstancesByBizId(String bizId);
 
-	/**
-	 * 获取工单配置信息
-	 * @param bizId
-	 * @return
-	 */
-	public List<Map<String, String>> getBizInfo(String bizId);
-	
-	public List<ProcessVariableInstance> getProcessVariableInstances(Map<String, String> params);
+    /**
+     * 获取工单配置信息
+     *
+     * @param bizId
+     * @return
+     */
+    List<Map<String, String>> getBizInfo(String bizId);
 
-	public void deleteByVarId(String variableId);
+    List<ProcessVariableInstance> getProcessVariableInstances(Map<String, String> params);
+
+    void deleteByVarId(String variableId);
 }

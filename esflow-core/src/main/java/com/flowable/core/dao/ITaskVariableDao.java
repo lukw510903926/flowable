@@ -12,21 +12,22 @@ import com.flowable.core.bean.TaskVariable;
  */
 public interface ITaskVariableDao extends IBaseDao<TaskVariable> {
 
-	public List<TaskVariable> loadTaskVariables(String processDefinitionId, int version, String... taskIdS);
+    List<TaskVariable> loadTaskVariables(String processDefinitionId, int version, String... taskIdS);
 
-	public int getProcessOrder(TaskVariable bean);
-	
-	public List<TaskVariable> getRefList(Map<String,Object> params);
+    int getProcessOrder(TaskVariable bean);
 
-	public List<TaskVariable> findTaskVariable(TaskVariable taskVariable);
+    List<TaskVariable> getRefList(Map<String, Object> params);
 
-	/**
-	 * 参数分页查询
-	 * @param processDefinitionId
-	 * @param version
-	 * @param taskIdS
-	 * @param page
-	 * @return
-	 */
-	public PageHelper<TaskVariable> loadTaskVariables(String processDefinitionId,int version, PageHelper<TaskVariable> page, String taskIdS);
+    List<TaskVariable> findTaskVariable(TaskVariable taskVariable);
+
+    /**
+     * 参数分页查询
+     *
+     * @param processDefinitionId
+     * @param version
+     * @param taskIdS
+     * @param page
+     * @return
+     */
+    PageHelper<TaskVariable> loadTaskVariables(String processDefinitionId, int version, PageHelper<TaskVariable> page, String taskIdS);
 }

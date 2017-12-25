@@ -7,5 +7,5 @@ import com.flowable.core.bean.BizFile;
 
 public interface IBizFileDao extends IBaseDao<BizFile> {
 
-	public List<BizFile> findBizFile(BizFile bizFile);
+	List<BizFile> findBizFile(BizFile bizFile);
 }

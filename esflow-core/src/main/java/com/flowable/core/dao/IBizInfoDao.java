@@ -9,7 +9,7 @@ import com.flowable.core.bean.BizInfo;
 
 public interface IBizInfoDao extends IBaseDao<BizInfo> {
 
-	public PageHelper<BizInfo> queryWorkOrder(Map<String, Object> params, PageHelper<BizInfo> page);
+	 PageHelper<BizInfo> queryWorkOrder(Map<String, Object> params, PageHelper<BizInfo> page);
 
 
 	/**
@@ -17,15 +17,15 @@ public interface IBizInfoDao extends IBaseDao<BizInfo> {
 	 * @param list
 	 * @return
 	 */
-	public List<BizInfo> getBizInfos(List<String> list);
+	 List<BizInfo> getBizInfos(List<String> list);
 
 	/**
 	 * 根据父单查询子单
 	 * @param parentId
 	 * @return
 	 */
-	public List<BizInfo> getBizByParentId(String parentId);
+	 List<BizInfo> getBizByParentId(String parentId);
 
-	public BizInfo getBizInfo(String id,String loginUser);
+	 BizInfo getBizInfo(String id,String loginUser);
 
 }

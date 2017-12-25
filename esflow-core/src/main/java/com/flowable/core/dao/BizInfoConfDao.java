@@ -11,24 +11,26 @@ import com.flowable.core.bean.BizInfoConf;
  * @time 2016年5月28日
  * @email lukw@eastcom-sw.com
  */
-public interface BizInfoConfDao extends IBaseDao< BizInfoConf>{
+public interface BizInfoConfDao extends IBaseDao<BizInfoConf> {
 
-	public List<BizInfoConf> findBizInfoConf(BizInfoConf bizInfoConf);
+    List<BizInfoConf> findBizInfoConf(BizInfoConf bizInfoConf);
 
-	/**
-	 * 当前工单我的待办
-	 * @param bizId
-	 * @return
-	 */
-	public BizInfoConf getMyWork(String bizId);
+    /**
+     * 当前工单我的待办
+     *
+     * @param bizId
+     * @return
+     */
+    BizInfoConf getMyWork(String bizId);
 
-	public String getTaskAssignee(String bizId);
+    String getTaskAssignee(String bizId);
 
-	public List<BizInfoConf> getBizInfoConf(String bizId);
-	
-	/**
-	 * 工单转派 (不通过工作流)
-	 * @param map
-	 */
-	public void turnTask(Map<String, Object> map);
+    List<BizInfoConf> getBizInfoConf(String bizId);
+
+    /**
+     * 工单转派 (不通过工作流)
+     *
+     * @param map
+     */
+    void turnTask(Map<String, Object> map);
 }

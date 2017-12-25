@@ -12,15 +12,14 @@ import com.flowable.core.bean.TaskVariableInstance;
  */
 public interface ITaskVarInstanceDao extends IBaseDao<TaskVariableInstance> {
 
-	public List<TaskVariableInstance> findByProcInstId(String processInstanceId) ;
+    List<TaskVariableInstance> findByProcInstId(String processInstanceId);
 
-	public List<AbstractVariableInstance> loadValueByLog(BizLog logBean) ;
+    List<AbstractVariableInstance> loadValueByLog(BizLog logBean);
 
-	public List<TaskVariableInstance> findByTaskId(String taskId) ;
+    List<TaskVariableInstance> findByTaskId(String taskId);
 
-	/**
-	 * 
-	 * @param variableId
-	 */
-	public void deleteByVarId(String variableId);
+    /**
+     * @param variableId
+     */
+    void deleteByVarId(String variableId);
 }

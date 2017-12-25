@@ -38,8 +38,9 @@ public class BizInfoDaoImpl extends BaseDaoImpl<BizInfo> implements IBizInfoDao 
 	@Override
 	public List<BizInfo> getBizByParentId(String parentId) {
 
-		if (StringUtils.isBlank(parentId))
+		if (StringUtils.isBlank(parentId)){
 			return null;
+		}
 		StringBuilder hql = new StringBuilder(" from BizInfo a where a.parentId = ? ");
 		return this.find(hql.toString(), new Object[] { parentId });
 	}

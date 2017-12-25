@@ -18,6 +18,7 @@ import com.flowable.core.dao.BizCounterUserDao;
 @Repository
 public class BizCounterUserDaoImpl extends BaseDaoImpl<BizCounterUser> implements BizCounterUserDao{
 
+	@Override
 	public PageHelper<BizCounterUser> findBizCounterUser(PageHelper<BizCounterUser> page, BizCounterUser user){
 		
 		return null;

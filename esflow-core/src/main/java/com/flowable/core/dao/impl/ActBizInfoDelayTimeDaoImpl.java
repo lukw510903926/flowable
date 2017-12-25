@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.flowable.common.dao.BaseDaoImpl;
 import com.flowable.core.bean.ActBizInfoDelayTime;
 import com.flowable.core.dao.ActBizInfoDelayTimeDao;
+import org.springframework.util.CollectionUtils;
 
 @Repository
 public class ActBizInfoDelayTimeDaoImpl extends BaseDaoImpl<ActBizInfoDelayTime> implements ActBizInfoDelayTimeDao {
@@ -19,8 +20,9 @@ public class ActBizInfoDelayTimeDaoImpl extends BaseDaoImpl<ActBizInfoDelayTime>
 		StringBuilder hql = new StringBuilder("from ActBizInfoDelayTime a where a.bizId = ?  ");
 		hql.append(" and applyStatus=0 order by createTime desc ");
 		List<ActBizInfoDelayTime> list = this.find(hql.toString(), new Object[] { bizId });
-		if (list != null && !list.isEmpty())
+		if (!CollectionUtils.isEmpty(list)){
 			return list.get(0);
+		}
 		return null;
 	}
 
