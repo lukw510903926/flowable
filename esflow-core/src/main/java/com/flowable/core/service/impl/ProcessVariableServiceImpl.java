@@ -35,7 +35,7 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 	@Autowired
 	private ITaskVarInstanceDao taskVarInstanceDao;
 
-	public int getProcessOrder(AbstractVariable bean) { 
+	public int getProcessOrder(AbstractVariable bean) {
 
 		if (bean == null || bean.getProcessDefinitionId() == null) {
 			return 0;
