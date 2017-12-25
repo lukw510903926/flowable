@@ -6,9 +6,9 @@ import com.flowable.core.bean.BizLog;
 
 public interface IBizLogService {
 
-	public void addBizLog(BizLog... beans) ;
+	void addBizLog(BizLog... beans) ;
 
-	public List<BizLog> loadBizLogs(String bizId) ;
+	List<BizLog> loadBizLogs(String bizId) ;
 
-	public BizLog getBizLogById(String id) ;
+	BizLog getBizLogById(String id) ;
 }

@@ -32,8 +32,9 @@ public class ActBizInfoDelayTimeServiceImpl extends BaseServiceImpl<ActBizInfoDe
 	@Transactional(readOnly=true)
 	public ActBizInfoDelayTime findActBizInfoByBizId(String bizId,String taskId) {
 		
-		if(StringUtils.isBlank(bizId))
+		if(StringUtils.isBlank(bizId)){
 			return null;
+		}
 		return actBizInfoDelayTimeDao.findActBizInfoByBizId(bizId,taskId);
 	}
 

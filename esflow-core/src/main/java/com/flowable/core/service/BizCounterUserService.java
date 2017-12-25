@@ -9,21 +9,22 @@ import com.flowable.core.bean.BizCounterUser;
 
 /**
  * 2016年8月23日
- * @author lukw 
+ *
+ * @author lukw
  * 下午8:13:52
  * com.eastcom.esflow.service
  * @email lukw@eastcom-sw.com
  */
 
-public interface BizCounterUserService extends IBaseService<BizCounterUser>{
-	
-	public PageHelper<BizCounterUser> findBizCounterUser(PageHelper<BizCounterUser> page, BizCounterUser user);
+public interface BizCounterUserService extends IBaseService<BizCounterUser> {
 
-	public void deleteUser(BizCounterUser user);
+    PageHelper<BizCounterUser> findBizCounterUser(PageHelper<BizCounterUser> page, BizCounterUser user);
 
-	public void saveUser(List<Map<String, String>> list, String bizId, String taskId);
+    void deleteUser(BizCounterUser user);
 
-	public void updateUser(List<Map<String, String>> list, String bizId, String taskId);
+    void saveUser(List<Map<String, String>> list, String bizId, String taskId);
+
+    void updateUser(List<Map<String, String>> list, String bizId, String taskId);
 
 }
 

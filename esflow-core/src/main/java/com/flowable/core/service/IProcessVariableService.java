@@ -19,14 +19,14 @@ public interface IProcessVariableService {
 	 * @param beans
 	 * @
 	 */
-	public void addVariable(AbstractVariable... beans) ;
+	void addVariable(AbstractVariable... beans) ;
 
 	/**
 	 * 修改
 	 * @param beans
 	 * @
 	 */
-	public void updateVariable(AbstractVariable... beans) ;
+	void updateVariable(AbstractVariable... beans) ;
 
 	/**
 	 * 
@@ -34,18 +34,18 @@ public interface IProcessVariableService {
 	 * @return
 	 * @
 	 */
-	public int getProcessOrder(AbstractVariable bean) ;
+	int getProcessOrder(AbstractVariable bean) ;
 
 	/**
 	 * 删除
 	 * @param beans
 	 * @
 	 */
-	public void deleteVariable(AbstractVariable... beans) ;
+	void deleteVariable(AbstractVariable... beans) ;
 
-	public AbstractVariable getVariableById(String id) ;
+	AbstractVariable getVariableById(String id) ;
 
-	public AbstractVariable getVariable(String id, Class<? extends AbstractVariable> type) ;
+	AbstractVariable getVariable(String id, Class<? extends AbstractVariable> type) ;
 
 	/**
 	 * 根据流程模板ID，获取模板的公共属性列表
@@ -54,7 +54,7 @@ public interface IProcessVariableService {
 	 * @return
 	 * @
 	 */
-	public List<ProcessVariable> loadVariables(String processDefinitionId, int version) ;
+	List<ProcessVariable> loadVariables(String processDefinitionId, int version) ;
 
 	/**
 	 * 根据流程模板ID，任务ID加载某个模板的指定流程任务ID，如果任务ID为空，则加载所有的任务ID对应的属性
@@ -63,18 +63,18 @@ public interface IProcessVariableService {
 	 * @return
 	 * @
 	 */
-	public List<TaskVariable> loadTaskVariables(String processDefinitionId, int version, String... taskIds) ;
+	List<TaskVariable> loadTaskVariables(String processDefinitionId, int version, String... taskIds) ;
 	
 	/**
 	 * 获取流程参数
 	 * @param params
 	 * @return
 	 */
-	public List<ProcessVariableInstance> getProcessVariableInstances(Map<String, String> params);
+	List<ProcessVariableInstance> getProcessVariableInstances(Map<String, String> params);
 
 
-	public PageHelper<TaskVariable> loadTaskVariables(String processDefinitionId, int version,PageHelper<TaskVariable> page, String taskIds) ;
+	PageHelper<TaskVariable> loadTaskVariables(String processDefinitionId, int version,PageHelper<TaskVariable> page, String taskIds) ;
 
-	public PageHelper<ProcessVariable> loadProcessVariables(String processDefinitionId, int version,PageHelper<ProcessVariable> page);
+	PageHelper<ProcessVariable> loadProcessVariables(String processDefinitionId, int version,PageHelper<ProcessVariable> page);
 	
 }

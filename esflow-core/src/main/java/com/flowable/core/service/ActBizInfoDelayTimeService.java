@@ -7,14 +7,15 @@ import com.flowable.core.bean.ActBizInfoDelayTime;
 
 public interface ActBizInfoDelayTimeService extends IBaseService<ActBizInfoDelayTime> {
 
-	/**
-	 * 根据工单id查询最新记录
-	 * @param bizId
-	 * @return
-	 */
-	public ActBizInfoDelayTime findActBizInfoByBizId(String bizId, String taskName);
-	
-	public void saveOrUpdate(ActBizInfoDelayTime actBizInfo);
+    /**
+     * 根据工单id查询最新记录
+     *
+     * @param bizId
+     * @return
+     */
+    ActBizInfoDelayTime findActBizInfoByBizId(String bizId, String taskName);
 
-	public List<ActBizInfoDelayTime> findActBizInfoDelayTime(ActBizInfoDelayTime delayTime);
+    void saveOrUpdate(ActBizInfoDelayTime actBizInfo);
+
+    List<ActBizInfoDelayTime> findActBizInfoDelayTime(ActBizInfoDelayTime delayTime);
 }

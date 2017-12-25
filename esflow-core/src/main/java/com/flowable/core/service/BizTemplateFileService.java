@@ -9,15 +9,15 @@ import com.flowable.common.service.IBaseService;
 import com.flowable.common.utils.PageHelper;
 import com.flowable.core.bean.BizTemplateFile;
 
-public interface BizTemplateFileService extends IBaseService<BizTemplateFile>{
+public interface BizTemplateFileService extends IBaseService<BizTemplateFile> {
 
-	public PageHelper<BizTemplateFile> findTemplateFlies(PageHelper<BizTemplateFile> page,BizTemplateFile file,boolean islike);
+    PageHelper<BizTemplateFile> findTemplateFlies(PageHelper<BizTemplateFile> page, BizTemplateFile file, boolean islike);
 
-	public void deleteByIds(List<String> list);
-	
-	public List<BizTemplateFile> findFileByIds(List<String> ids);
+    void deleteByIds(List<String> list);
 
-	public void saveOrUpdate(BizTemplateFile dataFile, MultipartFile file);
-	
-	public BizTemplateFile getBizTemplateFile(Map<String,String> params);
+    List<BizTemplateFile> findFileByIds(List<String> ids);
+
+    void saveOrUpdate(BizTemplateFile dataFile, MultipartFile file);
+
+    BizTemplateFile getBizTemplateFile(Map<String, String> params);
 }

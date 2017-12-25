@@ -98,6 +98,7 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 		}
 	}
 
+	@Override
 	@Transactional
 	public void addBizInfo(BizInfo... beans) {
 		for (BizInfo bean : beans) {
@@ -105,11 +106,13 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 		}
 	}
 
+	@Override
 	@Transactional
 	public void updateBizInfo(BizInfo... beans) {
 		for (BizInfo bean : beans) {
-			if (bean.getId() == null)
+			if (bean.getId() == null){
 				continue;
+			}
 			dao.update(bean);
 		}
 	}
@@ -194,6 +197,7 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 		}
 	}
 
+	@Override
 	@Transactional
 	public void deleteBizInfo(BizInfo... beans) {
 
@@ -204,6 +208,7 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 		}
 	}
 
+	@Override
 	@Transactional
 	public void deleteBizInfo(String... ids) {
 

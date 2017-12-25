@@ -79,6 +79,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	@Autowired
 	private ISystemUserService systemUserService;
 
+	@Override
 	public Map<String, Object> getActivityTask(BizInfo bean, LoginUser user) {
 
 		if (bean == null || Constants.BIZ_END.equals(bean.getStatus())) {
@@ -118,6 +119,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 		return result;
 	}
 
+	@Override
 	public Map<String, String> loadStartButtons(String tempId) {
 
 		Map<String, String> result = null;
@@ -137,6 +139,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	/**
 	 * 获取任务节点 出口线
 	 */
+	@Override
 	public Map<String, String> findOutGoingTransNames(String taskID, boolean def) {
 
 		Map<String, String> result = new HashMap<String, String>();
@@ -159,6 +162,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	 * @param taskId
 	 * @return
 	 */
+
 	public UserTask getCurrentTask(String taskId) {
 
 		UserTask crrretnTask = null;
@@ -221,6 +225,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	 *            当前任务ID
 	 * @return @
 	 */
+	@Override
 	public String getParentTask(String taskID) {
 
 		UserTask userTask = this.getCurrentTask(taskID);
@@ -261,11 +266,12 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	/**
 	 * 执行任务
 	 * 
-	 * @param bean
+	 * @param bizInfo
 	 * @param taskID
 	 * @param variables
 	 * @return @
 	 */
+	@Override
 	@Transactional
 	public boolean completeTask(BizInfo bizInfo, String taskID, LoginUser user, Map<String, Object> variables) {
 
@@ -370,9 +376,10 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	 * 
 	 * @param bean
 	 * @param taskID
-	 * @param user
+	 * @param username
 	 * @return @
 	 */
+	@Override
 	public boolean claimTask(BizInfo bean, String taskID, String username) {
 
 		// 签收进行权限判断
@@ -416,6 +423,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 		return flag;
 	}
 
+	@Override
 	public Map<String, Object> loadProcessList() {
 
 		List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().list();
@@ -433,10 +441,10 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	/**
 	 * 转派任务
 	 * 
-	 * @param bean
 	 * @param taskID
 	 * @param loginUser
-	 * @param toUser
+	 * @param toAssignment
+	 * @param assignmentType
 	 * @return @
 	 */
 	@Override
@@ -461,8 +469,9 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 			for (IdentityLink il : links) {
 				if ("candidate".equals(il.getType())) {
 					String groupName = il.getGroupId();
-					if (StringUtils.isNotEmpty(groupName))
+					if (StringUtils.isNotEmpty(groupName)){
 						result.add(groupName);
+					}
 				}
 			}
 		}
@@ -557,10 +566,11 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	 * 
 	 * @param bean
 	 *            工单对象
-	 * @param user
+	 * @param username
 	 *            用户
 	 * @return @
 	 */
+	@Override
 	public String getWorkAccessTask(BizInfo bean, String username) {
 
 		// 先判断当前工单的所有活动是否可以进行处理
@@ -618,8 +628,9 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 			if (task.getEndTime() == null) {
 				continue;
 			}
-			if (!temps.contains(task.getTaskDefinitionKey()))
+			if (!temps.contains(task.getTaskDefinitionKey())){
 				temps.add(task.getTaskDefinitionKey());
+			}
 		}
 		return (String[]) temps.toArray(new String[temps.size()]);
 	}
@@ -638,9 +649,10 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 	/**
 	 * 显示流程实例图片
 	 * 
-	 * @param id
+	 * @param bean
 	 * @return @
 	 */
+	@Override
 	public InputStream viewProcessImage(BizInfo bean) {
 
 		ProcessInstance processInstance = this.getProceInstance(bean.getProcessInstanceId());

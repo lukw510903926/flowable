@@ -17,6 +17,7 @@ public class BizFileServiceImpl implements IBizFileService {
 	@Autowired
 	private IBizFileDao dao;
 
+	@Override
 	@Transactional
 	public void addBizFile(BizFile... beans) {
 		if (beans == null) {
@@ -27,30 +28,35 @@ public class BizFileServiceImpl implements IBizFileService {
 		}
 	}
 
+	@Override
 	@Transactional
 	public void updateBizFile(BizFile... beans) {
 		if (beans == null) {
 			return;
 		}
 		for (BizFile bean : beans) {
-			if (bean.getId() == null)
+			if (bean.getId() == null){
 				continue;
+			}
 			dao.update(bean);
 		}
 	}
 
+	@Override
 	@Transactional
 	public void deleteBizFile(BizFile... beans) {
 		if (beans == null) {
 			return;
 		}
 		for (BizFile bean : beans) {
-			if (bean.getId() == null)
+			if (bean.getId() == null){
 				continue;
+			}
 			dao.delete(bean);
 		}
 	}
 
+	@Override
 	@Transactional
 	public void deleteBizFile(String... ids) {
 		if (ids == null) {

@@ -7,5 +7,5 @@ import com.flowable.core.bean.Countersign;
 
 public interface CountersignService extends IBaseService<Countersign> {
 
-	public List<Countersign> findCountersign(Countersign countersign);
+    List<Countersign> findCountersign(Countersign countersign);
 }

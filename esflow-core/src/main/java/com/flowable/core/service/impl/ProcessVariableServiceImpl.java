@@ -35,6 +35,7 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 	@Autowired
 	private ITaskVarInstanceDao taskVarInstanceDao;
 
+	@Override
 	public int getProcessOrder(AbstractVariable bean) {
 
 		if (bean == null || bean.getProcessDefinitionId() == null) {
@@ -100,6 +101,7 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 		}
 	}
 
+	@Override
 	public AbstractVariable getVariableById(String id) {
 
 		AbstractVariable bean = getVariable(id, ProcessVariable.class);
@@ -109,6 +111,7 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 		return bean;
 	}
 
+	@Override
 	public AbstractVariable getVariable(String id, Class<? extends AbstractVariable> type) {
 
 		if (type != null) {
@@ -127,6 +130,7 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 	 * 
 	 * @return @
 	 */
+	@Override
 	public List<ProcessVariable> loadVariables(String processDefinitionId, int version) {
 
 		return processVariableDao.loadProcessVariables(processDefinitionId, version);
@@ -146,6 +150,7 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
 	 * 
 	 * @return @
 	 */
+	@Override
 	public List<TaskVariable> loadTaskVariables(String processDefinitionId, int version, String... taskIds) {
 
 		return taskVariableDao.loadTaskVariables(processDefinitionId, version, taskIds);

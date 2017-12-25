@@ -53,6 +53,7 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
 		return this.bizTemplateFileDao.findTemplateFlies(page, file, islike);
 	}
 
+	@Override
 	public BizTemplateFile getBizTemplateFile(Map<String, String> params) {
 
 		BizInfo bizInfo = null;

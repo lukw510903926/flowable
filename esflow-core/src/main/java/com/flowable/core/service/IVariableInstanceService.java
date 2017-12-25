@@ -19,9 +19,9 @@ public interface IVariableInstanceService {
 	 * @param beans
 	 * @
 	 */
-	public void addProcessInstance(AbstractVariableInstance... beans) ;
+	void addProcessInstance(AbstractVariableInstance... beans) ;
 
-	public void updateProcessInstance(AbstractVariableInstance... beans) ;
+	void updateProcessInstance(AbstractVariableInstance... beans) ;
 
 	/**
 	 * 加载某个工单所填写的所有数据
@@ -30,9 +30,9 @@ public interface IVariableInstanceService {
 	 * @return
 	 * @
 	 */
-	public List<AbstractVariableInstance> loadInstances(BizInfo bean) ;
+	List<AbstractVariableInstance> loadInstances(BizInfo bean) ;
 
-	public Map<String, AbstractVariableInstance> getVarMap(BizInfo bizInfo, BizInfoConf bizInfoConf, VariableLoadType type);
+	Map<String, AbstractVariableInstance> getVarMap(BizInfo bizInfo, BizInfoConf bizInfoConf, VariableLoadType type);
 
 	/**
 	 * 根据LOG记录加载对应的数据
@@ -41,7 +41,7 @@ public interface IVariableInstanceService {
 	 * @return
 	 * @
 	 */
-	public List<AbstractVariableInstance> loadValueByLog(BizLog logBean) ;
+	List<AbstractVariableInstance> loadValueByLog(BizLog logBean) ;
 	
 
 	enum VariableLoadType {

@@ -17,6 +17,7 @@ public class BizLogServiceImpl implements IBizLogService {
 	@Autowired
 	private IBizLogDao logDao;
 
+	@Override
 	@Transactional
 	public void addBizLog(BizLog... beans)  {
 		for (BizLog bean : beans){
@@ -29,6 +30,7 @@ public class BizLogServiceImpl implements IBizLogService {
 		return logDao.loadLogByBizId(workID);
 	}
 
+	@Override
 	public BizLog getBizLogById(String logId){
 		return logDao.getById(logId);
 	}

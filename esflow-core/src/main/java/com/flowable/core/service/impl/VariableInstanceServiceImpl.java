@@ -23,84 +23,86 @@ import com.flowable.core.service.IVariableInstanceService;
 @Transactional(readOnly = true)
 public class VariableInstanceServiceImpl implements IVariableInstanceService {
 
-	@Autowired
-	private IProcessVarInstanceDao processInstanceDao;
+    @Autowired
+    private IProcessVarInstanceDao processInstanceDao;
 
-	@Autowired
-	private ITaskVarInstanceDao taskInstanceDao;
-	
-	@Override
-	@Transactional
-	public void addProcessInstance(AbstractVariableInstance... beans)  {
-		
-		for (AbstractVariableInstance bean : beans) {
-			if (bean instanceof ProcessVariableInstance)
-				processInstanceDao.save((ProcessVariableInstance) bean);
-			else {
-				taskInstanceDao.save((TaskVariableInstance) bean);
-			}
-		}
-	}
-	
-	@Override
-	public void updateProcessInstance(AbstractVariableInstance... beans)  {
-		
-		for (AbstractVariableInstance bean : beans) {
-			if (bean.getId() == null)
-				continue;
-			if (bean instanceof ProcessVariableInstance)
-				processInstanceDao.update((ProcessVariableInstance) bean);
-			else {
-				taskInstanceDao.update((TaskVariableInstance) bean);
-			}
-		}
-	}
+    @Autowired
+    private ITaskVarInstanceDao taskInstanceDao;
 
-	/**
-	 * 加载某个工单所填写的所有数据
-	 * 
-	 * @param bean
-	 * @return
-	 * @
-	 */
-	@Override
-	public List<AbstractVariableInstance> loadInstances(BizInfo bean)  {
-		
-		List<AbstractVariableInstance> result = new ArrayList<AbstractVariableInstance>();
-		List<ProcessVariableInstance> temp1 = null;
-		temp1 = processInstanceDao.loadProcessInstancesByBizId(bean.getId());
-		if (temp1 != null)
-			result.addAll(temp1);
-		return result;
-	}
+    @Override
+    @Transactional
+    public void addProcessInstance(AbstractVariableInstance... beans) {
 
-	@Override
-	public Map<String, AbstractVariableInstance> getVarMap(BizInfo bizInfo,BizInfoConf bizInfoConf, VariableLoadType type) {
-		
-		Map<String, AbstractVariableInstance> map = new HashMap<String, AbstractVariableInstance>();
-		List<ProcessVariableInstance> pList = processInstanceDao.loadProcessInstancesByBizId(bizInfo.getId());
-		List<TaskVariableInstance> tList = null;
-		switch (type) {
-		case ALL:
-			tList = taskInstanceDao.findByProcInstId(bizInfo.getProcessInstanceId());
-			break;
-		case UPDATABLE:
-			tList = taskInstanceDao.findByTaskId(bizInfoConf.getTaskId());
-			break;
-		}
-		if (null != pList){
-			pList.forEach(var ->map.put(var.getVariable().getName(), var));
-		}
-		if (null != tList){
-			tList.forEach(var ->map.put(var.getVariable().getName()	+ (type == VariableLoadType.ALL ? ('-' + bizInfoConf.getTaskId()) : ""), var));
-		}
-		return map;
-	}
+        for (AbstractVariableInstance bean : beans) {
+            if (bean instanceof ProcessVariableInstance) {
+                processInstanceDao.save((ProcessVariableInstance) bean);
+            } else {
+                taskInstanceDao.save((TaskVariableInstance) bean);
+            }
+        }
+    }
 
-	@Override
-	public List<AbstractVariableInstance> loadValueByLog(BizLog logBean)  {
-		
-		return taskInstanceDao.loadValueByLog(logBean);
-	}
+    @Override
+    public void updateProcessInstance(AbstractVariableInstance... beans) {
+
+        for (AbstractVariableInstance bean : beans) {
+            if (bean.getId() == null) {
+                continue;
+            }
+            if (bean instanceof ProcessVariableInstance) {
+                processInstanceDao.update((ProcessVariableInstance) bean);
+            } else {
+                taskInstanceDao.update((TaskVariableInstance) bean);
+            }
+        }
+    }
+
+    /**
+     * 加载某个工单所填写的所有数据
+     *
+     * @param bean
+     * @return
+     * @
+     */
+    @Override
+    public List<AbstractVariableInstance> loadInstances(BizInfo bean) {
+
+        List<AbstractVariableInstance> result = new ArrayList<AbstractVariableInstance>();
+        List<ProcessVariableInstance> temp1 = null;
+        temp1 = processInstanceDao.loadProcessInstancesByBizId(bean.getId());
+        if (temp1 != null){
+            result.addAll(temp1);
+        }
+        return result;
+    }
+
+    @Override
+    public Map<String, AbstractVariableInstance> getVarMap(BizInfo bizInfo, BizInfoConf bizInfoConf, VariableLoadType type) {
+
+        Map<String, AbstractVariableInstance> map = new HashMap<String, AbstractVariableInstance>();
+        List<ProcessVariableInstance> pList = processInstanceDao.loadProcessInstancesByBizId(bizInfo.getId());
+        List<TaskVariableInstance> tList = null;
+        switch (type) {
+            case ALL:
+                tList = taskInstanceDao.findByProcInstId(bizInfo.getProcessInstanceId());
+                break;
+            case UPDATABLE:
+                tList = taskInstanceDao.findByTaskId(bizInfoConf.getTaskId());
+                break;
+        }
+        if (null != pList) {
+            pList.forEach(var -> map.put(var.getVariable().getName(), var));
+        }
+        if (null != tList) {
+            tList.forEach(var -> map.put(var.getVariable().getName() + (type == VariableLoadType.ALL ? ('-' + bizInfoConf.getTaskId()) : ""), var));
+        }
+        return map;
+    }
+
+    @Override
+    public List<AbstractVariableInstance> loadValueByLog(BizLog logBean) {
+
+        return taskInstanceDao.loadValueByLog(logBean);
+    }
 
 }

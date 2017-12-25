@@ -9,9 +9,9 @@ import com.flowable.core.bean.BizTimedTask;
 
 public interface BizTimedTaskService extends IBaseService<BizTimedTask> {
 
-	public List<BizTimedTask> findBizTimedTask(BizTimedTask bizTask);
+    List<BizTimedTask> findBizTimedTask(BizTimedTask bizTask);
 
-	public void saveTimedTask(BizInfo bizInfo,BizInfoConf bizConf);
+    void saveTimedTask(BizInfo bizInfo, BizInfoConf bizConf);
 
-	public void sumitBizTimedTask();
+    void sumitBizTimedTask();
 }

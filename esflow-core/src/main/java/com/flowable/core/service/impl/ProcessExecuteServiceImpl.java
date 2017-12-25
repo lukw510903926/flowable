@@ -85,6 +85,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	@Autowired
 	private BizInfoConfService bizInfoConfService;
 
+	@Override
 	public Map<String, Object> loadBizLogInput(String logId) {
 
 		BizLog logBean = logService.getBizLogById(logId);
@@ -102,6 +103,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	/**
 	 * 加载所有的流程
 	 */
+	@Override
 	public Map<String, Object> loadProcessList() {
 		return processDefinitionService.loadProcessList();
 	}
@@ -151,10 +153,10 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 * 如果有工单号，则获取到工单当前需要处理的流程，然后再加载属性
 	 * 
 	 * @param tempID
-	 * @param workNumber
 	 * @return
 	 * @throws ServiceException
 	 */
+	@Override
 	public List<AbstractVariable> loadHandleProcessVariables(String tempID) {
 
 		List<AbstractVariable> result = new ArrayList<AbstractVariable>();
@@ -165,6 +167,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		return result;
 	}
 
+	@Override
 	public List<AbstractVariable> loadHandleProcessValBean(BizInfo bean, String taskID) {
 
 		List<AbstractVariable> result = new ArrayList<AbstractVariable>();
@@ -173,8 +176,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		if (task != null) {
 			List<TaskVariable> taskVariabels = variableService.loadTaskVariables(bean.getProcessDefinitionId(),
 					processDefinitionService.getWorkOrderVersion(bean), task.getTaskDefinitionKey());
-			if (taskVariabels != null)
+			if (taskVariabels != null){
 				result.addAll(taskVariabels);
+			}
 		} else {
 			return loadHandleProcessVariables(bean.getProcessDefinitionId());
 		}
@@ -200,7 +204,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	/**
 	 * 签收工单
 	 * 
-	 * @param params
+	 * @param bizInfo
+	 * @param loginUser
 	 * @return
 	 */
 	private BizInfo sign(BizInfo bizInfo, String loginUser) {
@@ -313,9 +318,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		bizInfoService.addBizInfo(bizInfo);
 		bizInfoConf.setBizInfo(bizInfo);
 		this.bizInfoConfService.saveOrUpdate(bizInfoConf);
-		if (startProc)
+		if (startProc){
 			startProc(bizInfo, bizInfoConf, params, now);
-		else {
+		}else {
 			List<AbstractVariable> processValList = loadHandleProcessVariables(procDefId);
 			saveOrUpdateVars(bizInfo, bizInfoConf, processValList, params, now);
 		}
@@ -408,6 +413,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		writeBizLog(bizInfo, task, now, params);
 	}
 
+	@Override
 	public void saveOrUpdateVars(BizInfo bizInfo, BizInfoConf bizInfoConf, List<AbstractVariable> processValList,
 			Map<String, Object> params, Date now) {
 
@@ -424,8 +430,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			} else {
 				value = (String) params.get(proName);
 			}
-			if (StringUtils.isEmpty(value))
+			if (StringUtils.isEmpty(value)){
 				continue;
+			}
 			AbstractVariableInstance valueBean = currentVars.get(proAbs.getName());
 			if (null != valueBean) {
 				valueBean.setValue(value);
@@ -508,10 +515,11 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 * 提交工单，实现流转
 	 * 
 	 * @param params
-	 * @param files
+	 * @param fileMap
 	 * @return
 	 * @throws ServiceException
 	 */
+	@Override
 	@Transactional
 	public BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
@@ -623,6 +631,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		return list;
 	}
 
+	@Override
 	public void writeBizLog(BizInfo bizInfo, Task task, Date now, Map<String, Object> params) {
 
 		BizLog logBean = new BizLog();
@@ -661,6 +670,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 * @return
 	 * @throws ServiceException
 	 */
+	@Override
 	public Map<String, String> loadStartButtons(String tempId) {
 
 		Map<String, String> buttons = processDefinitionService.loadStartButtons(tempId);
@@ -683,10 +693,11 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 * annexs:附件列表<br>
 	 * workLogs:日志
 	 * 
-	 * @param bizId
+	 * @param id
 	 * @return
 	 * @throws ServiceException
 	 */
+	@Override
 	public Map<String, Object> queryWorkOrder(String id) {
 
 		String loginUser = WebUtil.getLoginUser().getUsername();
@@ -764,6 +775,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 * @return [文件类型,InputStream]
 	 * @throws ServiceException
 	 */
+	@Override
 	public Object[] downloadFile(String action, String id) {
 
 		Object[] result = new Object[4];

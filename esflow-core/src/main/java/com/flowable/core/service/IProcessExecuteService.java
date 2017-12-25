@@ -18,7 +18,7 @@ import com.flowable.core.bean.BizInfoConf;
  */
 public interface IProcessExecuteService {
 
-	public static final String systemFormType = "_SYS_FORM_TYPE";
+	static final String systemFormType = "_SYS_FORM_TYPE";
 
 	/**
 	 * 获取某个日志对应的输入数据
@@ -27,7 +27,7 @@ public interface IProcessExecuteService {
 	 * @return
 	 * @
 	 */
-	public Map<String, Object> loadBizLogInput(String logId) ;
+	Map<String, Object> loadBizLogInput(String logId) ;
 
 	/**
 	 * 获取某个流程的开始按钮
@@ -36,14 +36,14 @@ public interface IProcessExecuteService {
 	 * @return
 	 * @
 	 */
-	public Map<String, String> loadStartButtons(String tempId) ;
+	Map<String, String> loadStartButtons(String tempId) ;
 
 	/**
 	 * 加载当前在运行的所有流程
 	 * 
 	 * @return
 	 */
-	public Map<String, Object> loadProcessList() ;
+	Map<String, Object> loadProcessList() ;
 
 	/**
 	 * 获取我的工单，包括：我创建的工单(1),我处理的工单(2X),我的待办任务(3),我的代签任务(4)
@@ -52,7 +52,7 @@ public interface IProcessExecuteService {
 	 * @return
 	 * @
 	 */
-	public PageHelper<BizInfo> queryMyBizInfos(String targe, Map<String, Object> params, PageHelper<BizInfo> page);
+	PageHelper<BizInfo> queryMyBizInfos(String targe, Map<String, Object> params, PageHelper<BizInfo> page);
 	/**
 	 * 获取当前需要填写的属性列表<br>
 	 * 如果没有工单号则获取模板的公共属性<br>
@@ -61,7 +61,7 @@ public interface IProcessExecuteService {
 	 * @return
 	 * @
 	 */
-	public List<AbstractVariable> loadHandleProcessVariables(String processDefinitionId) ;
+	List<AbstractVariable> loadHandleProcessVariables(String processDefinitionId) ;
 	
 	/**
 	 * 保存参数，如果是草稿，那么流程实例ID、任务ID皆留空，还不保存到流程参数；<br />
@@ -72,7 +72,7 @@ public interface IProcessExecuteService {
 	 * @param params
 	 * @param now
 	 */
-	public void saveOrUpdateVars(BizInfo bizInfo,BizInfoConf bizInfoConf, List<AbstractVariable> processValList, Map<String, Object> params,Date now);
+	void saveOrUpdateVars(BizInfo bizInfo,BizInfoConf bizInfoConf, List<AbstractVariable> processValList, Map<String, Object> params,Date now);
 
 	/**
 	 * 保存工单草稿
@@ -83,7 +83,7 @@ public interface IProcessExecuteService {
 	 * @return
 	 * @
 	 */
-	public BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap, boolean startProc, String[] deleFileId) ;
+	BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap, boolean startProc, String[] deleFileId) ;
 	
 	/**
 	 * 更新工单关联的任务信息（填充下一个（或初始）任务（环节）的信息）
@@ -101,7 +101,7 @@ public interface IProcessExecuteService {
 	 * @return
 	 * @
 	 */
-	public BizInfo updateBiz(String id, Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap,boolean startProc);
+	BizInfo updateBiz(String id, Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap,boolean startProc);
 	/**
 	 * 处理工单，新增跟审批
 	 * 
@@ -110,28 +110,27 @@ public interface IProcessExecuteService {
 	 * @return
 	 * @
 	 */
-	public BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap) ;
+	BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap) ;
 	
 	/**
 	 * 记录流程操作日志
 	 * @param bizInfo
 	 * @param task
 	 * @param now
-	 * @param result
 	 * @param params
 	 */
-	public void writeBizLog(BizInfo bizInfo, Task task, Date now, Map<String, Object> params);
+	void writeBizLog(BizInfo bizInfo, Task task, Date now, Map<String, Object> params);
 	
-	public List<AbstractVariable> loadHandleProcessValBean(BizInfo bean, String taskId) ;
+	List<AbstractVariable> loadHandleProcessValBean(BizInfo bean, String taskId) ;
 
 	/**
 	 * 根据工单号查询工单信息，并且处理工单的处理权限
 	 * @return
 	 * @
 	 */
-	public Map<String, Object> queryWorkOrder(String id) ;
+	Map<String, Object> queryWorkOrder(String id) ;
 
-	public BizInfo getBizInfo(String id) ;
+	BizInfo getBizInfo(String id) ;
 
 	/**
 	 * 下载或查看文件
@@ -141,7 +140,7 @@ public interface IProcessExecuteService {
 	 * @return [文件类型,InputStream]
 	 * @
 	 */
-	public Object[] downloadFile(String action, String id) ;
+	Object[] downloadFile(String action, String id) ;
 
 	/**
 	 * 更新工单信息
@@ -150,6 +149,6 @@ public interface IProcessExecuteService {
 	 * @return
 	 * @
 	 */
-	public BizInfo update(Map<String, Object> params) ;
+	BizInfo update(Map<String, Object> params) ;
 
 }

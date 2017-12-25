@@ -14,12 +14,12 @@ public interface IBizHandleService {
 	 * @return
 	 * @
 	 */
-	public PageHelper<Map<String,Object>> loadMembers(PageHelper<Map<String, Object>> page,Map<String,Object> params) ;
+	PageHelper<Map<String,Object>> loadMembers(PageHelper<Map<String, Object>> page,Map<String,Object> params) ;
 	
 	/**
 	 * 获取供选部门
 	 * @param params
 	 * @return
 	 */
-	public List<Map<String,Object>> loadSectors(Map<String,Object> params);
+	List<Map<String,Object>> loadSectors(Map<String,Object> params);
 }

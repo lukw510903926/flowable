@@ -32,7 +32,6 @@ public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> impleme
 		this.bizInfoConfDao.saveOrUpdate(bizInfoConf);
 	}
 
-	@Transactional(readOnly = true)
 	private boolean check(BizInfoConf bizInfoConf) {
 
 		BizInfoConf example = new BizInfoConf();
