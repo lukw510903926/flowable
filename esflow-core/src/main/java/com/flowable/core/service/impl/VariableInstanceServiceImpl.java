@@ -101,6 +101,7 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
 
 	@Override
 	public List<AbstractVariableInstance> loadValueByLog(BizLog logBean)  {
+		
 		return taskInstanceDao.loadValueByLog(logBean);
 	}
 
