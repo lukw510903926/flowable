@@ -1,8 +1,6 @@
 package com.flowable.web.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,22 +73,4 @@ public class SSOUtil {
 		}
 		return cacheMap;
 	}
-	
-	private static Map<String, List<String>> constructMapByList2(List<String> list) {
-		String[] array;
-		List<String> l;
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
-		for (String str : list) {
-			array = str.split(":");
-			if (!map.containsKey(array[0])) {
-				l = new ArrayList<String>();
-				map.put(array[0], l);
-			} else {
-				l = map.get(array[0]);
-			}
-			l.add(array[1]);
-		}
-		return map;
-	}
-
 }
