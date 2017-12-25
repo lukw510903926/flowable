@@ -91,17 +91,15 @@ public interface IProcessDefinitionService {
 	/**
 	 * 转派任务
 	 * 
-	 * @param bean
 	 * @param taskID
-	 * @param user
+	 * @param loginUser
 	 * @param toAssignment
 	 *            需要转派的人或组
 	 * @param assignmentType
 	 *            标记为人或组取值为：group|user
 	 * @return @
 	 */
-	public boolean assignmentTask(BizInfo bean, String taskID, LoginUser user, String toAssignment,
-			String assignmentType);
+	public boolean assignmentTask(String taskID, LoginUser loginUser, String toAssignment, String assignmentType);
 
 	/**
 	 * 获取下一步正在处理的任务信息,如果返回null标示流程已结束
@@ -180,12 +178,6 @@ public interface IProcessDefinitionService {
 	 */
 	public boolean copyVariables(ProcessDefinition processDefinition) throws Exception;
 
-	/**
-	 * 
-	 * @param nextTaskId
-	 * @return @ 备注: 分派子单 返回目标任务节点的上个节点的处理
-	 */
-	public String[] getNextTaskInfo(String nextTaskId, Map<String, Object> params);
 
 	public boolean autoClaim(String processInstanceID);
 
