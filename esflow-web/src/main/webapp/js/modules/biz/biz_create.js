@@ -9,11 +9,7 @@ biz.create = {
 			biz.create.draftData = this.loadDraftBiz();
 		}
 		$.ajax({
-			url : path + "/workflow/create",
-			type : "get",
-			data : {
-				key : key
-			},
+			url : path + "/workflow/create/"+key,
 			async : false,
 			success : function(data) {
 				if (data.result) {
@@ -87,64 +83,6 @@ biz.create = {
 			} ];
 			biz.create.setStatic(list, workInfo, saveUser);
 			break;
-		case "networkManagement":
-			$("#msgtitle").text("报障人信息");
-			var list = [ {
-				id : "workNum",
-				alias : "工单号"
-			}, {
-				id : "status",
-				alias : "当前状态"
-			}, {
-				id : "dep",
-				alias : "报障部门"
-			}, {
-				id : "name",
-				alias : "报障人姓名"
-			}, {
-				id : "mobile",
-				alias : "报障人联系方式"
-			}, {
-				id : "email",
-				alias : "邮箱地址"
-			}, {
-				id : "city",
-				alias : "报障地市"
-			}, {
-				id : "createTime",
-				alias : "故障发生时间"
-			} ];
-			biz.create.setStatic(list, workInfo, saveUser);
-			break;
-		case "problemManagement":
-			$("#msgtitle").text("报障人信息");
-			var list = [ {
-				id : "workNum",
-				alias : "工单号"
-			}, {
-				id : "status",
-				alias : "当前状态"
-			}, {
-				id : "dep",
-				alias : "报障部门"
-			}, {
-				id : "name",
-				alias : "报障人姓名"
-			}, {
-				id : "mobile",
-				alias : "报障人联系方式"
-			}, {
-				id : "email",
-				alias : "邮箱地址"
-			}, {
-				id : "city",
-				alias : "报障地市"
-			}, {
-				id : "createTime",
-				alias : "故障发生时间"
-			} ];
-			biz.create.setStatic(list, workInfo, saveUser);
-			break;
 		default:
 			$("#msgtitle").text("申请人信息");
 			var list = [ {
@@ -184,7 +122,7 @@ biz.create = {
 		} else {
 			for (var i = 0; i < list.length; i++) {
 				var text = createUser[list[i].id];
-				if (list[i].id == "createTime"){
+				if (list[i].id == "createTime") {
 					text = (new Date()).Format("yyyy/MM/dd hh:mm:ss");
 				}
 				view.addTextField(list[i]).text(text == null ? "" : text);
@@ -194,8 +132,9 @@ biz.create = {
 	},
 	//回显
 	loadBaseData : function(serviceInfo, ele) {
-		if (ele == undefined)
+		if (ele == undefined){
 			ele = $("body");
+		}
 		for (var i in serviceInfo) {
 			if (serviceInfo[i].variable.viewComponent == "CROSSDIMENSION") {
 				biz.show.table.jwWork.setJwWorkValue(serviceInfo[i].value);
@@ -209,7 +148,7 @@ biz.create = {
 			} else if (serviceInfo[i].variable.viewComponent == "EVENTBIZLIST") {
 				biz.show.table.eventBizList.setEventBizList(serviceInfo[i]);
 				continue;
-			}else if (serviceInfo[i].variable.viewComponent == "MANAGERAPPROVER") {
+			} else if (serviceInfo[i].variable.viewComponent == "MANAGERAPPROVER") {
 				$("#handleUser   option[value='" + serviceInfo[i].value + "']").attr("selected", true);
 			} else if (serviceInfo[i].variable.viewComponent == "STAFFINFOLINKAGECOMBOBOX") {
 				$("#handleUser   option[value='" + serviceInfo[i].value + "']").attr("selected", true);
@@ -255,10 +194,10 @@ biz.create = {
 		$("#form").find('[name="actualCreatePhone"]').val(createUser.mobile);
 	},
 	createButtons : function(container, buttons) {
+
 		var buttonlist = $("<div class='btn-list'>");
 		$(container).append(buttonlist);
-
-		var button = "<a class='btn btn-y mrr10' onclick=biz.create.submit('save')>草稿</a>";
+		var button = "<a class='btn btn-y mrr10' onclick=biz.create.submit('saveTemp')>草稿</a>";
 		buttonlist.append(button);
 		for (var key in buttons) {
 			button = "<a class='btn btn-y mrr10' onclick=biz.create.submit('" + key + "')>" + buttons[key] + "</a>";
@@ -273,11 +212,6 @@ biz.create = {
 		}
 		var input = $(":input[checkEmpty='true']");
 
-		if ("submit" == key && $(":radio[name='isSelfReview']").length > 0 && $(":radio[name='isSelfReview']:checked").val() == "否") {
-			bsAlert("提示", "请完成自评再提交！");
-			return;
-		}
-
 		if ("submit" == key) {
 			$("#form [name='startProc']").val(true);
 			for (var i = 0; i < input.length; i++) {
@@ -288,8 +222,9 @@ biz.create = {
 				return;
 			}
 		}
-		if ("save" == key)
+		if ("saveTemp" == key) {
 			$("#form [name='startProc']").val(false);
+		}
 		$("#form [name='base.buttonId']").val(key);
 		$("#form [name='base.handleResult']").val(biz.create.buttons[key]);
 		$("#form").attr("action", path + "/workflow/bizInfo");
@@ -316,7 +251,7 @@ biz.create = {
 		});
 
 		$('#form').ajaxSubmit({
-			url : path + '/workflow/bizInfo',
+			url : path + '/workflow/bizInfo/create',
 			traditional : true,
 			dataType : 'json',
 			async : false,

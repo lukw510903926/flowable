@@ -4,13 +4,10 @@ biz.detail = {
 	mark : 0,
 	init : function() {
 		$.ajax({
-			url : path + "/workflow/display",
+			url : path + "/workflow/display/"+id,
 			cache : false,
 			async : false,
 			type : "get",
-			data : {
-				id : id
-			},
 			success : function(result) {
 				biz.detail.grops = result.ProcessValBeanMap;
 				if (!result.workBean) {
@@ -492,27 +489,8 @@ biz.detail.save = function(key) {
 	}
 	//重新提交，交维工作做了处理
 	if (typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") != -1) : false) {
-		$("#form [name='startProc']").val(true);
-		if ($("[name='crossDimension']").length > 0) {
-			var jwWorkString = "";
-			var jwWork = $("[name='jwWork']:checked");
-			for (var i = 0; i < jwWork.length; i++) {
-				var dJwWork = jwWork.eq(i);
-				jwWorkString += dJwWork.val() + ":";
-				var ddJwWork = $("[name='jwWork" + dJwWork.val() + "']:checked");
-				for (var j = 0; j < ddJwWork.length; j++) {
-					jwWorkString += ddJwWork.eq(j).val() + ",";
-				}
-				if (ddJwWork.length > 0)
-					jwWorkString = jwWorkString.substring(0, jwWorkString.length - 1);
-				jwWorkString += ";";
-			}
-			if (jwWorkString != "")
-				jwWorkString = jwWorkString.substring(0, jwWorkString.length - 1);
-			jwWork.attr("name", "");
-			$("[name='crossDimension']").val(jwWorkString);
-		}
-		url = path + "/workflow/bizInfo/" + biz.detail.workInfo.id;
+//		$("#form [name='startProc']").val(true);
+		url = path + "/workflow/bizInfo/updateBiz";
 	}
 
 	$("[name='base.buttonId']").val(key);
@@ -555,37 +533,6 @@ biz.detail.save = function(key) {
 	});
 };
 
-//工时修改
-biz.detail.saveWorkTime = function() {
-	layer.confirm("确认是否修改工时", {
-		skin : "layerskin",
-		btn : [ "确定", "取消" ]
-	}, function(index) {
-		var workTimes = new Array();
-		$.each($(".workTime"), function(k, v) {
-			var workTime = {};
-			workTime["workTime"] = v.value;
-			var ids = v.name.split("&");
-			workTime["variableId"] = ids[0];
-			workTime["taskId"] = ids[1];
-			workTime["bizId"] = bizId;
-			workTimes.push(workTime);
-		})
-		$.ajax({
-			url : path + "/workflow/resetWorkTime",
-			data : {
-				workTime : JSON.stringify(workTimes)
-			},
-			type : "post",
-			dataType : "json",
-			success : function(data) {
-				layer.msg(data.msg);
-			}
-		})
-	}, function() {
-		return;
-	});
-};
 
 $(function() {
 	biz.detail.init();
