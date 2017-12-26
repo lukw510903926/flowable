@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.flowable.common.exception.ServiceException;
 import com.flowable.common.utils.DateUtils;
+import com.flowable.common.utils.LoginUser;
 import com.flowable.common.utils.PageHelper;
 import com.flowable.core.bean.AbstractVariable;
 import com.flowable.core.bean.AbstractVariableInstance;
@@ -204,7 +205,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	 * @param loginUser
 	 * @return
 	 */
-	private BizInfo sign(BizInfo bizInfo, BizInfoConf bizInfoConf,String loginUser) {
+	private BizInfo sign(BizInfo bizInfo, BizInfoConf bizInfoConf, String loginUser) {
 
 		String taskId = bizInfoConf.getTaskId();
 		if (StringUtils.isEmpty(taskId)) {
@@ -273,7 +274,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	@Override
 	@Transactional
 	public BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap,
-			boolean startProc, String[] deleFileId) {
+								  boolean startProc, String[] deleFileId) {
 
 		String source = (String) params.get("$source");
 		source = StringUtils.isBlank(source) ? "人工发起" : source;
@@ -325,18 +326,20 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	@Transactional
 	public BizInfo updateBiz(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
-		String id = (String)params.get("base.bizId");
+		String id = (String) params.get("base.bizId");
 		BizInfo bizInfo = bizInfoService.get(id);
 		BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(id);
 		Date now = new Date();
-//		if (StringUtils.isNotBlank(bizInfo.getProcessInstanceId()) && StringUtils.isNotBlank(bizInfoConf.getTaskId())) {
+		// if (StringUtils.isNotBlank(bizInfo.getProcessInstanceId()) &&
+		// StringUtils.isNotBlank(bizInfoConf.getTaskId())) {
 		reSubmit(params, bizInfo, bizInfoConf);
-//		} else if (startProc) {
-//			startProc(bizInfo, bizInfoConf, params, now);
-//		} else {
-//			List<AbstractVariable> variables = this.loadHandleProcessValBean(bizInfo, bizInfoConf.getTaskId());
-//			saveOrUpdateVars(bizInfo, bizInfoConf, variables, params, now);
-//		}
+		// } else if (startProc) {
+		// startProc(bizInfo, bizInfoConf, params, now);
+		// } else {
+		// List<AbstractVariable> variables =
+		// this.loadHandleProcessValBean(bizInfo, bizInfoConf.getTaskId());
+		// saveOrUpdateVars(bizInfo, bizInfoConf, variables, params, now);
+		// }
 		bizInfoService.updateBizInfo(bizInfo);
 		saveFile(fileMap, now, bizInfo, null);
 		return bizInfo;
@@ -404,7 +407,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
 	@Override
 	public void saveOrUpdateVars(BizInfo bizInfo, BizInfoConf bizInfoConf, List<AbstractVariable> processValList,
-			Map<String, Object> params, Date now) {
+								 Map<String, Object> params, Date now) {
 
 		String procInstId = bizInfo.getProcessInstanceId();
 		String taskId = bizInfoConf.getTaskId();
@@ -535,7 +538,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		String taskId = bizInfoConf.getTaskId();
 		Task task = processDefinitionService.getTaskBean(taskId);
 		if (Constants.SIGN.equalsIgnoreCase(buttonId)) {
-			sign(bizInfo, bizInfoConf,(String) params.get("loginUser"));
+			sign(bizInfo, bizInfoConf, (String) params.get("loginUser"));
 		} else {
 			Map<String, Object> variables = new HashMap<String, Object>();
 			List<AbstractVariable> processValList = loadHandleProcessValBean(bizInfo, taskId);
@@ -632,9 +635,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		logBean.setBizInfo(bizInfo);
 		logBean.setHandleDescription((String) params.get("base.handleMessage"));
 		logBean.setHandleResult((String) params.get("base.handleResult"));
-		String loginUser = WebUtil.getLoginUser() != null ? WebUtil.getLoginUser().getUsername()
-				: (String) params.get("loginUser");
-		logBean.setHandleUser(loginUser);
+		LoginUser loginUser = WebUtil.getLoginUser();
+		String username = loginUser != null ? loginUser.getUsername() : (String) params.get("loginUser");
+		logBean.setHandleUser(username);
 		logBean.setHandleName((String) params.get("base.handleName"));
 		logService.addBizLog(logBean);
 	}
