@@ -35,9 +35,7 @@ biz.detail = {
 				biz.detail.subBizInfo = result.workBean.subBizInfo;
 				biz.detail.bizKey = biz.detail.workInfo.processDefinitionId;
 				biz.detail.files = result.workBean.files;
-				biz.detail.workLoad = result.workLoad;
 				biz.detail.buttonGroup = biz.detail.groupButton(biz.detail.ProcessTaskValBeans, biz.detail.buttons);
-				biz.detail.reSetWorkTime = result.reSetWorkTime;
 				document.title = biz.detail.workInfo.title;
 
 				$("[name='base.workNumber']").val(biz.detail.workInfo.id);
@@ -383,7 +381,14 @@ biz.detail = {
 					flow[key] = buttons[key];
 				}
 			}
-			var group = treatment.viewDatas.split(",");
+            var group = [];
+            if ($.isEmptyObject(treatment.viewDatas)) {
+                $.each(biz.detail.buttons, function (index, entity) {
+                    group.push(entity);
+                });
+            } else {
+                group = treatment.viewDatas.split(",");
+            }
 			//处理分组文本与按钮文本相同情况
 			for (var key in flow) {
 				for (var i = 0; i < group.length; i++) {
