@@ -1,8 +1,5 @@
 //$.namespace("processVariableSet");
 $(function() {
-	function truefalseValue(value) {
-		return "true" == value || value == true ? "是" : "否";
-	}
 	$("#process-task-table").bootstrapTable({
 		method : 'get',
 		queryParams : function queryParams(params) {
