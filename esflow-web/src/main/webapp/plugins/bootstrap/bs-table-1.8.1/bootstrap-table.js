@@ -178,7 +178,7 @@
         url: undefined,
         ajax: undefined,
         cache: false,
-        contentType: 'application/json',
+        contentType:"application/x-www-form-urlencoded",
         dataType: 'json',
         ajaxOptions: {},
         queryParams: function (params) {
