@@ -36,10 +36,10 @@ public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> impleme
 
 		BizInfoConf example = new BizInfoConf();
 		example.setBizInfo(bizInfoConf.getBizInfo());
-		example.setTaskAssignee(bizInfoConf.getTaskAssignee());
-		example.setTaskId(bizInfoConf.getTaskId());
-		List<BizInfoConf> list = this.findBizInfoConf(example);
-		this.delete(list);
+//		example.setTaskAssignee(bizInfoConf.getTaskAssignee());
+//		example.setTaskId(bizInfoConf.getTaskId());
+//		List<BizInfoConf> list = this.findBizInfoConf(example);
+		this.delete(this.findBizInfoConf(example));
 		return true;
 	}
 

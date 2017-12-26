@@ -55,10 +55,7 @@ public class CommandServiceImpl implements CommandService {
 			}
 			CommonJumpTaskCmd cmd = new CommonJumpTaskCmd(taskId, targetTaskDefKey);
 			managementService.executeCommand(cmd);
-			BizInfoConf example = new BizInfoConf();
-			example.setBizInfo(bizInfo);
 			processExecuteService.updateBizTaskInfo(bizInfo, conf);
-			this.bizInfoConfService.delete(this.bizInfoConfService.findBizInfoConf(example));
 			this.bizInfoService.update(bizInfo);
 			this.bizInfoConfService.saveOrUpdate(conf);
 		} catch (Exception e) {
