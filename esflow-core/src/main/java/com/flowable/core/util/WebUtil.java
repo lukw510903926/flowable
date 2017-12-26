@@ -26,6 +26,11 @@ public class WebUtil {
 		loginUsers.set(user);
 		return user;
 	}
+
+	public static LoginUser getLoginUser(HttpServletRequest request) {
+
+    	return getLoginUser(request,null);
+	}
 	
 	public static void setLoginUser(HttpServletRequest request,LoginUser loginUser){
 
