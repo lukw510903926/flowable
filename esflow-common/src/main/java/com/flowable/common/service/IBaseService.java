@@ -1,5 +1,7 @@
 package com.flowable.common.service;
 
+import com.flowable.common.utils.PageHelper;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -11,23 +13,27 @@ import java.util.Map;
  */
 public interface IBaseService<T> {
 
-	public List<T> findAll();
+    List<T> findAll();
 
-	public List<T> findbyParam(Map<String,Object> param, boolean isLike);
+    List<T> findbyParam(Map<String, Object> param, boolean isLike);
 
-	public void saveOrUpdate(T t);
-	
-	public Serializable save(T t);
-	
-	public void update(T t);
-	
-	public T get(String id);
-	
-	public void delete(T t);
+    PageHelper<T> findByParams(Map<String, Object> params, PageHelper<T> page, boolean like);
 
-	public void delete(List<T> t);
-	
-	public void deleteById(String id);
-	
-	public void deleteByIds(List<String> list);
+    void saveOrUpdate(T t);
+
+    Serializable save(T t);
+
+    void update(T t);
+
+    T get(String id);
+
+    void delete(T t);
+
+    void delete(List<T> t);
+
+    void deleteById(String id);
+
+    void deleteByIds(List<String> list);
+
+    boolean check(Serializable uid, List<T> list);
 }

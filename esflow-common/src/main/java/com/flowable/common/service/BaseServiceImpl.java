@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.flowable.common.utils.PageHelper;
+import com.flowable.common.utils.ReflectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,12 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 	public List<T> findAll() {
 		logger.info(" baseDao : "+baseDao.getClass());
 		return baseDao.findAll();
+	}
+
+	@Override
+	public PageHelper<T> findByParams(Map<String, Object> params, PageHelper<T> page, boolean like){
+
+		return this.baseDao.findByParams(params,page,like);
 	}
 
 	@Override
@@ -78,5 +87,22 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 	public void deleteByIds(List<String> list) {
 		
 		this.baseDao.deleteByIds(list);
+	}
+
+	@Override
+	public boolean check(Serializable uid, List<T> list) {
+
+		if (CollectionUtils.isEmpty(list)) {
+			return true;
+		} else {
+			int size = list.size();
+			if (size > 1) {
+				return false;
+			} else {
+				T t = list.get(0);
+				String oid = ReflectionUtils.getter(t, "id") + "";
+				return oid.equals(uid);
+			}
+		}
 	}
 }

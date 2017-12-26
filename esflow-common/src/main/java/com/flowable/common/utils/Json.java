@@ -40,4 +40,12 @@ public class Json implements Serializable{
 	public void setObj(Object obj) {
 		this.obj = obj;
 	}
+
+	public Json() {
+	}
+
+	public Json(String msg, boolean success) {
+		this.success = success;
+		this.msg = msg;
+	}
 }

@@ -69,6 +69,8 @@ public interface IBaseDao<T> {
 	 * @return
 	 */
 	public List<T> findByParams(Map<String, Object> params, boolean like);
+
+	PageHelper<T> findByParams(Map<String, Object> params, PageHelper<T> page, boolean like);
 	
 	public SQLQuery createSQLQuery(String sql);
 
