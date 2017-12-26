@@ -80,7 +80,13 @@ public class FlowableController {
     public BizInfo jump(@PathVariable("bizId") String bizId) {
 
         BizInfo bizInfo = this.bizInfoService.get(bizId);
-        commandService.jumpCommand(bizId, bizInfo.getTaskId(), "vendorHandle");
+        Map<String,Object> params = new HashMap<String, Object>();
+        params.put("base.handleMessage", "工单跳转");
+		params.put("base.handleResult", "工单跳转");
+		params.put("base.handleName", "工单跳转");
+		params.put("base.bizId", bizId);
+		params.put("base.taskDefKey", "vendorHandle");
+        commandService.jumpCommand(params);
         return bizInfo;
     }
 
