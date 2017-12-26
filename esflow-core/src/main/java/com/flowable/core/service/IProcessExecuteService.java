@@ -95,13 +95,12 @@ public interface IProcessExecuteService {
 	/**
 	 * 更新工单信息
 	 * 
-	 * @param id
 	 * @param params
-	 * @param startProc 
+	 * @param fileMap 
 	 * @return
 	 * @
 	 */
-	BizInfo updateBiz(String id, Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap,boolean startProc);
+	BizInfo updateBiz(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap);
 	/**
 	 * 处理工单，新增跟审批
 	 * 
@@ -129,8 +128,6 @@ public interface IProcessExecuteService {
 	 * @
 	 */
 	Map<String, Object> queryWorkOrder(String id) ;
-
-	BizInfo getBizInfo(String id) ;
 
 	/**
 	 * 下载或查看文件
