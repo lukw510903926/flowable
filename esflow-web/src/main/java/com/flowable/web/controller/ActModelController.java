@@ -1,11 +1,11 @@
 package com.flowable.web.controller;
 
-import com.flowable.common.utils.DataGrid;
-import com.flowable.common.utils.DateUtils;
-import com.flowable.common.utils.Json;
-import com.flowable.common.utils.PageHelper;
-import com.flowable.core.service.IProcessModelService;
-import org.apache.commons.collections.CollectionUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.flowable.engine.repository.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.flowable.common.utils.DataGrid;
+import com.flowable.common.utils.Json;
+import com.flowable.common.utils.PageHelper;
+import com.flowable.core.service.IProcessModelService;
 
 /**
  * 流程模型相关Controller
@@ -48,19 +47,6 @@ public class ActModelController {
         try {
             List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
             PageHelper<Model> helper = processModelService.modelList(page, category);
-            List<Model> tempResult = helper.getList();
-            if (CollectionUtils.isNotEmpty(tempResult)) {
-                for (Model temp : tempResult) {
-                    Map<String, Object> item = new HashMap<String, Object>();
-                    item.put("id", temp.getId());
-                    item.put("key", temp.getKey());
-                    item.put("name", temp.getName());
-                    item.put("version", temp.getVersion());
-                    item.put("createTime", DateUtils.formatDateTime(temp.getCreateTime()));
-                    item.put("lastUpdateTime", DateUtils.formatDateTime(temp.getLastUpdateTime()));
-                    result.add(item);
-                }
-            }
             grid.setRows(result);
             grid.setTotal(helper.getCount());
         } catch (Exception e) {

@@ -107,7 +107,7 @@ public class ActProcessController {
             grid.setRows(helper.getList());
             grid.setTotal(helper.getCount());
         } catch (Exception e) {
-            e.printStackTrace();
+           logger.error("获取运行中的实例列表失败 : {}",e);
         }
         return grid;
     }

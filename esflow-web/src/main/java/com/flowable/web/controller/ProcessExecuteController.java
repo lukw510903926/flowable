@@ -35,11 +35,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.flowable.common.exception.ServiceException;
 import com.flowable.common.utils.DataGrid;
 import com.flowable.common.utils.Json;
-import com.flowable.common.utils.LoginUser;
 import com.flowable.common.utils.PageHelper;
 import com.flowable.core.bean.AbstractVariable;
 import com.flowable.core.bean.BizInfo;
@@ -111,11 +112,11 @@ public class ProcessExecuteController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public Map<String, Object> create(String key, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/create/{key}", method = RequestMethod.GET)
+	public Map<String, Object> create(@PathVariable("key")String key, HttpServletRequest request) {
 
 		Map<String, Object> data = new HashMap<String, Object>();
-		WebUtil.getLoginUser(request, response);
+		WebUtil.getLoginUser(request);
 		ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
 		if (processDefinition != null) {
 			String proDefId = processDefinition.getId();
@@ -137,16 +138,16 @@ public class ProcessExecuteController {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	@ResponseBody
-	@RequestMapping(value = "/display")
-	public Map<String, Object> display(String id, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/display/{id}")
+	public Map<String, Object> display(@PathVariable("id") String id, HttpServletRequest request) {
 
 		Map<String, Object> data = new HashMap<String, Object>();
-		WebUtil.getLoginUser(request, response);
+		WebUtil.getLoginUser(request);
 		Map<String, Object> result = processExecuteService.queryWorkOrder(id);
 		data.put("CURRE_OP", result.get("CURRE_OP"));
-		List<AbstractVariable> list = (List<AbstractVariable>) result.get("ProcessValBeanMap");
+		String processVal = JSONObject.toJSONString(result.get("ProcessValBeanMap"));
+		List<AbstractVariable> list = JSON.parseObject(processVal, new TypeReference<List<AbstractVariable>>() {});
 		Map<String, List<AbstractVariable>> map = groupProcessValBean(list);
 		data.put("ProcessValBeanMap", map);
 		data.put("ProcessTaskValBeans", result.get("ProcessTaskValBeans"));
@@ -155,17 +156,28 @@ public class ProcessExecuteController {
 		return data;
 	}
 
-	@RequestMapping(value = "bizInfo")
+	/**
+	 * 创建工单
+	 * 
+	 * @param params
+	 * @param startProc
+	 * @param deleFileId
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "bizInfo/create")
 	public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params, boolean startProc,
-			String[] deleFileId, MultipartHttpServletRequest request, HttpServletResponse response) {
+			String[] deleFileId, MultipartHttpServletRequest request) {
 
 		Json json = new Json();
-		WebUtil.getLoginUser(request, response);
+		WebUtil.getLoginUser(request);
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.TEXT_PLAIN);
 		BizInfo bean = null;
 		try {
 			if (validateFileSize(request)) {
+				json.setSuccess(false);
 				json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
 				return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
 			}
@@ -182,26 +194,36 @@ public class ProcessExecuteController {
 		} else {
 			json.setMsg("/biz/list/myWork");
 		}
+		json.setSuccess(true);
 		return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "bizInfo/{id}")
-	public ResponseEntity<String> updateBiz(@PathVariable String id, @RequestParam Map<String, Object> params,
-			boolean startProc, MultipartHttpServletRequest request, HttpServletResponse response) {
+	/**
+	 * 重新提交
+	 * 
+	 * @param id
+	 * @param params
+	 * @param startProc
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "bizInfo/updateBiz")
+	public ResponseEntity<String> updateBiz(@RequestParam Map<String, Object> params,MultipartHttpServletRequest request) {
 
 		Json json = new Json();
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.setContentType(MediaType.TEXT_PLAIN);
 		try {
-			WebUtil.getLoginUser(request, response);
-			json.setSuccess(false);
+			WebUtil.getLoginUser(request);
 			if (validateFileSize(request)) {
 				json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
 				return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
 			}
-			processExecuteService.updateBiz(id, params, request.getMultiFileMap(), startProc);
+			processExecuteService.updateBiz(params, request.getMultiFileMap());
 		} catch (Exception e) {
 			logger.info("error", e);
+			json.setSuccess(false);
 			json.setMsg("操作失败: " + e.getLocalizedMessage());
 			return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
 		}
@@ -219,15 +241,13 @@ public class ProcessExecuteController {
 	 * @return
 	 */
 	@RequestMapping(value = "/submit")
-	public ResponseEntity<String> submit(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request,
-			HttpServletResponse response) {
+	public ResponseEntity<String> submit(@RequestParam Map<String, Object> params,MultipartHttpServletRequest request) {
 
 		Json json = new Json();
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.setContentType(MediaType.TEXT_PLAIN);
-		boolean max = validateFileSize(request);
 		try {
-			WebUtil.getLoginUser(request, response);
+			WebUtil.getLoginUser(request);
 			json.setSuccess(false);
 			if (validateFileSize(request)) {
 				json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
@@ -236,13 +256,8 @@ public class ProcessExecuteController {
 			processExecuteService.submit(params, request.getMultiFileMap());
 		} catch (Exception e) {
 			logger.error("表单提交失败 : {}", e);
-			;
 			json.setSuccess(false);
-			String message = e.getLocalizedMessage();
-			if (max) {
-				message = "附件大小不能超过" + maxUpload / 1024 / 1024 + "M";
-			}
-			json.setMsg("操作失败: " + message);
+			json.setMsg("操作失败: " + e.getLocalizedMessage());
 			return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
 		}
 
@@ -361,38 +376,5 @@ public class ProcessExecuteController {
 			temp.add(bean);
 		}
 		return map;
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/interface/update")
-	public String update(@RequestParam Map<String, Object> params, HttpServletRequest request,
-			HttpServletResponse response) {
-
-		String loginUser = (String) params.get("loginUser");
-		LoginUser user = WebUtil.getLoginUser(request, response);
-		if (user == null) {
-			return "ERROR:找不到登录用户:" + loginUser;
-		}
-		// 根据接口获取登录用户
-		try {
-			processExecuteService.update(params);
-		} catch (Exception e) {
-			logger.error("操作失败 : {}", e);
-			return "ERROR:处理失败-" + e.getMessage();
-		}
-		return "true";
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/interface/getWorkOrderInfo")
-	public String getWorkOrderInfo(String bizId, HttpServletRequest request, HttpServletResponse response) {
-
-		try {
-			BizInfo mapInfo = processExecuteService.getBizInfo(bizId);
-			return JSONObject.toJSONString(mapInfo);
-		} catch (Exception e) {
-			logger.error("操作失败 : {}", e);
-			return "ERROR:获取数据失败:" + e.getMessage();
-		}
 	}
 }
