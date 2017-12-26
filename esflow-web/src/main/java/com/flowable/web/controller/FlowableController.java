@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.flowable.core.bean.BizInfo;
+import com.flowable.core.service.IBizInfoService;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.ExclusiveGateway;
 import org.flowable.bpmn.model.FlowElement;
@@ -29,58 +31,63 @@ import com.flowable.core.service.IProcessDefinitionService;
 @Controller
 public class FlowableController {
 
-	@Autowired
-	private TaskService taskService;
+    @Autowired
+    private TaskService taskService;
 
-	@Autowired
-	private RuntimeService runtimeService;
+    @Autowired
+    private RuntimeService runtimeService;
 
-	@Autowired
-	private CommandService commandService;
+    @Autowired
+    private CommandService commandService;
 
-	@Autowired
-	private RepositoryService repositoryService;
+    @Autowired
+    private RepositoryService repositoryService;
 
-	@Autowired
-	private IProcessDefinitionService processDefinitionService;
+    @Autowired
+    private IProcessDefinitionService processDefinitionService;
 
-	@ResponseBody
-	@RequestMapping("/flow")
-	public Map<String, Object> findOutGoingTransNames() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    @Autowired
+    private IBizInfoService bizInfoService;
 
-		Map<String, Object> result = new HashMap<String, Object>();
-		TaskEntityImpl task = (TaskEntityImpl)taskService.createTaskQuery().taskId("2527").singleResult();
-		ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(task.getProcessInstanceId())
-				.singleResult();
-		String processDefinitionId = pi.getProcessDefinitionId();
-		BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
-		org.flowable.bpmn.model.Process process = bpmnModel.getProcesses().get(0);
-		Collection<FlowElement> flowElements = process.getFlowElements();
-		for (FlowElement flowElement : flowElements) {
-			if(flowElement.getId().equalsIgnoreCase(task.getTaskDefinitionKey())){
-				if (flowElement instanceof UserTask) {
-					UserTask u = (UserTask) flowElement;
-					List<SequenceFlow> outgoingFlows = u.getOutgoingFlows();
-					SequenceFlow sequenceFlow = outgoingFlows.get(0);
-					ExclusiveGateway userTask = (ExclusiveGateway)sequenceFlow.getTargetFlowElement();
-					userTask.getOutgoingFlows().forEach(outgoingFlow ->result.put(outgoingFlow.getId(), outgoingFlow.getName()));
-				}
-			}
-		}
-		return result;
-	}
+    @ResponseBody
+    @RequestMapping("/flow")
+    public Map<String, Object> findOutGoingTransNames() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-	@ResponseBody
-	@RequestMapping("/jump/{bizId}/{taskId}")
-	public Object jump(@PathVariable("bizId")String bizId,@PathVariable("taskId")String taskId){
-		commandService.jumpCommand(bizId,taskId, "vendorHandle");
-		return "";
-	}
+        Map<String, Object> result = new HashMap<String, Object>();
+        TaskEntityImpl task = (TaskEntityImpl) taskService.createTaskQuery().taskId("2527").singleResult();
+        ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(task.getProcessInstanceId())
+                .singleResult();
+        String processDefinitionId = pi.getProcessDefinitionId();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+        org.flowable.bpmn.model.Process process = bpmnModel.getProcesses().get(0);
+        Collection<FlowElement> flowElements = process.getFlowElements();
+        for (FlowElement flowElement : flowElements) {
+            if (flowElement.getId().equalsIgnoreCase(task.getTaskDefinitionKey())) {
+                if (flowElement instanceof UserTask) {
+                    UserTask u = (UserTask) flowElement;
+                    List<SequenceFlow> outgoingFlows = u.getOutgoingFlows();
+                    SequenceFlow sequenceFlow = outgoingFlows.get(0);
+                    ExclusiveGateway userTask = (ExclusiveGateway) sequenceFlow.getTargetFlowElement();
+                    userTask.getOutgoingFlows().forEach(outgoingFlow -> result.put(outgoingFlow.getId(), outgoingFlow.getName()));
+                }
+            }
+        }
+        return result;
+    }
 
-	@ResponseBody
-	@RequestMapping("/nextTask/{instanceId}")
-	public String nextTask(@PathVariable("instanceId")String instanceId){
+    @ResponseBody
+    @RequestMapping("/jump/{bizId}")
+    public BizInfo jump(@PathVariable("bizId") String bizId) {
 
-		return JSONObject.toJSONString(processDefinitionService.getNextTaskInfo(instanceId));
-	}
+        BizInfo bizInfo = this.bizInfoService.get(bizId);
+        commandService.jumpCommand(bizId, bizInfo.getTaskId(), "vendorHandle");
+        return bizInfo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/nextTask/{instanceId}")
+    public String nextTask(@PathVariable("instanceId") String instanceId) {
+
+        return JSONObject.toJSONString(processDefinitionService.getNextTaskInfo(instanceId));
+    }
 }
