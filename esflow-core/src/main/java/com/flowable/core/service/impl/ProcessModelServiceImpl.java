@@ -129,7 +129,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
 					.addInputStream(processName, in).deploy();
 			// .addString(processName, new String(bpmnBytes)).deploy();
 
-			// 设置流程分类
+			//设置流程分类
 			List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery()
 					.deploymentId(deployment.getId()).list();
 			for (ProcessDefinition processDefinition : list) {

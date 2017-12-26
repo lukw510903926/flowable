@@ -37,253 +37,252 @@ import com.flowable.core.util.WebUtil;
 @Transactional(readOnly = true)
 public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBizInfoService {
 
-	private Logger logger = LoggerFactory.getLogger("bizInfoServiceImpl");
+    private Logger logger = LoggerFactory.getLogger("bizInfoServiceImpl");
 
-	@Autowired
-	private IBizInfoDao dao;
+    @Autowired
+    private IBizInfoDao dao;
 
-	@Autowired
-	private BizInfoConfDao bizInfoConfDao;
+    @Autowired
+    private BizInfoConfDao bizInfoConfDao;
 
-	@Autowired
-	private IProcessVarInstanceDao processInstanceDao;
+    @Autowired
+    private IProcessVarInstanceDao processInstanceDao;
 
-	@Autowired
-	private ISystemUserService roleService;
+    @Autowired
+    private ISystemUserService roleService;
 
-	@Autowired
-	private IBizFileService bizFileService;
+    @Autowired
+    private IBizFileService bizFileService;
 
-	@Autowired
-	private ActProcessService actProcessService;
+    @Autowired
+    private ActProcessService actProcessService;
 
-	@Override
-	public List<BizInfo> getBizByParentId(String parentId) {
+    @Override
+    public List<BizInfo> getBizByParentId(String parentId) {
 
-		return this.dao.getBizByParentId(parentId);
-	}
+        return this.dao.getBizByParentId(parentId);
+    }
 
-	@Override
-	public List<String> loadBizInfoStatus(String processId) {
+    @Override
+    public List<String> loadBizInfoStatus(String processId) {
 
-		List<String> list = new ArrayList<String>();
-		list.add(Constants.BIZ_TEMP);
-		list.add(Constants.BIZ_NEW);
-		if (StringUtils.isNotBlank(processId)) {
-			getProcessStatus(processId, list);
-		} else {
-			List<ProcessDefinition> processList = actProcessService.findProcessDefinition(null);
-			for (ProcessDefinition processDefinition : processList) {
-				processId = processDefinition.getId();
-				getProcessStatus(processId, list);
-			}
-		}
-		list.add(Constants.BIZ_END);
-		return list;
-	}
+        List<String> list = new ArrayList<String>();
+        list.add(Constants.BIZ_TEMP);
+        list.add(Constants.BIZ_NEW);
+        if (StringUtils.isNotBlank(processId)) {
+            getProcessStatus(processId, list);
+        } else {
+            List<ProcessDefinition> processList = actProcessService.findProcessDefinition(null);
+            for (ProcessDefinition processDefinition : processList) {
+                processId = processDefinition.getId();
+                getProcessStatus(processId, list);
+            }
+        }
+        list.add(Constants.BIZ_END);
+        return list;
+    }
 
-	private void getProcessStatus(String processId, List<String> list) {
+    private void getProcessStatus(String processId, List<String> list) {
 
-		try {
-			List<Map<String, Object>> result = actProcessService.getAllTaskByProcessKey(processId);
-			for (Map<String, Object> map : result) {
-				String status = (String) map.get("name");
-				if (!list.contains(status)) {
-					list.add(status);
-				}
-			}
-		} catch (Exception e) {
-			logger.error("获取工单状态失败 : {}",e);
-			throw new ServiceException("获取工单状态失败!");
-		}
-	}
+        try {
+            List<Map<String, Object>> result = actProcessService.getAllTaskByProcessKey(processId);
+            for (Map<String, Object> map : result) {
+                String status = (String) map.get("name");
+                if (!list.contains(status)) {
+                    list.add(status);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("获取工单状态失败 : {}", e);
+            throw new ServiceException("获取工单状态失败!");
+        }
+    }
 
-	@Override
-	@Transactional
-	public void addBizInfo(BizInfo... beans) {
-		for (BizInfo bean : beans) {
-			dao.save(bean);
-		}
-	}
+    @Override
+    @Transactional
+    public void addBizInfo(BizInfo... beans) {
+        for (BizInfo bean : beans) {
+            dao.save(bean);
+        }
+    }
 
-	@Override
-	@Transactional
-	public void updateBizInfo(BizInfo... beans) {
-		for (BizInfo bean : beans) {
-			if (bean.getId() == null){
-				continue;
-			}
-			dao.update(bean);
-		}
-	}
+    @Override
+    @Transactional
+    public void updateBizInfo(BizInfo... beans) {
+        for (BizInfo bean : beans) {
+            if (bean.getId() != null) {
+                dao.update(bean);
+            }
+        }
+    }
 
-	@Override
-	public BizInfo copyBizInfo(String bizId, String processInstanceId, Map<String, Object> variables) {
+    @Override
+    public BizInfo copyBizInfo(String bizId, String processInstanceId, Map<String, Object> variables) {
 
-		BizInfo oldBiz = this.get(bizId);
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("parentId", bizId);
-		params.put("status", Constants.BIZ_NEW);
-		params.put("parentTaskName", oldBiz.getTaskName());
-		PageHelper<BizInfo> page = new PageHelper<BizInfo>();
-		page.setPage(-1);
-		page.setRows(-1);
-		List<BizInfo> list = this.getBizInfoList(params, page).getList();
-		BizInfo newBiz = oldBiz.clone();
-		newBiz.setId(null);
-		if (CollectionUtils.isEmpty(list)) {
-			newBiz.setWorkNum(newBiz.getWorkNum() + "-00" + 1);
-		} else {
-			newBiz.setWorkNum(newBiz.getWorkNum() + "-00" + (list.size() + 1));
-		}
-		newBiz.setProcessInstanceId(processInstanceId);
-		newBiz.setParentId(bizId);
-		newBiz.setCreateTime(new Date());
-		newBiz.setParentTaskName(oldBiz.getTaskName());
-		newBiz.setStatus(Constants.BIZ_NEW);
-		String username = WebUtil.getLoginUser().getUsername();
-		newBiz.setCreateUser(username);
-		this.addBizInfo(newBiz);
-		this.copyProcessVarInstance(processInstanceId, oldBiz, newBiz);
-		BizInfoConf bizInfoConf = new BizInfoConf();
-		bizInfoConf.setBizInfo(oldBiz);
-		this.copyBizInfoConf(newBiz, bizInfoConf);
-		this.copyBizFile(bizId, oldBiz, newBiz, username);
-		return newBiz;
-	}
+        BizInfo oldBiz = this.get(bizId);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("parentId", bizId);
+        params.put("status", Constants.BIZ_NEW);
+        params.put("parentTaskName", oldBiz.getTaskName());
+        PageHelper<BizInfo> page = new PageHelper<BizInfo>();
+        page.setPage(-1);
+        page.setRows(-1);
+        List<BizInfo> list = this.getBizInfoList(params, page).getList();
+        BizInfo newBiz = oldBiz.clone();
+        newBiz.setId(null);
+        if (CollectionUtils.isEmpty(list)) {
+            newBiz.setWorkNum(newBiz.getWorkNum() + "-00" + 1);
+        } else {
+            newBiz.setWorkNum(newBiz.getWorkNum() + "-00" + (list.size() + 1));
+        }
+        newBiz.setProcessInstanceId(processInstanceId);
+        newBiz.setParentId(bizId);
+        newBiz.setCreateTime(new Date());
+        newBiz.setParentTaskName(oldBiz.getTaskName());
+        newBiz.setStatus(Constants.BIZ_NEW);
+        String username = WebUtil.getLoginUser().getUsername();
+        newBiz.setCreateUser(username);
+        this.addBizInfo(newBiz);
+        this.copyProcessVarInstance(processInstanceId, oldBiz, newBiz);
+        BizInfoConf bizInfoConf = new BizInfoConf();
+        bizInfoConf.setBizInfo(oldBiz);
+        this.copyBizInfoConf(newBiz, bizInfoConf);
+        this.copyBizFile(bizId, oldBiz, newBiz, username);
+        return newBiz;
+    }
 
-	private void copyProcessVarInstance(String processInstanceId, BizInfo oldBiz, BizInfo newBiz) {
-		
-		List<ProcessVariableInstance> processInstances = processInstanceDao
-				.loadProcessInstances(oldBiz.getProcessInstanceId());
-		if (CollectionUtils.isNotEmpty(processInstances)) {
-			processInstances.forEach(oldInstance -> {
-				ProcessVariableInstance processVariableInstance = oldInstance.clone();
-				processVariableInstance.setId(null);
-				processVariableInstance.setBizId(newBiz.getId());
-				processVariableInstance.setProcessInstanceId(processInstanceId);
-				processVariableInstance.setCreateTime(new Date());
-				processInstanceDao.save(processVariableInstance);
-			});
-		}
-	}
+    private void copyProcessVarInstance(String processInstanceId, BizInfo oldBiz, BizInfo newBiz) {
 
-	private void copyBizFile(String bizId, BizInfo oldBiz, BizInfo newBiz, String username) {
+        List<ProcessVariableInstance> processInstances = processInstanceDao
+                .loadProcessInstances(oldBiz.getProcessInstanceId());
+        if (CollectionUtils.isNotEmpty(processInstances)) {
+            processInstances.forEach(oldInstance -> {
+                ProcessVariableInstance processVariableInstance = oldInstance.clone();
+                processVariableInstance.setId(null);
+                processVariableInstance.setBizId(newBiz.getId());
+                processVariableInstance.setProcessInstanceId(processInstanceId);
+                processVariableInstance.setCreateTime(new Date());
+                processInstanceDao.save(processVariableInstance);
+            });
+        }
+    }
 
-		List<BizFile> files = bizFileService.loadBizFilesByBizId(bizId, oldBiz.getTaskId());
-		if (CollectionUtils.isNotEmpty(files)) {
-			files.forEach(oldFile -> {
-				BizFile bizFile = oldFile.clone();
-				bizFile.setId(null);
-				bizFile.setBizInfo(newBiz);
-				bizFile.setCreateDate(new Date());
-				bizFile.setCreateUser(username);
-				bizFileService.addBizFile(bizFile);
-			});
-		}
-	}
+    private void copyBizFile(String bizId, BizInfo oldBiz, BizInfo newBiz, String username) {
 
-	private void copyBizInfoConf(BizInfo newBiz, BizInfoConf bizInfoConf) {
+        List<BizFile> files = bizFileService.loadBizFilesByBizId(bizId, oldBiz.getTaskId());
+        if (CollectionUtils.isNotEmpty(files)) {
+            files.forEach(oldFile -> {
+                BizFile bizFile = oldFile.clone();
+                bizFile.setId(null);
+                bizFile.setBizInfo(newBiz);
+                bizFile.setCreateDate(new Date());
+                bizFile.setCreateUser(username);
+                bizFileService.addBizFile(bizFile);
+            });
+        }
+    }
 
-		List<BizInfoConf> bizInfoConfs = this.bizInfoConfDao.findBizInfoConf(bizInfoConf);
-		if (CollectionUtils.isNotEmpty(bizInfoConfs)) {
-			bizInfoConfs.forEach(bizConf -> {
-				BizInfoConf newConf = bizConf.clone();
-				newConf.setId(null);
-				newConf.setBizInfo(newBiz);
-				newConf.setCreateTime(new Date());
-				bizInfoConfDao.save(newConf);
-			});
-		}
-	}
+    private void copyBizInfoConf(BizInfo newBiz, BizInfoConf bizInfoConf) {
 
-	@Override
-	@Transactional
-	public void deleteBizInfo(BizInfo... beans) {
+        List<BizInfoConf> bizInfoConfs = this.bizInfoConfDao.findBizInfoConf(bizInfoConf);
+        if (CollectionUtils.isNotEmpty(bizInfoConfs)) {
+            bizInfoConfs.forEach(bizConf -> {
+                BizInfoConf newConf = bizConf.clone();
+                newConf.setId(null);
+                newConf.setBizInfo(newBiz);
+                newConf.setCreateTime(new Date());
+                bizInfoConfDao.save(newConf);
+            });
+        }
+    }
 
-		for (BizInfo bean : beans) {
-			if (bean.getId() == null)
-				continue;
-			dao.delete(bean);
-		}
-	}
+    @Override
+    @Transactional
+    public void deleteBizInfo(BizInfo... beans) {
 
-	@Override
-	@Transactional
-	public void deleteBizInfo(String... ids) {
+        for (BizInfo bean : beans) {
+            if (bean.getId() != null) {
+                dao.delete(bean);
+            }
+        }
+    }
 
-		for (String id : ids) {
-			dao.deleteById(id);
-		}
-	}
+    @Override
+    @Transactional
+    public void deleteBizInfo(String... ids) {
 
-	@Override
-	public BizInfo getBizInfo(String id, String loginUser) {
+        for (String id : ids) {
+            dao.deleteById(id);
+        }
+    }
 
-		return dao.getBizInfo(id, loginUser);
-	}
+    @Override
+    public BizInfo getBizInfo(String id, String loginUser) {
 
-	@Override
-	public BizInfo getByBizId(String id) {
+        return dao.getBizInfo(id, loginUser);
+    }
 
-		return this.get(id);
-	}
+    @Override
+    public BizInfo getByBizId(String id) {
 
-	@Override
-	@Transactional
-	public void updateBizByIds(List<String> list) {
+        return this.get(id);
+    }
 
-		list.forEach(id -> {
-			if (StringUtils.isNotBlank(id)) {
-				BizInfo bizInfo = this.get(id);
-				if (bizInfo != null) {
-					bizInfo.setStatus(Constants.BIZ_DELETE);
-					this.updateBizInfo(bizInfo);
-				}
-			}
-		});
-	}
+    @Override
+    @Transactional
+    public void updateBizByIds(List<String> list) {
 
-	@Override
-	public PageHelper<BizInfo> getBizInfoList(Map<String, Object> params, PageHelper<BizInfo> page) {
+        list.forEach(id -> {
+            if (StringUtils.isNotBlank(id)) {
+                BizInfo bizInfo = this.get(id);
+                if (bizInfo != null) {
+                    bizInfo.setStatus(Constants.BIZ_DELETE);
+                    this.updateBizInfo(bizInfo);
+                }
+            }
+        });
+    }
 
-		logger.info("工单查询 params : " + params);
-		List<BizInfo> result = new ArrayList<BizInfo>();
-		Map<String, SystemUser> userCache = new HashMap<String, SystemUser>();
-		Object ct1 = params.get("createTime");
-		Object ct2 = params.get("createTime2");
-		if (!(ct1 == null && ct2 == null)) {
-			if (ct1 == null) {
-				params.put("createTime", new Date());
-			} else if (ct2 == null) {
-				params.put("createTime2", new Date());
-			}
-		}
+    @Override
+    public PageHelper<BizInfo> getBizInfoList(Map<String, Object> params, PageHelper<BizInfo> page) {
 
-		PageHelper<BizInfo> pageHelper = dao.queryWorkOrder(params, page);
-		List<BizInfo> list = pageHelper.getList();
-		if (CollectionUtils.isNotEmpty(list)) {
-			for (BizInfo bizInfo : list) {
-				bizInfo.setCreateUser(this.getUserNameCn(bizInfo.getCreateUser(), userCache));
-				bizInfo.setTaskAssignee(this.getUserNameCn(bizInfo.getTaskAssignee(), userCache));
-				result.add(bizInfo);
-			}
-		}
-		pageHelper.setList(result);
-		userCache.clear();
-		return pageHelper;
-	}
+        logger.info("工单查询 params : " + params);
+        List<BizInfo> result = new ArrayList<BizInfo>();
+        Map<String, SystemUser> userCache = new HashMap<String, SystemUser>();
+        Object ct1 = params.get("createTime");
+        Object ct2 = params.get("createTime2");
+        if (!(ct1 == null && ct2 == null)) {
+            if (ct1 == null) {
+                params.put("createTime", new Date());
+            } else if (ct2 == null) {
+                params.put("createTime2", new Date());
+            }
+        }
 
-	private String getUserNameCn(String username, Map<String, SystemUser> userCache) {
+        PageHelper<BizInfo> pageHelper = dao.queryWorkOrder(params, page);
+        List<BizInfo> list = pageHelper.getList();
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (BizInfo bizInfo : list) {
+                bizInfo.setCreateUser(this.getUserNameCn(bizInfo.getCreateUser(), userCache));
+                bizInfo.setTaskAssignee(this.getUserNameCn(bizInfo.getTaskAssignee(), userCache));
+                result.add(bizInfo);
+            }
+        }
+        pageHelper.setList(result);
+        userCache.clear();
+        return pageHelper;
+    }
 
-		SystemUser loginUser = userCache.get(username);
-		if (loginUser == null) {
-			loginUser = this.roleService.getUserByUsername(username);
-		}
-		if (loginUser != null) {
-			userCache.put(username, loginUser);
-			return loginUser.getName();
-		}
-		return username;
-	}
+    private String getUserNameCn(String username, Map<String, SystemUser> userCache) {
+
+        SystemUser loginUser = userCache.get(username);
+        if (loginUser == null) {
+            loginUser = this.roleService.getUserByUsername(username);
+        }
+        if (loginUser != null) {
+            userCache.put(username, loginUser);
+            return loginUser.getName();
+        }
+        return username;
+    }
 }
