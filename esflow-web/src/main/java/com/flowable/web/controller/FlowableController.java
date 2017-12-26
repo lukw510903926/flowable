@@ -17,10 +17,16 @@ import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@RestController
+import com.alibaba.fastjson.JSONObject;
+import com.flowable.core.service.CommandService;
+import com.flowable.core.service.IProcessDefinitionService;
+
+@Controller
 public class FlowableController {
 
 	@Autowired
@@ -30,8 +36,15 @@ public class FlowableController {
 	private RuntimeService runtimeService;
 
 	@Autowired
+	private CommandService commandService;
+
+	@Autowired
 	private RepositoryService repositoryService;
 
+	@Autowired
+	private IProcessDefinitionService processDefinitionService;
+
+	@ResponseBody
 	@RequestMapping("/flow")
 	public Map<String, Object> findOutGoingTransNames() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -55,5 +68,19 @@ public class FlowableController {
 			}
 		}
 		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping("/jump/{bizId}/{taskId}")
+	public Object jump(@PathVariable("bizId")String bizId,@PathVariable("taskId")String taskId){
+		commandService.jumpCommand(bizId,taskId, "vendorHandle");
+		return "";
+	}
+
+	@ResponseBody
+	@RequestMapping("/nextTask/{instanceId}")
+	public String nextTask(@PathVariable("instanceId")String instanceId){
+
+		return JSONObject.toJSONString(processDefinitionService.getNextTaskInfo(instanceId));
 	}
 }
