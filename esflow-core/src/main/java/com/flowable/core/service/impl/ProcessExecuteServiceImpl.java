@@ -274,7 +274,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	@Override
 	@Transactional
 	public BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap,
-								  boolean startProc, String[] deleFileId) {
+			boolean startProc, String[] deleFileId) {
 
 		String source = (String) params.get("$source");
 		source = StringUtils.isBlank(source) ? "人工发起" : source;
@@ -407,7 +407,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
 	@Override
 	public void saveOrUpdateVars(BizInfo bizInfo, BizInfoConf bizInfoConf, List<AbstractVariable> processValList,
-								 Map<String, Object> params, Date now) {
+			Map<String, Object> params, Date now) {
 
 		String procInstId = bizInfo.getProcessInstanceId();
 		String taskId = bizInfoConf.getTaskId();
@@ -498,8 +498,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 				}
 			}
 			bizInfo.setTaskId(taskIds.substring(0, taskIds.lastIndexOf(",")));
-			String assignee = StringUtils.isBlank(taskAssignee.toString()) ? null
-					: taskAssignee.substring(0, taskAssignee.lastIndexOf(","));
+			String assignee = taskAssignee.toString();
+			assignee = StringUtils.isBlank(assignee) ? null : assignee.substring(0, assignee.lastIndexOf(","));
 			bizInfo.setStatus(taskInfo.getName());
 			bizInfo.setTaskName(taskInfo.getName());
 			bizInfo.setTaskDefKey(taskInfo.getTaskDefinitionKey());

@@ -28,19 +28,12 @@ public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> impleme
 	@Transactional(readOnly = false)
 	public void saveOrUpdate(BizInfoConf bizInfoConf) {
 		
-		this.check(bizInfoConf);
-		this.bizInfoConfDao.saveOrUpdate(bizInfoConf);
-	}
-
-	private boolean check(BizInfoConf bizInfoConf) {
-
 		BizInfoConf example = new BizInfoConf();
 		example.setBizInfo(bizInfoConf.getBizInfo());
-//		example.setTaskAssignee(bizInfoConf.getTaskAssignee());
-//		example.setTaskId(bizInfoConf.getTaskId());
-//		List<BizInfoConf> list = this.findBizInfoConf(example);
+		example.setTaskAssignee(bizInfoConf.getTaskAssignee());
+		example.setTaskId(bizInfoConf.getTaskId());
 		this.delete(this.findBizInfoConf(example));
-		return true;
+		this.bizInfoConfDao.saveOrUpdate(bizInfoConf);
 	}
 
 	@Override
