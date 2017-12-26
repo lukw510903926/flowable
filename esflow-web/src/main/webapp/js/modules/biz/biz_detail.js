@@ -61,9 +61,7 @@ biz.detail = {
 			var list = grops[grop];
 
 			var table = biz.detail.getTable(grop);
-
-			var tr = $("<tr>");
-
+			var tr = $("<tr></tr>");
 			if (grop == "工单信息") {
 				var th = $("<th>");
 				th.text("工单标题:");
@@ -91,9 +89,7 @@ biz.detail = {
 			}
 			view.setDynamic();
 			//加载附件组件
-			if (grop == "工单信息" && biz.detail.bizKey.split(":")[0] != "maintainManagement") {
-				biz.show.table.addFile(biz.detail.annexs, table);
-			}
+			biz.show.table.addFile(biz.detail.annexs, table);
 		}
 		//加载子工单组件
 		if (!$.isEmptyObject(biz.detail.subBizInfo)) {
@@ -107,8 +103,9 @@ biz.detail = {
 	},
 	loadBaseData : function(serviceInfo, ele) { //回显
 
-		if (ele == undefined)
+		if (ele == undefined){
 			ele = $("body");
+		}
 		for (var i in serviceInfo) {
 			//特殊处理组件
 			if (serviceInfo[i].variable.viewComponent == "CROSSDIMENSION") {
@@ -338,17 +335,17 @@ biz.detail = {
 			//判断是否签收
 			var qianshou = false;
 			var bnts = biz.detail.buttonGroup ? biz.detail.buttonGroup.all : buttons;
-			for (var key in bnts) {
-				if (bnts[key] == "签收") {
+			$.each(bnts,function(index,value){
+				if (value == "签收") {
 					qianshou = true;
 					biz.edit.form.addMessage({
 						alias : "处理意见",
 						name : "handleResult",
 						required : false
 					});
-					break;
+					return false;
 				}
-			}
+			});
 			biz.detail.loadBaseData(workLoad, table);
 		}
 	},

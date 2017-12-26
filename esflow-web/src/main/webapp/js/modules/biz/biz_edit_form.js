@@ -201,7 +201,6 @@ biz.edit.form = {
         } else {
             if (option.list) {
                 for (var i = 0; i < option.list.length; i++) {
-
                     if (option.list[i].viewComponent == "TREATMENT") {
                         var treatmentList = [];
                         if ($.isEmptyObject(option.list[i].viewDatas)) {
@@ -503,6 +502,7 @@ biz.edit.form = {
         }
         return biz.edit.data.tr;
     },
+    
     addBoolean: function (data, table, tr) {
 
         if (table == undefined) {

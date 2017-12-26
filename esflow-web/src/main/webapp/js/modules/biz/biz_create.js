@@ -136,22 +136,12 @@ biz.create = {
 			ele = $("body");
 		}
 		for (var i in serviceInfo) {
-			if (serviceInfo[i].variable.viewComponent == "CROSSDIMENSION") {
-				biz.show.table.jwWork.setJwWorkValue(serviceInfo[i].value);
-				continue;
-			} else if (serviceInfo[i].variable.viewComponent == "CONFIRMUSER") {
+			if (serviceInfo[i].variable.viewComponent == "CONFIRMUSER") {
 				biz.show.table.confirmUser.setConfirmUserValue(serviceInfo[i]);
 				continue;
 			} else if (serviceInfo[i].variable.viewComponent == "MEMBERLINKAGE") {
 				ele.find("span[name='" + serviceInfo[i].variable.id + "&" + serviceInfo[i].taskId + "']").text(serviceInfo[i].value == null ? "" : serviceInfo[i].value.replace("Group:", ""));
 				continue;
-			} else if (serviceInfo[i].variable.viewComponent == "EVENTBIZLIST") {
-				biz.show.table.eventBizList.setEventBizList(serviceInfo[i]);
-				continue;
-			} else if (serviceInfo[i].variable.viewComponent == "MANAGERAPPROVER") {
-				$("#handleUser   option[value='" + serviceInfo[i].value + "']").attr("selected", true);
-			} else if (serviceInfo[i].variable.viewComponent == "STAFFINFOLINKAGECOMBOBOX") {
-				$("#handleUser   option[value='" + serviceInfo[i].value + "']").attr("selected", true);
 			} else if (serviceInfo[i].variable.viewComponent == "MEMBERBOX") {
 				biz.show.table.userInfo.setUserNames(serviceInfo[i]);
 			} else if (ele.find(":input[name='" + serviceInfo[i].variable.name + "']").length > 0) {
@@ -190,6 +180,7 @@ biz.create = {
 				biz.create.type.event(view, group == "工单信息");
 			}
 		}
+		view.addFile(bizId ? biz.create.draftData.annexs : null);
 		$("#form").find('[name="actualCreator"]').val(createUser.fullname);
 		$("#form").find('[name="actualCreatePhone"]').val(createUser.mobile);
 	},
@@ -207,8 +198,9 @@ biz.create = {
 	submit : function(key) {
 		var file = $(":file");
 		for (var i = 0; i < file.length; i++) {
-			if (file.eq(i).val() == "")
+			if (file.eq(i).val() == ""){
 				file.eq(i).remove();
+			}
 		}
 		var input = $(":input[checkEmpty='true']");
 
@@ -282,9 +274,6 @@ biz.create.type = {
 		}
 		view.addTitle("工单标题");
 		view.setDynamic();
-		if (flag) {
-			view.addFile(bizId ? biz.create.draftData.annexs : null);
-		}
 	},
 	maintain : function(view, flag) {
 		if (flag) {
