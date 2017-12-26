@@ -402,6 +402,7 @@ biz.show.table = {
      * 子单
      */
     addSonBiz: function (data, table, tr) {
+
         if (table == undefined) {
             table = biz.show.data.table;
         }
@@ -471,7 +472,7 @@ biz.show.table = {
             },
             success: function (result) {
                 if (result) {
-                    $.each(result,function(index,entity){
+                    $.each(result, function (index, entity) {
                         var span = $("<span style='margin-right:10px;display:block;'><a href='" + path + "/biz/download?id=" + entity.id + "'>" + entity.name + "</a></span>");
                         $("span[name='" + data.variable.id + "&" + data.taskId + "']").append(span);
                     });
@@ -500,7 +501,7 @@ biz.show.table = {
                     }
                 }
                 s.forEach(function (item) {
-                    if ($("body").find("span[name='" + item + "']").children().length == 0){
+                    if ($("body").find("span[name='" + item + "']").children().length == 0) {
                         $("body").find("span[name='" + item + "']").append("无");
                     }
                 });
@@ -665,7 +666,7 @@ biz.show.table.sonBiz = {
             columns: [{
                 field: "workNum",
                 title: "工单号",
-                align: "left",
+                align: "center",
                 formatter: function (value, row, index) {
                     var url = path + "/biz/" + row.id;
                     return "<a onclick=\"window.open('" + url + "');\">" + value + "</a>";
@@ -673,44 +674,35 @@ biz.show.table.sonBiz = {
             }, {
                 field: "bizType",
                 title: "工单类型",
-                align: "left"
+                align: "center"
             }, {
                 field: "title",
                 title: "工单标题",
-                align: "left"
+                align: "center"
             }, {
                 field: "createUser",
                 title: "创建人",
-                align: "left"
+                align: "center"
             }, {
                 field: "createTime",
                 title: "创建时间",
-                align: "left"
+                align: "center"
             }, {
                 field: "status",
                 title: "工单状态",
-                align: "left"
+                align: "center"
             }, {
                 field: "taskAssignee",
                 title: "当前处理人",
-                align: "left"
-            }],
-            onLoadSuccess: function (data) {
-                for (var i = 0; i < data.rows.length; i++) {
-                    var checkbox = $("<input type='checkbox'>");
-                    var span = $("<span style='display: inline-block;'>");
-                    span.append(checkbox);
-                    span.append(data.rows[i].bizId);
-                    div.append(span);
-                }
-            }
+                align: "center"
+            }]
         });
-        for (var i = 0; i < data.length; i++) {
-            var checkbox = $("<input type='checkbox'>");
-            var span = $("<span style='display: inline-block;'>");
-            span.append(checkbox);
-            span.append(data[i].bizId);
+
+        $.each(data, function (index, entity) {
+            var checkbox = $("<input type='checkbox'/>");
+            var span = $("<span style='display: inline-block;'></span>");
+            span.append(checkbox).append(entity.workNum);
             div.append(span);
-        }
+        });
     }
 };

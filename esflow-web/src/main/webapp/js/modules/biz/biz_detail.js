@@ -99,7 +99,7 @@ biz.detail = {
 			}
 		}
 		//加载子工单组件
-		if (biz.detail.subBizInfo != undefined) {
+		if (!$.isEmptyObject(biz.detail.subBizInfo)) {
 			var table = biz.detail.getTable("子单信息");
 			biz.show.table.addSonBiz({
 				alias : "推诿单",
