@@ -119,7 +119,7 @@ biz.create = {
             });
             view.appendTd();
         } else {
-            $.each(list,function(index,entity){
+            $.each(list, function (index, entity) {
                 var text = createUser[entity.id];
                 if (entity.id == "createTime") {
                     text = (new Date()).Format("yyyy/MM/dd hh:mm:ss");
@@ -179,8 +179,8 @@ biz.create = {
                 default:
                     biz.create.type.event(view, group == "工单信息");
             }
+            view.addFile(bizId ? biz.create.draftData.annexs : null);
         }
-        view.addFile(bizId ? biz.create.draftData.annexs : null);
         $("#form").find('[name="actualCreator"]').val(createUser.fullname);
         $("#form").find('[name="actualCreatePhone"]').val(createUser.mobile);
     },
