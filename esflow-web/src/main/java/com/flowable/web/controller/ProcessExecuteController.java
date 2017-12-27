@@ -13,6 +13,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.flowable.core.bean.ProcessVariable;
+import com.flowable.core.service.IProcessVariableService;
+import com.flowable.core.util.Constants;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -42,7 +45,6 @@ import com.flowable.common.exception.ServiceException;
 import com.flowable.common.utils.DataGrid;
 import com.flowable.common.utils.Json;
 import com.flowable.common.utils.PageHelper;
-import com.flowable.core.bean.AbstractVariable;
 import com.flowable.core.bean.BizInfo;
 import com.flowable.core.service.IBizInfoService;
 import com.flowable.core.service.IProcessDefinitionService;
@@ -53,328 +55,337 @@ import com.flowable.core.util.WebUtil;
 @RequestMapping("/workflow")
 public class ProcessExecuteController {
 
-	@Autowired
-	private IProcessExecuteService processExecuteService;
+    @Autowired
+    private IProcessExecuteService processExecuteService;
 
-	@Autowired
-	private IProcessDefinitionService processDefinitionService;
+    @Autowired
+    private IProcessDefinitionService processDefinitionService;
 
-	@Autowired
-	private IBizInfoService bizInfoService;
+    @Autowired
+    private IBizInfoService bizInfoService;
 
-	@Value("${web.maxUploadSize}")
-	private long maxUpload;
+    @Autowired
+    private IProcessVariableService processVariableService;
 
-	private Logger logger = LoggerFactory.getLogger("processExecuteController");
+    @Value("${web.maxUploadSize}")
+    private long maxUpload;
 
-	@ResponseBody
-	@RequestMapping(value = "/loadWorkLogInput")
-	public Map<String, Object> loadWorkLogInput(String logId) {
-		return processExecuteService.loadBizLogInput(logId);
-	}
+    private Logger logger = LoggerFactory.getLogger("processExecuteController");
 
-	@RequestMapping(value = "index")
-	public String index(Model model) {
+    @ResponseBody
+    @RequestMapping(value = "/loadWorkLogInput")
+    public Map<String, Object> loadWorkLogInput(String logId) {
+        return processExecuteService.loadBizLogInput(logId);
+    }
 
-		Map<String, Object> map = processExecuteService.loadProcessList();
-		model.addAttribute("ProcessMapJson", JSONObject.toJSONString(map));
-		return "work/index";
-	}
+    @RequestMapping(value = "index")
+    public String index(Model model) {
 
-	/**
-	 * target取值如下<br>
-	 * myComplete : 待办工单<br>
-	 * myClaim : 待签任务<br>
-	 * query : 全局查询<br>
-	 * myCreate : 我创建的单<br>
-	 * myHandle : 我处理过的单<br>
-	 * myClose : 我创建并关闭的单
-	 * 
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/queryWorkOrder")
-	public DataGrid queryWorkOrder(@RequestParam Map<String, Object> params, PageHelper<BizInfo> page,
-			HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> map = processExecuteService.loadProcessList();
+        model.addAttribute("ProcessMapJson", JSONObject.toJSONString(map));
+        return "work/index";
+    }
 
-		WebUtil.getLoginUser(request, response);
-		String action = (String) params.get("action");
-		PageHelper<BizInfo> helper = processExecuteService.queryMyBizInfos(action, params, page);
-		DataGrid grid = new DataGrid();
-		grid.setRows(helper.getList());
-		grid.setTotal(helper.getCount());
-		return grid;
-	}
+    /**
+     * target取值如下<br>
+     * myComplete : 待办工单<br>
+     * myClaim : 待签任务<br>
+     * query : 全局查询<br>
+     * myCreate : 我创建的单<br>
+     * myHandle : 我处理过的单<br>
+     * myClose : 我创建并关闭的单
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/queryWorkOrder")
+    public DataGrid queryWorkOrder(@RequestParam Map<String, Object> params, PageHelper<BizInfo> page,
+                                   HttpServletRequest request, HttpServletResponse response) {
 
-	/**
-	 * 创建工单
-	 * 
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/create/{key}", method = RequestMethod.GET)
-	public Map<String, Object> create(@PathVariable("key")String key, HttpServletRequest request) {
+        WebUtil.getLoginUser(request, response);
+        String action = (String) params.get("action");
+        PageHelper<BizInfo> helper = processExecuteService.queryMyBizInfos(action, params, page);
+        DataGrid grid = new DataGrid();
+        grid.setRows(helper.getList());
+        grid.setTotal(helper.getCount());
+        return grid;
+    }
 
-		Map<String, Object> data = new HashMap<String, Object>();
-		WebUtil.getLoginUser(request);
-		ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
-		if (processDefinition != null) {
-			String proDefId = processDefinition.getId();
-			data.put("base_tempID", proDefId);
-			List<AbstractVariable> list = processExecuteService.loadHandleProcessVariables(proDefId);
-			data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
-			Map<String, List<AbstractVariable>> map = groupProcessValBean(list);
-			data.put("ProcessValBeanMap", map);
-			data.put("result", true);
-		} else {
-			data.put("result", false);
-			data.put("msg", "流程【" + key + "】未找到!");
-		}
-		return data;
-	}
+    /**
+     * 创建工单
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/create/{key}", method = RequestMethod.GET)
+    public Map<String, Object> create(@PathVariable("key") String key, HttpServletRequest request) {
 
-	/**
-	 * 显示某个工单信息
-	 * 
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/display/{id}")
-	public Map<String, Object> display(@PathVariable("id") String id, HttpServletRequest request) {
+        Map<String, Object> data = new HashMap<String, Object>();
+        try {
 
-		Map<String, Object> data = new HashMap<String, Object>();
-		WebUtil.getLoginUser(request);
-		Map<String, Object> result = processExecuteService.queryWorkOrder(id);
-		data.put("CURRE_OP", result.get("CURRE_OP"));
-		String processVal = JSONObject.toJSONString(result.get("ProcessValBeanMap"));
-		List<AbstractVariable> list = JSON.parseObject(processVal, new TypeReference<List<AbstractVariable>>() {});
-		Map<String, List<AbstractVariable>> map = groupProcessValBean(list);
-		data.put("ProcessValBeanMap", map);
-		data.put("ProcessTaskValBeans", result.get("ProcessTaskValBeans"));
-		data.put("SYS_BUTTON", result.get("SYS_BUTTON"));
-		data.put("workBean", result);
-		return data;
-	}
+            WebUtil.getLoginUser(request);
+            ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
+            if (processDefinition != null) {
+                String proDefId = processDefinition.getId();
+                data.put("base_tempID", proDefId);
+                ProcessVariable variable = new ProcessVariable();
+                variable.setProcessDefinitionId(proDefId);
+                variable.setTaskId(Constants.TASK_START);
+                variable.setVersion(-1);
+                List<ProcessVariable> list = this.processVariableService.findProcessVariables(variable);
+                data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
+                Map<String, List<ProcessVariable>> map = groupProcessValBean(list);
+                data.put("ProcessValBeanMap", map);
+                data.put("result", true);
+            } else {
+                data.put("result", false);
+                data.put("msg", "流程【" + key + "】未找到!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
 
-	/**
-	 * 创建工单
-	 * 
-	 * @param params
-	 * @param startProc
-	 * @param deleFileId
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	@RequestMapping(value = "bizInfo/create")
-	public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params, boolean startProc,
-			String[] deleFileId, MultipartHttpServletRequest request) {
+    /**
+     * 显示某个工单信息
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/display/{id}")
+    public Map<String, Object> display(@PathVariable("id") String id, HttpServletRequest request) {
 
-		Json json = new Json();
-		WebUtil.getLoginUser(request);
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.TEXT_PLAIN);
-		BizInfo bean = null;
-		try {
-			if (validateFileSize(request)) {
-				json.setSuccess(false);
-				json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
-				return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
-			}
-			bean = processExecuteService.createBizDraft(params, request.getMultiFileMap(), startProc, deleFileId);
-		} catch (Exception e) {
-			logger.error("工单创建失败 : {}", e);
-			json.setSuccess(false);
-			json.setMsg("操作失败: " + e.getLocalizedMessage());
-			return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
-		}
-		json.setSuccess(true);
-		if (startProc) {
-			json.setMsg("/biz/" + bean.getId());
-		} else {
-			json.setMsg("/biz/list/myWork");
-		}
-		json.setSuccess(true);
-		return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
-	}
+        Map<String, Object> data = new HashMap<String, Object>();
+            Map<String, Object> result = processExecuteService.queryWorkOrder(id);
+        try {
+            WebUtil.getLoginUser(request);
+            logger.info(JSONObject.toJSONString(result));
+            String processVal = JSONObject.toJSONString(result.get("processVariables"));
+            List<ProcessVariable> list = JSON.parseObject(processVal, new TypeReference<List<ProcessVariable>>() {
+            });
+            Map<String, List<ProcessVariable>> map = groupProcessValBean(list);
+            result.put("processVariablesMap", map);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
-	/**
-	 * 重新提交
-	 * 
-	 * @param id
-	 * @param params
-	 * @param startProc
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	@RequestMapping(value = "bizInfo/updateBiz")
-	public ResponseEntity<String> updateBiz(@RequestParam Map<String, Object> params,MultipartHttpServletRequest request) {
+    /**
+     * 创建工单
+     *
+     * @param params
+     * @param startProc
+     * @param deleFileId
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "bizInfo/create")
+    public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params, boolean startProc,
+                                            String[] deleFileId, MultipartHttpServletRequest request) {
 
-		Json json = new Json();
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.setContentType(MediaType.TEXT_PLAIN);
-		try {
-			WebUtil.getLoginUser(request);
-			if (validateFileSize(request)) {
-				json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
-				return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
-			}
-			processExecuteService.updateBiz(params, request.getMultiFileMap());
-		} catch (Exception e) {
-			logger.info("error", e);
-			json.setSuccess(false);
-			json.setMsg("操作失败: " + e.getLocalizedMessage());
-			return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
-		}
-		json.setSuccess(true);
-		json.setMsg("操作成功");
-		return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
-	}
+        Json json = new Json();
+        WebUtil.getLoginUser(request);
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.TEXT_PLAIN);
+        BizInfo bean = null;
+        try {
+            if (validateFileSize(request)) {
+                json.setSuccess(false);
+                json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
+                return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
+            }
+            bean = processExecuteService.createBizDraft(params, request.getMultiFileMap(), startProc, deleFileId);
+        } catch (Exception e) {
+            logger.error("工单创建失败 : {}", e);
+            json.setSuccess(false);
+            json.setMsg("操作失败: " + e.getLocalizedMessage());
+            return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
+        }
+        json.setSuccess(true);
+        if (startProc) {
+            json.setMsg("/biz/" + bean.getId());
+        } else {
+            json.setMsg("/biz/list/myWork");
+        }
+        json.setSuccess(true);
+        return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
+    }
 
-	/**
-	 * 工单处理，自动处理工单的各种状态的提交
-	 * 
-	 * @param params
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	@RequestMapping(value = "/submit")
-	public ResponseEntity<String> submit(@RequestParam Map<String, Object> params,MultipartHttpServletRequest request) {
+    /**
+     * 重新提交
+     *
+     * @param params
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "bizInfo/updateBiz")
+    public ResponseEntity<String> updateBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
-		Json json = new Json();
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.setContentType(MediaType.TEXT_PLAIN);
-		try {
-			WebUtil.getLoginUser(request);
-			json.setSuccess(false);
-			if (validateFileSize(request)) {
-				json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
-				return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
-			}
-			processExecuteService.submit(params, request.getMultiFileMap());
-		} catch (Exception e) {
-			logger.error("表单提交失败 : {}", e);
-			json.setSuccess(false);
-			json.setMsg("操作失败: " + e.getLocalizedMessage());
-			return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
-		}
+        Json json = new Json();
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentType(MediaType.TEXT_PLAIN);
+        try {
+            WebUtil.getLoginUser(request);
+            if (validateFileSize(request)) {
+                json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
+                return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
+            }
+            processExecuteService.updateBiz(params, request.getMultiFileMap());
+        } catch (Exception e) {
+            logger.info("error", e);
+            json.setSuccess(false);
+            json.setMsg("操作失败: " + e.getLocalizedMessage());
+            return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
+        }
+        json.setSuccess(true);
+        json.setMsg("操作成功");
+        return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
+    }
 
-		json.setSuccess(true);
-		json.setMsg("操作成功");
-		return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
-	}
+    /**
+     * 工单处理，自动处理工单的各种状态的提交
+     *
+     * @param params
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/submit")
+    public ResponseEntity<String> submit(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
-	private boolean validateFileSize(MultipartHttpServletRequest request) {
+        Json json = new Json();
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentType(MediaType.TEXT_PLAIN);
+        try {
+            WebUtil.getLoginUser(request);
+            json.setSuccess(false);
+            if (validateFileSize(request)) {
+                json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
+                return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
+            }
+            processExecuteService.submit(params, request.getMultiFileMap());
+        } catch (Exception e) {
+            logger.error("表单提交失败 : {}", e);
+            json.setSuccess(false);
+            json.setMsg("操作失败: " + e.getLocalizedMessage());
+            return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
+        }
 
-		long fileSize = 0L;
-		MultiValueMap<String, MultipartFile> multiValueMap = request.getMultiFileMap();
-		if (MapUtils.isNotEmpty(multiValueMap)) {
-			Collection<List<MultipartFile>> files = multiValueMap.values();
-			for (List<MultipartFile> list : files) {
-				for (MultipartFile multipartFile : list) {
-					fileSize += multipartFile.getSize();
-				}
-			}
-		}
-		if (maxUpload < fileSize) {
-			return true;
-		}
-		return false;
-	}
+        json.setSuccess(true);
+        json.setMsg("操作成功");
+        return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
+    }
 
-	@ResponseBody
-	@RequestMapping(value = "/bizInfo/delete")
-	public Json deleteBizInfo(@RequestParam List<String> ids) {
+    private boolean validateFileSize(MultipartHttpServletRequest request) {
 
-		Json json = new Json();
-		try {
-			bizInfoService.updateBizByIds(ids);
-		} catch (ServiceException e) {
-			logger.error("操作失败 : {}", e);
-			json.setSuccess(false);
-			json.setMsg("操作失败: " + e.getLocalizedMessage());
-			return json;
-		}
-		json.setSuccess(true);
-		json.setMsg("操作成功");
-		return json;
-	}
+        long fileSize = 0L;
+        MultiValueMap<String, MultipartFile> multiValueMap = request.getMultiFileMap();
+        if (MapUtils.isNotEmpty(multiValueMap)) {
+            Collection<List<MultipartFile>> files = multiValueMap.values();
+            for (List<MultipartFile> list : files) {
+                for (MultipartFile multipartFile : list) {
+                    fileSize += multipartFile.getSize();
+                }
+            }
+        }
+        if (maxUpload < fileSize) {
+            return true;
+        }
+        return false;
+    }
 
-	@ResponseBody
-	@RequestMapping(value = "/download")
-	public void downloadFile(String action, String id, HttpServletRequest request, HttpServletResponse response) {
+    @ResponseBody
+    @RequestMapping(value = "/bizInfo/delete")
+    public Json deleteBizInfo(@RequestParam List<String> ids) {
 
-		Object[] result = processExecuteService.downloadFile(action, id);
-		if (result[1] == null) {
-			return;
-		}
-		InputStream is = (InputStream) result[1];
-		String fileType = (String) result[0];
-		Long fileLong = (Long) result[2];
-		String fileName = (String) result[3];
-		response.reset();
-		if ("IMAGE".equalsIgnoreCase(fileType)) {
-			response.setContentType("image/PNG;charset=GB2312");
-		} else {
-			try {
-				fileName = new String(fileName.getBytes("utf-8"), "ISO8859-1");
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-			response.setContentType("application/x-download");
-			response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-			response.setHeader("Content-Length", fileLong == null ? "0" : String.valueOf(fileLong));
-		}
-		if (is != null) {
-			OutputStream output = null;
-			try {
-				output = response.getOutputStream();// 得到输出流
-				int size = 2048;
-				byte[] b = new byte[size];
-				int p = 0;
-				while ((p = is.read(b)) > 0) {
-					output.write(b, 0, p);
-					if (p < size) {
-						break;
-					}
-				}
-			} catch (Exception e) {
-			} finally {
-				try {
-					is.close();// 关闭文件流
+        Json json = new Json();
+        try {
+            bizInfoService.updateBizByIds(ids);
+        } catch (ServiceException e) {
+            logger.error("操作失败 : {}", e);
+            json.setSuccess(false);
+            json.setMsg("操作失败: " + e.getLocalizedMessage());
+            return json;
+        }
+        json.setSuccess(true);
+        json.setMsg("操作成功");
+        return json;
+    }
 
-				} catch (Exception e) {
-				}
-				try {
-					output.flush();
-					output.close();
-				} catch (Exception e) {
-				}
-			}
-		}
-	}
+    @ResponseBody
+    @RequestMapping(value = "/download")
+    public void downloadFile(String action, String id, HttpServletRequest request, HttpServletResponse response) {
 
-	/**
-	 * 将属性进行分组
-	 * 
-	 * @param list
-	 * @return
-	 */
-	private static Map<String, List<AbstractVariable>> groupProcessValBean(List<AbstractVariable> list) {
+        Object[] result = processExecuteService.downloadFile(action, id);
+        if (result[1] == null) {
+            return;
+        }
+        InputStream is = (InputStream) result[1];
+        String fileType = (String) result[0];
+        Long fileLong = (Long) result[2];
+        String fileName = (String) result[3];
+        response.reset();
+        if ("IMAGE".equalsIgnoreCase(fileType)) {
+            response.setContentType("image/PNG;charset=GB2312");
+        } else {
+            try {
+                fileName = new String(fileName.getBytes("utf-8"), "ISO8859-1");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            response.setContentType("application/x-download");
+            response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+            response.setHeader("Content-Length", fileLong == null ? "0" : String.valueOf(fileLong));
+        }
+        if (is != null) {
+            OutputStream output = null;
+            try {
+                output = response.getOutputStream();// 得到输出流
+                int size = 2048;
+                byte[] b = new byte[size];
+                int p = 0;
+                while ((p = is.read(b)) > 0) {
+                    output.write(b, 0, p);
+                    if (p < size) {
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+            } finally {
+                try {
+                    is.close();// 关闭文件流
 
-		Map<String, List<AbstractVariable>> map = new LinkedHashMap<String, List<AbstractVariable>>();
-		for (AbstractVariable bean : list) {
-			String groupName = bean.getGroupName();
-			groupName = StringUtils.isEmpty(groupName) ? "其它信息" : groupName;
-			List<AbstractVariable> temp = map.get(groupName);
-			if (temp == null) {
-				temp = new ArrayList<AbstractVariable>();
-				map.put(groupName, temp);
-			}
-			temp.add(bean);
-		}
-		return map;
-	}
+                } catch (Exception e) {
+                }
+                try {
+                    output.flush();
+                    output.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
+    /**
+     * 将属性进行分组
+     *
+     * @param list
+     * @return
+     */
+    private static Map<String, List<ProcessVariable>> groupProcessValBean(List<ProcessVariable> list) {
+
+        Map<String, List<ProcessVariable>> map = new LinkedHashMap<String, List<ProcessVariable>>();
+        for (ProcessVariable bean : list) {
+            String groupName = bean.getGroupName();
+            groupName = StringUtils.isEmpty(groupName) ? "其它信息" : groupName;
+            List<ProcessVariable> temp = map.get(groupName);
+            if (temp == null) {
+                temp = new ArrayList<ProcessVariable>();
+                map.put(groupName, temp);
+            }
+            temp.add(bean);
+        }
+        return map;
+    }
 }

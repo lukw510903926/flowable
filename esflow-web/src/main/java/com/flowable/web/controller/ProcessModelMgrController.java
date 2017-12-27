@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.task.api.TaskQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.flowable.common.utils.DataGrid;
 import com.flowable.common.utils.Json;
 import com.flowable.common.utils.PageHelper;
-import com.flowable.core.bean.AbstractVariable;
 import com.flowable.core.bean.ProcessVariable;
 import com.flowable.core.bean.ProcessVariableInstance;
-import com.flowable.core.bean.TaskVariable;
 import com.flowable.core.service.IProcessDefinitionService;
 import com.flowable.core.service.IProcessVariableService;
 
@@ -52,7 +51,7 @@ public class ProcessModelMgrController {
      */
     @ResponseBody
     @RequestMapping(value = "processValList")
-    public DataGrid processValList(@RequestParam Map<String, Object> params, PageHelper<TaskVariable> page) {
+    public DataGrid processValList(@RequestParam Map<String, Object> params, PageHelper<ProcessVariable> page) {
 
         DataGrid grid = new DataGrid();
         try {
@@ -70,7 +69,11 @@ public class ProcessModelMgrController {
                 grid.setRows(processValBeans.getList());
                 grid.setTotal((long) processValBeans.getCount());
             } else {
-                PageHelper<TaskVariable> processTaskValBeans = processValService.loadTaskVariables(processId, Integer.parseInt(version), page, taskId);
+                ProcessVariable processVariable = new ProcessVariable();
+                processVariable.setVersion(Integer.parseInt(version));
+                processVariable.setProcessDefinitionId(processId);
+                processVariable.setTaskId(taskId);
+                PageHelper<ProcessVariable> processTaskValBeans = processValService.findProcessVariables(processVariable, page);
                 grid.setRows(processTaskValBeans.getList());
                 grid.setTotal(processTaskValBeans.getCount());
             }
@@ -95,7 +98,7 @@ public class ProcessModelMgrController {
         String taskId = (String) params.get("taskId");
         Json ajaxJson = new Json();
         try {
-            AbstractVariable processValAbs = null;
+            ProcessVariable processValAbs = null;
             if (StringUtils.isBlank(taskId)) {
                 processValAbs = processValService.getVariableById(processId);
             } else {
@@ -126,7 +129,7 @@ public class ProcessModelMgrController {
         Json json = new Json();
         try {
             for (int i = 0; i < valIds.length; i++) {
-                AbstractVariable processValAbs = processValService.getVariableById(valIds[i]);
+                ProcessVariable processValAbs = processValService.getVariableById(valIds[i]);
                 if (processValAbs != null) {
                     processValService.deleteVariable(processValAbs);
                 }
@@ -149,6 +152,7 @@ public class ProcessModelMgrController {
     @ResponseBody
     @RequestMapping(value = "saveOrUpdateProcessVal")
     public Json saveOrUpdateProcessVal(HttpServletRequest request, @RequestParam Map<String, Object> reqParams) {
+
         logger.info("保存或者更新流程全局变量---saveOrUpdateProcessVal");
         Json json = new Json();
         try {
@@ -156,16 +160,9 @@ public class ProcessModelMgrController {
             boolean isTask = false;
             String id = (String) reqParams.get("id");
             String taskId = (String) reqParams.get("taskId");
-            AbstractVariable processValAbs = processValService.getVariableById(id);
-            if (StringUtils.isNotBlank(taskId)) {
-                isTask = true;
-            }
+            ProcessVariable processValAbs = processValService.getVariableById(id);
             if (processValAbs == null) {
-                if (isTask) {
-                    processValAbs = new TaskVariable();
-                } else {
-                    processValAbs = new ProcessVariable();
-                }
+                processValAbs = new ProcessVariable();
                 processValAbs.setId(StringUtils.replace(UUID.randomUUID().toString(), "-", ""));
                 isUpdate = false;
             }
@@ -210,11 +207,9 @@ public class ProcessModelMgrController {
 
             processValAbs.setProcessVariable(Boolean.parseBoolean((String) reqParams.get("isprocVal")));
 
-            if (isTask) {
-                String variableGroup = (String) reqParams.get("variableGroup");
-                ((TaskVariable) processValAbs).setVariableGroup(variableGroup);
-                ((TaskVariable) processValAbs).setTaskId(taskId);
-            }
+//            String variableGroup = (String) reqParams.get("variableGroup");
+//                  processValAbs.setVariableGroup(variableGroup);
+            processValAbs.setTaskId(taskId);
             if (isUpdate) {
                 processValService.updateVariable(processValAbs);
             } else {
@@ -264,13 +259,17 @@ public class ProcessModelMgrController {
                     list.add(data);
                 }
             } else {
-                List<TaskVariable> processTaskValBeans = processValService.loadTaskVariables(processId, Integer.parseInt(version), taskId);
-                for (TaskVariable task : processTaskValBeans) {
+                ProcessVariable processVariable = new ProcessVariable();
+                processVariable.setVersion(Integer.parseInt(version));
+                processVariable.setProcessDefinitionId(processId);
+                processVariable.setTaskId(taskId);
+                List<ProcessVariable> processTaskValBeans = processValService.findProcessVariables(processVariable);
+                for (ProcessVariable task : processTaskValBeans) {
                     grops.add(task.getGroupName().trim());
                 }
                 for (String grop : grops) {
-                    List<TaskVariable> tasks = new ArrayList<TaskVariable>();
-                    for (TaskVariable task : processTaskValBeans) {
+                    List<ProcessVariable> tasks = new ArrayList<ProcessVariable>();
+                    for (ProcessVariable task : processTaskValBeans) {
                         if (grop == task.getGroupName() || (grop != null && grop.equals(task.getGroupName().trim()))) {
                             tasks.add(task);
                         }

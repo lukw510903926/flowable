@@ -148,10 +148,10 @@ public class BizController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "biz/getDraftBiz")
-	public Map<String, Object> getDraftBiz(String id, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "biz/workInfo/{bizId}")
+	public Map<String, Object> getDraftBiz(@PathVariable("bizId") String bizId, HttpServletRequest request, HttpServletResponse response) {
 		WebUtil.getLoginUser(request, response);
-		return processExecuteService.queryWorkOrder(id);
+		return processExecuteService.queryWorkOrder(bizId);
 	}
 
 }
