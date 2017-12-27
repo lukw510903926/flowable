@@ -105,6 +105,7 @@ public class BizTimedTaskServiceImpl extends BaseServiceImpl<BizTimedTask> imple
 
 	@Override
 	public List<BizTimedTask> findBizTimedTask(BizTimedTask bizTask) {
+
 		return this.bizTimedTaskDao.findBizTimedTask(bizTask);
 	}
 }

@@ -23,8 +23,6 @@ public interface BizInfoConfDao extends IBaseDao<BizInfoConf> {
      */
     BizInfoConf getMyWork(String bizId);
 
-    String getTaskAssignee(String bizId);
-
     List<BizInfoConf> getBizInfoConf(String bizId);
 
     /**

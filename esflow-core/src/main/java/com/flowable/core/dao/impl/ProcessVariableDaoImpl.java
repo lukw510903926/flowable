@@ -99,6 +99,7 @@ public class ProcessVariableDaoImpl extends BaseDaoImpl<ProcessVariable> impleme
 
     @Override
     public List<ProcessVariable> getRefList(Map<String, Object> params) {
+
         StringBuffer hql = new StringBuffer();
         hql.append(" from ProcessVariable where processDefinitionId=? ");
         hql.append("and version=? and refVariable is not null and refVariable<>''");

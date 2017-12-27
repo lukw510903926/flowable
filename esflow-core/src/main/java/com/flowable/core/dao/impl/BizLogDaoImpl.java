@@ -19,13 +19,7 @@ public class BizLogDaoImpl extends BaseDaoImpl<BizLog> implements IBizLogDao {
 		return this.find("FROM BizLog bean WHERE bean.bizInfo.id=? ORDER BY bean.createTime ASC", new Object[] { bizId });
 	}
 
-	@Override
-	public List<Map<String,Object>> findBizInfoIds(String handleUser){
-		
-		StringBuilder hql = new StringBuilder("select distinct new map( bean.bizInfo.id as bizId ) FROM BizLog bean WHERE bean.handleUser =? ");
-		return this.find(hql.toString(),new Object[]{handleUser}); 
-	}
-	
+
 	@Override
 	public List<BizLog> findBizLogs(BizLog bizLog){
 		

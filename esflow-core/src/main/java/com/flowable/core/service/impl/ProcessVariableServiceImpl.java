@@ -75,25 +75,6 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
         return processVariableDao.getById(id);
     }
 
-    /**
-     * 根据流程模板ID，获取模板的公共属性列表<br>
-     * 版本号，如果为空则去最新的版本
-     *
-     * @return @
-     */
-    @Override
-    public List<ProcessVariable> loadVariables(String processDefinitionId, int version) {
-
-        return processVariableDao.loadProcessVariables(processDefinitionId, version);
-    }
-
-    @Override
-    public PageHelper<ProcessVariable> loadProcessVariables(String processDefinitionId, int version,
-                                                            PageHelper<ProcessVariable> page) {
-
-        return processVariableDao.loadProcessVariables(processDefinitionId, version, page);
-    }
-
     @Override
     public PageHelper<ProcessVariable> findProcessVariables(ProcessVariable variable, PageHelper<ProcessVariable> page) {
 

@@ -97,6 +97,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * 根据流程定义ID获取流程名
      */
     public String getProcessDefinitionName(String procDefId) {
+
         return processDefinitionService.getProcDefById(procDefId).getName();
     }
 
@@ -105,10 +106,10 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
         log.info(" queryMyBizInfos begin ------");
         // 转换查询时间
-        String ct1 = (String) params.get("createTime");
-        String ct2 = (String) params.get("createTime2");
-        Date dt1 = DateUtils.parseDate(ct1);
-        Date dt2 = DateUtils.parseDate(ct2);
+        String createTime = (String) params.get("createTime");
+        String createTime2 = (String) params.get("createTime2");
+        Date dt1 = DateUtils.parseDate(createTime);
+        Date dt2 = DateUtils.parseDate(createTime2);
         if (dt1 == null) {
             params.remove("createTime");
         } else {
@@ -133,17 +134,14 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     }
 
     @Override
-    public List<ProcessVariable> loadHandleProcessValBean(BizInfo bean, String taskID) {
+    public List<ProcessVariable> loadHandleProcessValBean(BizInfo bean, String taskId) {
 
-        Task task = processDefinitionService.getTaskBean(taskID);
+        Task task = processDefinitionService.getTaskBean(taskId);
         ProcessVariable variable = new ProcessVariable();
         variable.setProcessDefinitionId(bean.getProcessDefinitionId());
         variable.setVersion(processDefinitionService.getWorkOrderVersion(bean));
-        if (task != null) {
-            variable.setTaskId(task.getTaskDefinitionKey());
-        } else {
-            variable.setTaskId(taskID);
-        }
+        taskId = task == null ? taskId : task.getTaskDefinitionKey();
+        variable.setTaskId(taskId);
         return this.variableService.findProcessVariables(variable);
     }
 
@@ -171,16 +169,15 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * 签收工单
      *
      * @param bizInfo
-     * @param loginUser
+     * @param username
      * @return
      */
-    private BizInfo sign(BizInfo bizInfo, BizInfoConf bizInfoConf, String loginUser) {
+    private BizInfo sign(BizInfo bizInfo, BizInfoConf bizInfoConf, String username) {
 
         String taskId = bizInfoConf.getTaskId();
         if (StringUtils.isEmpty(taskId)) {
-            throw new ServiceException("找不到任务ID");
+            throw new ServiceException("请确认是否有权先签收任务!");
         }
-        String username = WebUtil.getLoginUser() == null ? loginUser : WebUtil.getLoginUser().getUsername();
         processDefinitionService.claimTask(bizInfo, taskId, username);
         bizInfoConf.setTaskAssignee(username);
         bizInfoService.updateBizInfo(bizInfo);

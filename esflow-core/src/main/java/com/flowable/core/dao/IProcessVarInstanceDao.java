@@ -18,14 +18,6 @@ public interface IProcessVarInstanceDao extends IBaseDao<ProcessVariableInstance
 
     List<ProcessVariableInstance> findProcessInstances(ProcessVariableInstance instance);
 
-    /**
-     * 获取工单配置信息
-     *
-     * @param bizId
-     * @return
-     */
-    List<Map<String, String>> getBizInfo(String bizId);
-
     List<ProcessVariableInstance> getProcessVariableInstances(Map<String, String> params);
 
     void deleteByVarId(String variableId);

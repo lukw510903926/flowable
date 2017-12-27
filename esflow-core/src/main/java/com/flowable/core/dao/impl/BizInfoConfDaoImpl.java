@@ -61,16 +61,13 @@ public class BizInfoConfDaoImpl extends BaseDaoImpl< BizInfoConf> implements Biz
 			hql.append(")");
 		}
 		List<BizInfoConf> result = this.find(hql.toString(), list.toArray());
-		if(CollectionUtils.isNotEmpty(result)){
-			return result.get(0);
-		}
-		return null;
+		return CollectionUtils.isNotEmpty(result) ? result.get(0) : null;
 	}
 	
 	@Override
 	public List<BizInfoConf> getBizInfoConf(String bizId){
 		
-		StringBuilder hql = new StringBuilder(" from BizInfoConf b where b.bizInfo.id = ? ");
+		String hql = " from BizInfoConf b where b.bizInfo.id = ? ";
 		return this.find(hql.toString(), new Object[]{bizId});
 	}
 	
@@ -83,17 +80,5 @@ public class BizInfoConfDaoImpl extends BaseDaoImpl< BizInfoConf> implements Biz
 		Object object[] = new Object[]{map.get("username"),map.get("bizId")};
 		this.executeBySql(updateBizInfo, object);
 		this.executeBySql(updateTask.toString(),object);
-	}
-	
-	
-	@Override
-	public String getTaskAssignee(String bizId){
-		
-		StringBuilder hql = new StringBuilder("SELECT TASK_ASSIGNEE AS TASKASSIGNEE FROM ACT_BIZ_INFO_CONF B WHERE B.BIZ_ID = ? ");
-		List<Map<String,String>> result = this.findBySql(hql.toString(),new Object[]{bizId},Map.class);
-		if(CollectionUtils.isNotEmpty(result)){
-			return result.get(0).get("TASKASSIGNEE");
-		}
-		return null;
 	}
 }

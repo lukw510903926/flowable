@@ -72,10 +72,7 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
 		page.setRows(-1);
 		page.setPage(-1);
 		List<BizTemplateFile> list = this.bizTemplateFileDao.findTemplateFlies(page, templateFile, false).getList();
-		if (CollectionUtils.isEmpty(list)) {
-			return null;
-		}
-		return list.get(0);
+		return CollectionUtils.isEmpty(list) ? null : list.get(0);
 	}
 
 	@Override
@@ -121,10 +118,7 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
 		page.setPage(-1);
 		page.setRows(-1);
 		List<BizTemplateFile> list = this.findTemplateFlies(page, file, false).getList();
-		if (!CollectionUtils.isEmpty(list)) {
-			return false;
-		}
-		return true;
+		return this.check(dataFile.getId(),list);
 
 	}
 

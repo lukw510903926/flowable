@@ -15,7 +15,7 @@ import com.flowable.core.dao.BizTemplateFileDao;
 public class BizTemplateFileDaoImpl extends BaseDaoImpl<BizTemplateFile> implements BizTemplateFileDao {
 
 	@Override
-	public PageHelper<BizTemplateFile> findTemplateFlies(PageHelper<BizTemplateFile> page,BizTemplateFile file,boolean islike){
+	public PageHelper<BizTemplateFile> findTemplateFlies(PageHelper<BizTemplateFile> page,BizTemplateFile file,boolean isLike){
 		
 		List<Object> list = new ArrayList<Object>();
 		StringBuffer hql = new StringBuffer(" from BizTemplateFile file where 1=1 ");
@@ -24,7 +24,7 @@ public class BizTemplateFileDaoImpl extends BaseDaoImpl<BizTemplateFile> impleme
 			list.add("%" + file.getCreateUser()+"%");
 		}
 		if(StringUtils.isNotBlank(file.getFileName())){
-			if(islike){
+			if(isLike){
 				hql.append(" and file.fileName like ? ");
 				list.add("%" + file.getFileName()+"%");
 			}else{

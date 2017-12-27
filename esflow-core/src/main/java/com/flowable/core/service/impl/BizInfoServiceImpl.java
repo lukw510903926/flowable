@@ -184,9 +184,9 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 
     private void copyBizInfoConf(BizInfo newBiz, BizInfoConf bizInfoConf) {
 
-        List<BizInfoConf> bizInfoConfs = this.bizInfoConfDao.findBizInfoConf(bizInfoConf);
-        if (CollectionUtils.isNotEmpty(bizInfoConfs)) {
-            bizInfoConfs.forEach(bizConf -> {
+        List<BizInfoConf> list = this.bizInfoConfDao.findBizInfoConf(bizInfoConf);
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(bizConf -> {
                 BizInfoConf newConf = bizConf.clone();
                 newConf.setId(null);
                 newConf.setBizInfo(newBiz);
@@ -253,17 +253,14 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
                     params.put("createTime2", new Date());
                 }
             }
-
             PageHelper<BizInfo> pageHelper = dao.queryWorkOrder(params, page);
             List<BizInfo> list = pageHelper.getList();
             if (CollectionUtils.isNotEmpty(list)) {
                 for (BizInfo bizInfo : list) {
                     bizInfo.setCreateUser(this.getUserNameCn(bizInfo.getCreateUser(), userCache));
                     bizInfo.setTaskAssignee(this.getUserNameCn(bizInfo.getTaskAssignee(), userCache));
-                    result.add(bizInfo);
                 }
             }
-            pageHelper.setList(result);
             userCache.clear();
             return pageHelper;
         }catch (Exception e){

@@ -9,21 +9,14 @@ import com.flowable.core.bean.BizInfo;
 
 public interface IBizInfoDao extends IBaseDao<BizInfo> {
 
-	 PageHelper<BizInfo> queryWorkOrder(Map<String, Object> params, PageHelper<BizInfo> page);
+    PageHelper<BizInfo> queryWorkOrder(Map<String, Object> params, PageHelper<BizInfo> page);
 
-
-	/**
-	 * 批量查询工单
-	 * @param list
-	 * @return
-	 */
-	 List<BizInfo> getBizInfos(List<String> list);
-
-	/**
-	 * 根据父单查询子单
-	 * @param parentId
-	 * @return
-	 */
-	 List<BizInfo> getBizByParentId(String parentId);
+    /**
+     * 根据父单查询子单
+     *
+     * @param parentId
+     * @return
+     */
+    List<BizInfo> getBizByParentId(String parentId);
 
 }

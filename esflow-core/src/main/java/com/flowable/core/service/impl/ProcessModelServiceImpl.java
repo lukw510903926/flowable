@@ -109,7 +109,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
 	@Transactional(readOnly = false)
 	public String deploy(String id) {
 
-		String procdefId = "";
+		String processDefinitionId = "";
 		try {
 			Model modelData = repositoryService.getModel(id);
 			BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
@@ -134,16 +134,16 @@ public class ProcessModelServiceImpl implements IProcessModelService {
 					.deploymentId(deployment.getId()).list();
 			for (ProcessDefinition processDefinition : list) {
 				repositoryService.setProcessDefinitionCategory(processDefinition.getId(), modelData.getCategory());
-				procdefId = processDefinition.getId();
+				processDefinitionId = processDefinition.getId();
 			}
 			if (CollectionUtils.isEmpty(list)) {
-				procdefId = "";
+				processDefinitionId = "";
 			}
 		} catch (Exception e) {
 			logger.error("设计模型图不正确，检查模型正确性 :",e);
 			throw new ServiceException("设计模型图不正确，检查模型正确性，模型ID=" + id, e);
 		}
-		return procdefId;
+		return processDefinitionId;
 	}
 
 	/**

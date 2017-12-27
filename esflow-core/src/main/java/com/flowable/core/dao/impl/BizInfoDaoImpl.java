@@ -28,7 +28,7 @@ public class BizInfoDaoImpl extends BaseDaoImpl<BizInfo> implements IBizInfoDao 
     @Autowired
     private ISystemUserDao systemUserDao;
 
-    private Logger logger = LoggerFactory.getLogger("bizInfoDaoImpl");
+    private Logger logger = LoggerFactory.getLogger(BizInfoDaoImpl.class);
 
     @Override
     public List<BizInfo> getBizByParentId(String parentId) {
@@ -38,20 +38,6 @@ public class BizInfoDaoImpl extends BaseDaoImpl<BizInfo> implements IBizInfoDao 
         }
         String hql = " from BizInfo a where a.parentId = ? ";
         return this.find(hql, new Object[]{parentId});
-    }
-
-    @Override
-    public List<BizInfo> getBizInfos(List<String> list) {
-
-        StringBuilder hql = new StringBuilder("FROM BizInfo bean WHERE bean.bizId in (");
-        List<String> params = new ArrayList<String>();
-        for (String id : list) {
-            hql.append(" ? ,");
-            params.add(id);
-        }
-        hql = hql.deleteCharAt(hql.length() - 1);
-        hql.append(")");
-        return this.find(hql.toString(), params.toArray());
     }
 
     @Override
@@ -127,8 +113,7 @@ public class BizInfoDaoImpl extends BaseDaoImpl<BizInfo> implements IBizInfoDao 
                     list.add("%," + role.getNameCn() + ",%");
                 }
             }
-            hql.append(" or c.taskAssignee is null ");
-            hql.append(" AND bean.id = c.bizInfo.id )");
+            hql.append(" or c.taskAssignee is null AND bean.id = c.bizInfo.id )");
         }
         String taskAssignee = (String) params.get("taskAssignee");
         if (StringUtils.isNotEmpty(taskAssignee)) {
@@ -163,7 +148,7 @@ public class BizInfoDaoImpl extends BaseDaoImpl<BizInfo> implements IBizInfoDao 
             list.add(params.get("createTime2"));
         }
         hql.append(" ORDER BY bean.createTime DESC ");
-        logger.info("args : " + list);
+        logger.info("args : {}", list);
         return this.find(page, hql.toString(), list.toArray());
     }
 }

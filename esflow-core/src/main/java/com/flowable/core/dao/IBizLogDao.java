@@ -10,8 +10,6 @@ public interface IBizLogDao extends IBaseDao<BizLog> {
 
     List<BizLog> loadLogByBizId(String bizId);
 
-    List<Map<String, Object>> findBizInfoIds(String handleUser);
-
     /**
      * 获取指定处理结果的 日志
      *

@@ -44,22 +44,11 @@ public interface IProcessVariableService {
 	ProcessVariable getVariableById(String id) ;
 
 	/**
-	 * 根据流程模板ID，获取模板的公共属性列表
-	 * @param processDefinitionId
-	 * @param version
-	 * @return
-	 * @
-	 */
-	List<ProcessVariable> loadVariables(String processDefinitionId, int version) ;
-
-	/**
 	 * 获取流程参数
 	 * @param params
 	 * @return
 	 */
 	List<ProcessVariableInstance> getProcessVariableInstances(Map<String, String> params);
-
-	PageHelper<ProcessVariable> loadProcessVariables(String processDefinitionId, int version,PageHelper<ProcessVariable> page);
 
 	PageHelper<ProcessVariable> findProcessVariables(ProcessVariable variable, PageHelper<ProcessVariable> page);
 
