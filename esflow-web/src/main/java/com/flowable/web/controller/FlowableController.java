@@ -60,16 +60,15 @@ public class FlowableController {
         String processDefinitionId = pi.getProcessDefinitionId();
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
         org.flowable.bpmn.model.Process process = bpmnModel.getProcesses().get(0);
-        Collection<FlowElement> flowElements = process.getFlowElements();
-        for (FlowElement flowElement : flowElements) {
-            if (flowElement.getId().equalsIgnoreCase(task.getTaskDefinitionKey())) {
-                if (flowElement instanceof UserTask) {
-                    UserTask u = (UserTask) flowElement;
-                    List<SequenceFlow> outgoingFlows = u.getOutgoingFlows();
-                    SequenceFlow sequenceFlow = outgoingFlows.get(0);
-                    ExclusiveGateway userTask = (ExclusiveGateway) sequenceFlow.getTargetFlowElement();
-                    userTask.getOutgoingFlows().forEach(outgoingFlow -> result.put(outgoingFlow.getId(), outgoingFlow.getName()));
-                }
+        FlowElement flowElement = process.getFlowElement(task.getTaskDefinitionKey());
+        if (flowElement != null) {
+            if (flowElement instanceof UserTask) {
+                UserTask userTask = (UserTask) flowElement;
+                List<SequenceFlow> outgoingFlows = userTask.getOutgoingFlows();
+                outgoingFlows.forEach(sequenceFlow -> {
+                    ExclusiveGateway exclusiveGateway = (ExclusiveGateway) sequenceFlow.getTargetFlowElement();
+                    exclusiveGateway.getOutgoingFlows().forEach(outgoingFlow -> result.put(outgoingFlow.getId(), outgoingFlow.getName()));
+                });
             }
         }
         return result;
@@ -80,12 +79,12 @@ public class FlowableController {
     public BizInfo jump(@PathVariable("bizId") String bizId) {
 
         BizInfo bizInfo = this.bizInfoService.get(bizId);
-        Map<String,Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put("base.handleMessage", "工单跳转");
-		params.put("base.handleResult", "工单跳转");
-		params.put("base.handleName", "工单跳转");
-		params.put("base.bizId", bizId);
-		params.put("base.taskDefKey", "vendorHandle");
+        params.put("base.handleResult", "工单跳转");
+        params.put("base.handleName", "工单跳转");
+        params.put("base.bizId", bizId);
+        params.put("base.taskDefKey", "vendorHandle");
         commandService.jumpCommand(params);
         return bizInfo;
     }
