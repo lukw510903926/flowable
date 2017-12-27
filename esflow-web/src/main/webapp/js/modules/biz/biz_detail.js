@@ -23,7 +23,8 @@ biz.detail = {
                 biz.detail.logVars = result.logVars;
                 biz.detail.serviceInfo = result.serviceInfo;
                 biz.detail.createUser = result.extInfo.createUser;
-                biz.detail.currentVariables = result.currentVariables;
+                console.info(result)
+                biz.detail.currentVariables = $.isEmptyObject(result.currentVariables) ? [] : result.currentVariables;
                 biz.detail.buttons = result.SYS_BUTTON;
                 biz.detail.currentTaskName = result.$currentTaskName;
                 biz.detail.annexs = result.annexs;
@@ -42,6 +43,7 @@ biz.detail = {
                 biz.detail.loadWorkForm(biz.detail.buttons, biz.detail.currentVariables, biz.detail.currentTaskName);
                 $("#stepPicBizId").append(biz.detail.workInfo.bizId);
                 biz.stepPic.loadStepPic(biz.detail.workLogs, biz.detail.workInfo.bizType);
+                console.info(biz.detail.buttonGroup)
                 if (!biz.detail.buttonGroup) {
                     biz.detail.createButtons("#workLogs", biz.detail.buttons);
                 }
@@ -340,23 +342,20 @@ biz.detail = {
     },
     /**
      * 按钮分组
-     * @param ProcessTaskValBeans
+     * @param currentVariables
      * @param buttons
      * @returns {{all: *}}
      */
-    groupButton: function (ProcessTaskValBeans, buttons) {
+    groupButton: function (currentVariables, buttons) {
 
         var treatment = null;
         var groupButtons = {
             all: buttons
         };
-        if (ProcessTaskValBeans == null) {
-            return;
-        }
         //确定处理方式属性
-        for (var i = 0; i < ProcessTaskValBeans.length; i++) {
-            if (ProcessTaskValBeans[i].viewComponent == "TREATMENT") {
-                treatment = ProcessTaskValBeans[i];
+        for (var i = 0; i < currentVariables.length; i++) {
+            if (currentVariables[i].viewComponent == "TREATMENT") {
+                treatment = currentVariables[i];
             }
         }
         //按钮分组，command为之前画图出错时出现的英文按钮可以去掉
@@ -412,6 +411,7 @@ biz.detail = {
                 }
             }
         }
+
         return groupButtons;
     },
     createButtons: function (container, buttons) { //未分组方法，旧
