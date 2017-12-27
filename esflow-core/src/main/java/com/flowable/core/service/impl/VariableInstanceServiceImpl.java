@@ -1,23 +1,19 @@
 package com.flowable.core.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.flowable.core.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.flowable.core.bean.AbstractVariableInstance;
 import com.flowable.core.bean.BizInfo;
-import com.flowable.core.bean.BizInfoConf;
 import com.flowable.core.bean.BizLog;
 import com.flowable.core.bean.ProcessVariableInstance;
-import com.flowable.core.bean.TaskVariableInstance;
 import com.flowable.core.dao.IProcessVarInstanceDao;
-import com.flowable.core.dao.ITaskVarInstanceDao;
 import com.flowable.core.service.IVariableInstanceService;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,34 +22,23 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
     @Autowired
     private IProcessVarInstanceDao processInstanceDao;
 
-    @Autowired
-    private ITaskVarInstanceDao taskInstanceDao;
-
     @Override
     @Transactional
-    public void addProcessInstance(AbstractVariableInstance... beans) {
+    public void addProcessInstance(ProcessVariableInstance... beans) {
 
-        for (AbstractVariableInstance bean : beans) {
-            if (bean instanceof ProcessVariableInstance) {
-                processInstanceDao.save((ProcessVariableInstance) bean);
-            } else {
-                taskInstanceDao.save((TaskVariableInstance) bean);
-            }
+        for (ProcessVariableInstance bean : beans) {
+            processInstanceDao.save(bean);
         }
     }
 
     @Override
-    public void updateProcessInstance(AbstractVariableInstance... beans) {
+    public void updateProcessInstance(ProcessVariableInstance... beans) {
 
-        for (AbstractVariableInstance bean : beans) {
+        for (ProcessVariableInstance bean : beans) {
             if (bean.getId() == null) {
                 continue;
             }
-            if (bean instanceof ProcessVariableInstance) {
-                processInstanceDao.update((ProcessVariableInstance) bean);
-            } else {
-                taskInstanceDao.update((TaskVariableInstance) bean);
-            }
+            processInstanceDao.update((ProcessVariableInstance) bean);
         }
     }
 
@@ -65,44 +50,41 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
      * @
      */
     @Override
-    public List<AbstractVariableInstance> loadInstances(BizInfo bean) {
+    public List<ProcessVariableInstance> loadInstances(BizInfo bean) {
 
-        List<AbstractVariableInstance> result = new ArrayList<AbstractVariableInstance>();
-        List<ProcessVariableInstance> temp1 = null;
-        temp1 = processInstanceDao.loadProcessInstancesByBizId(bean.getId());
-        if (temp1 != null){
-            result.addAll(temp1);
-        }
-        return result;
+        return processInstanceDao.loadProcessInstancesByBizId(bean.getId());
     }
 
     @Override
-    public Map<String, AbstractVariableInstance> getVarMap(BizInfo bizInfo, BizInfoConf bizInfoConf, VariableLoadType type) {
+    public Map<String, ProcessVariableInstance> getVarMap(BizInfo bizInfo, String taskId, VariableLoadType type) {
 
-        Map<String, AbstractVariableInstance> map = new HashMap<String, AbstractVariableInstance>();
-        List<ProcessVariableInstance> pList = processInstanceDao.loadProcessInstancesByBizId(bizInfo.getId());
-        List<TaskVariableInstance> tList = null;
+        Map<String, ProcessVariableInstance> map = new HashMap<String, ProcessVariableInstance>();
+        BizLog logBean = new BizLog();
+        logBean.setBizInfo(bizInfo);
+        logBean.setTaskID(Constants.TASK_START);
+        List<ProcessVariableInstance> pList = this.loadValueByLog(logBean);
+        List<ProcessVariableInstance> tList = null;
         switch (type) {
             case ALL:
-                tList = taskInstanceDao.findByProcInstId(bizInfo.getProcessInstanceId());
+                tList = processInstanceDao.findByProcInstId(bizInfo.getProcessInstanceId());
                 break;
             case UPDATABLE:
-                tList = taskInstanceDao.findByTaskId(bizInfoConf.getTaskId());
+                logBean.setTaskID(taskId);
+                tList = this.loadValueByLog(logBean);
                 break;
         }
-        if (null != pList) {
+        if (!CollectionUtils.isEmpty(pList)) {
             pList.forEach(var -> map.put(var.getVariable().getName(), var));
         }
-        if (null != tList) {
-            tList.forEach(var -> map.put(var.getVariable().getName() + (type == VariableLoadType.ALL ? ('-' + bizInfoConf.getTaskId()) : ""), var));
+        if (!CollectionUtils.isEmpty(tList)) {
+            tList.forEach(var -> map.put(var.getVariable().getName() + (type == VariableLoadType.ALL ? ('-' + taskId) : ""), var));
         }
         return map;
     }
 
     @Override
-    public List<AbstractVariableInstance> loadValueByLog(BizLog logBean) {
+    public List<ProcessVariableInstance> loadValueByLog(BizLog logBean) {
 
-        return taskInstanceDao.loadValueByLog(logBean);
+        return processInstanceDao.loadValueByLog(logBean);
     }
-
 }

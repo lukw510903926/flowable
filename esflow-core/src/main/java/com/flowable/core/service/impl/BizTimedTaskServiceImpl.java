@@ -52,7 +52,7 @@ public class BizTimedTaskServiceImpl extends BaseServiceImpl<BizTimedTask> imple
 	@Override
 	@Scheduled(cron = "0 20 23 * * ? ")
 	@Transactional(readOnly = false)
-	public void sumitBizTimedTask() {
+	public void submitBizTimedTask() {
 
 		BizTimedTask bizTimedTask = new BizTimedTask();
 		Date date = new Date();

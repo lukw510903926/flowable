@@ -30,4 +30,8 @@ public interface IProcessVariableDao extends IBaseDao<ProcessVariable> {
     PageHelper<ProcessVariable> loadProcessVariables(String processDefinitionId, int version, PageHelper<ProcessVariable> page);
 
     int getProcessOrder(ProcessVariable bean);
+
+    PageHelper<ProcessVariable> findProcessVariables(ProcessVariable variable, PageHelper<ProcessVariable> page);
+
+    List<ProcessVariable> findProcessVariables(ProcessVariable variable);
 }

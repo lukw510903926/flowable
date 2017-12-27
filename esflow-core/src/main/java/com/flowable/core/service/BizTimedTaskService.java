@@ -13,5 +13,5 @@ public interface BizTimedTaskService extends IBaseService<BizTimedTask> {
 
     void saveTimedTask(BizInfo bizInfo, BizInfoConf bizConf);
 
-    void sumitBizTimedTask();
+    void submitBizTimedTask();
 }

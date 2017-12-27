@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.flowable.core.bean.BizLog;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -16,14 +17,34 @@ public class ProcessVarInstanceDaoImpl extends BaseDaoImpl<ProcessVariableInstan
 
 	@Override
 	public List<ProcessVariableInstance> loadProcessInstances(String processInstanceId)  {
-		
+
 		if(StringUtils.isNotBlank(processInstanceId)) {
 			String hql = " from ProcessVariableInstance where  processInstanceId= ? ";
 			return this.find(hql,new Object[] {processInstanceId});
 		}
 		return null;
 	}
-	
+
+	@Override
+	public List<ProcessVariableInstance> findProcessInstances(ProcessVariableInstance instance)  {
+
+			StringBuffer hql = new StringBuffer(" from ProcessVariableInstance p where  1=1");
+			List<Object> list = new ArrayList<Object>();
+		if(StringUtils.isNotBlank(instance.getProcessInstanceId())) {
+			hql.append(" and p.processInstanceId = ? ");
+			list.add(instance.getProcessInstanceId());
+		}
+		if(StringUtils.isNotBlank(instance.getBizId())){
+			hql.append(" and bizId = ? ");
+			list.add(instance.getBizId());
+		}
+		if(StringUtils.isNotBlank(instance.getTaskId())){
+			hql.append(" and p.taskId = ? ");
+			list.add(instance.getTaskId());
+		}
+		return this.find(hql.toString(),list.toArray());
+	}
+
 	@Override
 	public List<ProcessVariableInstance> loadProcessInstancesByBizId(String bizId) {
 		
@@ -75,4 +96,20 @@ public class ProcessVarInstanceDaoImpl extends BaseDaoImpl<ProcessVariableInstan
 			this.execute(hql,new Object[]{variableId});
 		}
 	}
+
+	@Override
+	public List<ProcessVariableInstance> loadValueByLog(BizLog logBean)  {
+
+		StringBuffer hql = new StringBuffer("FROM ProcessVariableInstance bean left join fetch bean.variable ");
+		hql.append("  v WHERE bean.processInstanceId=? AND bean.taskId=?  order by v.order asc");
+		return this.find(hql.toString(),new Object[] { logBean.getBizInfo().getProcessInstanceId(), logBean.getTaskID() });
+	}
+
+	@Override
+	public List<ProcessVariableInstance> findByProcInstId(String processInstanceId) {
+
+		String hql = " from ProcessVariableInstance where processInstanceId = ? order by createTime asc";
+		return this.find(hql, new Object[] {processInstanceId});
+	}
+
 }

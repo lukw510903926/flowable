@@ -3,7 +3,7 @@ package com.flowable.core.service;
 import java.util.List;
 import java.util.Map;
 
-import com.flowable.core.bean.AbstractVariableInstance;
+import com.flowable.core.bean.ProcessVariableInstance;
 import com.flowable.core.bean.BizInfo;
 import com.flowable.core.bean.BizInfoConf;
 import com.flowable.core.bean.BizLog;
@@ -19,9 +19,9 @@ public interface IVariableInstanceService {
 	 * @param beans
 	 * @
 	 */
-	void addProcessInstance(AbstractVariableInstance... beans) ;
+	void addProcessInstance(ProcessVariableInstance... beans) ;
 
-	void updateProcessInstance(AbstractVariableInstance... beans) ;
+	void updateProcessInstance(ProcessVariableInstance... beans) ;
 
 	/**
 	 * 加载某个工单所填写的所有数据
@@ -30,9 +30,9 @@ public interface IVariableInstanceService {
 	 * @return
 	 * @
 	 */
-	List<AbstractVariableInstance> loadInstances(BizInfo bean) ;
+	List<ProcessVariableInstance> loadInstances(BizInfo bean) ;
 
-	Map<String, AbstractVariableInstance> getVarMap(BizInfo bizInfo, BizInfoConf bizInfoConf, VariableLoadType type);
+	Map<String, ProcessVariableInstance> getVarMap(BizInfo bizInfo, String taskId, VariableLoadType type);
 
 	/**
 	 * 根据LOG记录加载对应的数据
@@ -41,7 +41,7 @@ public interface IVariableInstanceService {
 	 * @return
 	 * @
 	 */
-	List<AbstractVariableInstance> loadValueByLog(BizLog logBean) ;
+	List<ProcessVariableInstance> loadValueByLog(BizLog logBean) ;
 	
 
 	enum VariableLoadType {

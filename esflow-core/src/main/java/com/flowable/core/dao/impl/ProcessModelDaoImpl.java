@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.flowable.common.utils.PageHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -17,10 +18,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.flowable.core.bean.ProcessVariable;
-import com.flowable.core.bean.TaskVariable;
 import com.flowable.core.dao.IProcessModelDao;
 import com.flowable.core.dao.IProcessVariableDao;
-import com.flowable.core.dao.ITaskVariableDao;
 
 @Repository
 public class ProcessModelDaoImpl implements IProcessModelDao {
@@ -30,9 +29,6 @@ public class ProcessModelDaoImpl implements IProcessModelDao {
 
     @Autowired
     private IProcessVariableDao processVariableDao;
-
-    @Autowired
-    private ITaskVariableDao taskVariableDao;
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
@@ -78,15 +74,18 @@ public class ProcessModelDaoImpl implements IProcessModelDao {
                 processVariableDao.update(tv);
             }
             // 拷贝任务配置
-            List<TaskVariable> newRefTaskVars = new ArrayList<TaskVariable>();
-            List<TaskVariable> taskValBeans = taskVariableDao.loadTaskVariables(oldPdf.getId(), oldPdf.getVersion());
+            List<ProcessVariable> newRefTaskVars = new ArrayList<ProcessVariable>();
+            ProcessVariable variable = new ProcessVariable();
+            variable.setProcessDefinitionId(oldPdf.getId());
+            variable.setVersion(oldPdf.getVersion());
+            List<ProcessVariable> taskValBeans = processVariableDao.findProcessVariables(variable,new PageHelper<>()).getList();
             if (CollectionUtils.isNotEmpty(taskValBeans)) {
-                for (TaskVariable oldValBean : taskValBeans) {
-                    TaskVariable taskVar = oldValBean.clone();
+                for (ProcessVariable oldValBean : taskValBeans) {
+                    ProcessVariable taskVar = oldValBean.clone();
                     taskVar.setId(StringUtils.replace(UUID.randomUUID().toString(), "-", ""));
                     taskVar.setProcessDefinitionId(newPdf.getId());
                     taskVar.setVersion(version_);
-                    String id = (String) taskVariableDao.save(taskVar);
+                    String id = (String) processVariableDao.save(taskVar);
                     refmap.put(oldValBean.getId(), id);
                     if (StringUtils.isNotBlank(taskVar.getRefVariable())) {
                         newRefTaskVars.add(taskVar);
@@ -94,9 +93,9 @@ public class ProcessModelDaoImpl implements IProcessModelDao {
                 }
             }
 
-            for (TaskVariable tv : newRefTaskVars) {
+            for (ProcessVariable tv : newRefTaskVars) {
                 tv.setRefVariable(refmap.get(tv.getRefVariable()));
-                taskVariableDao.update(tv);
+                processVariableDao.update(tv);
             }
         }
     }

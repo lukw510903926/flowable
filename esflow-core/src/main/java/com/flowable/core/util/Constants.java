@@ -11,6 +11,8 @@ public class Constants {
 	 * 会签人员参数标识
 	 */
 	public final static String COUNTER_SIGN = "_members";
+
+	public final static String TASK_START = "START";
 	
 	/**
 	 * 签收标识

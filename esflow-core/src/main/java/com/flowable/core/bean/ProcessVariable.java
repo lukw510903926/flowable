@@ -1,16 +1,11 @@
 package com.flowable.core.bean;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.*;
 
 /**
  * 流程全局属性配置
@@ -19,162 +14,261 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Table(name = "ACT_BIZ_PROCESS_VARIABLE")
 @DynamicInsert
 @DynamicUpdate
-@JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"}) 
-public class ProcessVariable extends AbstractVariable implements java.io.Serializable {
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler", "fieldHandler" })
+public class ProcessVariable implements java.io.Serializable {
 
 	private static final long serialVersionUID = 5361380519460842436L;
 
+	/**
+	 * ID
+	 */
 	@Id
 	@GeneratedValue(generator = "generator")
 	@GenericGenerator(name = "generator", strategy = "uuid")
 	@Column(unique = true, nullable = false, length = 64, name = "ID")
-	public String getId() {
-		return super.getId();
-	}
+	private String id;
 
+	/**
+	 * 任务Id
+	 */
+	@Column(name = "TASK_ID", length = 32)
+	private String taskId;
+
+	/**
+	 * 流程模板ID
+	 */
 	@Column(name = "PROCESS_DEFINITION_ID", length = 64, nullable = false)
-	public String getProcessDefinitionId() {
-		return super.getProcessDefinitionId();
-	}
+	private String processDefinitionId;
 
+	/**
+	 * 属性中文名
+	 */
 	@Column(nullable = false, length = 256, name = "NAME")
-	public String getName() {
-		return super.getName();
-	}
+	private String name;
 
+	/**
+	 * 属性别名
+	 */
 	@Column(nullable = false, length = 256, name = "ALIAS")
-	public String getAlias() {
-		return super.getAlias();
-	}
+	private String alias;
+
+	/**
+	 * 属性排序
+	 */
 
 	@Column(nullable = true, name = "NAME_ORDER")
-	public Integer getOrder() {
-		return super.getOrder();
-	}
+	private Integer order;
 
+	/**
+	 * 是否必填
+	 */
 	@Column(nullable = false, name = "IS_REQUIRED")
-	public Boolean isRequired() {
-		return super.isRequired();
-	}
+	private Boolean required;
 
+	/**
+	 * 是否为流程变量 是提交时传递到下个节点
+	 */
+	@Column(name = "IS_PROCESS_VARIABLE")
+	private Boolean processVariable;
+
+	/**
+	 * 分组名
+	 */
 	@Column(length = 256, name = "GROUP_NAME")
-	public String getGroupName() {
-		return super.getGroupName();
-	}
+	private String groupName;
 
+	/**
+	 * 分组排序
+	 */
 	@Column(name = "GROUP_ORDER")
-	public Integer getGroupOrder() {
-		return super.getGroupOrder();
+	private Integer groupOrder;
+
+	/**
+	 * 页面组件
+	 */
+	@Column(length = 256, name = "VIEW_COMPONENT")
+	private String viewComponent;
+
+	/**
+	 * 页面组件数据
+	 */
+	@Column(length = 256, name = "VIEW_DATAS")
+	private String viewDatas;
+	
+	/**
+	 * 下拉组件数据URL
+	 */
+	@Column(length = 256, name = "VIEW_URL")
+	private String viewUrl;
+
+	/**
+	 * 页面组件参数
+	 */
+	@Column(length = 256, name = "VIEW_PARAMS")
+	private String viewParams;
+
+	/**
+	 * 所属版本
+	 */
+	@Column(nullable = false, name = "VERSION")
+	private Integer version;
+
+	/**
+	 * 联动属性
+	 */
+	@Column(length = 64, name = "REF_VARIABLE")
+	private String refVariable;
+
+	/**
+	 * 联动属性值
+	 */
+	@Column(length = 256, name = "REF_PARAM")
+	private String refParam;
+
+	public String getId() {
+		return id;
 	}
 
-	@Column(length = 256, name = "VIEW_COMPONENT")
-	public String getViewComponent() {
-		return super.getViewComponent();
+	public void setId(String id) {
+		this.id = id;
 	}
 	
-	@Override
-	@Column(length = 256, name = "VIEW_PARAMS")
-	public String getViewParams() {
-		return super.getViewParams();
+	public String getTaskId() {
+		return taskId;
 	}
 
-	@Column(nullable = false, name = "VERSION")
-	public Integer getVersion() {
-		return super.getVersion();
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
 	}
 
-	@Column(name = "IS_PROCESS_VARIABLE")
+	public Boolean getRequired() {
+		return required;
+	}
+
+	public Boolean getProcessVariable() {
+		return processVariable;
+	}
+
+	public String getProcessDefinitionId() {
+		return processDefinitionId;
+	}
+
+	public void setProcessDefinitionId(String processDefinitionId) {
+		this.processDefinitionId = processDefinitionId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	public Integer getOrder() {
+		return order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+
+	public Boolean isRequired() {
+		return required;
+	}
+
+	public void setRequired(Boolean required) {
+		this.required = required;
+	}
+
 	public Boolean isProcessVariable() {
 		return processVariable;
 	}
 
-	@Override
-	public void setId(String id) {
-		super.setId(id);
-	}
-
-	@Override
-	public void setProcessDefinitionId(String processDefinitionId) {
-		super.setProcessDefinitionId(processDefinitionId);
-	}
-
-	@Override
-	public void setName(String name) {
-		super.setName(name);
-	}
-
-	@Override
-	public void setAlias(String alias) {
-		super.setAlias(alias);
-	}
-
-	@Override
-	public void setOrder(Integer order) {
-		super.setOrder(order);
-	}
-
-	@Override
-	public void setRequired(Boolean required) {
-		super.setRequired(required);
-	}
-
-	@Override
 	public void setProcessVariable(Boolean processVariable) {
-		super.setProcessVariable(processVariable);
+		this.processVariable = processVariable;
 	}
 
-	@Override
+	public String getGroupName() {
+		return groupName;
+	}
+
 	public void setGroupName(String groupName) {
-		super.setGroupName(groupName);
+		this.groupName = groupName;
 	}
 
-	@Override
+	public Integer getGroupOrder() {
+		return groupOrder;
+	}
+
 	public void setGroupOrder(Integer groupOrder) {
-		super.setGroupOrder(groupOrder);
+		this.groupOrder = groupOrder;
 	}
 
-	@Override
+	public String getViewComponent() {
+		return viewComponent;
+	}
+
 	public void setViewComponent(String viewComponent) {
-		super.setViewComponent(viewComponent);
+		this.viewComponent = viewComponent;
 	}
 
-	@Override
+	public String getViewParams() {
+		return viewParams;
+	}
+
 	public void setViewParams(String viewParams) {
-		super.setViewParams(viewParams);
+		this.viewParams = viewParams;
 	}
 
-	@Override
+	public Integer getVersion() {
+		return version;
+	}
+
 	public void setVersion(Integer version) {
-		super.setVersion(version);
+		this.version = version;
 	}
-	@Column(length = 256, name = "VIEW_DATAS")
+
 	public String getViewDatas() {
-		return super.getViewDatas();
+		return viewDatas;
 	}
-	
-	@Override
+
 	public void setViewDatas(String viewDatas) {
-		super.setViewDatas(viewDatas);
+		this.viewDatas = viewDatas;
 	}
 	
-	@Column(length = 64, name = "REF_VARIABLE")
+	public String getViewUrl() {
+		return viewUrl;
+	}
+
+	public void setViewUrl(String viewUrl) {
+		this.viewUrl = viewUrl;
+	}
+
 	public String getRefVariable() {
-		return super.getRefVariable();
+		return refVariable;
 	}
 
 	public void setRefVariable(String refVariable) {
-		super.setRefVariable(refVariable);
+		this.refVariable = refVariable;
 	}
 
-	@Column(length = 256, name = "REF_PARAM")
 	public String getRefParam() {
-		return super.getRefParam();
+		return refParam;
 	}
 
 	public void setRefParam(String refParam) {
-		super.setRefParam(refParam);
+		this.refParam = refParam;
 	}
-	
+
 	public ProcessVariable clone() {
 		ProcessVariable instance = null;
 		try {
