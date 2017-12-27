@@ -59,14 +59,6 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
     BizInfo getByBizId(String id);
 
     /**
-     * 不包含配置信息 taskId
-     *
-     * @param id
-     * @return
-     */
-    BizInfo getBizInfo(String id, String loginUser);
-
-    /**
      * 分页查询指定用户创建的工单
      *
      * @return

@@ -217,12 +217,6 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
     }
 
     @Override
-    public BizInfo getBizInfo(String id, String loginUser) {
-
-        return dao.getBizInfo(id, loginUser);
-    }
-
-    @Override
     public BizInfo getByBizId(String id) {
 
         return this.get(id);
@@ -246,31 +240,37 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
     @Override
     public PageHelper<BizInfo> getBizInfoList(Map<String, Object> params, PageHelper<BizInfo> page) {
 
-        logger.info("工单查询 params : " + params);
-        List<BizInfo> result = new ArrayList<BizInfo>();
-        Map<String, SystemUser> userCache = new HashMap<String, SystemUser>();
-        Object ct1 = params.get("createTime");
-        Object ct2 = params.get("createTime2");
-        if (!(ct1 == null && ct2 == null)) {
-            if (ct1 == null) {
-                params.put("createTime", new Date());
-            } else if (ct2 == null) {
-                params.put("createTime2", new Date());
+        try {
+            logger.info("工单查询 params : " + params);
+            List<BizInfo> result = new ArrayList<BizInfo>();
+            Map<String, SystemUser> userCache = new HashMap<String, SystemUser>();
+            Object ct1 = params.get("createTime");
+            Object ct2 = params.get("createTime2");
+            if (!(ct1 == null && ct2 == null)) {
+                if (ct1 == null) {
+                    params.put("createTime", new Date());
+                } else if (ct2 == null) {
+                    params.put("createTime2", new Date());
+                }
             }
-        }
 
-        PageHelper<BizInfo> pageHelper = dao.queryWorkOrder(params, page);
-        List<BizInfo> list = pageHelper.getList();
-        if (CollectionUtils.isNotEmpty(list)) {
-            for (BizInfo bizInfo : list) {
-                bizInfo.setCreateUser(this.getUserNameCn(bizInfo.getCreateUser(), userCache));
-                bizInfo.setTaskAssignee(this.getUserNameCn(bizInfo.getTaskAssignee(), userCache));
-                result.add(bizInfo);
+            PageHelper<BizInfo> pageHelper = dao.queryWorkOrder(params, page);
+            List<BizInfo> list = pageHelper.getList();
+            if (CollectionUtils.isNotEmpty(list)) {
+                for (BizInfo bizInfo : list) {
+                    bizInfo.setCreateUser(this.getUserNameCn(bizInfo.getCreateUser(), userCache));
+                    bizInfo.setTaskAssignee(this.getUserNameCn(bizInfo.getTaskAssignee(), userCache));
+                    result.add(bizInfo);
+                }
             }
+            pageHelper.setList(result);
+            userCache.clear();
+            return pageHelper;
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("");
+            throw new ServiceException("查询失败");
         }
-        pageHelper.setList(result);
-        userCache.clear();
-        return pageHelper;
     }
 
     private String getUserNameCn(String username, Map<String, SystemUser> userCache) {

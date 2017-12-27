@@ -26,12 +26,4 @@ public interface IBizInfoDao extends IBaseDao<BizInfo> {
 	 */
 	 List<BizInfo> getBizByParentId(String parentId);
 
-	/**
-	 * 获取工单
-	 * @param id
-	 * @param loginUser
-	 * @return
-	 */
-	 BizInfo getBizInfo(String id,String loginUser);
-
 }
