@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.flowable.core.bean.ProcessVariableInstance;
 import com.flowable.core.bean.BizInfo;
-import com.flowable.core.bean.BizInfoConf;
 import com.flowable.core.bean.BizLog;
 
 /**
