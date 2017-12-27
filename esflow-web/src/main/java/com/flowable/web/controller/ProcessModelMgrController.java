@@ -10,6 +10,8 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.task.api.TaskQuery;
@@ -61,22 +63,13 @@ public class ProcessModelMgrController {
                 version = "1";
             }
             String taskId = (String) params.get("taskId");
-            if (StringUtils.isBlank(taskId)) {
-                PageHelper<ProcessVariable> processPage = new PageHelper<ProcessVariable>();
-                processPage.setPage(page.getPage());
-                processPage.setRows(page.getRows());
-                PageHelper<ProcessVariable> processValBeans = processValService.loadProcessVariables(processId, Integer.parseInt(version), processPage);
-                grid.setRows(processValBeans.getList());
-                grid.setTotal((long) processValBeans.getCount());
-            } else {
-                ProcessVariable processVariable = new ProcessVariable();
-                processVariable.setVersion(Integer.parseInt(version));
-                processVariable.setProcessDefinitionId(processId);
-                processVariable.setTaskId(taskId);
-                PageHelper<ProcessVariable> processTaskValBeans = processValService.findProcessVariables(processVariable, page);
-                grid.setRows(processTaskValBeans.getList());
-                grid.setTotal(processTaskValBeans.getCount());
-            }
+            ProcessVariable variable = new ProcessVariable();
+            variable.setProcessDefinitionId(processId);
+            variable.setTaskId(taskId);
+            variable.setVersion(Integer.parseInt(version));
+            PageHelper<ProcessVariable> processValBeans = this.processValService.findProcessVariables(variable, page);
+            grid.setRows(processValBeans.getList());
+            grid.setTotal((long) processValBeans.getCount());
         } catch (Exception e) {
             logger.error("操作失败 : {}", e);
         }
@@ -124,8 +117,11 @@ public class ProcessModelMgrController {
     @ResponseBody
     @RequestMapping(value = "deleteProcessValById")
     public Json deleteProcessValById(HttpServletRequest request, @RequestParam Map<String, Object> params) {
+
         logger.info("根据全局流程变量IDs删除变量详情---deleteProcessValById");
-        String[] valIds = ((String) params.get("valIds")).split(",");
+
+        String ids = (String) params.get("valIds");
+        String[] valIds = StringUtils.isNotBlank(ids) ? ids.split(",") : new String[]{};
         Json json = new Json();
         try {
             for (int i = 0; i < valIds.length; i++) {
@@ -157,7 +153,6 @@ public class ProcessModelMgrController {
         Json json = new Json();
         try {
             boolean isUpdate = true;
-            boolean isTask = false;
             String id = (String) reqParams.get("id");
             String taskId = (String) reqParams.get("taskId");
             ProcessVariable processValAbs = processValService.getVariableById(id);
@@ -173,11 +168,7 @@ public class ProcessModelMgrController {
             processValAbs.setRefVariable((String) reqParams.get("refVariable"));
             processValAbs.setRefParam((String) reqParams.get("refParam"));
             String temp = (String) reqParams.get("nameOrder");
-            Integer temp2 = null;
-            try {
-                temp2 = Integer.parseInt(temp);
-            } catch (Exception e) {
-            }
+            Integer temp2 = Integer.parseInt(temp);
             if (temp2 == null) {
                 // 查询当前最大序号
                 temp2 = processValService.getProcessOrder(processValAbs);
@@ -188,14 +179,7 @@ public class ProcessModelMgrController {
             processValAbs.setGroupName((String) reqParams.get("groupName"));
 
             temp = (String) reqParams.get("groupOrder");
-            temp2 = null;
-            try {
-                temp2 = Integer.parseInt(temp);
-            } catch (Exception e) {
-            }
-            if (temp2 == null) {
-                temp2 = 0;
-            }
+            temp2 = Integer.parseInt(temp);
             processValAbs.setGroupOrder(temp2);
 
             // 页面组件特殊处理
@@ -240,46 +224,28 @@ public class ProcessModelMgrController {
             String processId = (String) params.get("processId");
             String version = (String) params.get("version");
             String taskId = (String) params.get("taskId");
-            Set<String> grops = new HashSet<String>();
-            if (StringUtils.isBlank(taskId)) {
-                List<ProcessVariable> processValBeans = processValService.loadVariables(processId, Integer.parseInt(version));
-                for (ProcessVariable process : processValBeans) {
-                    grops.add(process.getGroupName().trim());
-                }
-                for (String grop : grops) {
-                    List<ProcessVariable> processes = new ArrayList<ProcessVariable>();
-                    for (ProcessVariable process : processValBeans) {
-                        if (grop == process.getGroupName() || (grop != null && grop.equals(process.getGroupName().trim()))) {
-                            processes.add(process);
-                        }
-                    }
-                    Map<String, Object> data = new HashMap<String, Object>();
-                    data.put("grop", grop);
-                    data.put("list", processes);
-                    list.add(data);
-                }
-            } else {
-                ProcessVariable processVariable = new ProcessVariable();
-                processVariable.setVersion(Integer.parseInt(version));
-                processVariable.setProcessDefinitionId(processId);
-                processVariable.setTaskId(taskId);
-                List<ProcessVariable> processTaskValBeans = processValService.findProcessVariables(processVariable);
-                for (ProcessVariable task : processTaskValBeans) {
-                    grops.add(task.getGroupName().trim());
-                }
-                for (String grop : grops) {
-                    List<ProcessVariable> tasks = new ArrayList<ProcessVariable>();
-                    for (ProcessVariable task : processTaskValBeans) {
-                        if (grop == task.getGroupName() || (grop != null && grop.equals(task.getGroupName().trim()))) {
-                            tasks.add(task);
-                        }
-                    }
-                    Map<String, Object> data = new HashMap<String, Object>();
-                    data.put("grop", grop);
-                    data.put("list", tasks);
-                    list.add(data);
-                }
+            Set<String> groups = new HashSet<String>();
+            ProcessVariable processVariable = new ProcessVariable();
+            processVariable.setVersion(Integer.parseInt(version));
+            processVariable.setProcessDefinitionId(processId);
+            processVariable.setTaskId(taskId);
+            List<ProcessVariable> processValBeans = processValService.findProcessVariables(processVariable);
+
+            if (CollectionUtils.isNotEmpty(processValBeans)) {
+                processValBeans.forEach(process -> groups.add(process.getGroupName().trim()));
             }
+            groups.forEach(group -> {
+                List<ProcessVariable> processes = new ArrayList<ProcessVariable>();
+                for (ProcessVariable process : processValBeans) {
+                    if (group != null && group.equals(process.getGroupName().trim())) {
+                        processes.add(process);
+                    }
+                }
+                Map<String, Object> data = new HashMap<String, Object>();
+                data.put("grop", group);
+                data.put("list", processes);
+                list.add(data);
+            });
         } catch (Exception e) {
             logger.error("操作失败 : {}", e);
         }
@@ -287,26 +253,10 @@ public class ProcessModelMgrController {
     }
 
     @ResponseBody
-    @RequestMapping("/getVarInstanceInstance")
-    public ProcessVariableInstance getVarInstanceInstance(@RequestParam Map<String, String> params) {
-
-        List<ProcessVariableInstance> list = this.processValService.getProcessVariableInstances(params);
-        ProcessVariableInstance instance = null;
-        if (list != null && !list.isEmpty()) {
-            instance = list.get(0);
-        }
-        return instance;
-    }
-
-    @ResponseBody
     @RequestMapping("/getProcessId/{key}")
     public String getProcessId(@PathVariable("key") String key) {
 
-        ProcessDefinition pd = processDefinitionService.getLatestProcDefByKey(key);
-        if (pd != null) {
-            return pd.getId();
-        } else {
-            return null;
-        }
+        ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
+        return processDefinition == null ? null : processDefinition.getId();
     }
 }
