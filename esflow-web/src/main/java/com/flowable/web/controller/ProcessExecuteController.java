@@ -1,8 +1,6 @@
 package com.flowable.web.controller;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,6 +16,7 @@ import com.flowable.core.service.IProcessVariableService;
 import com.flowable.core.util.Constants;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.util.FileUtil;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,28 +120,23 @@ public class ProcessExecuteController {
     public Map<String, Object> create(@PathVariable("key") String key, HttpServletRequest request) {
 
         Map<String, Object> data = new HashMap<String, Object>();
-        try {
-
-            WebUtil.getLoginUser(request);
-            ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
-            if (processDefinition != null) {
-                String proDefId = processDefinition.getId();
-                data.put("base_tempID", proDefId);
-                ProcessVariable variable = new ProcessVariable();
-                variable.setProcessDefinitionId(proDefId);
-                variable.setTaskId(Constants.TASK_START);
-                variable.setVersion(-1);
-                List<ProcessVariable> list = this.processVariableService.findProcessVariables(variable);
-                data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
-                Map<String, List<ProcessVariable>> map = groupProcessValBean(list);
-                data.put("ProcessValBeanMap", map);
-                data.put("result", true);
-            } else {
-                data.put("result", false);
-                data.put("msg", "流程【" + key + "】未找到!");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        WebUtil.getLoginUser(request);
+        ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
+        if (processDefinition != null) {
+            String proDefId = processDefinition.getId();
+            data.put("base_tempID", proDefId);
+            ProcessVariable variable = new ProcessVariable();
+            variable.setProcessDefinitionId(proDefId);
+            variable.setTaskId(Constants.TASK_START);
+            variable.setVersion(-1);
+            List<ProcessVariable> list = this.processVariableService.findProcessVariables(variable);
+            data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
+            Map<String, List<ProcessVariable>> map = groupProcessValBean(list);
+            data.put("ProcessValBeanMap", map);
+            data.put("result", true);
+        } else {
+            data.put("result", false);
+            data.put("msg", "流程【" + key + "】未找到!");
         }
         return data;
     }
@@ -156,19 +150,13 @@ public class ProcessExecuteController {
     @RequestMapping(value = "/display/{id}")
     public Map<String, Object> display(@PathVariable("id") String id, HttpServletRequest request) {
 
-        Map<String, Object> data = new HashMap<String, Object>();
-            Map<String, Object> result = processExecuteService.queryWorkOrder(id);
-        try {
-            WebUtil.getLoginUser(request);
-            logger.info(JSONObject.toJSONString(result));
-            String processVal = JSONObject.toJSONString(result.get("processVariables"));
-            List<ProcessVariable> list = JSON.parseObject(processVal, new TypeReference<List<ProcessVariable>>() {
-            });
-            Map<String, List<ProcessVariable>> map = groupProcessValBean(list);
-            result.put("processVariablesMap", map);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Map<String, Object> result = processExecuteService.queryWorkOrder(id);
+        WebUtil.getLoginUser(request);
+        String processVal = JSONObject.toJSONString(result.get("processVariables"));
+        List<ProcessVariable> list = JSON.parseObject(processVal, new TypeReference<List<ProcessVariable>>() {
+        });
+        Map<String, List<ProcessVariable>> map = groupProcessValBean(list);
+        result.put("processVariablesMap", map);
         return result;
     }
 
@@ -229,6 +217,7 @@ public class ProcessExecuteController {
         try {
             WebUtil.getLoginUser(request);
             if (validateFileSize(request)) {
+                json.setSuccess(false);
                 json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
                 return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
             }
@@ -259,8 +248,8 @@ public class ProcessExecuteController {
         responseHeaders.setContentType(MediaType.TEXT_PLAIN);
         try {
             WebUtil.getLoginUser(request);
-            json.setSuccess(false);
             if (validateFileSize(request)) {
+                json.setSuccess(false);
                 json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
                 return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
             }
@@ -271,7 +260,6 @@ public class ProcessExecuteController {
             json.setMsg("操作失败: " + e.getLocalizedMessage());
             return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
         }
-
         json.setSuccess(true);
         json.setMsg("操作成功");
         return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
@@ -315,55 +303,28 @@ public class ProcessExecuteController {
 
     @ResponseBody
     @RequestMapping(value = "/download")
-    public void downloadFile(String action, String id, HttpServletRequest request, HttpServletResponse response) {
+    public void downloadFile(String action, String id, HttpServletResponse response) {
 
         Object[] result = processExecuteService.downloadFile(action, id);
         if (result[1] == null) {
             return;
         }
-        InputStream is = (InputStream) result[1];
+        InputStream inputStream = (InputStream) result[1];
         String fileType = (String) result[0];
         Long fileLong = (Long) result[2];
         String fileName = (String) result[3];
-        response.reset();
-        if ("IMAGE".equalsIgnoreCase(fileType)) {
-            response.setContentType("image/PNG;charset=GB2312");
-        } else {
-            try {
+        try {
+            if ("IMAGE".equalsIgnoreCase(fileType)) {
+                response.setContentType("image/PNG;charset=GB2312");
+            } else {
                 fileName = new String(fileName.getBytes("utf-8"), "ISO8859-1");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                response.setContentType("application/x-download");
+                response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+                response.setHeader("Content-Length", fileLong == null ? "0" : String.valueOf(fileLong));
+                FileUtil.copyStream(inputStream, response.getOutputStream());
             }
-            response.setContentType("application/x-download");
-            response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-            response.setHeader("Content-Length", fileLong == null ? "0" : String.valueOf(fileLong));
-        }
-        if (is != null) {
-            OutputStream output = null;
-            try {
-                output = response.getOutputStream();// 得到输出流
-                int size = 2048;
-                byte[] b = new byte[size];
-                int p = 0;
-                while ((p = is.read(b)) > 0) {
-                    output.write(b, 0, p);
-                    if (p < size) {
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-            } finally {
-                try {
-                    is.close();// 关闭文件流
-
-                } catch (Exception e) {
-                }
-                try {
-                    output.flush();
-                    output.close();
-                } catch (Exception e) {
-                }
-            }
+        } catch (Exception e) {
+            logger.error("文件下载失败 : {}", e);
         }
     }
 

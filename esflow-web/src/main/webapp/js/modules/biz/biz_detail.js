@@ -23,8 +23,7 @@ biz.detail = {
                 biz.detail.logVars = result.logVars;
                 biz.detail.serviceInfo = result.serviceInfo;
                 biz.detail.createUser = result.extInfo.createUser;
-                console.info(result)
-                biz.detail.currentVariables = $.isEmptyObject(result.currentVariables) ? [] : result.currentVariables;
+                biz.detail.currentVariables =  result.currentVariables;
                 biz.detail.buttons = result.SYS_BUTTON;
                 biz.detail.currentTaskName = result.$currentTaskName;
                 biz.detail.annexs = result.annexs;
@@ -43,7 +42,6 @@ biz.detail = {
                 biz.detail.loadWorkForm(biz.detail.buttons, biz.detail.currentVariables, biz.detail.currentTaskName);
                 $("#stepPicBizId").append(biz.detail.workInfo.bizId);
                 biz.stepPic.loadStepPic(biz.detail.workLogs, biz.detail.workInfo.bizType);
-                console.info(biz.detail.buttonGroup)
                 if (!biz.detail.buttonGroup) {
                     biz.detail.createButtons("#workLogs", biz.detail.buttons);
                 }
@@ -244,6 +242,7 @@ biz.detail = {
         view.appendTd();
     },
     loadWorkLogs: function (workLogs) {
+
         var mark = 1;
         for (var i in workLogs) {
             var div = $("<div class='import_form'>");
@@ -306,10 +305,16 @@ biz.detail = {
                     view.addFile(biz.detail.files[workLogs[i].id]);
                 }
             }
-            //回显
             biz.detail.loadProcessData(logVar, table);
         }
     },
+
+    /**
+     * 当前任务form
+     * @param buttons
+     * @param taskVariableBeans
+     * @param currentTaskName
+     */
     loadWorkForm: function (buttons, taskVariableBeans, currentTaskName) {
 
         if (buttons != null) {
@@ -340,6 +345,7 @@ biz.detail = {
             biz.detail.loadProcessData({}, table);
         }
     },
+
     /**
      * 按钮分组
      * @param currentVariables
@@ -352,6 +358,9 @@ biz.detail = {
         var groupButtons = {
             all: buttons
         };
+        if($.isEmptyObject(currentVariables)){
+            return;
+        }
         //确定处理方式属性
         for (var i = 0; i < currentVariables.length; i++) {
             if (currentVariables[i].viewComponent == "TREATMENT") {
@@ -414,16 +423,28 @@ biz.detail = {
 
         return groupButtons;
     },
+
+    /**
+     * 创建按钮
+     * @param container
+     * @param buttons
+     */
     createButtons: function (container, buttons) { //未分组方法，旧
         $("#formButtons").remove();
         var buttonList = $("<div id='formButtons' class='btn_list' style='padding:10px 0;margin:0;'>");
         $(container).append(buttonList);
-        $.each(buttons,function(key,value){
-            buttonList.append("<a class='yes_btn mrr10' onclick=biz.detail.save('" + key + "')>" + value + "</a>");
-        });
+        for (var key in buttons) {
+            buttonList.append("<a class='yes_btn mrr10' onclick=biz.detail.save('" + key + "')>" + buttons[key] + "</a>");
+        }
         buttonList.append("<a onclick='javascript:window.opener=null;window.close();'>关闭</a>");
     },
-    getTable: function (group) { //工单基本数据分组获取布局table
+
+    /**
+     * 工单基本数据分组获取布局table
+     * @param group
+     * @returns {*}
+     */
+    getTable: function (group) {
         var table;
         if (group == $("#msgtitle").text()) {
             table = $("#fqrxx");
@@ -442,6 +463,12 @@ biz.detail = {
         }
         return table;
     },
+
+    /**
+     * 工单日志
+     * @param currentTaskName
+     * @returns {*|jQuery|HTMLElement}
+     */
     getWorkLogsTable: function (currentTaskName) { //创建获取当前流程布局table，传入流程名称，早期改名有瑕疵
         var div = $("<div class='import_form'>");
         var title = "<h2 class='white_tit'>我的处理：" + currentTaskName +
