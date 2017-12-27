@@ -76,7 +76,7 @@ function detailFormatter(index, row) {
 	content += '	</div>';
 	content += '	<div class="btn-group" role="group" aria-label="...">';
 	content += '		<button type="button" class="btn btn-y" onclick="convertToModel(\'' + row.id + '\');">转换为模型</button>';
-	content += '		<button type="button" class="btn btn-y" onclick="window.open(\'' + path + '/process/variable?processDefinitionId=' + row.id + '&version=' + row.version + '&taskId=\', \'_self\');">设置流程参数</button>';
+	content += '		<button type="button" class="btn btn-y" onclick="window.open(\'' + path + '/process/variable?processDefinitionId=' + row.id + '&version=' + row.version + '&taskId=START\', \'_self\');">设置流程参数</button>';
 	content += '		<button type="button" class="btn btn-y" onclick="window.open(\'' + path + '/process/task/list?processDefinitionId=' + row.id + '&version=' + row.version + '\', \'_self\');">查看流程任务</button>';
 	content += '	</div>';
 	content += '	<div class="btn-group" role="group" aria-label="...">';

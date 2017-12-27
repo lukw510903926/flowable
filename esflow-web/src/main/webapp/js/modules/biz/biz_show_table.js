@@ -38,25 +38,19 @@ biz.show.table = {
             for (var j = 0; j < option.list.length; j++) {
                 switch (option.list[j].viewComponent) {
                     case "TEXTAREA":
-                        tr = biz.show.table.addTextarea(option.list[j]);
+                        biz.show.table.addTextarea(option.list[j]);
                         break;
                     case "TEXT":
-                        tr = biz.show.table.addTextField(option.list[j]);
-                        break;
-                    case "MCMGRID":
-                        tr = biz.show.table.addConfigItem(option.list[j]);
-                        break;
-                    case "ORGCOMBOBOX":
-                        biz.edit.form.addorgComBobox(option.list[j]);
+                        biz.show.table.addTextField(option.list[j]);
                         break;
                     case "REQUIREDFILE":
-                        tr = biz.show.table.addQuiredFile(option.list[j]);
+                        biz.show.table.addQuiredFile(option.list[j]);
                         break;
                     case "GROUPHEAD":
-                        tr = biz.show.table.addGroupHead(option.list[j]);
+                        biz.show.table.addGroupHead(option.list[j]);
                         break;
                     default:
-                        tr = biz.show.table.addTextField(option.list[j]);
+                        biz.show.table.addTextField(option.list[j]);
                 }
             }
             if (option.end || option.end == undefined) {
@@ -324,19 +318,19 @@ biz.show.table = {
      * 处理方式
      */
     listByTreatment: function (list) {
-        var treatmentid = null;
+        var treatmentId = null;
         for (var i = 0; i < list.length; i++) {
             if (list[i].name == "treatment") {
-                treatmentid = list[i].id;
+                treatmentId = list[i].id;
                 break;
             }
         }
         var array = [];
-        if (treatmentid != null) {
+        if (treatmentId != null) {
             var treatment = null;
             var serviceInfo = biz.detail.serviceInfo;
             for (var i in serviceInfo) {
-                if (treatmentid == serviceInfo[i].variable.id) {
+                if (treatmentId == serviceInfo[i].variable.id) {
                     treatment = serviceInfo[i].value;
                     break;
                 }
