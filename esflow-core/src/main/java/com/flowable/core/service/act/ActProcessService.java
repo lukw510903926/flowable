@@ -184,7 +184,7 @@ public class ActProcessService {
 	public InputStream resourceRead(String processDefinitionId, String processInstanceId, String resourceType) throws Exception {
 
 		if (!StringUtils.isBlank(processInstanceId)) {
-			ProcessInstance processInstance = processService.getProceInstance(processInstanceId);
+			ProcessInstance processInstance = processService.getProcessInstance(processInstanceId);
 			processDefinitionId = processInstance.getProcessDefinitionId();
 		}
 		ProcessDefinition processDefinition = null;

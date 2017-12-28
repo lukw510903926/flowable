@@ -114,16 +114,8 @@ public interface IProcessDefinitionService {
      * 获取当前用户对工单有权限处理的任务，并返回操作权限 返回HANDLE，表示可以进行处理，SIGN表示可以进行签收，其他无权限<br>
      * 返回格式：任务ID:权限
      *
-     * @param bean 工单对象
-     * @return @
-     */
-    String getWorkAccessTask(BizInfo bean, String username);
-
-    /**
-     * 判断用户对当前任务的权限，返回权限值<br>
-     * 返回HANDLE，表示可以进行处理，SIGN表示可以进行签收，其他无权限<br>
-     *
-     * @param taskID
+     * @param taskID  taskId
+     * @param username 用户
      * @return @
      */
     String getWorkAccessTask(String taskID, String username);
@@ -185,6 +177,6 @@ public interface IProcessDefinitionService {
      */
     List<String> getTaskCandidateGroup(Task task);
 
-    ProcessInstance getProceInstance(String processInstanceID);
+    ProcessInstance getProcessInstance(String processInstanceID);
 
 }
