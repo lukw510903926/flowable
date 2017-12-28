@@ -282,7 +282,10 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             List<ProcessVariable> processValList = loadHandleProcessValBean(bizInfo, Constants.TASK_START);
             saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
         }
-        saveFile(multiValueMap, now, bizInfo, null);
+        TaskEntityImpl task = new TaskEntityImpl(); // 开始节点没有任务对象
+        task.setId(Constants.TASK_START);
+        task.setName((String) params.get("base.handleName"));
+        saveFile(multiValueMap, now, bizInfo, task);
         this.deleBizFiles(deleFileId);
         return bizInfo;
     }
@@ -295,6 +298,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         BizInfo bizInfo = bizInfoService.get(id);
         BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(id);
         Date now = new Date();
+        Task task = processDefinitionService.getTaskBean(bizInfoConf.getTaskId());
         // if (StringUtils.isNotBlank(bizInfo.getProcessInstanceId()) &&
         // StringUtils.isNotBlank(bizInfoConf.getTaskId())) {
         reSubmit(params, bizInfo, bizInfoConf);
@@ -306,7 +310,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         // saveOrUpdateVars(bizInfo, bizInfoConf, variables, params, now);
         // }
         bizInfoService.updateBizInfo(bizInfo);
-        saveFile(fileMap, now, bizInfo, null);
+        saveFile(fileMap, now, bizInfo, task);
         return bizInfo;
     }
 
@@ -500,7 +504,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         String taskId = bizInfoConf.getTaskId();
         Task task = processDefinitionService.getTaskBean(taskId);
         if (Constants.SIGN.equalsIgnoreCase(buttonId)) {
-            sign(bizInfo, bizInfoConf, (String) params.get("loginUser"));
+            sign(bizInfo, bizInfoConf, WebUtil.getLoginUser().getUsername());
         } else {
             Map<String, Object> variables = new HashMap<String, Object>();
             List<ProcessVariable> processValList = loadHandleProcessValBean(bizInfo, taskId);
@@ -690,7 +694,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         // 加载工单流程参数
         result.put("serviceInfo", instanceService.loadInstances(bizInfo));
         // 加载流程参数附件
-        result.put("annexs", bizFileService.loadBizFilesByBizId(bizInfo.getId(), null));
+        result.put("annexs", bizFileService.loadBizFilesByBizId(bizInfo.getId(), Constants.TASK_START));
         // 加载日志
         List<BizLog> bizLogs = logService.loadBizLogs(bizInfo.getId());
         Map<String, List<ProcessVariableInstance>> logVars = new HashMap<String, List<ProcessVariableInstance>>(0);
