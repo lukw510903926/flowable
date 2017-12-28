@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.flowable.common.utils.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -144,17 +145,17 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
         newBiz.setCreateUser(username);
         this.addBizInfo(newBiz);
         this.copyProcessVarInstance(processInstanceId, oldBiz, newBiz);
-        BizInfoConf bizInfoConf = new BizInfoConf();
-        bizInfoConf.setBizInfo(oldBiz);
-        this.copyBizInfoConf(newBiz, bizInfoConf);
+        this.copyBizInfoConf(newBiz, oldBiz.getId());
         this.copyBizFile(bizId, oldBiz, newBiz, username);
         return newBiz;
     }
 
     private void copyProcessVarInstance(String processInstanceId, BizInfo oldBiz, BizInfo newBiz) {
 
-        List<ProcessVariableInstance> processInstances = processInstanceDao
-                .loadProcessInstances(oldBiz.getProcessInstanceId());
+        ProcessVariableInstance instance = new ProcessVariableInstance();
+        instance.setBizId(oldBiz.getId());
+        instance.setTaskId(Constants.TASK_START);
+        List<ProcessVariableInstance> processInstances = processInstanceDao.findProcessInstances(instance);
         if (CollectionUtils.isNotEmpty(processInstances)) {
             processInstances.forEach(oldInstance -> {
                 ProcessVariableInstance processVariableInstance = oldInstance.clone();
@@ -182,9 +183,9 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
         }
     }
 
-    private void copyBizInfoConf(BizInfo newBiz, BizInfoConf bizInfoConf) {
+    private void copyBizInfoConf(BizInfo newBiz, String bizId) {
 
-        List<BizInfoConf> list = this.bizInfoConfDao.findBizInfoConf(bizInfoConf);
+        List<BizInfoConf> list = this.bizInfoConfDao.getBizInfoConf(bizId);
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(bizConf -> {
                 BizInfoConf newConf = bizConf.clone();
@@ -201,9 +202,7 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
     public void deleteBizInfo(BizInfo... beans) {
 
         for (BizInfo bean : beans) {
-            if (bean.getId() != null) {
-                dao.delete(bean);
-            }
+            this.delete(bean);
         }
     }
 
@@ -240,33 +239,45 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
     @Override
     public PageHelper<BizInfo> getBizInfoList(Map<String, Object> params, PageHelper<BizInfo> page) {
 
-        try {
-            logger.info("工单查询 params : " + params);
-            Map<String, SystemUser> userCache = new HashMap<String, SystemUser>();
-            Object ct1 = params.get("createTime");
-            Object ct2 = params.get("createTime2");
-            if (!(ct1 == null && ct2 == null)) {
-                if (ct1 == null) {
-                    params.put("createTime", new Date());
-                } else if (ct2 == null) {
-                    params.put("createTime2", new Date());
-                }
-            }
-            PageHelper<BizInfo> pageHelper = dao.queryWorkOrder(params, page);
-            List<BizInfo> list = pageHelper.getList();
-            if (CollectionUtils.isNotEmpty(list)) {
-                for (BizInfo bizInfo : list) {
-                    bizInfo.setCreateUser(this.getUserNameCn(bizInfo.getCreateUser(), userCache));
-                    bizInfo.setTaskAssignee(this.getUserNameCn(bizInfo.getTaskAssignee(), userCache));
-                }
-            }
-            userCache.clear();
-            return pageHelper;
-        }catch (Exception e){
-            e.printStackTrace();
-            logger.error("");
-            throw new ServiceException("查询失败");
+        logger.info("工单查询 params : " + params);
+        String action = (String) params.get("action");
+        String createTime = (String) params.get("createTime");
+        String createTime2 = (String) params.get("createTime2");
+        if (!(createTime == null && createTime2 == null)) {
+            String key = createTime == null ? "createTime" : "createTime2";
+            params.put(key, new Date());
         }
+        Date dt1 = DateUtils.parseDate(createTime);
+        Date dt2 = DateUtils.parseDate(createTime2);
+        if (dt1 == null) {
+            params.remove("createTime");
+        } else {
+            params.put("createTime", dt1);
+        }
+        if (dt2 == null) {
+            params.remove("createTime2");
+        } else {
+            params.put("createTime2", dt2);
+        }
+        if ("myCreate".equalsIgnoreCase(action)) {
+            params.remove("createUser");
+        } else if ("myClose".equalsIgnoreCase(action)) {
+            params.put("status", Constants.BIZ_END);
+        } else if ("myTemp".equalsIgnoreCase(action)) {
+            params.put("status", "草稿");
+            params.remove("createUser");
+        }
+        Map<String, SystemUser> userCache = new HashMap<String, SystemUser>();
+        PageHelper<BizInfo> pageHelper = dao.queryWorkOrder(params, page);
+        List<BizInfo> list = pageHelper.getList();
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (BizInfo bizInfo : list) {
+                bizInfo.setCreateUser(this.getUserNameCn(bizInfo.getCreateUser(), userCache));
+                bizInfo.setTaskAssignee(this.getUserNameCn(bizInfo.getTaskAssignee(), userCache));
+            }
+        }
+        userCache.clear();
+        return pageHelper;
     }
 
     private String getUserNameCn(String username, Map<String, SystemUser> userCache) {

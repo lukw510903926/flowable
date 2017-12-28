@@ -102,38 +102,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	}
 
 	@Override
-	public PageHelper<BizInfo> queryMyBizInfos(String targe, Map<String, Object> params, PageHelper<BizInfo> page) {
-
-		log.info(" queryMyBizInfos begin ------");
-		// 转换查询时间
-		String createTime = (String) params.get("createTime");
-		String createTime2 = (String) params.get("createTime2");
-		Date dt1 = DateUtils.parseDate(createTime);
-		Date dt2 = DateUtils.parseDate(createTime2);
-		if (dt1 == null) {
-			params.remove("createTime");
-		} else {
-			params.put("createTime", dt1);
-		}
-		if (dt2 == null) {
-			params.remove("createTime2");
-		} else {
-			params.put("createTime2", dt2);
-		}
-		if ("myCreate".equalsIgnoreCase(targe)) {
-			params.remove("createUser");
-		} else if ("myClose".equalsIgnoreCase(targe)) {
-			params.put("status", Constants.BIZ_END);
-		} else if ("myWork".equals(targe)) {
-			params.put("checkAssignee", "checkAssignee");
-		} else if ("myTemp".equalsIgnoreCase(targe)) {
-			params.put("status", "草稿");
-			params.remove("createUser");
-		}
-		return bizInfoService.getBizInfoList(params, page);
-	}
-
-	@Override
 	public List<ProcessVariable> loadHandleProcessValBean(BizInfo bean, String taskId) {
 
 		Task task = processDefinitionService.getTaskBean(taskId);
@@ -289,7 +257,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		this.deleBizFiles(deleFileId);
 		return bizInfo;
 	}
-	
+
 	public BizInfo startProc(BizInfo bizInfo, BizInfoConf bizInfoConf, Map<String, Object> params, Date now) {
 
 		String procDefId = bizInfo.getProcessDefinitionId();
@@ -357,7 +325,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		return bizInfo;
 	}
 
-	@Transactional
 	private BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap, BizInfo bizInfo,
 			BizInfoConf bizInfoConf, List<ProcessVariable> processValList) {
 
@@ -386,7 +353,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	}
 
 	private Map<String, Object> setVariables(BizInfo bizInfo, Map<String, Object> params,List<ProcessVariable> processValList) {
-		
+
 		String buttonId = (String) params.get("base.buttonId");
 		Map<String, Object> variables = new HashMap<String, Object>();
 		// 设置流程参数
@@ -397,8 +364,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			}
 		}
 		variables.put("SYS_FORMTYPE", params.get(IProcessExecuteService.systemFormType));
-		variables.put("SYS_BUTTON_VALUE", buttonId);
-		variables.put("SYS_BIZ_CREATEUSER", bizInfo.getCreateUser());
+		variables.put(Constants.SYS_BUTTON_VALUE, buttonId);
+		variables.put(Constants.SYS_BIZ_CREATEUSER, bizInfo.getCreateUser());
 		variables.put(Constants.SYS_BIZ_ID, bizInfo.getId());
 		variables.put(Constants.COUNTER_SIGN, this.getUsernames((String) params.get("handleUser")));
 		return variables;
