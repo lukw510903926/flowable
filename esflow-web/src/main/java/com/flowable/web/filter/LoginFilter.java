@@ -15,16 +15,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.flowable.common.utils.LoginUser;
 import com.flowable.core.util.WebUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoginFilter implements Filter {
 
-	private Logger logger = Logger.getLogger(this.getClass());
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private Set<String> prefixIignores = new HashSet<String>();
+	private Set<String> prefixIgnores = new HashSet<String>();
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -32,7 +33,7 @@ public class LoginFilter implements Filter {
 		String ignoresParam = filterConfig.getInitParameter("ignores");
 		String[] ignoreArray = ignoresParam.split(",");
 		for (String s : ignoreArray) {
-			prefixIignores.add(s);
+			prefixIgnores.add(s);
 		}
 		logger.info("loginFilter init -------------------");
 	}
@@ -40,6 +41,7 @@ public class LoginFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)throws IOException, ServletException {
 
+		logger.info("doFilter---------------------------------------------");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpSession session = httpRequest.getSession();
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -70,7 +72,7 @@ public class LoginFilter implements Filter {
 	private boolean canIgnore(HttpServletRequest request) {
 
 		String url = request.getRequestURI();
-		for (String ignore : prefixIignores) {
+		for (String ignore : prefixIgnores) {
 			if (url.endsWith(ignore)) {
 				return true;
 			}
