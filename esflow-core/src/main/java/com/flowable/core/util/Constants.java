@@ -13,6 +13,8 @@ public class Constants {
 	public final static String COUNTER_SIGN = "_members";
 
 	public final static String TASK_START = "START";
+
+	public final static String SYS_BUTTON_VALUE = "SYS_BUTTON_VALUE";
 	
 	/**
 	 * 签收标识
