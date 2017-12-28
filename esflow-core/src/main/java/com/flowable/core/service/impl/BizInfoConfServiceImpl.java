@@ -3,6 +3,7 @@ package com.flowable.core.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +48,10 @@ public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> impleme
 	@Transactional(readOnly = true)
 	public BizInfoConf getMyWork(String bizId) {
 
-		return this.bizInfoConfDao.getMyWork(bizId);
+		if(StringUtils.isNotBlank(bizId)) {
+			return this.bizInfoConfDao.getMyWork(bizId);
+		}
+		return null;
 	}
 
 	@Override

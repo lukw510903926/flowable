@@ -242,7 +242,6 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
 
         try {
             logger.info("工单查询 params : " + params);
-            List<BizInfo> result = new ArrayList<BizInfo>();
             Map<String, SystemUser> userCache = new HashMap<String, SystemUser>();
             Object ct1 = params.get("createTime");
             Object ct2 = params.get("createTime2");
