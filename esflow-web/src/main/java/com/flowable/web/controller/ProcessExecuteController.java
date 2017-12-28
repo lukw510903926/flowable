@@ -98,8 +98,7 @@ public class ProcessExecuteController {
                                    HttpServletRequest request, HttpServletResponse response) {
 
         WebUtil.getLoginUser(request, response);
-        String action = (String) params.get("action");
-        PageHelper<BizInfo> helper = processExecuteService.queryMyBizInfos(action, params, page);
+        PageHelper<BizInfo> helper = bizInfoService.getBizInfoList(params,page);
         DataGrid grid = new DataGrid();
         grid.setRows(helper.getList());
         grid.setTotal(helper.getCount());
