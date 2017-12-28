@@ -194,7 +194,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             outgoingFlows.forEach(sequenceFlow -> {
                 FlowElement targetFlowElement = sequenceFlow.getTargetFlowElement();
                 if (targetFlowElement instanceof ExclusiveGateway) {
-                    ExclusiveGateway exclusiveGateway = (ExclusiveGateway) sequenceFlow.getTargetFlowElement();
+                    ExclusiveGateway exclusiveGateway = (ExclusiveGateway) targetFlowElement;
                     List<SequenceFlow> sequenceFlows = exclusiveGateway.getOutgoingFlows();
                     if (!CollectionUtils.isEmpty(sequenceFlows)) {
                         list.addAll(sequenceFlows);
