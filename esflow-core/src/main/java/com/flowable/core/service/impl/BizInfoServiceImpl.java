@@ -128,7 +128,7 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
         PageHelper<BizInfo> page = new PageHelper<BizInfo>();
         page.setPage(-1);
         page.setRows(-1);
-        List<BizInfo> list = this.getBizInfoList(params, page).getList();
+        List<BizInfo> list = this.findBizInfo(params, page).getList();
         BizInfo newBiz = oldBiz.clone();
         newBiz.setId(null);
         if (CollectionUtils.isEmpty(list)) {
@@ -237,7 +237,7 @@ public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBiz
     }
 
     @Override
-    public PageHelper<BizInfo> getBizInfoList(Map<String, Object> params, PageHelper<BizInfo> page) {
+    public PageHelper<BizInfo> findBizInfo(Map<String, Object> params, PageHelper<BizInfo> page) {
 
         logger.info("工单查询 params : " + params);
         String action = (String) params.get("action");

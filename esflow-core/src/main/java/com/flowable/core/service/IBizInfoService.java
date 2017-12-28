@@ -63,7 +63,7 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      *
      * @return
      */
-    PageHelper<BizInfo> getBizInfoList(Map<String, Object> params, PageHelper<BizInfo> page);
+    PageHelper<BizInfo> findBizInfo(Map<String, Object> params, PageHelper<BizInfo> page);
 
     /**
      * @param list
