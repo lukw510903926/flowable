@@ -1,7 +1,6 @@
 package com.flowable.core.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import com.flowable.common.dao.IBaseDao;
 import com.flowable.core.bean.BizLog;
