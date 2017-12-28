@@ -2,7 +2,6 @@ package com.flowable.web.controller;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.flowable.core.bean.ProcessVariable;
 import com.flowable.core.service.IProcessVariableService;
 import com.flowable.core.util.Constants;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.util.FileUtil;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -28,13 +26,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.alibaba.fastjson.JSON;
@@ -179,11 +175,6 @@ public class ProcessExecuteController {
         header.setContentType(MediaType.TEXT_PLAIN);
         BizInfo bean = null;
         try {
-            if (validateFileSize(request)) {
-                json.setSuccess(false);
-                json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
-                return new ResponseEntity<String>(JSONObject.toJSONString(json), header, HttpStatus.OK);
-            }
             bean = processExecuteService.createBizDraft(params, request.getMultiFileMap(), startProc, deleFileId);
         } catch (Exception e) {
             logger.error("工单创建失败 : {}", e);
@@ -212,25 +203,20 @@ public class ProcessExecuteController {
     public ResponseEntity<String> updateBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
         Json json = new Json();
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setContentType(MediaType.TEXT_PLAIN);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
         try {
             WebUtil.getLoginUser(request);
-            if (validateFileSize(request)) {
-                json.setSuccess(false);
-                json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
-                return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
-            }
             processExecuteService.updateBiz(params, request.getMultiFileMap());
         } catch (Exception e) {
             logger.info("error", e);
             json.setSuccess(false);
             json.setMsg("操作失败: " + e.getLocalizedMessage());
-            return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
+            return new ResponseEntity<String>(JSONObject.toJSONString(json), headers, HttpStatus.OK);
         }
         json.setSuccess(true);
         json.setMsg("操作成功");
-        return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<String>(JSONObject.toJSONString(json), headers, HttpStatus.OK);
     }
 
     /**
@@ -244,43 +230,20 @@ public class ProcessExecuteController {
     public ResponseEntity<String> submit(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
         Json json = new Json();
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setContentType(MediaType.TEXT_PLAIN);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
         try {
             WebUtil.getLoginUser(request);
-            if (validateFileSize(request)) {
-                json.setSuccess(false);
-                json.setMsg("操作失败: " + "附件大小不能超过" + maxUpload / 1024 / 1024 + "M");
-                return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
-            }
             processExecuteService.submit(params, request.getMultiFileMap());
         } catch (Exception e) {
             logger.error("表单提交失败 : {}", e);
             json.setSuccess(false);
             json.setMsg("操作失败: " + e.getLocalizedMessage());
-            return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
+            return new ResponseEntity<String>(JSONObject.toJSONString(json), headers, HttpStatus.OK);
         }
         json.setSuccess(true);
         json.setMsg("操作成功");
-        return new ResponseEntity<String>(JSONObject.toJSONString(json), responseHeaders, HttpStatus.OK);
-    }
-
-    private boolean validateFileSize(MultipartHttpServletRequest request) {
-
-        long fileSize = 0L;
-        MultiValueMap<String, MultipartFile> multiValueMap = request.getMultiFileMap();
-        if (MapUtils.isNotEmpty(multiValueMap)) {
-            Collection<List<MultipartFile>> files = multiValueMap.values();
-            for (List<MultipartFile> list : files) {
-                for (MultipartFile multipartFile : list) {
-                    fileSize += multipartFile.getSize();
-                }
-            }
-        }
-        if (maxUpload < fileSize) {
-            return true;
-        }
-        return false;
+        return new ResponseEntity<String>(JSONObject.toJSONString(json), headers, HttpStatus.OK);
     }
 
     @ResponseBody

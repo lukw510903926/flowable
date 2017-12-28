@@ -11,10 +11,8 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.task.api.TaskQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,6 @@ import com.flowable.common.utils.DataGrid;
 import com.flowable.common.utils.Json;
 import com.flowable.common.utils.PageHelper;
 import com.flowable.core.bean.ProcessVariable;
-import com.flowable.core.bean.ProcessVariableInstance;
 import com.flowable.core.service.IProcessDefinitionService;
 import com.flowable.core.service.IProcessVariableService;
 
