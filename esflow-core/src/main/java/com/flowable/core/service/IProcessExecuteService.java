@@ -46,15 +46,6 @@ public interface IProcessExecuteService {
 	Map<String, Object> loadProcessList() ;
 
 	/**
-	 * 获取我的工单，包括：我创建的工单(1),我处理的工单(2X),我的待办任务(3),我的代签任务(4)
-	 * 
-	 * @param targe
-	 * @return
-	 * @
-	 */
-	PageHelper<BizInfo> queryMyBizInfos(String targe, Map<String, Object> params, PageHelper<BizInfo> page);
-
-	/**
 	 * 保存参数，如果是草稿，那么流程实例ID、任务ID皆留空，还不保存到流程参数；<br />
 	 * 如果是创单，流程实例ID非空，任务ID留空；<br />
 	 * 正常流转，流程实例ID、任务ID都非空。
