@@ -23,7 +23,7 @@ biz.detail = {
                 biz.detail.logVars = result.logVars;
                 biz.detail.serviceInfo = result.serviceInfo;
                 biz.detail.createUser = result.extInfo.createUser;
-                biz.detail.currentVariables =  result.currentVariables;
+                biz.detail.currentVariables = result.currentVariables;
                 biz.detail.buttons = result.SYS_BUTTON;
                 biz.detail.currentTaskName = result.$currentTaskName;
                 biz.detail.annexs = result.annexs;
@@ -358,7 +358,7 @@ biz.detail = {
         var groupButtons = {
             all: buttons
         };
-        if($.isEmptyObject(currentVariables)){
+        if ($.isEmptyObject(currentVariables)) {
             return;
         }
         //确定处理方式属性
@@ -523,25 +523,23 @@ biz.detail.save = function (key) {
         type: "post",
         cache: false,
         success: function (result) {
+
             if (result) {
                 try {
                     result = eval("(" + result.replace("<PRE>", "").replace("</PRE>", "").replace("<pre>", "").replace("</pre>", "") + ")");
                 } catch (e) {
+                }
+                if (result.success) {
                     layer.close(index);
-                    bsAlert("异常", result);
-                    return;
+                    location.reload();
+                } else {
+                    layer.close(index);
+                    bsAlert("提交失败", result.msg);
                 }
             } else {
                 layer.close(index);
                 bsAlert("异常", result);
                 return;
-            }
-            if (!result || result.success == true) {
-                layer.close(index);
-                location.reload();
-            } else {
-                layer.close(index);
-                bsAlert("异常", result.msg);
             }
         },
         error: function (result) {
