@@ -50,7 +50,7 @@ public class CommandServiceImpl implements CommandService {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void jumpCommand(Map<String,Object> params) {
+	public BizInfo jumpCommand(Map<String,Object> params) {
 
 		try {
 			String bizId = (String) params.get("base.bizId");
@@ -71,6 +71,7 @@ public class CommandServiceImpl implements CommandService {
 			processExecuteService.writeBizLog(bizInfo, task, new Date(), params);
 			this.bizInfoService.update(bizInfo);
 			this.bizInfoConfService.saveOrUpdate(conf);
+			return bizInfo;
 		} catch (Exception e) {
 			logger.error(" 流程跳转失败 : {}", e);
 			throw new ServiceException("流程跳转失败!");

@@ -1,5 +1,7 @@
 package com.flowable.core.service;
 
+import com.flowable.core.bean.BizInfo;
+
 import java.util.Map;
 
 public interface CommandService {
@@ -10,5 +12,5 @@ public interface CommandService {
 	 *  base.bizId 工单ID
 	 *  base.taskDefKey 目标节点定义id
 	 */
-	void jumpCommand(Map<String, Object> params) ;
+	BizInfo jumpCommand(Map<String, Object> params) ;
 }
