@@ -1,13 +1,10 @@
 package com.flowable.web.controller;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.flowable.core.bean.BizInfo;
-import com.flowable.core.service.IBizInfoService;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.ExclusiveGateway;
 import org.flowable.bpmn.model.FlowElement;
@@ -46,12 +43,9 @@ public class FlowableController {
     @Autowired
     private IProcessDefinitionService processDefinitionService;
 
-    @Autowired
-    private IBizInfoService bizInfoService;
-
     @ResponseBody
     @RequestMapping("/flow")
-    public Map<String, Object> findOutGoingTransNames() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public Map<String, Object> findOutGoingTransNames() {
 
         Map<String, Object> result = new HashMap<String, Object>();
         TaskEntityImpl task = (TaskEntityImpl) taskService.createTaskQuery().taskId("2527").singleResult();
@@ -66,8 +60,10 @@ public class FlowableController {
                 UserTask userTask = (UserTask) flowElement;
                 List<SequenceFlow> outgoingFlows = userTask.getOutgoingFlows();
                 outgoingFlows.forEach(sequenceFlow -> {
-                    ExclusiveGateway exclusiveGateway = (ExclusiveGateway) sequenceFlow.getTargetFlowElement();
-                    exclusiveGateway.getOutgoingFlows().forEach(outgoingFlow -> result.put(outgoingFlow.getId(), outgoingFlow.getName()));
+                    if (sequenceFlow.getTargetFlowElement() instanceof ExclusiveGateway) {
+                        ExclusiveGateway exclusiveGateway = (ExclusiveGateway) sequenceFlow.getTargetFlowElement();
+                        exclusiveGateway.getOutgoingFlows().forEach(outgoingFlow -> result.put(outgoingFlow.getId(), outgoingFlow.getName()));
+                    }
                 });
             }
         }
