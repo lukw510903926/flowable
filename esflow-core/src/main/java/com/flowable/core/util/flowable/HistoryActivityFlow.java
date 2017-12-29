@@ -3,7 +3,7 @@ package com.flowable.core.util.flowable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistroyActivitiFlow {
+public class HistoryActivityFlow {
 
 	/**
 	 *  用以保存高亮的线flowId
@@ -15,10 +15,10 @@ public class HistroyActivitiFlow {
 	 */
 	private List<String> activitys = new ArrayList<String>(0);
 	
-	public HistroyActivitiFlow() {
+	public HistoryActivityFlow() {
 	}
 
-	public HistroyActivitiFlow(List<String> highFlows, List<String> activitys) {
+	public HistoryActivityFlow(List<String> highFlows, List<String> activitys) {
 		this.highFlows = highFlows;
 		this.activitys = activitys;
 	}

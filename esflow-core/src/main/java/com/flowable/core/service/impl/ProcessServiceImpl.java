@@ -40,13 +40,13 @@ import com.flowable.core.service.IProcessDefinitionService;
 import com.flowable.core.service.auth.ISystemUserService;
 import com.flowable.core.util.Constants;
 import com.flowable.core.util.WebUtil;
-import com.flowable.core.util.flowable.HistroyActivitiFlow;
+import com.flowable.core.util.flowable.HistoryActivityFlow;
 
 @Service
 @Transactional(readOnly = true)
 public class ProcessServiceImpl implements IProcessDefinitionService {
 
-    private static Logger logger = Logger.getLogger(ProcessServiceImpl.class);
+    private Logger logger = Logger.getLogger(ProcessServiceImpl.class);
 
     @Autowired
     private TaskService taskService;
@@ -623,34 +623,77 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                 temps.add(task.getTaskDefinitionKey());
             }
         }
-        return (String[]) temps.toArray(new String[temps.size()]);
+        return temps.toArray(new String[temps.size()]);
     }
 
-    public HistroyActivitiFlow getHighLightedElement(ProcessDefinitionEntity processDefinitionEntity,
+    public HistoryActivityFlow getHighLightedElement(ProcessDefinitionEntity processDefinitionEntity,
                                                      List<HistoricActivityInstance> historicActivityInstances) {
+        // 用以保存高亮的节点
+        List<String> activities = new ArrayList<String>();
+        historicActivityInstances.forEach(historicActivityInstance -> {
+            historicActivityInstance.getActivityId();
+            activities.add(historicActivityInstance.getActivityId());
+        });
+        List<String> highFlows = this.getHighLightedFlows(processDefinitionEntity, historicActivityInstances);
+        return new HistoryActivityFlow(highFlows, activities);
+    }
 
-        List<String> highFlows = new ArrayList<String>();// 用以保存高亮的线flowId
-        List<String> activitys = new ArrayList<String>();// 用以保存高亮的流程
-        for (int i = 0; i < historicActivityInstances.size(); i++) {
 
+    private List<String> getHighLightedFlows(ProcessDefinitionEntity processDefinitionEntity, List<HistoricActivityInstance> historicActivityInstances) {
+
+        // 用以保存高亮的线flowId
+        List<String> highFlows = new ArrayList<String>();
+        String processDefinitionId = processDefinitionEntity.getId();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+        Process process = bpmnModel.getProcesses().get(0);
+        for (int i = 0; i < historicActivityInstances.size() - 1; i++) {
+
+            FlowElement flowElement = process.getFlowElement(historicActivityInstances.get(i).getActivityId());
+            List<FlowElement> sameStartTimeNodes = new ArrayList<FlowElement>();// 用以保存后需开始时间相同的节点
+            FlowElement nextFlowElement = process.getFlowElement(historicActivityInstances.get(i + 1).getActivityId());
+            // 将后面第一个节点放在时间相同节点的集合里
+            sameStartTimeNodes.add(nextFlowElement);
+            for (int j = i + 1; j < historicActivityInstances.size() - 1; j++) {
+
+                HistoricActivityInstance historicActivityInstance = historicActivityInstances.get(j);// 后续第一个节点
+                HistoricActivityInstance nextHistoricActivityInstance = historicActivityInstances.get(j + 1);// 后续第二个节点
+                if (historicActivityInstance.getStartTime().equals(nextHistoricActivityInstance.getStartTime())) {
+                    // 如果第一个节点和第二个节点开始时间相同保存
+                    FlowElement sameActivityImpl2 = process.getFlowElement(nextHistoricActivityInstance.getActivityId());
+                    sameStartTimeNodes.add(sameActivityImpl2);
+                } else {
+                    // 有不相同跳出循环
+                    break;
+                }
+            }
+            Activity activity = (Activity) flowElement;
+            List<SequenceFlow> outgoingFlows = activity.getOutgoingFlows();
+            for (SequenceFlow pvmTransition : outgoingFlows) {
+                // 对所有的线进行遍历
+                FlowElement pvmActivityImpl = pvmTransition.getTargetFlowElement();
+                // 如果取出的线的目标节点存在时间相同的节点里，保存该线的id，进行高亮显示
+                if (sameStartTimeNodes.contains(pvmActivityImpl)) {
+                    highFlows.add(pvmTransition.getId());
+                }
+            }
         }
-        return new HistroyActivitiFlow(highFlows, activitys);
+        return highFlows;
     }
 
     /**
      * 显示流程实例图片
      *
-     * @param bean
+     * @param processInstanceId
      * @return @
      */
     @Override
-    public InputStream viewProcessImage(BizInfo bean) {
+    public InputStream viewProcessImage(String processInstanceId) {
 
-        ProcessInstance processInstance = this.getProcessInstance(bean.getProcessInstanceId());
+        ProcessInstance processInstance = this.getProcessInstance(processInstanceId);
         String processDefinitionId = null;
         if (processInstance == null) {
             HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
-                    .processInstanceId(bean.getProcessInstanceId()).singleResult();
+                    .processInstanceId(processInstanceId).singleResult();
             if (historicProcessInstance != null) {
                 processDefinitionId = historicProcessInstance.getProcessDefinitionId();
             }
@@ -658,15 +701,15 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             processDefinitionId = processInstance.getProcessDefinitionId();
         }
         List<HistoricActivityInstance> list = historyService.createHistoricActivityInstanceQuery()
-                .processInstanceId(bean.getProcessInstanceId()).orderByHistoricActivityInstanceStartTime().asc().list();
+                .processInstanceId(processInstanceId).orderByHistoricActivityInstanceStartTime().asc().list();
         ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
                 .getDeployedProcessDefinition(processDefinitionId);
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
-        HistroyActivitiFlow histroyActivitiFlow = getHighLightedElement(processDefinition, list);
+        HistoryActivityFlow historyActivityFlow = getHighLightedElement(processDefinition, list);
         try {
             ProcessDiagramGenerator processDiagramGenerator = engineConfiguration.getProcessDiagramGenerator();
-            return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", histroyActivitiFlow.getActivitys(),
-                    histroyActivitiFlow.getHighFlows());
+            return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),
+                    historyActivityFlow.getHighFlows());
 
         } catch (Exception e) {
             logger.error(" 显示流程实例图片失败 : {}", e);

@@ -51,9 +51,10 @@ public interface IProcessDefinitionService {
     /**
      * 显示流程实例图片
      *
+     * @param processInstanceId
      * @return @
      */
-    InputStream viewProcessImage(BizInfo bean);
+    InputStream viewProcessImage(String processInstanceId);
 
     /**
      * 新增流程实例
@@ -114,7 +115,7 @@ public interface IProcessDefinitionService {
      * 获取当前用户对工单有权限处理的任务，并返回操作权限 返回HANDLE，表示可以进行处理，SIGN表示可以进行签收，其他无权限<br>
      * 返回格式：任务ID:权限
      *
-     * @param taskID  taskId
+     * @param taskID   taskId
      * @param username 用户
      * @return @
      */
