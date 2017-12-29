@@ -643,8 +643,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
         // 用以保存高亮的线flowId
         List<String> highFlows = new ArrayList<String>();
-        String processDefinitionId = processDefinitionEntity.getId();
-        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionEntity.getId());
         Process process = bpmnModel.getProcesses().get(0);
         for (int i = 0; i < historicActivityInstances.size() - 1; i++) {
 
@@ -700,12 +699,13 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         } else {
             processDefinitionId = processInstance.getProcessDefinitionId();
         }
-        List<HistoricActivityInstance> list = historyService.createHistoricActivityInstanceQuery()
+
+        List<HistoricActivityInstance> historicActivityInstances = historyService.createHistoricActivityInstanceQuery()
                 .processInstanceId(processInstanceId).orderByHistoricActivityInstanceStartTime().asc().list();
         ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
                 .getDeployedProcessDefinition(processDefinitionId);
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
-        HistoryActivityFlow historyActivityFlow = getHighLightedElement(processDefinition, list);
+        HistoryActivityFlow historyActivityFlow = this.getHighLightedElement(processDefinition, historicActivityInstances);
         try {
             ProcessDiagramGenerator processDiagramGenerator = engineConfiguration.getProcessDiagramGenerator();
             return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),
