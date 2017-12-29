@@ -380,16 +380,15 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     /**
      * 签收任务
      *
-     * @param bean
      * @param taskID
      * @param username
      * @return @
      */
     @Override
-    public boolean claimTask(BizInfo bean, String taskID, String username) {
+    public boolean claimTask(String taskID, String username) {
 
         // 签收进行权限判断
-        Task task = getTaskBean(taskID);
+        Task task = this.getTaskBean(taskID);
         if (task == null) {
             throw new ServiceException("无效任务");
         }
@@ -397,21 +396,15 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             throw new ServiceException("任务已被签收");
         }
         boolean flag = claimRole(task, username);
-        if (!flag) {
-            List<String> list = getTaskCandidateGroup(task);
-            StringBuilder roles = new StringBuilder();
-            if (!CollectionUtils.isEmpty(list)) {
-                list.forEach(role -> roles.append(role).append(" "));
-            }
-            throw new ServiceException("没有权限签收该任务,当前任务代办角色为 :" + roles.toString());
+        if (flag) {
+            taskService.claim(taskID, username);
         }
-        taskService.claim(taskID, username);
         return true;
     }
 
     private boolean claimRole(Task task, String username) {
 
-        List<String> list = getTaskCandidateGroup(task);
+        List<String> list = this.getTaskCandidateGroup(task);
         logger.info("group :" + list);
         boolean flag = false;
         if (!CollectionUtils.isEmpty(list)) {
@@ -425,6 +418,14 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             }
         } else {
             flag = true; // 环节没设置签收角色
+        }
+
+        if (!flag) {
+            StringBuilder roles = new StringBuilder(16);
+            if (!CollectionUtils.isEmpty(list)) {
+                list.forEach(role -> roles.append(role).append(" "));
+            }
+            throw new ServiceException("没有权限签收该任务,当前任务代办角色为 :" + roles.toString());
         }
         return flag;
     }
@@ -569,7 +570,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      * 获取当前用户对工单有权限处理的任务，并返回操作权限 返回HANDLE，表示可以进行处理，SIGN表示可以进行签收，其他无权限<br>
      * 返回格式：任务ID:权限
      *
-     * @param taskID  taskId
+     * @param taskID   taskId
      * @param username 用户
      * @return @
      */

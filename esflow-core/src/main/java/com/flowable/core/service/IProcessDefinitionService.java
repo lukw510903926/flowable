@@ -77,11 +77,11 @@ public interface IProcessDefinitionService {
     /**
      * 签收任务
      *
-     * @param bean
      * @param taskID
+     * @param username
      * @return @
      */
-    boolean claimTask(BizInfo bean, String taskID, String username);
+    boolean claimTask(String taskID, String username);
 
     /**
      * 转派任务
