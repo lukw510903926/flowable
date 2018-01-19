@@ -43,7 +43,7 @@ import com.flowable.core.util.WorkOrderUtil;
 @Transactional(readOnly = true)
 public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
-	private Logger log = LoggerFactory.getLogger(IProcessExecuteService.class);
+	private Logger logger = LoggerFactory.getLogger(IProcessExecuteService.class);
 
 	@Autowired
 	private IProcessVariableService processVariableService;
@@ -145,7 +145,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		if (StringUtils.isEmpty(taskId)) {
 			throw new ServiceException("请确认是否有权先签收任务!");
 		}
-		processDefinitionService.claimTask(bizInfo, taskId, username);
+		processDefinitionService.claimTask(taskId, username);
 		bizInfoConf.setTaskAssignee(username);
 		bizInfoService.updateBizInfo(bizInfo);
 		bizInfo.setTaskAssignee(username);
@@ -289,7 +289,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	@Transactional
 	public BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
-		log.info("params :" + params);
+		logger.info("params :" + params);
 		String bizId = (String) params.get("base.bizId");
 		BizInfo bizInfo = bizInfoService.getByBizId(bizId);
 		if (null == bizInfo) {
@@ -327,7 +327,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 	private BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap, BizInfo bizInfo,
 			BizInfoConf bizInfoConf, List<ProcessVariable> processValList) {
 
-		log.info("params :" + params);
+		logger.info("params :" + params);
 		Date now = new Date();
 		Task task = processDefinitionService.getTaskBean(bizInfoConf.getTaskId());
 		String buttonId = (String) params.get("base.buttonId");
@@ -665,7 +665,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 				throw new ServiceException("找不到工单");
 			}
 			result[0] = "IMAGE";
-			result[1] = processDefinitionService.viewProcessImage(bean);
+			result[1] = processDefinitionService.viewProcessImage(bean.getProcessInstanceId());
 		} else {
 			BizFile bean = bizFileService.getBizFileById(id);
 			if (bean == null) {
@@ -679,7 +679,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			try {
 				is = new FileInputStream(file);
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				logger.error("文件未找到 : {}",e);
 			}
 			result[0] = bean.getFileType();
 			result[1] = is;
