@@ -166,11 +166,6 @@ public class ProcessModelMgrController {
             processValAbs.setRefParam((String) reqParams.get("refParam"));
             String temp = (String) reqParams.get("nameOrder");
             Integer temp2 = Integer.parseInt(temp);
-            if (temp2 == null) {
-                // 查询当前最大序号
-                temp2 = processValService.getProcessOrder(processValAbs);
-                temp2 = temp2 == null ? 1 : temp2 + 1;
-            }
             processValAbs.setOrder(temp2);
             processValAbs.setRequired(Boolean.parseBoolean((String) reqParams.get("required")));
             processValAbs.setGroupName((String) reqParams.get("groupName"));
@@ -185,11 +180,7 @@ public class ProcessModelMgrController {
             processValAbs.setViewComponent(viewComponent);
             processValAbs.setViewDatas(viewComponentVal);
             processValAbs.setViewParams((String) reqParams.get("viewParams"));
-
             processValAbs.setProcessVariable(Boolean.parseBoolean((String) reqParams.get("isprocVal")));
-
-//            String variableGroup = (String) reqParams.get("variableGroup");
-//                  processValAbs.setVariableGroup(variableGroup);
             processValAbs.setTaskId(taskId);
             if (isUpdate) {
                 processValService.updateVariable(processValAbs);
