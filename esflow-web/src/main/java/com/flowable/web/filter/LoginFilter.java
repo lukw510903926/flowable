@@ -41,7 +41,6 @@ public class LoginFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)throws IOException, ServletException {
 
-		logger.info("doFilter---------------------------------------------");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpSession session = httpRequest.getSession();
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -50,6 +49,7 @@ public class LoginFilter implements Filter {
 			chain.doFilter(httpRequest, response);
 			return;
 		}
+		logger.info("doFilter---------------------------------------------");
 		if (loginUser == null) {
 			String requestUri = httpRequest.getRequestURI();
 			String queryStr = httpRequest.getQueryString();
