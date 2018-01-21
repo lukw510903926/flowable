@@ -1,7 +1,5 @@
 package com.flowable.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +11,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.flowable.core.bean.ProcessVariable;
@@ -25,25 +21,7 @@ import com.flowable.core.dao.IProcessVariableDao;
 public class ProcessModelDaoImpl implements IProcessModelDao {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private IProcessVariableDao processVariableDao;
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Override
-    public List<String> getTaskCandidateGroup(String taskID) {
-
-        String sql = "SELECT GROUP_ID_ AS GROUP_ID FROM COMMON.act_ru_identitylink where TYPE_='candidate' and task_id_='" + taskID + "'";
-        return jdbcTemplate.query(sql, new RowMapper() {
-
-            @Override
-            public Object mapRow(ResultSet arg0, int arg1) throws SQLException {
-                return arg0.getString(1);
-            }
-
-        });
-    }
 
     @Override
     public void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf) throws Exception {
