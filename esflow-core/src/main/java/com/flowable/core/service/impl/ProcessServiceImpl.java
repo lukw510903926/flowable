@@ -344,12 +344,12 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
             for (SequenceFlow pvmTransition : outgoingFlows) {
                 if (pvmTransition.getId().equals(buttonValue) || "submit".equalsIgnoreCase(buttonValue)) {
-                    String docv = (String) pvmTransition.getDocumentation();
-                    if (StringUtils.isEmpty(docv)) {
+                    String documentation = pvmTransition.getDocumentation();
+                    if (StringUtils.isEmpty(documentation)) {
                         continue;
                     }
                     // 如果该线为驳回先，则从历史里面去当前任务已经结束的最近一个任务，然后将单分配给此人
-                    if (docv.startsWith("command:fallback")) {
+                    if (documentation.startsWith("command:fallback")) {
                         List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
                                 .processInstanceId(processInstanceId).finished().orderByHistoricTaskInstanceEndTime()
                                 .desc().taskDefinitionKey(nextTask.getTaskDefinitionKey()).list();
@@ -360,9 +360,9 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                             }
                         }
                         // 如果该线为循环，则将新的任务转派给当前用户 // 如果该线为转派，则将新的任务转派给制定的用户或组
-                    } else if (docv.startsWith("command:repeat")) {
+                    } else if (documentation.startsWith("command:repeat")) {
                         taskService.claim(nextTask.getId(), WebUtil.getLoginUser().getUsername());
-                    } else if (docv.startsWith("command:transfer")) {
+                    } else if (documentation.startsWith("command:transfer")) {
                         assignmentTask(nextTask, transfer_value, transfer_type);
                     }
                 }
