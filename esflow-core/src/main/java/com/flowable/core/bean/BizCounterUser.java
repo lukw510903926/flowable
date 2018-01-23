@@ -41,10 +41,10 @@ public class BizCounterUser implements Serializable{
 	@Column(name="DEPTMENT_NAME",length = 32)
 	private String deptmentName;
 	
-	@Column(name="BIZID",length = 32)
+	@Column(name="BIZ_ID",length = 32)
 	private String bizId;
 	
-	@Column(name="TASKID" ,length=32)
+	@Column(name="TASK_ID" ,length=32)
 	private String taskId;
 	
 	@Column(name="CREATE_TIME")
