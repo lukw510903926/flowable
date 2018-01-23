@@ -48,7 +48,7 @@ public class SystemRole implements Serializable {
 	private String nameCn;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "SYS_USER_ROLE", joinColumns = { @JoinColumn(name = "ROLE_ID") },
+	@JoinTable(name = "T_SYS_USER_ROLE", joinColumns = { @JoinColumn(name = "ROLE_ID") },
 		inverseJoinColumns = {@JoinColumn(name = "USER_ID") })
 	private Set<SystemUser> users = new HashSet<SystemUser>();
 
