@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * 工单对象
  */
 @Entity
-@Table(name = "ACT_BIZ_INFO")
+@Table(name = "T_BIZ_INFO")
 @DynamicInsert
 @DynamicUpdate
 public class BizInfo implements java.io.Serializable, Cloneable {

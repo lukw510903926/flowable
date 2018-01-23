@@ -19,7 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
  *
  */
 @Entity
-@Table(name = "ACT_BIZ_TEMPLATE_FILE")
+@Table(name = "T_BIZ_TEMPLATE_FILE")
 @DynamicInsert
 @DynamicUpdate
 public class BizTemplateFile implements Serializable{

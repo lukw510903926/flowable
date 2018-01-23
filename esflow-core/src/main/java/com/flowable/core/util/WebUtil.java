@@ -37,15 +37,4 @@ public class WebUtil {
 		loginUsers.set(loginUser);
 		request.getSession().setAttribute(WebUtil.LOGIN_USER, loginUser);
 	}
-
-	public static Map<String,String> userToMap(Map<String,String> user){
-		
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("username", user.get("username"));
-		map.put("name", user.get("fullname"));
-		map.put("mobile", user.get("mobile"));
-		map.put("dep", user.get("dept"));
-		map.put("email", user.get("email"));
-		return map;
-	}
 }

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * 流程日志
  */
 @Entity
-@Table(name = "ACT_BIZ_LOG")
+@Table(name = "AT_BIZ_LOG")
 @DynamicInsert
 @DynamicUpdate
 public class BizLog implements java.io.Serializable {

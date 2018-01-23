@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "SYS_USER")
+@Table(name = "T_SYS_USER")
 @JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"}) 
 public class SystemUser implements Serializable {
 

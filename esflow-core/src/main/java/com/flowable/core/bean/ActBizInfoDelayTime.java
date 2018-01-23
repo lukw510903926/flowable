@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  */
 
 @Entity
-@Table(name="ACT_BIZ_INFO_DELAY_TIME")
+@Table(name="T_BIZ_INFO_DELAY_TIME")
 @DynamicInsert
 @DynamicUpdate
 public class ActBizInfoDelayTime implements Serializable{

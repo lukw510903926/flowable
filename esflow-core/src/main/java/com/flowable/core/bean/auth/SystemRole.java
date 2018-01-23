@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Table(name = "SYS_ROLE")
+@Table(name = "T_SYS_ROLE")
 @JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"}) 
 public class SystemRole implements Serializable {
 

@@ -22,7 +22,7 @@ import com.flowable.core.util.Constants;
  *
  */
 @Entity
-@Table(name="ACT_COUNTER_SIGN")
+@Table(name="T_COUNTER_SIGN")
 public class Countersign implements Serializable{
 
 	private static final long serialVersionUID = 1L;

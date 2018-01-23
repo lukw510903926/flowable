@@ -13,7 +13,7 @@ import java.util.Date;
  * 流程全局实例（存储具体填写的值）
  */
 @Entity
-@Table(name = "ACT_BIZ_PROCESS_INSTANCE")
+@Table(name = "T_BIZ_PROCESS_INSTANCE")
 @DynamicInsert
 @DynamicUpdate
 @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler", "fieldHandler" })

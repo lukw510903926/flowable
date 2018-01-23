@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * 附件表
  */
 @Entity
-@Table(name = "ACT_BIZ_FILE")
+@Table(name = "T_BIZ_FILE")
 @DynamicInsert
 @DynamicUpdate
 public class BizFile implements Serializable, Cloneable {

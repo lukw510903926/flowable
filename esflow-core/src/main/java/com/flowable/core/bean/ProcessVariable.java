@@ -11,7 +11,7 @@ import javax.persistence.*;
  * 流程全局属性配置
  */
 @Entity
-@Table(name = "ACT_BIZ_PROCESS_VARIABLE")
+@Table(name = "T_BIZ_PROCESS_VARIABLE")
 @DynamicInsert
 @DynamicUpdate
 @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler", "fieldHandler" })

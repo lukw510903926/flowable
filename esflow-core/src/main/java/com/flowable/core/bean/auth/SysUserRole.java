@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @eamil : 13507615840@163.com
  **/
 @Entity
-@Table(name = "SYS_USER_ROLE")
+@Table(name = "T_SYS_USER_ROLE")
 public class SysUserRole implements Serializable{
 
 

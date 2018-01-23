@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * @email lukw@eastcom-sw.com
  */
 @Entity
-@Table(name="BIZ_COUNTER_USER")
+@Table(name="T_BIZ_COUNTER_USER")
 public class BizCounterUser implements Serializable{
 
 	private static final long serialVersionUID = 8899924192856670854L;

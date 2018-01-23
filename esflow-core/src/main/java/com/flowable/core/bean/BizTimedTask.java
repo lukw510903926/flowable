@@ -21,7 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @DynamicInsert
 @DynamicUpdate
-@Table(name="BIZ_TIMED_TASK")
+@Table(name="T_TIMED_TASK")
 public class BizTimedTask implements Serializable{
 
 	private static final long serialVersionUID = 1L;
