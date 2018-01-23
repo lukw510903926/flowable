@@ -4,19 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
        default-lazy-init="true">
 
-    <bean id="activitiEngineExpressionBean" class="com.flowable.core.bean.ActivitiEngineExpressionBean"/>
-
     <bean id="processEngineConfiguration" class="org.flowable.spring.SpringProcessEngineConfiguration">
         <property name="dataSource" ref="dataSource"/>
         <property name="transactionManager" ref="transactionManager"/>
         <property name="databaseSchemaUpdate" value="true"/>
         <property name="activityFontName" value="宋体"/>
         <property name="labelFontName" value="宋体"/>
-        <property name="beans">
-            <map>
-                <entry key="expBean" value-ref="activitiEngineExpressionBean"/>
-            </map>
-        </property>
     </bean>
     <bean id="processEngine" class="org.flowable.spring.ProcessEngineFactoryBean">
         <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
