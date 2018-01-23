@@ -482,7 +482,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
 		if (MapUtils.isNotEmpty(fileMap)) {
 			for (String fileCatalog : fileMap.keySet()) {
-				List<MultipartFile> files = (List<MultipartFile>) fileMap.get(fileCatalog);
+				List<MultipartFile> files = fileMap.get(fileCatalog);
 				if (CollectionUtils.isNotEmpty(files)) {
 					files.forEach(file -> {
 						BizFile bizFile = UploadFileUtil.saveFile(file);
