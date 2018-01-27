@@ -10,81 +10,83 @@ import com.flowable.core.bean.BizFile;
 import com.flowable.core.dao.IBizFileDao;
 import com.flowable.core.service.IBizFileService;
 
+/**
+ * @creater lukew
+ */
 @Service
-@Transactional(readOnly = true)
 public class BizFileServiceImpl implements IBizFileService {
 
-	@Autowired
-	private IBizFileDao dao;
+    @Autowired
+    private IBizFileDao dao;
 
-	@Override
-	@Transactional
-	public void addBizFile(BizFile... beans) {
-		if (beans == null) {
-			return;
-		}
-		for (BizFile bean : beans) {
-			dao.save(bean);
-		}
-	}
+    @Override
+    @Transactional
+    public void addBizFile(BizFile... beans) {
+        if (beans == null) {
+            return;
+        }
+        for (BizFile bean : beans) {
+            dao.save(bean);
+        }
+    }
 
-	@Override
-	@Transactional
-	public void updateBizFile(BizFile... beans) {
-		if (beans == null) {
-			return;
-		}
-		for (BizFile bean : beans) {
-			if (bean.getId() == null){
-				continue;
-			}
-			dao.update(bean);
-		}
-	}
+    @Override
+    @Transactional
+    public void updateBizFile(BizFile... beans) {
+        if (beans == null) {
+            return;
+        }
+        for (BizFile bean : beans) {
+            if (bean.getId() == null) {
+                continue;
+            }
+            dao.update(bean);
+        }
+    }
 
-	@Override
-	@Transactional
-	public void deleteBizFile(BizFile... beans) {
-		if (beans == null) {
-			return;
-		}
-		for (BizFile bean : beans) {
-			if (bean.getId() == null){
-				continue;
-			}
-			dao.delete(bean);
-		}
-	}
+    @Override
+    @Transactional
+    public void deleteBizFile(BizFile... beans) {
+        if (beans == null) {
+            return;
+        }
+        for (BizFile bean : beans) {
+            if (bean.getId() == null) {
+                continue;
+            }
+            dao.delete(bean);
+        }
+    }
 
-	@Override
-	@Transactional
-	public void deleteBizFile(String... ids) {
-		if (ids == null) {
-			return;
-		}
-		for (String id : ids) {
-			dao.deleteById(id);
-		}
-	}
+    @Override
+    @Transactional
+    public void deleteBizFile(String... ids) {
+        if (ids == null) {
+            return;
+        }
+        for (String id : ids) {
+            dao.deleteById(id);
+        }
+    }
 
-	@Override
-	public List<BizFile> loadBizFilesByBizId(String bizId, String taskId) {
-		BizFile bizFile = new BizFile();
-		bizFile.setBizId(bizId);
-		bizFile.setTaskId(taskId);
-		return dao.findBizFile(bizFile);
-	}
+    @Override
+    public List<BizFile> loadBizFilesByBizId(String bizId, String taskId) {
+        BizFile bizFile = new BizFile();
+        bizFile.setBizId(bizId);
+        bizFile.setTaskId(taskId);
+        return dao.findBizFile(bizFile);
+    }
 
-	@Override
-	public BizFile getBizFileById(String id) {
-		
-		return dao.getById(id);
-	}
+    @Override
+    public BizFile getBizFileById(String id) {
 
-	@Override
-	public List<BizFile> findBizFile(BizFile bizFile) {
+        return dao.getById(id);
+    }
 
-		return this.dao.findBizFile(bizFile);
-	}
+    @Override
+    public List<BizFile> findBizFile(BizFile bizFile) {
+
+        return this.dao.findBizFile(bizFile);
+    }
 
 }

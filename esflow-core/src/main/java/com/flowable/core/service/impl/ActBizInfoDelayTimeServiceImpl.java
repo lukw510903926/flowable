@@ -13,35 +13,36 @@ import com.flowable.core.dao.ActBizInfoDelayTimeDao;
 import com.flowable.core.service.ActBizInfoDelayTimeService;
 
 @Service
-public class ActBizInfoDelayTimeServiceImpl extends BaseServiceImpl<ActBizInfoDelayTime> implements ActBizInfoDelayTimeService{
+public class ActBizInfoDelayTimeServiceImpl extends BaseServiceImpl<ActBizInfoDelayTime> implements ActBizInfoDelayTimeService {
 
-	@Autowired
-	private ActBizInfoDelayTimeDao actBizInfoDelayTimeDao;
+    @Autowired
+    private ActBizInfoDelayTimeDao actBizInfoDelayTimeDao;
 
-	@Override
-	public void saveOrUpdate(ActBizInfoDelayTime actBizInfo){
-		
-		if(StringUtils.isNotBlank(actBizInfo.getId())){
-			this.actBizInfoDelayTimeDao.update(actBizInfo);
-		}else{
-			this.actBizInfoDelayTimeDao.save(actBizInfo);
-		}
-	}
-	
-	@Override
-	@Transactional(readOnly=true)
-	public ActBizInfoDelayTime findActBizInfoByBizId(String bizId,String taskId) {
-		
-		if(StringUtils.isBlank(bizId)){
-			return null;
-		}
-		return actBizInfoDelayTimeDao.findActBizInfoByBizId(bizId,taskId);
-	}
+    @Override
+    @Transactional
+    public void saveOrUpdate(ActBizInfoDelayTime actBizInfo) {
 
-	@Override
-	@Transactional(readOnly=true)
-	public List<ActBizInfoDelayTime> findActBizInfoDelayTime(ActBizInfoDelayTime delayTime){
-		
-		return this.actBizInfoDelayTimeDao.findActBizInfoDelayTime(delayTime);
-	}
+        if (StringUtils.isNotBlank(actBizInfo.getId())) {
+            this.actBizInfoDelayTimeDao.update(actBizInfo);
+        } else {
+            this.actBizInfoDelayTimeDao.save(actBizInfo);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ActBizInfoDelayTime findActBizInfoByBizId(String bizId, String taskId) {
+
+        if (StringUtils.isBlank(bizId)) {
+            return null;
+        }
+        return actBizInfoDelayTimeDao.findActBizInfoByBizId(bizId, taskId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ActBizInfoDelayTime> findActBizInfoDelayTime(ActBizInfoDelayTime delayTime) {
+
+        return this.actBizInfoDelayTimeDao.findActBizInfoDelayTime(delayTime);
+    }
 }

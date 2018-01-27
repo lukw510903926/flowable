@@ -17,13 +17,11 @@ import com.flowable.core.service.BizCounterUserService;
 
 /**
  * 2016年8月23日
- * 
+ *
  * @author lukw 下午8:16:03 com.eastcom.esflow.service.impl
- * @email lukw@eastcom-sw.com
+ * @email 13507615840@163.com
  */
-
 @Service
-@Transactional(readOnly = true)
 public class BizCounterUserServiceImpl extends BaseServiceImpl<BizCounterUser> implements BizCounterUserService {
 
 	@Autowired
