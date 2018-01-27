@@ -56,6 +56,21 @@ public class ProcessVariableInstance implements java.io.Serializable {
 	 */
 	private String value;
 
+	/**
+	 * 处理人信息
+	 */
+	private String handleUser;
+
+	/**
+	 * 参数名称
+	 */
+	private String variableName;
+
+	/**
+	 * 参数别名
+	 */
+	private String variableAlias;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROCESS_VARIABLE_ID")
 	public ProcessVariable getVariable() {
@@ -123,6 +138,33 @@ public class ProcessVariableInstance implements java.io.Serializable {
 
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
+	}
+
+	@Column(name = "HANDLE_USER", nullable = false, length = 128)
+	public String getHandleUser() {
+		return handleUser;
+	}
+
+	public void setHandleUser(String handleUser) {
+		this.handleUser = handleUser;
+	}
+
+	@Column(name = "VARIABLE_NAME", nullable = false, length = 32)
+	public String getVariableName() {
+		return variableName;
+	}
+
+	public void setVariableName(String variableName) {
+		this.variableName = variableName;
+	}
+
+	@Column(name = "VARIABLE_ALIAS", nullable = false, length = 32)
+	public String getVariableAlias() {
+		return variableAlias;
+	}
+
+	public void setVariableAlias(String variableAlias) {
+		this.variableAlias = variableAlias;
 	}
 
 	public ProcessVariableInstance clone() {

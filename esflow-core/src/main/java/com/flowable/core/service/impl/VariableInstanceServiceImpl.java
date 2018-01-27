@@ -38,7 +38,7 @@ public class VariableInstanceServiceImpl implements IVariableInstanceService {
             if (bean.getId() == null) {
                 continue;
             }
-            processInstanceDao.update((ProcessVariableInstance) bean);
+            processInstanceDao.update(bean);
         }
     }
 

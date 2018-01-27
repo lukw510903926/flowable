@@ -129,13 +129,6 @@ public interface IProcessDefinitionService {
      */
     int getWorkOrderVersion(BizInfo bean);
 
-    /**
-     * 获取到工单所处理过的历史环节（任务ID）
-     *
-     * @return
-     */
-    String[] getWorkOrderHistoryTask(String processInstanceId);
-
     Map<String, Object> loadProcessList();
 
     /**

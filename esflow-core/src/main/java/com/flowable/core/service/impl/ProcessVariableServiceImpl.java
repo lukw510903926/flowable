@@ -15,7 +15,6 @@ import com.flowable.core.dao.IProcessVariableDao;
 import com.flowable.core.service.IProcessVariableService;
 
 @Service
-@Transactional(readOnly = true)
 public class ProcessVariableServiceImpl implements IProcessVariableService {
 
     @Autowired
@@ -50,7 +49,7 @@ public class ProcessVariableServiceImpl implements IProcessVariableService {
             if (bean.getId() == null) {
                 continue;
             }
-            processVariableDao.update((ProcessVariable) bean);
+            processVariableDao.update(bean);
         }
     }
 

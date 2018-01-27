@@ -536,22 +536,23 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         ProcessInstance processInstance = this.getProcessInstance(processInstanceId);
         if (processInstance != null) {// 已经结束
             List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
-            if (!CollectionUtils.isEmpty(tasks)) {
-                for (Task task : tasks) {
-                    StringBuffer groups = new StringBuffer();
-                    Task taskCopy = new TaskEntityImpl();
-                    ReflectionUtils.copyBean(task, taskCopy);
-                    if (StringUtils.isEmpty(task.getAssignee())) {
-                        List<String> list = getTaskCandidateGroup(task);
-                        for (String group : list) {
-                            groups.append(group + ",");
-                        }
-                        if (StringUtils.isNotBlank(groups.toString())) {
-                            taskCopy.setAssignee(Constants.BIZ_GROUP + groups.deleteCharAt(groups.lastIndexOf(",")));
-                        }
+            if (CollectionUtils.isEmpty(tasks)) {
+                return taskList;
+            }
+            for (Task task : tasks) {
+                StringBuffer groups = new StringBuffer();
+                Task taskCopy = new TaskEntityImpl();
+                ReflectionUtils.copyBean(task, taskCopy);
+                if (StringUtils.isEmpty(task.getAssignee())) {
+                    List<String> list = getTaskCandidateGroup(task);
+                    for (String group : list) {
+                        groups.append(group + ",");
                     }
-                    taskList.add(taskCopy);
+                    if (StringUtils.isNotBlank(groups.toString())) {
+                        taskCopy.setAssignee(Constants.BIZ_GROUP + groups.deleteCharAt(groups.lastIndexOf(",")));
+                    }
                 }
+                taskList.add(taskCopy);
             }
         }
         return taskList;
@@ -561,7 +562,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     public Task getTaskBean(String taskID) {
 
         if (StringUtils.isEmpty(taskID)) {
-            return null;
+            throw new ServiceException("taskID 不可为空");
         }
         return taskService.createTaskQuery().taskId(taskID).singleResult();
     }
@@ -607,23 +608,6 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             throw new ServiceException("找不到流程定义:" + processDefinitionId);
         }
         return definition.getVersion();
-    }
-
-    @Override
-    public String[] getWorkOrderHistoryTask(String processInstanceId) {
-
-        List<HistoricTaskInstance> tasks = historyService.createHistoricTaskInstanceQuery()
-                .processInstanceId(processInstanceId).list();
-        List<String> temps = new ArrayList<String>();
-        for (HistoricTaskInstance task : tasks) {
-            if (task.getEndTime() == null) {
-                continue;
-            }
-            if (!temps.contains(task.getTaskDefinitionKey())) {
-                temps.add(task.getTaskDefinitionKey());
-            }
-        }
-        return temps.toArray(new String[temps.size()]);
     }
 
     public HistoryActivityFlow getHighLightedElement(ProcessDefinitionEntity processDefinitionEntity,

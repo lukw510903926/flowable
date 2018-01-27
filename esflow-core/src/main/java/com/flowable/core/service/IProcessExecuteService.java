@@ -120,13 +120,4 @@ public interface IProcessExecuteService {
 	 */
 	Object[] downloadFile(String action, String id) ;
 
-	/**
-	 * 更新工单信息
-	 * 
-	 * @param params
-	 * @return
-	 * @
-	 */
-	BizInfo update(Map<String, Object> params) ;
-
 }
