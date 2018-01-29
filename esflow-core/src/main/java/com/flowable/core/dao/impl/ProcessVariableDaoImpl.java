@@ -79,17 +79,6 @@ public class ProcessVariableDaoImpl extends BaseDaoImpl<ProcessVariable> impleme
             hql.append(" and BEAN.processDefinitionId=? ");
             list.add(variable.getProcessDefinitionId());
         }
-        hql.append(" AND BEAN.version = ");
-        Integer version = variable.getVersion();
-        if (version != null) {
-            if (version < 0) {
-                hql.append("(SELECT max(version) FROM ProcessVariable WHERE processDefinitionId=?)");
-                list.add(variable.getProcessDefinitionId());
-            } else {
-                hql.append("?");
-                list.add(version);
-            }
-        }
         if (StringUtils.isNotBlank(variable.getTaskId())) {
             hql.append(" and BEAN.taskId = ? ");
             list.add(variable.getTaskId());
