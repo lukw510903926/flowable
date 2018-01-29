@@ -10,71 +10,75 @@ import java.util.List;
  */
 public class PageHelper<T> {
 
-	private int page = 0;
-	private int rows = 0;
-	private long count;
-	private String sort;
-	private String order = "ASC";
-	
-	private List<T> list = new ArrayList<T>();
-	
-	public PageHelper(int page, int rows) {
-		this.page = page;
-		this.rows = rows;
-	}
-	
-	public PageHelper() {
-	}
+    private int page = -1;
+    private int rows = -1;
+    private long count;
+    private String sort;
+    private String order = "ASC";
 
-	public int getPage() {
-		return page;
-	}
-	public void setPage(int page) {
-		this.page = page;
-	}
-	public int getRows() {
-		return rows;
-	}
-	public void setRows(int rows) {
-		this.rows = rows;
-	}
-	
-	public long getCount() {
-		return count;
-	}
+    private List<T> list = new ArrayList<T>();
 
-	public void setCount(long count) {
-		this.count = count;
-	}
+    public PageHelper(int page, int rows) {
+        this.page = page;
+        this.rows = rows;
+    }
 
-	public List<T> getList() {
-		return list;
-	}
-	public void setList(List<T> list) {
-		this.list = list;
-	}
-	
-	public String getSort() {
-		return sort;
-	}
+    public PageHelper() {
+    }
 
-	public void setSort(String sort) {
-		this.sort = sort;
-	}
+    public int getPage() {
+        return page;
+    }
 
-	public String getOrder() {
-		return order;
-	}
+    public void setPage(int page) {
+        this.page = page;
+    }
 
-	public void setOrder(String order) {
-		this.order = order;
-	}
+    public int getRows() {
+        return rows;
+    }
 
-	public int getFirstRow(){
-		return (this.page-1)*this.rows>0 ? (this.page-1)*this.rows : -1;
-	}
-	
-	public int getMaxRow(){
-		return this.page*this.rows+1>0 ? this.page*this.rows+1 : -1;
-	}
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
+    }
+
+    public List<T> getList() {
+        return list;
+    }
+
+    public void setList(List<T> list) {
+        this.list = list;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
+
+    public String getOrder() {
+        return order;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
+    }
+
+    public int getFirstRow() {
+        return (this.page - 1) * this.rows > 0 ? (this.page - 1) * this.rows : -1;
+    }
+
+    public int getMaxRow() {
+        return this.page * this.rows + 1 > 0 ? this.page * this.rows + 1 : -1;
+    }
 }
