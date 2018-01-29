@@ -471,7 +471,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
         List<IdentityLink> links = taskService.getIdentityLinksForTask(task.getId());
         List<String> result = new ArrayList<String>();
-        if (links != null && !links.isEmpty()) {
+        if (!CollectionUtils.isEmpty(links)) {
             for (IdentityLink il : links) {
                 if ("candidate".equals(il.getType())) {
                     String groupName = il.getGroupId();
