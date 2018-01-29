@@ -582,54 +582,24 @@ biz.edit.form.combobox = {
     },
     loadDictComboBox: function (select, params) {//数据字典下拉框
         $.ajax({
-            url: path + "/workflow/dictComboBoxList",
+            url: path + "/dictValue/list",
             type: "post",
             async: false,
-            data: {dictName: params},
+            data: {dictTypeId: params},
             success: function (data) {
                 var option = $("<option></option>");
                 option.val('');
                 option.text('');
                 select.append(option);
-                $.each(data, function (index, entity) {
+                $.each(data.rows, function (index, entity) {
                     option = $("<option></option>");
-                    option.val(entity.NAME);
-                    option.text(entity.NAME);
+                    option.val(entity.name);
+                    option.text(entity.name);
                     select.append(option);
                 });
             }
         });
 
-    },
-    //处理人下拉
-    terminaluser: function () {
-        biz.edit.form.combobox.data.select.empty();
-        $.ajax({
-            url: path + "/actBizConf/findBizSystemUserConf",
-            type: "post",
-            async: false,
-            data: {
-                bizType: key,
-                bizId: bizId,
-                userType: biz.edit.form.combobox.data.terminalUserType,
-                systemType: biz.edit.form.combobox.data.systemType,
-                systemName: $("[name='" + biz.edit.form.combobox.data.systemName + "']").val()
-            },
-            success: function (data) {
-
-                biz.edit.form.combobox.data.select.empty();
-                if (data.rows) {
-                    var option = $("<option></option>");
-                    biz.edit.form.combobox.data.select.append(option);
-                    $.each(data.rows, function (index, entity) {
-                        option = $("<option></option>");
-                        option.val(entity.USERNAME);
-                        option.text(entity.FULLNAME);
-                        biz.edit.form.combobox.data.select.append(option);
-                    });
-                }
-            }
-        });
     },
     loadUserInfo: function (dataId, type) {
 
@@ -731,6 +701,7 @@ biz.edit.form.file = {
         var fileName = encodeURI(biz.edit.form.file.data.downLoadFile);
         window.location.href = path + "/bizTemplateFile/downloadTemplate?&fileName=" + encodeURIComponent(fileName) + "&bizType=" + key + "&bizId=" + bizId;
     },
+
     removeFile: function (element) {//删除附件
         var checkbox = $(element).parent().parent().parent().parent().find(":checked");
         for (var i = 0; i < checkbox.length; i++) {
@@ -758,6 +729,7 @@ biz.edit.form.file = {
         if (existCheckBox.length == 0)
             biz.edit.form.file.handleDiv.parent().find("input:hidden").val("");
     },
+
     creatFileWindow: function () {//创建容器html代码
         var modal = $("<div class='modal fade' id='selectFile' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'>");
         var dialog = $("<div class='modal-dialog'>");

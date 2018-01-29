@@ -152,39 +152,19 @@ function getViewParams() {
         $.ajax({
             type: 'POST',
             async: false,
-            url: path + "/dict/findDictConfig",
-            data: {status: 0},
+            url: path + "/dictType/list",
             dataType: 'json',
             success: function (result) {
                 $('#ud_viewParams').empty();
                 for (var i = 0; i < result.rows.length; i++) {
                     var option = $('<option>');
-                    option.val(result.rows[i].DICTNAME);
-                    option.text(result.rows[i].DICTNAME);
+                    option.val(result.rows[i].id);
+                    option.text(result.rows[i].name);
                     $('#ud_viewParams').append(option);
                 }
             }
         });
-    } else if (combobox == 'MCMCOMBOBOX') {
-        $('[for="ud_viewParams"]').parent().show();
-        $('[for="ud_viewParams"]').text('配置项：');
-        onclick = 'biz.edit.form.memberList.showMenu();';
-        $.ajax({
-            type: 'get',
-            async: false,
-            url: path + "/workflow/modelconfigList",
-            dataType: 'json',
-            success: function (result) {
-                $('#ud_viewParams').empty();
-                for (var i = 0; i < result.list.length; i++) {
-                    var option = $('<option>');
-                    option.val(result.list[i].name);
-                    option.text(result.list[i].name);
-                    $('#ud_viewParams').append(option);
-                }
-            }
-        });
-    } else if (combobox == 'REQUIREDFILE') {
+    }  else if (combobox == 'REQUIREDFILE') {
         $('#helpBlock').html('文件名包含文件扩展名,如 xxx.doc,无需模版下载可不配置');
         $('#ud_componentArgsLabel').html('模版名称: &nbsp');
     }else if (combobox == "MEMBERLIST" || combobox == "MEMBERSEELCT") {
