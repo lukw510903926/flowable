@@ -16,7 +16,6 @@ import com.flowable.core.service.IVariableInstanceService;
 import org.springframework.util.CollectionUtils;
 
 @Service
-@Transactional(readOnly = true)
 public class VariableInstanceServiceImpl implements IVariableInstanceService {
 
     @Autowired
