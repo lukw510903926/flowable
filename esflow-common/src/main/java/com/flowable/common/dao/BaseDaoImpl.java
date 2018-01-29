@@ -188,7 +188,7 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
         PageHelper<T> result = new PageHelper<T>();
         result.setCount(this.count(detachedCriteria));
         Criteria criteria = detachedCriteria.getExecutableCriteria(getCurrentSession());
-        if (page != null) {
+        if (page != null && page.getRows() > 0) {
             criteria.setFirstResult(page.getFirstRow());
             criteria.setMaxResults(page.getMaxRow());
         }
@@ -246,8 +246,10 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
         }
         Query query = createQuery(hql);
         this.setParameter(query, parameter);
-        query.setFirstResult(page.getFirstRow());
-        query.setMaxResults(page.getMaxRow());
+        if (page.getRows() > 0) {
+            query.setFirstResult(page.getFirstRow());
+            query.setMaxResults(page.getMaxRow());
+        }
         page.setList(query.list());
     }
 
@@ -398,8 +400,10 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
         }
         SQLQuery query = this.createSQLQuery(sql);
         this.setParameter(query, parameter);
-        query.setFirstResult(page.getFirstRow());
-        query.setMaxResults(page.getMaxRow());
+        if (page.getRows() > 0) {
+            query.setFirstResult(page.getFirstRow());
+            query.setMaxResults(page.getMaxRow());
+        }
         setResultTransformer(query, resultClass);
         page.setList(query.list());
     }
@@ -593,10 +597,10 @@ public class BaseDaoImpl<T> implements IBaseDao<T> {
         }
         Criteria criteria = detachedCriteria.getExecutableCriteria(getCurrentSession());
         criteria.setResultTransformer(resultTransformer);
-        // set page
-        criteria.setFirstResult(page.getFirstRow());
-        criteria.setMaxResults(page.getMaxRow());
-        // order by
+        if (page.getRows() > 0) {
+            criteria.setFirstResult(page.getFirstRow());
+            criteria.setMaxResults(page.getMaxRow());
+        }
         if (StringUtils.isNotBlank(page.getSort())) {
             String[] fields = page.getSort().split(",");
             String[] orders = null;
