@@ -1,5 +1,6 @@
 package com.flowable.web.controller.dict;
 
+import com.flowable.common.utils.DataGrid;
 import com.flowable.common.utils.Json;
 import com.flowable.common.utils.PageHelper;
 import com.flowable.common.utils.ReflectionUtils;
@@ -93,8 +94,12 @@ public class DictValueController {
 
     @ResponseBody
     @RequestMapping("list")
-    public PageHelper<DictValue> findDictValue(PageHelper<DictValue> page, DictValue dictValue) {
+    public DataGrid findDictValue(PageHelper<DictValue> page, DictValue dictValue) {
 
-        return this.dictValueService.findByParams(ReflectionUtils.beanToMap(dictValue), page, true);
+        DataGrid dataGrid = new DataGrid();
+        PageHelper<DictValue> result = this.dictValueService.findByParams(ReflectionUtils.beanToMap(dictValue), page, false);
+        dataGrid.setRows(result.getList());
+        dataGrid.setTotal(result.getCount());
+        return dataGrid;
     }
 }
