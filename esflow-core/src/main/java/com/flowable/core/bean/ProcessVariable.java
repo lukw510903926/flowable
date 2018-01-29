@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * 流程全局属性配置
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @DynamicInsert
 @DynamicUpdate
 @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler", "fieldHandler" })
-public class ProcessVariable implements java.io.Serializable {
+public class ProcessVariable implements Serializable,Cloneable {
 
 	private static final long serialVersionUID = 5361380519460842436L;
 
