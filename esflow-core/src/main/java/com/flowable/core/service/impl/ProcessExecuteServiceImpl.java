@@ -580,23 +580,23 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * 下载或查看文件
      *
      * @param action
-     * @param bizId
+     * @param id
      * @return [文件类型, InputStream]
      * @throws ServiceException
      */
     @Override
-    public Object[] downloadFile(String action, String bizId) {
+    public Object[] downloadFile(String action, String id) {
 
         Object[] result = new Object[4];
         if ("work".equalsIgnoreCase(action)) {
-            BizInfo bean = bizInfoService.get(bizId);
+            BizInfo bean = bizInfoService.get(id);
             if (bean == null) {
                 throw new ServiceException("找不到工单");
             }
             result[0] = "IMAGE";
             result[1] = processDefinitionService.viewProcessImage(bean.getProcessInstanceId());
         } else {
-            BizFile bean = bizFileService.getBizFileById(bizId);
+            BizFile bean = bizFileService.getBizFileById(id);
             if (bean == null) {
                 throw new ServiceException("找不到附件");
             }
