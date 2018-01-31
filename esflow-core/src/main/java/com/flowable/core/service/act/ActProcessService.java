@@ -56,7 +56,6 @@ import com.flowable.core.service.IProcessDefinitionService;
  * @version 2013-11-03
  */
 @Service
-@Transactional(readOnly = true)
 public class ActProcessService {
 
 	/**
@@ -117,11 +116,9 @@ public class ActProcessService {
 		if (StringUtils.isNotBlank(procInsId)) {
 			processInstanceQuery.processInstanceId(procInsId);
 		}
-
 		if (StringUtils.isNotBlank(procDefKey)) {
 			processInstanceQuery.processDefinitionKey(procDefKey);
 		}
-
 		page.setCount(processInstanceQuery.count());
 		page.setList(processInstanceQuery.listPage(page.getFirstRow(), page.getMaxRow()));
 		return page;
@@ -140,7 +137,7 @@ public class ActProcessService {
 		InputStreamReader in = new InputStreamReader(bpmnStream, "UTF-8");
 		XMLStreamReader xtr = xif.createXMLStreamReader(in);
 		BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
-		List<org.flowable.bpmn.model.Process> processes = bpmnModel.getProcesses();
+		List<Process> processes = bpmnModel.getProcesses();
 		if (CollectionUtils.isNotEmpty(processes)) {
 			for (Process process : processes) {
 				Collection<FlowElement> flowElements = process.getFlowElements();

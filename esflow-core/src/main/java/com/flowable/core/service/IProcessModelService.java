@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.JsonProcessingException;
 import org.flowable.engine.repository.Model;
 
 import com.flowable.common.utils.PageHelper;
@@ -31,7 +30,6 @@ public interface IProcessModelService {
 	/**
 	 * 导出model的xml文件
 	 * @throws IOException 
-	 * @throws JsonProcessingException 
 	 */
 	void export(String id, HttpServletResponse response);
 
