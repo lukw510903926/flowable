@@ -140,37 +140,32 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         source = StringUtils.isBlank(source) ? "人工发起" : source;
         String procDefId = (String) params.get("base.tempID");
         String dt1 = (String) params.get("base.limitTime");
-        String createUser = (String) params.get("base.createUser");
+        String createUser = WebUtil.getLoginUser().getUsername();
         String tempBizId = (String) params.get("tempBizId");
         Date limitTime = DateUtils.parseDate(dt1);
         Date now = new Date();
         BizInfo bizInfo = null;
-        // BizInfoConf bizInfoConf = null;
         if (StringUtils.isNotBlank(tempBizId)) {
             bizInfo = bizInfoService.get(tempBizId);
-            // bizInfoConf = this.bizInfoConfService.get(bizInfo.getId());
         } else {
             bizInfo = new BizInfo();
             bizInfo.setWorkNum(WorkOrderUtil.builWorkNumber(procDefId));
         }
-        // if (bizInfoConf == null) {
-        BizInfoConf bizInfoConf = new BizInfoConf();
-        bizInfoConf.setBizInfo(bizInfo);
-        // }
+
         bizInfo.setSource(source);
         bizInfo.setLimitTime(limitTime);
         bizInfo.setProcessDefinitionId(procDefId);
         bizInfo.setBizType(getProcessDefinitionName(procDefId));
         bizInfo.setStatus(Constants.BIZ_TEMP);
         bizInfo.setCreateTime(now);
-
-        createUser = StringUtils.isNotBlank(createUser) ? createUser : WebUtil.getLoginUser().getUsername();
         bizInfo.setCreateUser(createUser);
-        bizInfoConf.setTaskAssignee(createUser);
         bizInfo.setTitle((String) params.get("base.workTitle"));
+        bizInfoService.addBizInfo(bizInfo);
+
+        BizInfoConf bizInfoConf = new BizInfoConf();
+        bizInfoConf.setTaskAssignee(createUser);
         bizInfoConf.setBizInfo(bizInfo);
         this.bizInfoConfService.saveOrUpdate(bizInfoConf);
-        bizInfoService.addBizInfo(bizInfo);
         if (startProc) {
             startProc(bizInfo, bizInfoConf, params, now);
         } else {
@@ -366,11 +361,13 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         } else {
             Task taskInfo = taskList.get(0);
             bizInfoConf.setTaskId(taskInfo.getId());
-            bizInfoConf.setTaskAssignee(taskInfo.getAssignee());
             StringBuffer taskIds = new StringBuffer(taskInfo.getId() + ",");
             StringBuffer taskAssignee = new StringBuffer();
             if (StringUtils.isNotBlank(taskInfo.getAssignee())) {
+                bizInfoConf.setTaskAssignee(taskInfo.getAssignee());
                 taskAssignee.append(taskInfo.getAssignee() + ",");
+            } else {
+                bizInfoConf.setTaskAssignee(null);
             }
             this.bizInfoConfService.saveOrUpdate(bizInfoConf);
             BizInfoConf bizConf = null;

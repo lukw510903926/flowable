@@ -19,7 +19,6 @@ import com.flowable.core.service.BizInfoConfService;
  * @email lukw@eastcom-sw.com
  */
 @Service
-@Transactional(readOnly = true)
 public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> implements BizInfoConfService {
 
 	@Autowired
