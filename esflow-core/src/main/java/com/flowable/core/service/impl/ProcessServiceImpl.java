@@ -322,6 +322,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             // TODO 只处理了一个角色的情况 未处理有候选角色的情况
             String username = this.systemUserService.findOnlyUser(new SystemRole(null, groups.get(0)));
             if (StringUtils.isNotEmpty(username)) {
+                taskService.unclaim(task.getId());
                 taskService.claim(task.getId(), username);
             }
         }
@@ -356,11 +357,13 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                         if (!CollectionUtils.isEmpty(list)) {
                             HistoricTaskInstance hti = list.get(0);
                             if (StringUtils.isNotBlank(hti.getAssignee())) {
+                                taskService.unclaim(nextTask.getId());
                                 taskService.claim(nextTask.getId(), hti.getAssignee());
                             }
                         }
                         // 如果该线为循环，则将新的任务转派给当前用户 // 如果该线为转派，则将新的任务转派给制定的用户或组
                     } else if (documentation.startsWith("command:repeat")) {
+                        taskService.unclaim(nextTask.getId());
                         taskService.claim(nextTask.getId(), WebUtil.getLoginUser().getUsername());
                     } else if (documentation.startsWith("command:transfer")) {
                         assignmentTask(nextTask, transfer_value, transfer_type);
@@ -397,6 +400,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         }
         boolean flag = claimRole(task, username);
         if (flag) {
+            taskService.unclaim(taskID);
             taskService.claim(taskID, username);
         }
         return true;
