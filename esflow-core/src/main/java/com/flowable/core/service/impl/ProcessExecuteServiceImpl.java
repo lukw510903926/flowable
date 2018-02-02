@@ -222,7 +222,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             throw new ServiceException("请确认是否有提交工单权限");
         }
         List<ProcessVariable> processValList = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
-        this.submit(params, fileMap, bizInfo, bizInfoConf, processValList);
+        this.submitBizInfo(params, fileMap, bizInfo, bizInfoConf, processValList);
         return bizInfo;
     }
 
@@ -241,12 +241,12 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         }
         List<ProcessVariable> processValList = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
         processValList.addAll(loadProcessVariables(bizInfo, Constants.TASK_START));
-        this.submit(params, fileMap, bizInfo, bizInfoConf, processValList);
+        this.submitBizInfo(params, fileMap, bizInfo, bizInfoConf, processValList);
         return bizInfo;
     }
 
-    private BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap, BizInfo bizInfo,
-                           BizInfoConf bizInfoConf, List<ProcessVariable> processValList) {
+    private BizInfo submitBizInfo(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap, BizInfo bizInfo,
+                                  BizInfoConf bizInfoConf, List<ProcessVariable> processValList) {
 
         logger.info("params :" + params);
         Date now = new Date();
