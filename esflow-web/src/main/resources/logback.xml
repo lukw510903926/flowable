@@ -8,7 +8,7 @@
 	<property name="logPath" value="${catalina.base}/logs" /> 
 	<!-- <property name="logPath" value="./logs" />  -->
 	<!-- 日志文件名称 -->
-	<property name="appName" value="tykj-open-api"></property>
+	<property name="appName" value="tykj-open-api"/>
 	<!-- 控制台 -->
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- encoder 默认配置为PatternLayoutEncoder -->
