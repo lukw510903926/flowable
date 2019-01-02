@@ -1,6 +1,7 @@
 package com.flowable.web.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.Filter;
@@ -12,6 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import com.flowable.common.utils.LoginUser;
 import com.flowable.core.util.WebUtil;
@@ -22,16 +24,14 @@ public class LoginFilter implements Filter {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Set<String> prefixIgnores = new HashSet<String>();
+    private Set<String> prefixIgnores = new HashSet<>();
 
     @Override
     public void init(FilterConfig filterConfig) {
 
         String ignoresParam = filterConfig.getInitParameter("ignores");
         String[] ignoreArray = ignoresParam.split(",");
-        for (String s : ignoreArray) {
-            prefixIgnores.add(s);
-        }
+        prefixIgnores.addAll(Arrays.asList(ignoreArray));
         logger.info("loginFilter init -------------------");
     }
 
@@ -58,7 +58,6 @@ public class LoginFilter implements Filter {
                 session.setAttribute(WebUtil.USER_URL, requestUri.substring(contextPath.length()));
             }
             httpResponse.sendRedirect(contextPath + "/login/login");
-//			httpRequest.getRequestDispatcher("/login/login").forward(httpRequest, response);
         } else {
             WebUtil.getLoginUser(httpRequest, httpResponse);
             httpRequest.getSession().setAttribute(WebUtil.LOGIN_USER, loginUser);
@@ -74,10 +73,7 @@ public class LoginFilter implements Filter {
                 return true;
             }
         }
-        if ("/login/login".equalsIgnoreCase(request.getServletPath())) {
-            return true;
-        }
-        return false;
+        return "/login/login".equalsIgnoreCase(request.getServletPath());
     }
 
     @Override
