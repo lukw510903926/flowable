@@ -3,15 +3,10 @@ package com.flowable.util.dao;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
+import javax.persistence.Query;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-
 import com.flowable.util.PageHelper;
-
 
 /**
  * @author 26223
@@ -20,83 +15,85 @@ import com.flowable.util.PageHelper;
  */
 public interface IBaseDao<T> {
 
-	public Session getCurrentSession();
-	
-	public SessionFactory getSessionFactory();
-	
-	public List<T> findAll();
+	Session getCurrentSession();
 
-	public Query createQuery(String hql);
+	List<T> findAll();
 
-	public <E> List<E> find(String hql);
+	Query createQuery(String hql);
 
-	public Serializable save(T t);
+	<E> List<E> find(String hql);
 
-	public void update(T t);
+	Serializable save(T t);
 
-	public void saveOrUpdate(T t);
+	void update(T t);
 
-	public void saveOrUpdate(List<T> list);
+	void saveOrUpdate(T t);
 
-	public void delete(T t);
+	void saveOrUpdate(List<T> list);
 
-	public void delete(List<T> list);
-	
-	public void deleteById(String id);
+	void delete(T t);
 
-	public void deleteByIds(List<String> list);
+	void delete(List<T> list);
 
-	public Criteria getCriteria();
+	void deleteById(String id);
 
-	public T getById(String id);
-	
-	public List<T> find(Criteria criteria);
+	void deleteByIds(List<String> list);
 
-	public T getUniqueResult(String propertyName,Object value);
+	Criteria getCriteria();
+
+	T getById(String id);
+
+	List<T> find(Criteria criteria);
+
+	T getUniqueResult(String propertyName, Object value);
 
 	/**
 	 * 
 	 * @param hql
-	 * @param parameter	three type List Map Object[]
+	 * @param parameter three type List Map Object[]
 	 * @return
 	 */
-	public <E> List<E> find(String hql, Object parameter);
-	
+	<E> List<E> find(String hql, Object parameter);
+
 	/**
 	 * 基本属性查询封装(不可用于引用属性的查询)
+	 * 
 	 * @param params
 	 * @param like
 	 * @return
 	 */
-	public List<T> findByParams(Map<String, Object> params, boolean like);
+	List<T> findByParams(Map<String, Object> params, boolean like);
 
 	PageHelper<T> findByParams(Map<String, Object> params, PageHelper<T> page, boolean like);
-	
-	public SQLQuery createSQLQuery(String sql);
 
-	public <E> List<E> findBySql(String sql, Class<?> clazz);
+	Query createSQLQuery(String sql);
+	
+	Query createSQLQuery(String sql,Class<?> resultClass);
 
-	public <E> List<E> findBySql(String sql, Object parameter, Class<?> clazz);
-	
-	public <E> List<E> findBySql(String sql, Object parameter);
-	
+	<E> List<E> findBySql(String sql, Class<?> clazz);
+
+	<E> List<E> findBySql(String sql, Object parameter, Class<?> clazz);
+
+	<E> List<E> findBySql(String sql, Object parameter);
+
 	/**
 	 * 唯一性校验
+	 * 
 	 * @param list
 	 * @param o
 	 * @return
 	 */
-	public boolean check(List<T> list, T o);
+	boolean check(List<T> list, T o);
 
-	public <E> PageHelper<E> findBySql(PageHelper<E> page, String sql, Object parameter, Class<?> resultClass);
+	<E> PageHelper<E> findBySql(PageHelper<E> page, String sql, Object parameter, Class<?> resultClass);
 
-	public <E> PageHelper<E> find(PageHelper<E> page, String hql, Object parameter);
+	<E> PageHelper<E> find(PageHelper<E> page, String hql, Object parameter);
 
-	public <E> PageHelper<E> find(PageHelper<E> page, String hql);
+	<E> PageHelper<E> find(PageHelper<E> page, String hql);
 
-	public <E> PageHelper<E> findBySql(PageHelper<E> page, String sql, Class<?> resultClass);
+	<E> PageHelper<E> findBySql(PageHelper<E> page, String sql, Class<?> resultClass);
 
-	public <E> PageHelper<E> findBySql(PageHelper<E> page, String sql);
+	<E> PageHelper<E> findBySql(PageHelper<E> page, String sql);
 
 	int executeBySql(String sqlString);
 
