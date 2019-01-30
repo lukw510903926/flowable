@@ -1,0 +1,69 @@
+package com.flowable.web.controller;
+
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
+import com.flowable.util.RestResult;
+import com.flowable.util.WebUtil;
+import com.flowable.util.exception.ServiceException;
+
+/**
+ * <p>
+ * 统一异常处理s
+ *
+ * @author yangqi
+ * @Description
+ *              </p>
+ * @email yangqi@ywwl.com
+ * @since 2018/10/16 10:16
+ **/
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+	private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+	/**
+	 * 所有异常报错
+	 *
+	 * @param exception
+	 * @return
+	 */
+	@ResponseBody
+	@ExceptionHandler(Exception.class)
+	public RestResult<Map<String, Object>> allExceptionHandler(Exception exception) {
+
+		Map<String, Object> map = WebUtil.getRequestParam();
+		logger.error("统一异常处理 :参数 : {},异常信息 : {}", map, exception);
+		return RestResult.fail(map, "操作失败!");
+	}
+
+	@ResponseBody
+	@ExceptionHandler(ServiceException.class)
+	public RestResult<Map<String, Object>> bizException(ServiceException bizException) {
+		Map<String, Object> map = WebUtil.getRequestParam();
+		logger.error("统一异常处理 :参数 : {},异常信息 : {}", map, bizException);
+		return RestResult.fail(map, bizException.getLocalizedMessage());
+	}
+
+	/**
+	 * 附件大小异常
+	 *
+	 * @param exception
+	 * @return
+	 */
+	@ResponseBody
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public RestResult<Map<String, Object>> maxUploadSizeException(MaxUploadSizeExceededException exception) {
+
+		Map<String, Object> map = WebUtil.getRequestParam();
+		String msg = "可以上传附件最大值 : " + exception.getMaxUploadSize() / 1024 / 1024 + "M";
+		logger.error("统一异常处理 :参数 : {},异常信息 : {}", map, exception);
+		return RestResult.fail(null, msg);
+	}
+}

@@ -1,0 +1,54 @@
+@charset "UTF-8";
+/* CSS Document */
+
+/* Global Styles */
+
+.mrt30{margin-top:30px;}
+.mrt20{margin-top:20px;}
+.mrl20{margin-left:20px;}
+.mrr20{margin-right:20px;}
+.mrb20{margin-bottom: 20px;}
+.mr10{margin:10px;}
+.mrt10{margin-top:10px;}
+.mrr10{margin-right:10px;}
+.mrl10{margin-left:10px;}
+.mrb10{margin-bottom:10px;}
+.mrl5{margin-left:5px;}
+.mrr5{margin-right:5px;}
+.mrt5{margin-top:5px;}
+.mrb5{margin-bottom:5px;}
+.mr5{margin:5px;}
+.pad0{padding:0;}
+.pad10{padding:10px;}
+.pad20{padding:20px;}
+.no-padding{padding:0;}
+.col-padding0{padding:0;}
+.mrt6{margin-top:6px;}
+.mrb6{margin-bottom:6px;}
+
+
+a{color:#3f3f4d;}
+a:focus, a:hover{color:#3f3f4d;outline:none;}
+a:focus [class^="icon-"], a:hover [class*="icon-"], button:focus [class^="bs-"], button:hover [class*="bs-"]{text-decoration:none;}
+
+h4,.h4{font-size:16px;}
+ul,.panel,p,.breadcrumb,.well{margin-bottom:0;}
+.dropdown-menu{font-size:12px;}
+.btn-sm{padding:3px 6px;}
+
+.lay-inline-block{display:inline-block}
+.lay-block{display:block;}
+.lay-block .caret{border-top:4px solid #fff;vertical-align: middle;margin-left: 6px;}
+.pos-relative{position:relative;}
+
+.collapse.in{height:auto;}
+
+/*模态框*/
+.modal-header, .modal-footer{padding:7px 10px;}
+.modal-header {background: url(../img/btn_bg.png) repeat-x 0 bottom;}
+.modal-body { padding: 10px; }
+/*.modal-dialog{min-width:600px;max-width:800px;margin:90px auto 30px;}
+@media (min-width: 768px){
+	.modal-dialog{margin:90px auto 30px;}
+	}*/
+
