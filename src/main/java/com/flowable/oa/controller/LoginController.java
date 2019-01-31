@@ -12,7 +12,8 @@ import com.flowable.oa.util.LoginUser;
 import com.flowable.oa.util.ReflectionUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +26,7 @@ import com.flowable.oa.entity.auth.SystemUser;
 @RequestMapping("/login")
 public class LoginController {
 
-	private Logger logger = Logger.getLogger(this.getClass());
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private ISystemUserService sysUserService;

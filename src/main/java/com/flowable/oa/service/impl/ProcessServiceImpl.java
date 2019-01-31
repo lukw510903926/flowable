@@ -13,7 +13,6 @@ import com.flowable.oa.util.ReflectionUtils;
 import com.flowable.oa.util.WebUtil;
 import com.flowable.oa.util.exception.ServiceException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.flowable.bpmn.model.Activity;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.FlowElement;
@@ -39,6 +38,8 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,7 @@ import com.flowable.oa.util.flowable.HistoryActivityFlow;
 @Service
 public class ProcessServiceImpl implements IProcessDefinitionService {
 
-    private Logger logger = Logger.getLogger(ProcessServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(ProcessServiceImpl.class);
 
     @Autowired
     private TaskService taskService;
@@ -697,6 +698,8 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             ProcessDiagramGenerator processDiagramGenerator = engineConfiguration.getProcessDiagramGenerator();
             return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),
                     historyActivityFlow.getHighFlows());
+
+//            return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),true);
 
         } catch (Exception e) {
             logger.error(" 显示流程实例图片失败 : {}", e);
