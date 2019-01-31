@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>首页</title>
+
+<style type="text/css">
+	body {
+		border-color:#ccc;
+		margin: 0px;
+		overflow: hidden;
+		font-family:"微软雅黑";
+		font-size:16px;
+	}
+	.desc{
+	border:1px dashed #ccc;
+	width:28%;
+	margin:10px auto;
+	color:#666;
+	padding:0 10px;
+	}
+	.title{
+	text-align:center;
+	font-size:22px;
+	margin-top:40px;
+	}
+	.title h3{
+		margin:50px auto;
+	}
+	p{
+	margin:0;
+	}
+	.dash-box{
+		width:100px;
+		text-align:center;
+		background:#fff;
+		height:20px;
+		margin:-10px auto;
+	}
+	.info{
+		margin-top: -22px;
+	    text-align: center;
+    }
+    .remind{
+    	margin-left: 25px;
+	    height: 38px;
+	    line-height: 38px;
+    }
+</style>
+</head>
+<body>
+	<div >
+		<div class="title">
+			<img alt="夲远科技" src="../../img/taoyuankeji.png">
+			<h3>欢迎登陆夲远科技后台管理系统</h3>
+		</div>		
+		<div class="desc" id="desc">
+			<p class="dash-box"></p>
+			<p  class="info">使用说明</p>
+			<p class="remind">1.该管理系统为夲远科技内部员工使用，权限由管理员分配;</p>
+			<p class="remind" style="padding-bottom:10px;">2.如果想拥有相应的操作权限，请联系管理员开通。</p>
+		</div>
+	</div>
+	
+<div th:include="common/plugins :: jsfooter"></div>
+</body>
+</html>

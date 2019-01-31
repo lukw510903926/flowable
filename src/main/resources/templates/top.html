@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <div th:include="common/head :: header"></div>
+</head>
+<body>
+	<nav class="navbar top-navbar" style="background: #2E363F">
+		<div class="panel-heading">
+			<span class="table_menu_w left"> 
+				<h3 style="color: #fff">夲远科技后台管理系统</h3>
+			</span>
+			<span class="table_menu_w right"> 
+				<i class="icon-user icon-font-16" style="color: #fff"></i>
+				<a th:text="${session._SESSION_LOGIN_USER.name}" style="color: #fff"></a> 
+				<a class="font-red" style="margin-left: 10px;color: #fff" onclick="resetPwd()">修改密码</a>
+				<a class="font-red" style="margin-left: 10px;margin-right: 30px;color: #fff" onclick="loginOut()">注销</a>
+			</span>
+		</div>
+	</nav>
+
+	<div th:include="common/plugins :: jsfooter"></div>
+	<script type="text/javascript">
+		
+		function loginOut(){
+			$.ajax({
+				url : path + '/logOut',
+				traditional : true,
+				success : function(result){
+					window.top.location.href = path +  '/login'
+				}
+			});
+		}
+		
+		function resetPwd(){
+			var view = window.top.document.getElementById("view_frame");
+			$(view).attr('src',path + '/resetPwdPage');
+			//window.top.view_frame.location.href = path +  '/resetPwdPage';
+		}
+		
+	</script>
+	
+	<!--添加||编辑弹框-->
+	<div class="modal fade" id="pwdModal" tabindex="-1"  tabindex="-1" data-backdrop='static' role="dialog">
+	    <div class="modal-dialog" role="document">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	                <h4 class="modal-title">修改密码</h4>
+	            </div>
+	            <div class="modal-body">
+	                <form id="resetPwdForm" class="form-horizontal" >
+	                    <input type="hidden" class="form-control" name="userId"/>
+	                    <div class="form-group">
+	                        <label  class="control-label col-xs-3 form-element"><span title="*" class="im">*</span>请输入旧密码:</label>
+	                        <div class="col-xs-8 form-element">
+	                        	<input type="text" class="form-control" name="oldPwd" id="oldPwd" placeholder="请输入8位数字字母组合的密码"/>
+	                        </div>
+	                    </div>
+	                    <div class="form-group">
+	                        <label  class="control-label col-xs-3 form-element"><span title="*" class="im">*</span>请输入新密码:</label>
+	                        <div class="col-xs-8 form-element">
+	                        	<input type="text" class="form-control" name="newPwd" id="newPwd" placeholder="请输入8位数字字母组合的密码"/>
+	                        </div>
+	                    </div>
+	                    <div class="form-group">
+	                        <label  class="control-label col-xs-3 form-element"><span title="*" class="im">*</span>请重复新密码:</label>
+	                        <div class="col-xs-8 form-element">
+	                        	<input type="text" class="form-control" name="reNewPwd" id="reNewPwd" placeholder="请输入8位数字字母组合的密码"/>
+	                        </div>
+	                    </div>
+	                </form>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" onclick="company.addCompany();" class="btn btn-y">保存</button>
+	                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="company.colseHandle()">取消</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!--/添加||编辑弹框-->
+</body>
+</html>
+

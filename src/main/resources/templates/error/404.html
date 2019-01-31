@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>这个.. 页面没有找到！！！_SJ5D.COM</title>
+
+<style type="text/css">
+	.img{
+		background:url(../../../img/404.png) no-repeat;
+		width:70%;
+		height:200px;
+		text-align:center;
+		margin:auto;
+	}
+	.box{
+		color:#666;
+		margin:200px auto;
+		width:50%;
+	}
+	.info{
+		overflow:hidden;
+	}
+	.info ul{
+	padding-left:20px;
+	float:left;
+	}
+	.info button{
+		border-radius:2px;
+		float:right;
+		width:120px;
+		height:38px;
+		background:#4685DD;
+		color:#fff;
+		border:0;
+		margin-right:30%;
+		margin-top:7%;
+	}
+	.info ul li{
+	list-style-type:circle;
+	color:#4685DD;
+	padding-left:0;
+	}
+	.info ul li span{
+		color:#666;
+		font-size:14px;
+	}
+</style>
+</head>
+<body>
+	<div class="box">
+		<div class="img"></div>
+		<p >我们正在联系火星总部的总指挥,帮您查找您要的页面信息,请返回等待信息哟~</p>
+		<div class="info">
+			<ul>
+				<li><span>不要返回吗?</span></li>
+				<li><span>确定不要返回吗?</span></li>
+				<li><span>真的真的确定不要返回吗?</span></li>
+				<li><span>Are you sure?</span></li>
+				<li><span>好吧,你赢了,你决定吧！</span></li>
+			</ul>
+			<button onclick="toIndex()">返回首页</button>
+		</div>
+	</div>
+</body>
+<script th:inline="javascript">
+		var _path = [[${#httpServletRequest.getContextPath()}]];
+		function toIndex(){
+			window.top.location.href= _path + '/index'
+		}
+</script>
+</html>

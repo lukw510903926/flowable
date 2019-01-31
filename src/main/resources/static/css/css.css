@@ -1,0 +1,110 @@
+@charset "UTF-8";
+/* CSS Document */
+
+@import url("base.css");
+@import url("header.css");
+@import url("ico.css");
+@import url("layout.css");
+
+/* Global Styles */
+
+html{height:100%}
+html,
+body {
+	font-size:12px;
+	line-height:1.6667;
+    color:#3f3f4d;
+	font-family:"Microsoft YaHei","宋体",Arial,Helvetica,sans-serif;
+	-ms-overflow-style: scrollbar;
+	min-width:1024px;
+}
+body{
+	background:#f6f6f6;
+}
+/*.modal-footer {
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+}
+.btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.modal-body{
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    height: 30px;
+    padding: 5px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}*/
+
+/*.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding: 5px;
+    padding-top: 5px;
+    padding-right: 8px;
+    padding-bottom: 5px;
+    padding-left: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+}*/
+
+div,ul, li, ol, p, dl, dt, dd, h1, h2, h3, h4, h5,img {list-style:none; margin:0; padding:0; border: none;vertical-align: baseline;outline: none;}
+select{font-family:"Microsoft YaHei";border:1px solid #bdc6cf;border-radius:3px;color:#576077;}
+
+/*--- 链接样式---*/
+a{color:#3f3f4d;text-decoration:none;cursor:pointer;}
+a:focus{outline:none;}
+
+/* 通用定义---*/
+.left 		{float:left;display:inline;}
+.right 		{float:right;display:inline;}
+i,em{font-style:normal}
+
+.red{color:#f00;}
+.green{color:#33b01e}
+.blue{color:#52aaff}
+.radius_left{border-radius:3px 0 0 3px}
+.radius_right{border-radius:0 3px 3px 0;}
+.mrl10{margin-left:10px;}
+.mrb5{margin-bottom:5px;}
+.mrtb10{margin:10px 0;}
+.nbb{border:1px solid #bdc6cf;border-bottom:0;border-radius:3px;}/*灰色边框，没有底框*/
+.ntb{border:1px solid #bdc6cf;border-top:0;}/*灰色边框，没有顶框*/
+.overflow_auto1{height:120px;overflow:auto;}
+.cover_div{width:100%;background:#000;filter:alpha(opacity=50);opacity:0.5;position:absolute;top:0;left:0;z-index:1}
+
+
+/* 清除浮动 */
+.clearfix:before,.clearfix:after {content: ".";display: block;height: 0;visibility: hidden;}
+.clearfix:after {clear: both;}
+.clearfix {zoom: 1;}/* for ie6 & ie7 */
+
+/*文字对齐*/
+.txt_align_l{text-align:left;}
+.txt_align_r{text-align:right;}
+.txt_align_c{text-align:center;}
+

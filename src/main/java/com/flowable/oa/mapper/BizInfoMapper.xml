@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.flowable.oa.dao.BizInfoMapper">
+
+	<resultMap id="BaseResultMap" type="com.flowable.oa.entity.BizInfo">
+		<id column="ID" property="id" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="TASK_ASSIGNEE" property="taskAssignee" />
+		<result column="WORK_NUM" property="workNum" />
+		<result column="TITLE" property="title" />
+		<result column="BIZ_TYPE" property="bizType" />
+		<result column="PROCESS_DEFINITION_ID" property="processDefinitionId" />
+		<result column="PROCESS_INSTANCE_ID" property="processInstanceId" />
+		<result column="TASK_ID" property="taskId" />
+		<result column="TASK_DEF_KEY" property="taskDefKey" />
+		<result column="TASK_NAME" property="taskName" />
+		<result column="TASK_ASSIGNEE" property="taskAssignee" />
+		<result column="CREATE_USER" property="createUser" />
+		<result column="LIMIT_TIME" property="limitTime" />
+		<result column="BIZ_STATUS" property="status" />
+		<result column="SOURCE" property="source" />
+		<result column="parent_Id" property="parentId" />
+		<result column="PARENT_TASKNAME" property="parentTaskName" />
+	</resultMap>
+
+	<!-- 通过规格查询活动 -->
+	<select id="queryWorkOrder" parameterType="Map"	resultMap="BaseResultMap">
+		select * from t_biz_info
+	</select>
+
+</mapper>

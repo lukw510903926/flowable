@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta content="text/html;charset=UTF-8"></meta>
+	<title>Title</title>
+</head>
+<body>
+<span th:text="${test}"></span>
+<has:role role="超级管理员">
+	<a>权限标签</a>
+</has:role>
+	<a>权限标签 超级管理员1</a>
+<h1>-------------------------------------------------------------------------</h1>
+<a has:permission="/url/template">aaaaaaaaaaaaaa</a>
+</body>
+</html>
