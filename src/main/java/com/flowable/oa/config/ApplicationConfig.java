@@ -1,11 +1,8 @@
 package com.flowable.oa.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import tk.mybatis.mapper.autoconfigure.MapperCacheDisabler;
 
 /**
  * 系统配置
@@ -22,11 +19,5 @@ public class ApplicationConfig implements WebMvcConfigurer{
 
 		LoginInterceptor loginInterceptor = new LoginInterceptor();
 		registry.addInterceptor(loginInterceptor).addPathPatterns("/**");
-	}
-
-	@Bean
-	@Profile("dev")
-	public MapperCacheDisabler mapperCacheDisabler() {
-		return new MapperCacheDisabler();
 	}
 }
