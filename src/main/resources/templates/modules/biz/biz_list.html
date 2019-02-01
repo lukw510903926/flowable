@@ -1,63 +1,63 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
-<base href="${ctx}">
-<title>工单查询</title>
-<div th:include="common/head :: header"></div>
-<meta name="decorator" content="default" />
-<style type="text/css">
-.form-element {
-	margin-left: 0 !important;
-	margin-right: 0 !important;
-	padding-left: 0;
-	padding-right: 0;
-}
+    <base href="${ctx}">
+    <title>工单查询</title>
+    <div th:include="common/head :: header"></div>
+    <div th:include="common/plugins :: jsfooter"></div>
+    <meta name="decorator" content="default"/>
+    <style type="text/css">
+        .form-element {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding-left: 0;
+            padding-right: 0;
+        }
 
-.rc-handle-container {
-	position: relative;
-}
+        .rc-handle-container {
+            position: relative;
+        }
 
-.rc-handle {
-	position: absolute;
-	width: 7px;
-	cursor: ew-resize;
-	*cursor: pointer;
-	margin-left: -3px;
-}
-</style>
-<script th:inline="javascript">
-	var statusList = [[${statusList }]];
-	var processList = [[${processList }]];
-	var action = [[${action}]]; 
-</script>
+        .rc-handle {
+            position: absolute;
+            width: 7px;
+            cursor: ew-resize;
+            *cursor: pointer;
+            margin-left: -3px;
+        }
+    </style>
+    <script th:inline="javascript">
+        var statusList = [[${statusList }]];
+        var processList = [[${processList }]];
+        var action = [[${action}]];
+    </script>
 </head>
 <body>
-	<div class="panel panel-box">
-		<div class="panel-heading">查询条件</div>
-		<div class="panel-body">
-			<div class="mr5">
-				<form class="form-horizontal" id="biz-query-form">
-					<div class="col-xs-12 btn-list">
-						<a id="queryBtn" class="btn btn-y">查询</a>
-						<button type="reset" class="btn btn-n mrl10"
-							onclick="biz.query.resetClick()">重置</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<div class="panel panel-ex" id='table'>
-		<div class="panel-body">
-			<div class="base-table-wrap">
-				<table id="biz-table"
-					class="table table-hover base-table table-striped" />
-			</div>
-		</div>
-	</div>
-	<div th:include="common/plugins :: jsfooter"></div>
-	<script type="text/javascript" th:src="@{/modules/biz/biz_list.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/modules/biz/biz_turn_task.js}"></script>
+<div class="panel panel-box">
+    <div class="panel-heading">查询条件</div>
+    <div class="panel-body">
+        <div class="mr5">
+            <form class="form-horizontal" id="biz-query-form">
+                <div class="col-xs-12 btn-list">
+                    <a id="queryBtn" class="btn btn-y">查询</a>
+                    <button type="reset" class="btn btn-n mrl10"
+                            onclick="biz.query.resetClick()">重置
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="panel panel-ex" id='table'>
+    <div class="panel-body">
+        <div class="base-table-wrap">
+            <table id="biz-table"
+                   class="table table-hover base-table table-striped"/>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/modules/biz/biz_list.js}"></script>
+<script type="text/javascript" th:src="@{/modules/biz/biz_turn_task.js}"></script>
 </body>
 </html>

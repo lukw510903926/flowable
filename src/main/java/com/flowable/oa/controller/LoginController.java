@@ -34,7 +34,7 @@ public class LoginController {
 	@RequestMapping("login")
 	public String login(HttpServletRequest request, HttpServletResponse response, Model model) {
 
-		String username = (String) request.getParameter("username");
+		String username = request.getParameter("username");
 		if (StringUtils.isNotBlank(username)) {
 			SystemUser systemUser = sysUserService.getUserByUsername(username);
 			if (systemUser != null) {

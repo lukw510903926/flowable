@@ -40,7 +40,7 @@ public class IndexController {
 	public String queryView(@PathVariable("action") String action, Model model) {
 
 		model.addAttribute("action", action);
-		List<String> processList = new ArrayList<String>();
+		List<String> processList = new ArrayList<>();
 		List<ProcessDefinition> list = actProcessService.findProcessDefinition(null);
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (ProcessDefinition processDefinition : list) {
@@ -50,6 +50,6 @@ public class IndexController {
 		List<String> statusList = workService.loadBizInfoStatus(null);
 		model.addAttribute("statusList", JSONObject.toJSON(statusList));
 		model.addAttribute("processList", JSONObject.toJSON(processList));
-		return "biz_list";
+		return "modules/biz/biz_list";
 	}
 }

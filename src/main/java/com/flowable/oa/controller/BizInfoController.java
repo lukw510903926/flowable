@@ -62,7 +62,7 @@ public class BizInfoController {
 		if (CollectionUtils.isNotEmpty(list)) {
 			return this.workService.loadBizInfoStatus(list.get(0).getId());
 		}
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -93,8 +93,7 @@ public class BizInfoController {
 	 * @return
 	 */
 	@RequestMapping(value = "biz/create/{key}")
-	public String createView(@PathVariable String key, String bizId, Model model, HttpServletRequest request,
-			HttpServletResponse response) {
+	public String createView(@PathVariable String key, String bizId, Model model, HttpServletRequest request) {
 
 		model.addAttribute("key", key);
 		WebUtil.getLoginUser(request);

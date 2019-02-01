@@ -4,7 +4,7 @@
 <head>
 <div th:include="common/head :: header"></div>
 <div th:include="common/plugins :: jsfooter"></div>
-<meta charset="UTF-8"></meta>
+<meta charset="UTF-8"/>
 <title>夲远科技后台管理系统</title>
 <style type="text/css">
 .header {
@@ -52,8 +52,6 @@ body {
 			        <a class="mu collapsed" data-toggle="collapse" href="#ul0"><span class="pull-right"><i class="icon-chevron-up"></i></span><i class="ico-menu mrr5"></i>通用功能</a>
 			        <!--三级菜单-->
 				    <ul id="ul0" class="list-unstyled sidebar-nav3 collapse in">
-						<a th:if="${session._SESSION_LOGIN_USER.roles}">aaaaaaaaaaaaaa</a>
-						<a th:if="${#lists.contains(session._SESSION_LOGIN_USER.roles, '超级管理员1')}">aaaaaaaaaaaaaa</a>
 						<li class="href mu3" href="/biz/list/myWork"><i class="ico-dot2 mrr5"></i>统一待办</li>
 						<li class="href mu3" href="/biz/list/myTemp"><i class="ico-dot2 mrr5"></i>工单草稿</li>
 						<li class="href mu3" href="/biz/list/myCreate"><i class="ico-dot2 mrr5"></i>已创建工单</li>
