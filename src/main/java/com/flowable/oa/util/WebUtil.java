@@ -5,6 +5,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.WebUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -94,6 +97,24 @@ public class WebUtil extends WebUtils {
      */
     public static boolean isAjaxRequest(HttpServletRequest request) {
         String requestedWith = request.getHeader("X-Requested-With");
-        return requestedWith != null ? "XMLHttpRequest".equals(requestedWith) : false;
+        return "XMLHttpRequest".equals(requestedWith);
+    }
+
+    /**
+     * 获取请求参数
+     *
+     * @return
+     */
+    public static Map<String, Object> getRequestParam() {
+
+        String paramName;
+        HttpServletRequest request = getRequest();
+        Map<String, Object> map = new HashMap<>();
+        Enumeration<String> enumPks = request.getParameterNames();
+        while (enumPks.hasMoreElements()) {
+            paramName = enumPks.nextElement();
+            map.put(paramName, request.getParameter(paramName));
+        }
+        return map;
     }
 }

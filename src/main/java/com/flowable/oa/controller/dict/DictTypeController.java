@@ -2,6 +2,8 @@ package com.flowable.oa.controller.dict;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.flowable.oa.entity.BizInfo;
+import com.flowable.oa.util.DataGrid;
 import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.Json;
 import com.flowable.oa.util.WebUtil;
@@ -32,7 +34,7 @@ public class DictTypeController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping("/dicts")
-    public String tables(HttpServletRequest request) {
+    public String tables() {
 
         return "modules/dict/dict_list";
     }
@@ -41,13 +43,8 @@ public class DictTypeController {
     @RequestMapping("save")
     public Json save(HttpServletRequest request, DictType dictType) {
 
-        try {
-            WebUtil.getLoginUser(request);
-            this.dictTypeService.saveOrUpdate(dictType);
-        } catch (Exception e) {
-            logger.error("保存失败 : {}", e);
-            return new Json("保存失败:" + e.getLocalizedMessage(), false);
-        }
+        WebUtil.getLoginUser(request);
+        this.dictTypeService.saveOrUpdate(dictType);
         return new Json(null, true);
     }
 
@@ -59,13 +56,8 @@ public class DictTypeController {
         if (StringUtils.isBlank(dictType.getId())) {
             new Json("id不可为空", false);
         }
-        try {
-            WebUtil.getLoginUser(request);
-            this.dictTypeService.saveOrUpdate(dictType);
-        } catch (Exception e) {
-            logger.error("更新失败 : {}", e);
-            return new Json("更新失败:" + e.getLocalizedMessage(), false);
-        }
+        WebUtil.getLoginUser(request);
+        this.dictTypeService.saveOrUpdate(dictType);
         return new Json(null, true);
     }
 
@@ -73,26 +65,25 @@ public class DictTypeController {
     @RequestMapping("delete")
     public Json delete(HttpServletRequest request, DictType dictType) {
 
-        try {
-            WebUtil.getLoginUser(request);
-            this.dictTypeService.delete(dictType);
-        } catch (Exception e) {
-            logger.error("删除失败 : {}", e);
-            return new Json("删除失败:" + e.getLocalizedMessage(), false);
-        }
+        WebUtil.getLoginUser(request);
+        this.dictTypeService.delete(dictType);
         return new Json(null, true);
     }
-    
+
     @ResponseBody
     @RequestMapping("get/{typeId}")
-    public DictType getEdit(@PathVariable("typeId")String typeId) {
-       return  this.dictTypeService.selectByKey(typeId);
+    public DictType getEdit(@PathVariable("typeId") String typeId) {
+        return this.dictTypeService.selectByKey(typeId);
     }
 
     @ResponseBody
     @RequestMapping("list")
-    public PageInfo<DictType> findDictType(PageInfo<DictType> page, DictType dictType) {
+    public DataGrid<DictType> findDictType(PageInfo<DictType> page, DictType dictType) {
 
-        return this.dictTypeService.findByModel(page,dictType, true);
+        PageInfo<DictType> helper = this.dictTypeService.findByModel(page, dictType, true);
+        DataGrid<DictType> grid = new DataGrid<>();
+        grid.setRows(helper.getList());
+        grid.setTotal(helper.getTotal());
+        return grid;
     }
 }

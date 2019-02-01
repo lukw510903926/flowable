@@ -26,74 +26,59 @@ import com.flowable.oa.service.dict.IDictValueService;
 @RequestMapping("dictValue")
 public class DictValueController {
 
-	@Autowired
-	private IDictValueService dictValueService;
+    @Autowired
+    private IDictValueService dictValueService;
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@RequestMapping("/list/{typeId}")
-	public String dictValues(@PathVariable("typeId") String typeId, Model model) {
+    @RequestMapping("/list/{typeId}")
+    public String dictValues(@PathVariable("typeId") String typeId, Model model) {
 
-		model.addAttribute("typeId", typeId);
-		return "modules/dict/value_list";
-	}
+        model.addAttribute("typeId", typeId);
+        return "modules/dict/value_list";
+    }
 
-	@ResponseBody
-	@RequestMapping("/value/{valueId}")
-	public DictValue getById(@PathVariable("valueId") String valueId) {
+    @ResponseBody
+    @RequestMapping("/value/{valueId}")
+    public DictValue getById(@PathVariable("valueId") String valueId) {
 
-		return this.dictValueService.getById(valueId);
-	}
+        return this.dictValueService.getById(valueId);
+    }
 
-	@ResponseBody
-	@RequestMapping("save")
-	public Json save(HttpServletRequest request, DictValue dictValue) {
+    @ResponseBody
+    @RequestMapping("save")
+    public Json save(HttpServletRequest request, DictValue dictValue) {
 
-		try {
-			WebUtil.getLoginUser(request);
-			this.dictValueService.saveOrUpdate(dictValue);
-		} catch (Exception e) {
-			logger.error("保存失败 : {}", e);
-			return new Json("保存失败:" + e.getLocalizedMessage(), false);
-		}
-		return new Json(null, true);
-	}
+        WebUtil.getLoginUser(request);
+        this.dictValueService.saveOrUpdate(dictValue);
+        return new Json(null, true);
+    }
 
-	@ResponseBody
-	@RequestMapping("update")
-	public Json update(HttpServletRequest request, DictValue dictValue) {
+    @ResponseBody
+    @RequestMapping("update")
+    public Json update(HttpServletRequest request, DictValue dictValue) {
 
-		if (StringUtils.isBlank(dictValue.getId())) {
-			new Json("id不可为空", false);
-		}
-		try {
-			WebUtil.getLoginUser(request);
-			this.dictValueService.saveOrUpdate(dictValue);
-		} catch (Exception e) {
-			logger.error("更新失败 : {}", e);
-			return new Json("更新失败:" + e.getLocalizedMessage(), false);
-		}
-		return new Json(null, true);
-	}
+        if (StringUtils.isBlank(dictValue.getId())) {
+            new Json("id不可为空", false);
+        }
+        WebUtil.getLoginUser(request);
+        this.dictValueService.saveOrUpdate(dictValue);
+        return new Json(null, true);
+    }
 
-	@ResponseBody
-	@RequestMapping("delete")
-	public Json delete(HttpServletRequest request, DictValue dictValue) {
+    @ResponseBody
+    @RequestMapping("delete")
+    public Json delete(HttpServletRequest request, DictValue dictValue) {
 
-		try {
-			WebUtil.getLoginUser(request);
-			this.dictValueService.deleteById(dictValue.getId());
-		} catch (Exception e) {
-			logger.error("删除失败 : {}", e);
-			return new Json("删除失败:" + e.getLocalizedMessage(), false);
-		}
-		return new Json(null, true);
-	}
+        WebUtil.getLoginUser(request);
+        this.dictValueService.deleteById(dictValue.getId());
+        return new Json(null, true);
+    }
 
-	@ResponseBody
-	@RequestMapping("list")
-	public PageInfo<DictValue> findDictValue(PageInfo<DictValue> page, DictValue dictValue) {
+    @ResponseBody
+    @RequestMapping("list")
+    public PageInfo<DictValue> findDictValue(PageInfo<DictValue> page, DictValue dictValue) {
 
-		return this.dictValueService.findByModel(page,dictValue,  false);
-	}
+        return this.dictValueService.findByModel(page, dictValue, false);
+    }
 }

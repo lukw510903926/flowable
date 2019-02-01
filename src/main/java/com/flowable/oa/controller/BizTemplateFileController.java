@@ -35,9 +35,9 @@ import com.flowable.oa.service.BizTemplateFileService;
 @Controller
 @RequestMapping("/bizTemplateFile")
 public class BizTemplateFileController {
-	
-	@Autowired
-	private Environment environment;
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private BizTemplateFileService bizTemplateFileService;
@@ -54,7 +54,7 @@ public class BizTemplateFileController {
     @RequestMapping("/list")
     public Map<String, Object> list(PageInfo<BizTemplateFile> page, BizTemplateFile file) {
 
-    	PageInfo<BizTemplateFile> helper = bizTemplateFileService.findTemplateFlies(page, file, true);
+        PageInfo<BizTemplateFile> helper = bizTemplateFileService.findTemplateFlies(page, file, true);
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("total", helper.getTotal());
         data.put("rows", helper.getList());
@@ -77,9 +77,9 @@ public class BizTemplateFileController {
             bizTemplateFileService.saveOrUpdate(bizTemplateFile, file);
         } catch (Exception e) {
             logger.error("上传失败 : ", e);
-            return new ResponseEntity<String>(JSONObject.toJSONString(Json.fail("上传失败")), responseHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(JSONObject.toJSONString(Json.fail("上传失败")), responseHeaders, HttpStatus.OK);
         }
-        return new ResponseEntity<String>(JSONObject.toJSONString(Json.success()), responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(JSONObject.toJSONString(Json.success()), responseHeaders, HttpStatus.OK);
     }
 
     @ResponseBody
@@ -125,12 +125,7 @@ public class BizTemplateFileController {
     @RequestMapping("/remove")
     public Json remove(@RequestParam List<String> ids) {
 
-        try {
-            bizTemplateFileService.deleteByIds(ids);
-            return Json.success();
-        } catch (Exception e) {
-            logger.error("工单删除失败 : {}", e);
-            return Json.fail("删除失败");
-        }
+        bizTemplateFileService.deleteByIds(ids);
+        return Json.success();
     }
 }

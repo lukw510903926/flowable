@@ -77,10 +77,8 @@ public class ProcessController{
 	 * @return
 	 */
 	@RequestMapping(value = "process/deploy", method = RequestMethod.POST)
-	public String deployProcess(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes, Model model)
-			throws Exception {
-		MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-		MultipartFile file = multiRequest.getFile("file");
+	public String deployProcess(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
+		MultipartFile file = request.getFile("file");
 		String fileName = file.getOriginalFilename();
 		String exportDir = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 				+ request.getContextPath() + "/deployments/";

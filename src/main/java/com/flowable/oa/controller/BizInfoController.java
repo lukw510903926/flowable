@@ -1,6 +1,7 @@
 package com.flowable.oa.controller;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -124,11 +125,11 @@ public class BizInfoController {
 			File file = new File("/home/ipnet/esflowFilePath/" + bizFile.getPath());
 			if (file.exists()) {
 				response.setHeader("Content-Disposition",
-						"attachment;filename=" + new String(bizFile.getName().getBytes("gb2312"), "ISO-8859-1"));
+						"attachment;filename=" + new String(bizFile.getName().getBytes("gb2312"), StandardCharsets.ISO_8859_1));
 				FileUtils.copyFile(file, response.getOutputStream());
 			} else {
 				response.setHeader("Content-Disposition",
-						"attachment;filename=" + new String("文件不存在".getBytes("gb2312"), "ISO-8859-1"));
+						"attachment;filename=" + new String("文件不存在".getBytes("gb2312"),StandardCharsets.ISO_8859_1));
 			}
 		} catch (Exception e) {
 			logger.error(" 下载失败 : {}", e);
@@ -144,7 +145,7 @@ public class BizInfoController {
 
 	@ResponseBody
 	@RequestMapping(value = "biz/workInfo/{bizId}")
-	public Map<String, Object> getDraftBiz(@PathVariable("bizId") String bizId, HttpServletRequest request, HttpServletResponse response) {
+	public Map<String, Object> getDraftBiz(@PathVariable("bizId") String bizId, HttpServletRequest request) {
 		WebUtil.getLoginUser(request);
 		return processExecuteService.queryWorkOrder(bizId);
 	}

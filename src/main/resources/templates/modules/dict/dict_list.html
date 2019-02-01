@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>字典列表</title>
+    <title>字典列表</title>
+    <div th:include="common/head :: header"></div>
+    <div th:include="common/plugins :: jsfooter"></div>
 </head>
 
 <body>
-	<div class="panel panel-ex">
-		<div class="panel-heading">字典列表 
-			<span class="table_menu_w right">
+<div class="panel panel-ex">
+    <div class="panel-heading">字典列表
+        <span class="table_menu_w right">
 				 <a id="editBtn" href="javascript:void(0);" onclick="editDictUI()">编辑</a> 
 				 <a id="delBtn" href="javascript:void(0);" onclick="delDict()">删除</a>
 			</span>
-		</div>
-		<div class="panel-body">
-			<div class="base-table-wrap">
-				<table id="dictconfigTable"	class="table_data base-table table-striped">
-				</table>
-			</div>
-		</div>
-	</div>
+    </div>
+    <div class="panel-body">
+        <div class="base-table-wrap">
+            <table id="biz-table" class="table table-hover base-table table-striped"/>
+        </div>
+    </div>
+</div>
 </body>
 <script type="text/javascript" th:src="@{/modules/dict/dictConfig.js}"></script>
 </html>

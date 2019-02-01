@@ -3,7 +3,8 @@ $(function () {
 });
 
 function loadDictConfigList() {
-    $("#dictConfigTable").bootstrapTable({
+
+    $("#biz-table").bootstrapTable({
         method: "post",
         url: path + "/dictType/list",
         contentType: "application/x-www-form-urlencoded",
@@ -50,7 +51,7 @@ function saveDictConfig() {
 
 
 function editDictUI() {
-    var rows = $("#dictConfigTable").bootstrapTable("getSelections");
+    var rows = $("#biz-table").bootstrapTable("getSelections");
     if (rows.length < 1 || rows.length > 1) {
         layer.msg("请选择一行!");
         return;
@@ -61,12 +62,12 @@ function editDictUI() {
 
 function delDict() {
 
-    var rows = $("#dictConfigTable").bootstrapTable("getSelections");
+    var rows = $("#biz-table").bootstrapTable("getSelections");
     if (rows.length < 1) {
         layer.msg("请选择需删除的行!");
         return;
     }
-    var ids = new Array();
+    var ids = [];
     for (var i = 0; i < rows.length; i++) {
         ids.push(rows[i].ID);
     }
@@ -78,7 +79,7 @@ function delDict() {
         traditional: true,
         async: false,
         success: function (data) {
-            $("#dictConfigTable").bootstrapTable("refresh");
+            $("#biz-table").bootstrapTable("refresh");
             layer.msg(data.msg);
         }
     });

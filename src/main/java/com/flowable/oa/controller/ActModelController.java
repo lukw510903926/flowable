@@ -1,6 +1,7 @@
 package com.flowable.oa.controller;
 
 import javax.servlet.http.HttpServletResponse;
+
 import com.flowable.oa.util.Json;
 import org.flowable.engine.repository.Model;
 import org.slf4j.Logger;
@@ -15,9 +16,10 @@ import com.flowable.oa.service.IProcessModelService;
 
 /**
  * 流程模型相关
+ *
+ * @author : lukewei
  * @project : tykj-oa
  * @createTime : 2018年1月31日 : 下午4:20:45
- * @author : lukewei
  * @description :
  */
 @Controller
@@ -95,15 +97,9 @@ public class ActModelController {
     public Json delete(String id) {
         logger.info("删除Model---delete");
         Json json = new Json();
-        try {
-            processModelService.delete(id);
-            json.setSuccess(true);
-            json.setMsg("删除成功!");
-        } catch (Exception e) {
-            logger.error("删除失败 : {}", e);
-            json.setSuccess(false);
-            json.setMsg("删除失败!");
-        }
+        processModelService.delete(id);
+        json.setSuccess(true);
+        json.setMsg("删除成功!");
         return json;
     }
 }

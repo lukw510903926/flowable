@@ -67,7 +67,7 @@ public class ProcessModelMgrController {
             variable.setVersion(Integer.parseInt(version));
             PageInfo<ProcessVariable> processValBeans = this.processValService.findProcessVariables(variable, page);
             grid.setRows(processValBeans.getList());
-            grid.setTotal((long) processValBeans.getTotal());
+            grid.setTotal(processValBeans.getTotal());
         } catch (Exception e) {
             logger.error("操作失败 : {}", e);
         }
@@ -122,7 +122,7 @@ public class ProcessModelMgrController {
         String[] valIds = StringUtils.isNotBlank(ids) ? ids.split(",") : new String[]{};
         Json json = new Json();
         try {
-        	processValService.deleteVariable(Arrays.asList(valIds));
+            processValService.deleteVariable(Arrays.asList(valIds));
             json.setSuccess(true);
             json.setMsg("删除成功!");
         } catch (Exception e) {
