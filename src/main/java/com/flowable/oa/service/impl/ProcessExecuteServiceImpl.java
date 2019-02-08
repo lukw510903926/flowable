@@ -25,6 +25,7 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
@@ -313,10 +314,12 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 			if (null != valueBean) {
 				valueBean.setValue(value);
 				valueBean.setCreateTime(now);
+				valueBean.setHandleUser(WebUtil.getLoginUser().getUsername());
 				instanceService.updateProcessInstance(valueBean);
 			} else {
 				valueBean = new ProcessVariableInstance();
 				valueBean.setProcessInstanceId(procInstId);
+				valueBean.setHandleUser(WebUtil.getLoginUser().getUsername());
 				valueBean.setValue(value);
 				valueBean.setCreateTime(now);
 				valueBean.setViewComponent(processVariable.getViewComponent());
@@ -365,17 +368,17 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		} else {
 			Task taskInfo = taskList.get(0);
 			bizInfoConf.setTaskId(taskInfo.getId());
-			StringBuffer taskIds = new StringBuffer(taskInfo.getId() + ",");
-			StringBuffer taskAssignee = new StringBuffer();
+			StringBuilder taskIds = new StringBuilder(taskInfo.getId() + ",");
+			StringBuilder taskAssignee = new StringBuilder();
 			if (StringUtils.isNotBlank(taskInfo.getAssignee())) {
-				taskAssignee.append(taskInfo.getAssignee() + ",");
+				taskAssignee.append(taskInfo.getAssignee()).append(",");
 				bizInfoConf.setTaskAssignee(taskInfo.getAssignee());
 			} else {
 				bizInfoConf.setTaskAssignee(null);
 			}
 			bizInfoConf.setBizId(bizId);
 			this.bizInfoConfService.saveOrUpdate(bizInfoConf);
-			BizInfoConf bizConf = null;
+			BizInfoConf bizConf ;
 			if (taskList.size() > 1) {
 				for (int i = 1; i < taskList.size(); i++) {
 					bizConf = new BizInfoConf();

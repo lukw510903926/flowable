@@ -16,167 +16,178 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * 流程全局实例（存储具体填写的值）
- * 
+ *
+ * @author : lukewei
  * @project : tykj-oa
  * @createTime : 2018年1月31日 : 下午2:34:09
- * @author : lukewei
  * @description :
  */
 @Entity
 @Table(name = "T_BIZ_PROCESS_INSTANCE")
 public class ProcessVariableInstance implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 620831623030964444L;
+    private static final long serialVersionUID = 620831623030964444L;
 
-	/**
-	 * ID
-	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, nullable = false, length = 64, name = "ID")
-	private String id;
+    /**
+     * ID
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, nullable = false, length = 64, name = "ID")
+    private String id;
 
-	/**
-	 * 增加填写时间
-	 */
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATE_TIME")
-	private Date createTime;
+    /**
+     * 增加填写时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATE_TIME")
+    private Date createTime;
 
-	/**
-	 * 参数
-	 */
-	@Column(name = "PROCESS_VARIABLE_ID")
-	private String variableId;
+    /**
+     * 参数
+     */
+    @Column(name = "PROCESS_VARIABLE_ID")
+    private String variableId;
 
-	/**
-	 * 流程id
-	 */
-	@Column(name = "BIZ_ID", nullable = false, length = 64)
-	private String bizId;
+    /**
+     * 流程id
+     */
+    @Column(name = "BIZ_ID", nullable = false, length = 64)
+    private String bizId;
 
-	/**
-	 * 任务ID
-	 */
-	@Column(name = "TASK_ID", nullable = false, length = 32)
-	private String taskId;
+    /**
+     * 任务ID
+     */
+    @Column(name = "TASK_ID", nullable = false, length = 32)
+    private String taskId;
 
-	/**
-	 * 流程实例ID
-	 */
-	@Column(length = 64, name = "PROCESS_INSTANCE_ID")
-	private String processInstanceId;
+    /**
+     * 流程实例ID
+     */
+    @Column(length = 64, name = "PROCESS_INSTANCE_ID")
+    private String processInstanceId;
 
-	/**
-	 * 值
-	 */
-	@Column(nullable = false, length = 512, name = "VALUE")
-	private String value;
+    /**
+     * 值
+     */
+    @Column(nullable = false, length = 512, name = "VALUE")
+    private String value;
 
-	/**
-	 * 参数名称
-	 */
-	@Column(name = "VARIABLE_NAME", nullable = false, length = 32)
-	private String variableName;
+    /**
+     * 参数名称
+     */
+    @Column(name = "VARIABLE_NAME", nullable = false, length = 32)
+    private String variableName;
 
-	/**
-	 * 参数别名
-	 */
-	@Column(name = "VARIABLE_ALIAS", nullable = false, length = 32)
-	private String variableAlias;
-	
-	@Column(name = "VIEW_COMPONENT")
-	private String viewComponent;
+    @Column(name = "HANDLE_USER", nullable = false, length = 64)
+    private String handleUser;
 
-	public String getId() {
-		return id;
-	}
+    /**
+     * 参数别名
+     */
+    @Column(name = "VARIABLE_ALIAS", nullable = false, length = 32)
+    private String variableAlias;
 
-	public String getVariableId() {
-		return variableId;
-	}
+    @Column(name = "VIEW_COMPONENT")
+    private String viewComponent;
 
-	public void setVariableId(String variableId) {
-		this.variableId = variableId;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getProcessInstanceId() {
-		return processInstanceId;
-	}
+    public String getVariableId() {
+        return variableId;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public void setVariableId(String variableId) {
+        this.variableId = variableId;
+    }
 
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public String getProcessInstanceId() {
+        return processInstanceId;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public void setProcessInstanceId(String processInstanceId) {
-		this.processInstanceId = processInstanceId;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getBizId() {
-		return bizId;
-	}
+    public void setProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
+    }
 
-	public void setBizId(String bizId) {
-		this.bizId = bizId;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public String getTaskId() {
-		return taskId;
-	}
+    public String getBizId() {
+        return bizId;
+    }
 
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
+    public void setBizId(String bizId) {
+        this.bizId = bizId;
+    }
 
-	public String getVariableName() {
-		return variableName;
-	}
+    public String getTaskId() {
+        return taskId;
+    }
 
-	public void setVariableName(String variableName) {
-		this.variableName = variableName;
-	}
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
 
-	public String getVariableAlias() {
-		return variableAlias;
-	}
+    public String getVariableName() {
+        return variableName;
+    }
 
-	public void setVariableAlias(String variableAlias) {
-		this.variableAlias = variableAlias;
-	}
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
 
-	public String getViewComponent() {
-		return viewComponent;
-	}
+    public String getVariableAlias() {
+        return variableAlias;
+    }
 
-	public void setViewComponent(String viewComponent) {
-		this.viewComponent = viewComponent;
-	}
+    public void setVariableAlias(String variableAlias) {
+        this.variableAlias = variableAlias;
+    }
 
-	public ProcessVariableInstance clone() {
-		ProcessVariableInstance instance = null;
-		try {
-			instance = (ProcessVariableInstance) super.clone();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return instance;
-	}
+    public String getViewComponent() {
+        return viewComponent;
+    }
+
+    public void setViewComponent(String viewComponent) {
+        this.viewComponent = viewComponent;
+    }
+
+    public String getHandleUser() {
+        return handleUser;
+    }
+
+    public void setHandleUser(String handleUser) {
+        this.handleUser = handleUser;
+    }
+
+    public ProcessVariableInstance clone() {
+        ProcessVariableInstance instance = null;
+        try {
+            instance = (ProcessVariableInstance) super.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return instance;
+    }
 
 }
