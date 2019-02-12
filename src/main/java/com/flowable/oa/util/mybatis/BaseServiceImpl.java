@@ -50,6 +50,12 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
+    public T selectOne(T entity) {
+
+        return mapper.selectOne(entity);
+    }
+
+    @Override
     public int save(T entity) {
         return mapper.insert(entity);
     }

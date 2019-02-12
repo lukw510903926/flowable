@@ -33,7 +33,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         List<String> urls = new ArrayList<>();
         urls.add("/url/template");
         loginUser.setUrls(urls);
-        WebUtil.setSessionUser(request, loginUser);
+        WebUtil.setSessionUser(loginUser);
         return true;
     }
 }

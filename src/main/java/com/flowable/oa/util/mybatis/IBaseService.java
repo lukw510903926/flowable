@@ -16,6 +16,8 @@ public interface IBaseService<T> {
      */
     T selectByKey(String key);
 
+    T selectOne(T entity);
+
     /**
      * 保存
      *

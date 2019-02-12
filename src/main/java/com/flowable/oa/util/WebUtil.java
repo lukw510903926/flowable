@@ -25,16 +25,7 @@ public class WebUtil extends WebUtils {
 
     public static LoginUser getLoginUser(HttpServletRequest request) {
 
-        LoginUser loginUser = new LoginUser();
-        loginUser.setUsername("admin");
-        Set<String> roles = new HashSet<String>();
-        roles.add("超级管理员");
-        loginUser.setRoles(roles);
-        List<String> urls = new ArrayList<>();
-        urls.add("/url/template");
-        loginUser.setUrls(urls);
-        setSessionUser(request, loginUser);
-        return loginUser;
+        return (LoginUser) getSessionAttribute(request, LOGIN_USER);
     }
 
     public static LoginUser getLoginUser() {
@@ -64,11 +55,11 @@ public class WebUtil extends WebUtils {
 
     public static String getLoginUserId() {
 
-        return Optional.ofNullable(getLoginUser()).map(loginUser -> loginUser.getId()).orElse(null);
+        return Optional.ofNullable(getLoginUser()).map(LoginUser::getId).orElse(null);
     }
 
-    public static void setSessionUser(HttpServletRequest request, LoginUser loginUser) {
-        request.getSession().setAttribute(LOGIN_USER, loginUser);
+    public static void setSessionUser(LoginUser loginUser) {
+        setSessionAttribute(getRequest(),LOGIN_USER, loginUser);
     }
 
     public static void setToken(HttpServletRequest request, String token) {
