@@ -587,20 +587,23 @@ biz.edit.form.combobox = {
             async: false,
             data: {dictTypeId: params},
             success: function (data) {
-                var option = $("<option></option>");
-                option.val('');
-                option.text('');
-                select.append(option);
-                $.each(data.rows, function (index, entity) {
-                    option = $("<option></option>");
-                    option.val(entity.name);
-                    option.text(entity.name);
+                if (data.rows) {
+                    var option = $("<option></option>");
+                    option.val('');
+                    option.text('');
                     select.append(option);
-                });
+                    $.each(data.rows, function (index, entity) {
+                        option = $("<option></option>");
+                        option.val(entity.name);
+                        option.text(entity.name);
+                        select.append(option);
+                    });
+                }
             }
         });
 
     },
+
     loadUserInfo: function (dataId, type) {
 
         var userInfo = '';
@@ -616,13 +619,20 @@ biz.edit.form.combobox = {
         return userInfo;
     },
 
-    addOption: function (select, data) {//根据数组生成下拉框选项
-        $.each(data, function (index, entity) {
-            var option = $("<option></option>");
-            option.val(entity);
-            option.text(entity);
-            select.append(option);
-        });
+    /**
+     * 根据数组生成下拉框选项
+     * @param select
+     * @param data
+     */
+    addOption: function (select, data) {
+        if (data) {
+            $.each(data, function (index, entity) {
+                var option = $("<option></option>");
+                option.val(entity);
+                option.text(entity);
+                select.append(option);
+            });
+        }
     },
     limitTimechange: function () {
         var newtime = $dp.cal.getNewDateStr();
@@ -671,13 +681,14 @@ biz.edit.form.file = {
     data: {},
     addFileInput: function (element, inputName) {//打开一次附件上传框，生成一个文件域
         biz.edit.fileNumber++;
-        if (!inputName){
+        if (!inputName) {
             inputName = "uploadFile";
         }
-        $("#fileTd").children(":file").hide();
+        var $fileTd = $("#fileTd");
+        $fileTd.children(":file").hide();
         var file = $("<input type='file' name='" + inputName + "' class='uploadFile left'/>");
         file.attr("id", "file" + biz.edit.fileNumber);
-        $("#fileTd").append(file);
+        $fileTd.append(file);
         biz.edit.form.file.handleDiv = $(element).parent().parent().parent();
     },
     selectFile: function () {//触发隐藏文件域的点击事件，弹窗选择框
@@ -687,7 +698,7 @@ biz.edit.form.file = {
     uploadFile: function () {//在附件单元格显示附件名，未入库
 
         var path = $("#file" + (biz.edit.fileNumber)).val();
-        if (path != "" && path != undefined) {
+        if (path !== "" && !path) {
             var filename = path.substring(path.lastIndexOf("\\") + 1);
             var span = "<span style='margin-right:10px;display:block;' id='spanfile" + biz.edit.fileNumber + "'>" +
                 "<input type='checkbox'/>" + filename + "</span>";
@@ -711,7 +722,7 @@ biz.edit.form.file = {
                 if (confirm("是否删除已有附件" + checkbox.eq(i).next("a").text())) {
                     //删除已入库附件没加上
                     var fileId = checkbox.eq(i).next("a").attr("id");
-                    if (fileId && fileId != "") {
+                    if (fileId && fileId !== "") {
                         $.ajax({
                             url: path + "/actBizConf/deleteFile",
                             data: {id: fileId}
@@ -719,14 +730,13 @@ biz.edit.form.file = {
                     }
                 } else {
                     checkbox = checkbox.not(checkbox[i]);
-                    continue;
                 }
             }
         }
         checkbox.parent().remove();
         biz.edit.form.file.handleDiv = $(element).parent().parent().parent();
         var existCheckBox = biz.edit.form.file.handleDiv.parent().find(":checkbox");
-        if (existCheckBox.length == 0)
+        if (existCheckBox.length === 0)
             biz.edit.form.file.handleDiv.parent().find("input:hidden").val("");
     },
 
@@ -774,56 +784,6 @@ biz.edit.form.file = {
     }
 };
 
-//交维工作组件相关方法
-biz.edit.form.jwWork = {
-    addCheckBox: function (td, labels, name, top) {//加入多选按钮
-        var trs = [];
-        var num = 1;
-        //可选标题
-        for (var key in labels) {
-            var checkbox = $("<input type='checkbox' checked='checked'>");
-            checkbox.attr("name", name);
-            checkbox.attr("onchange", "biz.edit.form.jwWork.changeDetailJwWork(this)");
-            checkbox.val(num);
-            td.append(checkbox);
-            td.append(key);
-            if (i % 6 == 5) {
-                td.append("<br>");
-            }
-            var tr = $("<tr>");
-            var th = $("<th>");
-            th.text(key + ":");
-            var td2 = $("<td colspan='3'>");
-            //不可选具体工作
-            for (var i = 0; i < labels[key].length; i++) {
-                checkbox = $("<input type='checkbox' checked='checked' disabled='disabled'>");
-                checkbox.attr("name", name + num);
-                checkbox.val(i + 1);
-                td2.append(checkbox);
-                td2.append(labels[key][i]);
-                if (i % 6 == 5) {
-                    td2.append("<br>");
-                }
-            }
-            tr.append(th);
-            tr.append(td2);
-            trs.push(tr);
-            num++;
-        }
-        return trs;
-    },
-    changeDetailJwWork: function (ele) {//选中，排除
-        if (ele.checked) {
-            var jwWork = $("[name='jwWork" + $(ele).val() + "']");
-            for (var i = 0; i < jwWork.length; i++) {
-                jwWork[i].checked = true;
-            }
-        } else {
-            $("[name='jwWork" + $(ele).val() + "']").attr("checked", false);
-        }
-    }
-};
-
 //联动属性相关方法
 biz.edit.form.refVariable = {
     setRefVariable: function (list, data) {
@@ -834,7 +794,7 @@ biz.edit.form.refVariable = {
         if (data.refVariable) {
             if (list != null && list.length > 0) {
                 for (var i = 0; i < list.length; i++) {
-                    if (list[i].id == data.refVariable) {
+                    if (list[i].id === data.refVariable) {
                         refDom = $('#form [name="' + list[i].name + '"]');
                         if (data.refParam) {
                             refConfigValiable = list[i].viewParams;
@@ -861,19 +821,17 @@ biz.edit.form.refVariable = {
                             for (var n = 0; n < result.length; n++) {
                                 if (result[n].list && result[n].list.length > 0) {
                                     for (var i = 0; i < result[n].list.length; i++) {
-                                        if (result[n].list[i].name == selectVal) {
+                                        if (result[n].list[i].name === selectVal) {
                                             paramVal = result[n].list[i][refConfigParam];
                                         }
                                     }
                                 }
                                 //设置联动属性
-                                if (dom.prop("tagName") == "SELECT") {
+                                if (dom.prop("tagName") === "SELECT") {
                                     dom.empty();
 
-                                    if (data.viewComponent == "DICTCOMBOBOX") {
+                                    if (data.viewComponent === "DICTCOMBOBOX") {
                                         biz.edit.form.combobox.loadDictComboBox(dom, paramVal);
-                                    } else if (data.viewComponent == "MCMCOMBOBOX") {
-                                        biz.edit.form.combobox.loadMcmComboBox(dom, paramVal);
                                     } else {
                                         biz.edit.form.combobox.loadComboBox(dom, paramVal);
                                     }
@@ -888,13 +846,11 @@ biz.edit.form.refVariable = {
             });
         } else if (data.refVariable && !data.refParam) {//联动父节点为其他组件
             refDom.change(function () {
-                if (dom.prop("tagName") == "SELECT") {
+                if (dom.prop("tagName") === "SELECT") {
                     dom.empty();
-                    if (data.viewComponent == "DICTCOMBOBOX") {
+                    if (data.viewComponent === "DICTCOMBOBOX") {
                         biz.edit.form.combobox.loadDictComboBox(dom, refDom.val());
-                    } else if (data.viewComponent == "MCMCOMBOBOX") {
-                        biz.edit.form.combobox.loadMcmComboBox(dom, refDom.val());
-                    } else {
+                    }  else {
                         biz.edit.form.combobox.loadComboBox(dom, refDom.val());
                     }
                 } else {
@@ -916,22 +872,22 @@ biz.edit.form.memberList = {
         biz.edit.form.memberList.inputName = inputName;
         var container = $("<div id='memberListContainer'>");
         container.hide();
-        var import_form = $("<div class='import_form'>");
+        var importForm = $("<div class='import_form'>");
         var table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
-        tr = $("<tr>");
-        td = $("<td colspan='4' style='text-align:center;'>");
+        var tr = $("<tr>");
+        var td = $("<td colspan='4' style='text-align:center;'>");
         var a = "<a onclick='biz.edit.form.memberList.queryGrid()' class='dt_btn' style='margin-left:0;'>查询</a>";
         td.append(a);
         tr.append(td);
         table.append(tr);
-        import_form = $("<div class='import_form'>");
-        title = "<h2 class='white_tit'><span class='white_tit_icon'></span>人员列表" +
+        importForm = $("<div class='import_form'>");
+        var title = "<h2 class='white_tit'><span class='white_tit_icon'></span>人员列表" +
             "<a role='button' data-toggle='collapse' href='#memberListcollapse' aria-expanded='true' class='gray_drop'></a></h2>";
-        import_form.html(title);
+        importForm.html(title);
         listtable_wrap = $("<div class='listtable_wrap panel-collapse collapse in' id='memberListcollapse' role='tabpanel' style='border-left:1px solid #bdc6cf;'>");
         table = $("<table id='memberList_table' />");
         listtable_wrap.append(table);
-        container.append(import_form);
+        container.append(importForm);
         container.append(listtable_wrap);
 
         var div = $('<div id="memberListRoleMenuContent" class="menuContent" style="display:none; position: absolute;">');
@@ -1005,11 +961,11 @@ biz.edit.form.memberList = {
             } else {
                 var flag = true;
                 for (var i = 0; i < rows.length; i++) {
-                    if (rows[i].username == data.username){
+                    if (rows[i].username == data.username) {
                         flag = false;
                     }
                 }
-                if (flag){
+                if (flag) {
                     rows.push(data);
                 }
             }
@@ -1034,17 +990,17 @@ biz.edit.form.memberList = {
                 for (var i = 0; i < rows.length; i++) {
                     var flag = true;
                     for (var j = 0; j < data.length; j++) {
-                        if (rows[i].username == data[j].username){
+                        if (rows[i].username == data[j].username) {
                             flag = false;
                         }
                     }
-                    if (flag){
+                    if (flag) {
                         selected.push(rows[i]);
                     }
                 }
             } else {
                 for (var i = 0; i < rows.length; i++) {
-                    if (rows[i].username != data.username){
+                    if (rows[i].username != data.username) {
                         selected.push(rows[i]);
                     }
                 }
