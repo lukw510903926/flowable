@@ -570,6 +570,7 @@
 }
 
 .btn_list a {
+	cursor: pointer;
 	display: inline-block;
 	background: #455469;
 	border-radius: 4px;
