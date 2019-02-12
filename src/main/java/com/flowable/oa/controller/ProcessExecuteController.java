@@ -209,8 +209,7 @@ public class ProcessExecuteController {
 	 * @return
 	 */
 	@RequestMapping(value = "/submit")
-	public ResponseEntity<String> submit(@RequestParam Map<String, Object> params,
-			MultipartHttpServletRequest request) {
+	public ResponseEntity<String> submit(@RequestParam Map<String, Object> params,MultipartHttpServletRequest request) {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.TEXT_PLAIN);
@@ -220,9 +219,9 @@ public class ProcessExecuteController {
 		} catch (Exception e) {
 			logger.error("表单提交失败 : {}", e);
 			String msg = "操作失败: " + e.getLocalizedMessage();
-			return new ResponseEntity<String>(JSONObject.toJSONString(Json.fail(msg)), headers, HttpStatus.OK);
+			return new ResponseEntity<>(JSONObject.toJSONString(Json.fail(msg)), headers, HttpStatus.OK);
 		}
-		return new ResponseEntity<String>(JSONObject.toJSONString(Json.success()), headers, HttpStatus.OK);
+		return new ResponseEntity<>(JSONObject.toJSONString(Json.success()), headers, HttpStatus.OK);
 	}
 
 	@ResponseBody

@@ -1,106 +1,106 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
-<title>工单流转</title>
-<div th:include="common/head :: header"></div>
-<style>
-.select2-container .select2-selection--multiple .select2-selection__rendered {
-	display:inline-flex;
-}
-.select2-container--default .select2-selection--multiple .select2-selection__choice {
-	margin-top:0px;
-}
+<html xmlns:th="http://www.thymeleaf.org" th:replace="index">
+<div th:fragment="content">
+    <head>
+        <title>工单流转</title>
+        <style>
+            .select2-container .select2-selection--multiple .select2-selection__rendered {
+                display: inline-flex;
+            }
 
-.Wdate {
-	line-height: 20px;
-	height:28px;
-}
+            .select2-container--default .select2-selection--multiple .select2-selection__choice {
+                margin-top: 0px;
+            }
 
-.listtable>tbody>tr>th {
-	width: 15%;
-	white-space: normal;
-}
+            .Wdate {
+                line-height: 20px;
+                height: 28px;
+            }
 
-.listtable>tbody>tr>td {
-	width: 35%;
-	white-space: normal;
-}
+            .listtable > tbody > tr > th {
+                width: 15%;
+                white-space: normal;
+            }
 
-.listtable>tbody>tr>td[colspan='3'] {
-	width: 85%;
-}
+            .listtable > tbody > tr > td {
+                width: 35%;
+                white-space: normal;
+            }
 
-.panel-body {
-	padding: 0px;
-}
+            .listtable > tbody > tr > td[colspan='3'] {
+                width: 85%;
+            }
 
-.panel-heading {
-	padding: 0;
-	margin: 0;
-}
+            .panel-body {
+                padding: 0px;
+            }
 
-.listtable {
-	table-layout: fixed;
-}
+            .panel-heading {
+                padding: 0;
+                margin: 0;
+            }
 
-#layoutTable tbody {
-	vertical-align: top;
-}
+            .listtable {
+                table-layout: fixed;
+            }
 
-</style>
-</head>
-<body style="padding: 10px 150px;">
-	<form id="form" method="post" enctype="multipart/form-data">
-		<input type="hidden" name="base.workNumber" />
-		<input type="hidden" name="base.handleResult" />
-		<input type="hidden" name="base.buttonId" />
-		<input type="hidden" name="base.handleName" />
-		<input type="hidden" id='bizId' name="base.bizId" th:value="${id}"/>
-		<div>
-			<h5 style="margin: 10px 0px;" id="biz_detail_info">工单状态</h5>
-			<div class="stepwrap" id="stepwrap">
-				<div id="stepPic" class="logistics clearfix"></div>
-				<div id="stepPic2" class="clearfix logistics-text"></div>
-			</div>
-		</div>
-		<div class="import_form">
-			<h2 class="white_tit">
-				<i id="msgtitle">报障人信息</i><a role="button" data-toggle="collapse" href="#collapse" class="drop"></a>
-			</h2>
-		</div>
-		<div class="listtable_wrap panel-collapse collapse in" id="collapse">
-			<table id="fqrxx" cellpadding="0" cellspacing="0" class="listtable"> </table>
-		</div>
-		<div class="close_all mrt10">
-			<div class="close_all_tit">
-				<a class="gray_drop" onclick="javascript:$('#workLogs a[href^=#work]').click();"
-					style="float:none;vertical-align:middle;margin:-3px 5px 0;"></a>展开/合并所有处理流程
-			</div>
-			<div id="workLogs"></div>
-		</div>
-	</form>
-	
-	<div th:include="common/plugins :: jsfooter"></div>
-	<script type="text/javascript" th:src="@{/modules/biz/biz_stepPic.js}"></script>
-	<script type="text/javascript" th:src="@{/modules/biz/biz_edit_form.js}"></script>
-	<script type="text/javascript" th:src="@{/modules/biz/biz_edit_paramfunc.js}"></script>
-	<script type="text/javascript" th:src="@{/modules/biz/biz_show_table.js}"></script>
-	<script type="text/javascript" th:src="@{/modules/biz/biz_detail.js}"></script>
-		<script th:inline="javascript">
-		$(document).ready(function () {
-			$(".js-example-basic-single").select2();
-			var stepLiLength = $("#step_log li").length;
-			var stepTxtLiLength = $("#step_text li").length;
-			var stepLogWidth = 140 * (stepLiLength - 1);
-			var stepTxtWidth = 140 * stepTxtLiLength;
-			$("#stepPic").width(stepLogWidth);
-			$("#stepPic2").width(stepTxtWidth);
-			var stepLogMar = stepLogWidth / 2 + 20;
-			var stepTxtMar = stepTxtWidth / 2;
-			$("#stepPic").css("margin-left", -stepLogMar + "px");
-			$("#stepPic2").css("margin-left", -stepTxtMar + "px");
-			$("#stepwrap").height(50 + $("#stepPic2").height() + "px");
-		}
-		)
-	</script>
-</body>
+            #layoutTable tbody {
+                vertical-align: top;
+            }
+
+        </style>
+    </head>
+    <body style="padding: 10px 150px;">
+    <form id="form" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="base.workNumber"/>
+        <input type="hidden" name="base.handleResult"/>
+        <input type="hidden" name="base.buttonId"/>
+        <input type="hidden" name="base.handleName"/>
+        <input type="hidden" id='bizId' name="base.bizId" th:value="${id}"/>
+        <div>
+            <h5 style="margin: 10px 0px;" id="biz_detail_info">工单状态</h5>
+            <div class="stepwrap" id="stepwrap">
+                <div id="stepPic" class="logistics clearfix"></div>
+                <div id="stepPic2" class="clearfix logistics-text"></div>
+            </div>
+        </div>
+        <div class="import_form">
+            <h2 class="white_tit">
+                <i id="msgtitle">报障人信息</i><a role="button" data-toggle="collapse" href="#collapse" class="drop"></a>
+            </h2>
+        </div>
+        <div class="listtable_wrap panel-collapse collapse in" id="collapse">
+            <table id="fqrxx" cellpadding="0" cellspacing="0" class="listtable"></table>
+        </div>
+        <div class="close_all mrt10">
+            <div class="close_all_tit">
+                <a class="gray_drop" onclick="javascript:$('#workLogs a[href^=#work]').click();"
+                   style="float:none;vertical-align:middle;margin:-3px 5px 0;"></a>展开/合并所有处理流程
+            </div>
+            <div id="workLogs"></div>
+        </div>
+    </form>
+    <script type="text/javascript" th:src="@{/modules/biz/biz_stepPic.js}"></script>
+    <script type="text/javascript" th:src="@{/modules/biz/biz_edit_form.js}"></script>
+    <script type="text/javascript" th:src="@{/modules/biz/biz_edit_paramfunc.js}"></script>
+    <script type="text/javascript" th:src="@{/modules/biz/biz_show_table.js}"></script>
+    <script type="text/javascript" th:src="@{/modules/biz/biz_detail.js}"></script>
+    <script th:inline="javascript">
+        $(document).ready(function () {
+                $(".js-example-basic-single").select2();
+                var stepLiLength = $("#step_log li").length;
+                var stepTxtLiLength = $("#step_text li").length;
+                var stepLogWidth = 140 * (stepLiLength - 1);
+                var stepTxtWidth = 140 * stepTxtLiLength;
+                $("#stepPic").width(stepLogWidth);
+                $("#stepPic2").width(stepTxtWidth);
+                var stepLogMar = stepLogWidth / 2 + 20;
+                var stepTxtMar = stepTxtWidth / 2;
+                $("#stepPic").css("margin-left", -stepLogMar + "px");
+                $("#stepPic2").css("margin-left", -stepTxtMar + "px");
+                $("#stepwrap").height(50 + $("#stepPic2").height() + "px");
+            }
+        )
+    </script>
+    </body>
+</div>
