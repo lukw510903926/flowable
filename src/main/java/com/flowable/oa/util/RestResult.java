@@ -61,6 +61,16 @@ public class RestResult<T> implements Serializable {
     }
 
     /**
+     * 请求成功
+     *
+     * @return
+     */
+    public static <T> RestResult<T> success() {
+
+        return success(null);
+    }
+
+    /**
      * 请求失败
      *
      * @param data

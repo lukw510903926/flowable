@@ -8,12 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.DataGrid;
-import com.flowable.oa.util.Json;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -82,12 +79,11 @@ public class ProcessModelMgrController {
      */
     @ResponseBody
     @RequestMapping(value = "getProcessValById")
-    public Json getProcessValById(@RequestParam Map<String, Object> params) {
+    public RestResult<Object> getProcessValById(@RequestParam Map<String, Object> params) {
 
         logger.info("根据全局流程变量ID得到变量详情---getProcessValById");
         String processId = (String) params.get("processId");
         String taskId = (String) params.get("taskId");
-        Json ajaxJson = new Json();
         try {
             ProcessVariable processValAbs = null;
             if (StringUtils.isBlank(taskId)) {
@@ -95,42 +91,29 @@ public class ProcessModelMgrController {
             } else {
                 processValAbs = processValService.selectByKey(taskId);
             }
-            ajaxJson.setObject(processValAbs);
-            ajaxJson.setSuccess(true);
+            return RestResult.success(processValAbs);
         } catch (Exception e) {
             logger.error("操作失败 : {}", e);
-            ajaxJson.setMsg("查询失败");
-            ajaxJson.setSuccess(false);
+            return RestResult.fail(null, "操作失败");
         }
-        return ajaxJson;
     }
 
     /**
      * 根据全局流程变量IDs删除变量详情
      *
-     * @param request
      * @param params
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "deleteProcessValById")
-    public Json deleteProcessValById(HttpServletRequest request, @RequestParam Map<String, Object> params) {
+    public RestResult<Object> deleteProcessValById(@RequestParam Map<String, Object> params) {
 
         logger.info("根据全局流程变量IDs删除变量详情---deleteProcessValById");
 
         String ids = (String) params.get("valIds");
         String[] valIds = StringUtils.isNotBlank(ids) ? ids.split(",") : new String[]{};
-        Json json = new Json();
-        try {
-            processValService.deleteVariable(Arrays.asList(valIds));
-            json.setSuccess(true);
-            json.setMsg("删除成功!");
-        } catch (Exception e) {
-            logger.error("操作失败 : {}", e);
-            json.setSuccess(false);
-            json.setMsg("删除失败!");
-        }
-        return json;
+        processValService.deleteVariable(Arrays.asList(valIds));
+        return RestResult.success();
     }
 
     /**
@@ -140,57 +123,48 @@ public class ProcessModelMgrController {
      */
     @ResponseBody
     @RequestMapping(value = "saveOrUpdateProcessVal")
-    public Json saveOrUpdateProcessVal(HttpServletRequest request, @RequestParam Map<String, Object> reqParams) {
+    public RestResult<Object> saveOrUpdateProcessVal(@RequestParam Map<String, Object> reqParams) {
 
         logger.info("保存或者更新流程全局变量---saveOrUpdateProcessVal");
-        Json json = new Json();
-        try {
-            boolean isUpdate = true;
-            String id = (String) reqParams.get("id");
-            String taskId = (String) reqParams.get("taskId");
-            ProcessVariable processValAbs = processValService.selectByKey(id);
-            if (processValAbs == null) {
-                processValAbs = new ProcessVariable();
-                processValAbs.setId(StringUtils.replace(UUID.randomUUID().toString(), "-", ""));
-                isUpdate = false;
-            }
-            processValAbs.setProcessDefinitionId((String) reqParams.get("processId"));
-            processValAbs.setVersion(Integer.parseInt((String) reqParams.get("version")));
-            processValAbs.setName((String) reqParams.get("name"));
-            processValAbs.setAlias((String) reqParams.get("alias"));
-            processValAbs.setRefVariable((String) reqParams.get("refVariable"));
-            processValAbs.setRefParam((String) reqParams.get("refParam"));
-            String temp = (String) reqParams.get("nameOrder");
-            Integer temp2 = Integer.parseInt(temp);
-            processValAbs.setOrder(temp2);
-            processValAbs.setIsRequired(Boolean.parseBoolean((String) reqParams.get("required")));
-            processValAbs.setGroupName((String) reqParams.get("groupName"));
-
-            temp = (String) reqParams.get("groupOrder");
-            temp2 = Integer.parseInt(temp);
-            processValAbs.setGroupOrder(temp2);
-
-            // 页面组件特殊处理
-            String viewComponent = (String) reqParams.get("viewComponent");
-            String viewComponentVal = (String) reqParams.get("viewDatas");
-            processValAbs.setViewComponent(viewComponent);
-            processValAbs.setViewDatas(viewComponentVal);
-            processValAbs.setViewParams((String) reqParams.get("viewParams"));
-            processValAbs.setIsProcessVariable(Boolean.parseBoolean((String) reqParams.get("isprocVal")));
-            processValAbs.setTaskId(taskId);
-            if (isUpdate) {
-                processValService.updateVariable(processValAbs);
-            } else {
-                processValService.addVariable(processValAbs);
-            }
-            json.setSuccess(true);
-            json.setMsg("操作成功");
-        } catch (Exception e) {
-            logger.error("操作失败 : {}", e);
-            json.setSuccess(false);
-            json.setMsg("操作失败!");
+        boolean isUpdate = true;
+        String id = (String) reqParams.get("id");
+        String taskId = (String) reqParams.get("taskId");
+        ProcessVariable processValAbs = processValService.selectByKey(id);
+        if (processValAbs == null) {
+            processValAbs = new ProcessVariable();
+            processValAbs.setId(StringUtils.replace(UUID.randomUUID().toString(), "-", ""));
+            isUpdate = false;
         }
-        return json;
+        processValAbs.setProcessDefinitionId((String) reqParams.get("processId"));
+        processValAbs.setVersion(Integer.parseInt((String) reqParams.get("version")));
+        processValAbs.setName((String) reqParams.get("name"));
+        processValAbs.setAlias((String) reqParams.get("alias"));
+        processValAbs.setRefVariable((String) reqParams.get("refVariable"));
+        processValAbs.setRefParam((String) reqParams.get("refParam"));
+        String temp = (String) reqParams.get("nameOrder");
+        Integer temp2 = Integer.parseInt(temp);
+        processValAbs.setOrder(temp2);
+        processValAbs.setIsRequired(Boolean.parseBoolean((String) reqParams.get("required")));
+        processValAbs.setGroupName((String) reqParams.get("groupName"));
+
+        temp = (String) reqParams.get("groupOrder");
+        temp2 = Integer.parseInt(temp);
+        processValAbs.setGroupOrder(temp2);
+
+        // 页面组件特殊处理
+        String viewComponent = (String) reqParams.get("viewComponent");
+        String viewComponentVal = (String) reqParams.get("viewDatas");
+        processValAbs.setViewComponent(viewComponent);
+        processValAbs.setViewDatas(viewComponentVal);
+        processValAbs.setViewParams((String) reqParams.get("viewParams"));
+        processValAbs.setIsProcessVariable(Boolean.parseBoolean((String) reqParams.get("isprocVal")));
+        processValAbs.setTaskId(taskId);
+        if (isUpdate) {
+            processValService.updateVariable(processValAbs);
+        } else {
+            processValService.addVariable(processValAbs);
+        }
+        return RestResult.success();
     }
 
     /**
@@ -203,7 +177,7 @@ public class ProcessModelMgrController {
     @RequestMapping(value = "processLabel")
     public List<Map<String, Object>> processLabel(@RequestParam Map<String, Object> params) {
 
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> list = new ArrayList<>();
         try {
             String processId = (String) params.get("processId");
             String version = (String) params.get("version");

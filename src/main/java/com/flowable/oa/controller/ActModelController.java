@@ -1,8 +1,7 @@
 package com.flowable.oa.controller;
 
 import javax.servlet.http.HttpServletResponse;
-
-import com.flowable.oa.util.Json;
+import com.flowable.oa.util.RestResult;
 import org.flowable.engine.repository.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,19 +52,15 @@ public class ActModelController {
      */
     @ResponseBody
     @RequestMapping(value = "deploy")
-    public Json deploy(String id) {
+    public RestResult<Object> deploy(String id) {
 
-        Json json = new Json();
         try {
             String procdefId = processModelService.deploy(id);
-            json.setSuccess(true);
-            json.setMsg("部署成功:" + procdefId);
+            return RestResult.success("部署成功: " + procdefId);
         } catch (Exception e) {
             logger.error("流程部署失败 : {}", e);
-            json.setSuccess(false);
-            json.setMsg("部署失败");
+            return RestResult.fail(null, "部署失败");
         }
-        return json;
     }
 
     /**
@@ -94,12 +89,9 @@ public class ActModelController {
      */
     @ResponseBody
     @RequestMapping(value = "delete")
-    public Json delete(String id) {
+    public RestResult<Object> delete(String id) {
         logger.info("删除Model---delete");
-        Json json = new Json();
         processModelService.delete(id);
-        json.setSuccess(true);
-        json.setMsg("删除成功!");
-        return json;
+        return RestResult.success();
     }
 }

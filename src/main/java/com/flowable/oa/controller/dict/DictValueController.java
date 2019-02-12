@@ -2,8 +2,8 @@ package com.flowable.oa.controller.dict;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import com.flowable.oa.util.Json;
 import com.flowable.oa.util.WebUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -47,32 +47,32 @@ public class DictValueController {
 
     @ResponseBody
     @RequestMapping("save")
-    public Json save(HttpServletRequest request, DictValue dictValue) {
+    public RestResult<Object> save(HttpServletRequest request, DictValue dictValue) {
 
         WebUtil.getLoginUser(request);
         this.dictValueService.saveOrUpdate(dictValue);
-        return new Json(null, true);
+        return RestResult.success();
     }
 
     @ResponseBody
     @RequestMapping("update")
-    public Json update(HttpServletRequest request, DictValue dictValue) {
+    public RestResult<Object> update(HttpServletRequest request, DictValue dictValue) {
 
         if (StringUtils.isBlank(dictValue.getId())) {
-            new Json("id不可为空", false);
+            return RestResult.fail(dictValue, "id不可为空");
         }
         WebUtil.getLoginUser(request);
         this.dictValueService.saveOrUpdate(dictValue);
-        return new Json(null, true);
+        return RestResult.success();
     }
 
     @ResponseBody
     @RequestMapping("delete")
-    public Json delete(HttpServletRequest request, DictValue dictValue) {
+    public RestResult<Object> delete(HttpServletRequest request, DictValue dictValue) {
 
         WebUtil.getLoginUser(request);
         this.dictValueService.deleteById(dictValue.getId());
-        return new Json(null, true);
+        return RestResult.success();
     }
 
     @ResponseBody

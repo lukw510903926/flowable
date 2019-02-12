@@ -2,6 +2,7 @@ package com.flowable.oa.controller;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +10,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import com.flowable.oa.util.Json;
 import com.flowable.oa.util.LoginUser;
 import com.flowable.oa.util.WebUtil;
 import org.apache.commons.io.FileUtils;
@@ -77,9 +78,9 @@ public class BizTemplateFileController {
             bizTemplateFileService.saveOrUpdate(bizTemplateFile, file);
         } catch (Exception e) {
             logger.error("上传失败 : ", e);
-            return new ResponseEntity<>(JSONObject.toJSONString(Json.fail("上传失败")), responseHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null,"上传失败")), responseHeaders, HttpStatus.OK);
         }
-        return new ResponseEntity<>(JSONObject.toJSONString(Json.success()), responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), responseHeaders, HttpStatus.OK);
     }
 
     @ResponseBody
@@ -100,17 +101,17 @@ public class BizTemplateFileController {
                 String templateFilePath = environment.getProperty("templateFilePath");
                 File inputFile = new File(templateFilePath + File.separator + templateFile.getId() + suffix);
                 if (inputFile.exists() && inputFile.isFile()) {
-                    headfilename = new String((templateFile.getFileName()).getBytes("gb2312"), "ISO-8859-1");
+                    headfilename = new String((templateFile.getFileName()).getBytes("gb2312"),  StandardCharsets.ISO_8859_1);
                     response.setHeader("Content-Disposition", "attachment;filename=" + headfilename);
                     FileUtils.copyFile(inputFile, response.getOutputStream());
                 } else {
-                    headfilename = new String("错误报告.txt".getBytes("gb2312"), "ISO-8859-1");
+                    headfilename = new String("错误报告.txt".getBytes("gb2312"),  StandardCharsets.ISO_8859_1);
                     response.setHeader("Content-Disposition", "attachment;filename=" + headfilename);
                     outputStream.write("文件不存在!".getBytes());
                 }
             } else {
                 logger.info(" templateFile is null ");
-                headfilename = new String("错误报告.txt".getBytes("gb2312"), "ISO-8859-1");
+                headfilename = new String("错误报告.txt".getBytes("gb2312"), StandardCharsets.ISO_8859_1);
                 response.setHeader("Content-Disposition", "attachment;filename=" + headfilename);
                 outputStream.write("文件不存在!请检查文件参数配置是否正确!".getBytes());
                 outputStream.flush();
@@ -123,9 +124,9 @@ public class BizTemplateFileController {
 
     @ResponseBody
     @RequestMapping("/remove")
-    public Json remove(@RequestParam List<String> ids) {
+    public RestResult<Object> remove(@RequestParam List<String> ids) {
 
         bizTemplateFileService.deleteByIds(ids);
-        return Json.success();
+        return RestResult.success();
     }
 }

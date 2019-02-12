@@ -9,9 +9,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.DataGrid;
-import com.flowable.oa.util.Json;
 import com.flowable.oa.util.ReflectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -60,9 +60,9 @@ public class ActProcessController {
     @RequestMapping(value = "list")
     public DataGrid<Map<String, Object>> processList(PageInfo<Object[]> page, @RequestParam Map<String, Object> params) {
 
-        DataGrid<Map<String, Object>> grid = new DataGrid<Map<String, Object>>();
+        DataGrid<Map<String, Object>> grid = new DataGrid<>();
         try {
-            List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+            List<Map<String, Object>> result = new ArrayList<>();
             page = actProcessService.processList(page, null);
             List<Object[]> tempResult = page.getList();
             for (Object[] objects : tempResult) {
@@ -87,7 +87,7 @@ public class ActProcessController {
     @RequestMapping(value = "processTaskList")
     public DataGrid<Map<String, Object>> processTaskList(@RequestParam Map<String, Object> params) {
 
-        DataGrid<Map<String, Object>> grid = new DataGrid<Map<String, Object>>();
+        DataGrid<Map<String, Object>> grid = new DataGrid<>();
         try {
             String processId = (String) params.get("processId");
             List<Map<String, Object>> result = actProcessService.getAllTaskByProcessKey(processId);
@@ -106,13 +106,13 @@ public class ActProcessController {
     @RequestMapping(value = "running")
     public DataGrid<ProcessInstance> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey) {
 
-        DataGrid<ProcessInstance> grid = new DataGrid<ProcessInstance>();
+        DataGrid<ProcessInstance> grid = new DataGrid<>();
         try {
-        	PageInfo<ProcessInstance> helper = actProcessService.runningList(page, procInsId, procDefKey);
+            PageInfo<ProcessInstance> helper = actProcessService.runningList(page, procInsId, procDefKey);
             grid.setRows(helper.getList());
             grid.setTotal(helper.getTotal());
         } catch (Exception e) {
-           logger.error("获取运行中的实例列表失败 : {}",e);
+            logger.error("获取运行中的实例列表失败 : {}", e);
         }
         return grid;
     }
@@ -126,30 +126,30 @@ public class ActProcessController {
      * @throws Exception
      */
     @RequestMapping(value = "resource/read")
-    public void resourceRead(String processDefinitionId, String processInstanceId, String type,
-                             HttpServletResponse response) throws Exception {
+    public void resourceRead(String processDefinitionId, String processInstanceId, String type, HttpServletResponse response) throws Exception {
+
         InputStream resourceAsStream = actProcessService.resourceRead(processDefinitionId, processInstanceId, type);
         if (type.equals("image")) {
             byte[] b = new byte[1024];
-            int len = -1;
+            int len;
             while ((len = resourceAsStream.read(b, 0, 1024)) != -1) {
                 response.getOutputStream().write(b, 0, len);
             }
         } else {
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuilder builder = new StringBuilder();
             LineIterator it = IOUtils.lineIterator(resourceAsStream, "utf-8");
             while (it.hasNext()) {
                 try {
                     String line = it.nextLine();
-                    stringBuffer.append(line);
-                    stringBuffer.append("\n");
+                    builder.append(line);
+                    builder.append("\n");
                 } catch (Exception e) {
                     logger.error("读取资源失败 : {}", e);
                 }
             }
             response.setContentType("text/plain;charset=utf-8");
             PrintWriter out = response.getWriter();
-            out.println(stringBuffer.toString());
+            out.println(builder.toString());
             out.close();
         }
     }
@@ -187,18 +187,9 @@ public class ActProcessController {
      */
     @ResponseBody
     @RequestMapping(value = "update/{state}")
-    public Json updateState(@PathVariable("state") String state, @RequestParam String processDefinitionId) {
-        Json json = new Json();
-        try {
-            String message = actProcessService.updateState(state, processDefinitionId);
-            json.setSuccess(true);
-            json.setMsg(message);
-        } catch (Exception e) {
-            logger.error("流程挂起,激活失败 : {}", e);
-            json.setSuccess(false);
-            json.setMsg("操作失败!");
-        }
-        return json;
+    public RestResult<Object> updateState(@PathVariable("state") String state, @RequestParam String processDefinitionId) {
+        actProcessService.updateState(state, processDefinitionId);
+        return RestResult.success();
     }
 
     /**
@@ -209,20 +200,16 @@ public class ActProcessController {
      */
     @ResponseBody
     @RequestMapping(value = "convert")
-    public Json convertToModel(@RequestParam String processDefinitionId) {
+    public RestResult<Object> convertToModel(@RequestParam String processDefinitionId) {
 
-        Json json = new Json();
         try {
             org.flowable.engine.repository.Model modelData = actProcessService.convertToModel(processDefinitionId);
             String message = "转换模型成功，模型ID=" + modelData.getId();
-            json.setSuccess(true);
-            json.setMsg(message);
+            return RestResult.success(message);
         } catch (Exception e) {
             logger.error("模型转换失败 : {}", e);
-            json.setSuccess(false);
-            json.setMsg("操作失败!");
+            return RestResult.fail(null, "模型转换失败");
         }
-        return json;
     }
 
     /**
@@ -247,18 +234,9 @@ public class ActProcessController {
      */
     @ResponseBody
     @RequestMapping(value = "delete")
-    public Json delete(String deploymentId) {
-        Json json = new Json();
-        try {
-            actProcessService.deleteDeployment(deploymentId);
-            json.setSuccess(true);
-            json.setMsg("删除成功--" + deploymentId);
-        } catch (Exception e) {
-            logger.error("流程删除失败 : {}", e);
-            json.setSuccess(false);
-            json.setMsg("操作失败!");
-        }
-        return json;
+    public RestResult<Object> delete(String deploymentId) {
+        actProcessService.deleteDeployment(deploymentId);
+        return RestResult.success();
     }
 
     /**
@@ -269,19 +247,10 @@ public class ActProcessController {
      */
     @ResponseBody
     @RequestMapping(value = "deleteProcIns")
-    public Json deleteProcIns(String procInsId, String reason) {
+    public RestResult<Object> deleteProcIns(String procInsId, String reason) {
 
-        Json json = new Json();
-        try {
-            actProcessService.deleteProcIns(procInsId, reason);
-            json.setSuccess(true);
-            json.setMsg("操作成功");
-        } catch (Exception e) {
-            logger.error("实例删除失败 : {}", e);
-            json.setSuccess(false);
-            json.setMsg("操作失败!");
-        }
-        return json;
+        actProcessService.deleteProcIns(procInsId, reason);
+        return RestResult.success();
     }
 
 }

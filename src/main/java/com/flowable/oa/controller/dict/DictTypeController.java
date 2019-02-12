@@ -2,14 +2,11 @@ package com.flowable.oa.controller.dict;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.flowable.oa.entity.BizInfo;
 import com.flowable.oa.util.DataGrid;
+import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import com.flowable.oa.util.Json;
 import com.flowable.oa.util.WebUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,8 +28,6 @@ public class DictTypeController {
     @Autowired
     private IDictTypeService dictTypeService;
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @RequestMapping("/dicts")
     public String tables() {
 
@@ -41,33 +36,33 @@ public class DictTypeController {
 
     @ResponseBody
     @RequestMapping("save")
-    public Json save(HttpServletRequest request, DictType dictType) {
+    public RestResult<Object> save(HttpServletRequest request, DictType dictType) {
 
         WebUtil.getLoginUser(request);
         this.dictTypeService.saveOrUpdate(dictType);
-        return new Json(null, true);
+        return RestResult.success();
     }
 
 
     @ResponseBody
     @RequestMapping("update")
-    public Json update(HttpServletRequest request, DictType dictType) {
+    public RestResult<Object> update(HttpServletRequest request, DictType dictType) {
 
         if (StringUtils.isBlank(dictType.getId())) {
-            new Json("id不可为空", false);
+           return RestResult.fail(null,"id不可为空");
         }
         WebUtil.getLoginUser(request);
         this.dictTypeService.saveOrUpdate(dictType);
-        return new Json(null, true);
+        return RestResult.success();
     }
 
     @ResponseBody
     @RequestMapping("delete")
-    public Json delete(HttpServletRequest request, DictType dictType) {
+    public RestResult<Object> delete(HttpServletRequest request, DictType dictType) {
 
         WebUtil.getLoginUser(request);
         this.dictTypeService.delete(dictType);
-        return new Json(null, true);
+        return RestResult.success();
     }
 
     @ResponseBody
