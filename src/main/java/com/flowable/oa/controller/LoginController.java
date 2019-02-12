@@ -51,7 +51,7 @@ public class LoginController {
         ReflectionUtils.copyBean(systemUser, loginUser);
         Set<SystemRole> set = systemUser.getRoles();
         if (CollectionUtils.isNotEmpty(set)) {
-            Set<String> roles = new HashSet<String>();
+            Set<String> roles = new HashSet<>();
             set.forEach(role -> roles.add(role.getNameCn()));
             loginUser.setRoles(roles);
         }

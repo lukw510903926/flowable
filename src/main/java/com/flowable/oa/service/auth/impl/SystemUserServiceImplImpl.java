@@ -44,11 +44,11 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
 		
 		systemRole.setUsers(null);
 		List<SystemRole> roles = this.systemRoleService.findByModel(systemRole, false);
-		Set<SystemUser> userSet = new HashSet<SystemUser>();
+		Set<SystemUser> userSet = new HashSet<>();
 		if (CollectionUtils.isNotEmpty(roles)) {
 			roles.forEach(role -> userSet.addAll(role.getUsers()));
 		}
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		userSet.forEach(systemUser ->list.add(systemUser.getUsername()));
 		return list;
 	}
@@ -67,8 +67,8 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
 	public List<String> findUserRoles(String username) {
 		
 		Optional<SystemUser> systemUser = Optional.ofNullable(this.getUserByUsername(username));
-		List<String> list = new ArrayList<String>();
-		Set<SystemRole> roles = systemUser.map(user ->user.getRoles()).orElse(new HashSet<SystemRole>());
+		List<String> list = new ArrayList<>();
+		Set<SystemRole> roles = systemUser.map(SystemUser::getRoles).orElse(new HashSet<>());
 		roles.forEach(role ->list.add(role.getNameCn()));
 		return list;
 	}
