@@ -54,9 +54,10 @@ biz.create = {
         return DraftBizData;
     },
     loadStatic: function (workInfo, saveUser) {
+        var $msgtitle = $("#msgtitle");
         switch (key) {
             case "eventManagement":
-                $("#msgtitle").text("报障人信息");
+                $msgtitle.text("报障人信息");
                 var list = [{
                     id: "workNum",
                     alias: "工单号"
@@ -85,7 +86,7 @@ biz.create = {
                 biz.create.setStatic(list, workInfo, saveUser);
                 break;
             default:
-                $("#msgtitle").text("申请人信息");
+                $msgtitle.text("申请人信息");
                 var list = [{
                     id: "workNum",
                     alias: "工单号"
@@ -116,14 +117,14 @@ biz.create = {
         });
         if (workInfo && saveUser) {
             $.each(list, function (index, entity) {
-                var text = workInfo[entity.id] == undefined ? saveUser[entity.id] : workInfo[entity.id];
+                var text = workInfo[entity.id] === undefined ? saveUser[entity.id] : workInfo[entity.id];
                 view.addTextField(entity).text(text == null ? "" : text);
             });
             view.appendTd();
         } else {
             $.each(list, function (index, entity) {
                 var text = createUser[entity.id];
-                if (entity.id == "createTime") {
+                if (entity.id === "createTime") {
                     text = (new Date()).Format("yyyy/MM/dd hh:mm:ss");
                 }
                 view.addTextField(entity).text(text == null ? "" : text);
@@ -139,11 +140,11 @@ biz.create = {
      */
     loadProcessData: function (serviceInfo, ele) {
 
-        if (ele == undefined) {
+        if (!ele) {
             ele = $("body");
         }
         $.each(serviceInfo, function (index, entity) {
-            if (entity.variable.viewComponent == "CONFIRMUSER") {
+            if (entity.variable.viewComponent === "CONFIRMUSER") {
                 biz.show.table.confirmUser.setConfirmUserValue(entity);
             } else if (ele.find(":input[name='" + entity.variable.name + "']").length > 0) {
                 ele.find(":input[name='" + entity.variable.name + "']").val(entity.value == null ? "" : entity.value);
@@ -155,16 +156,17 @@ biz.create = {
         for (var group in data) {
             var list = data[group];
             var table;
-            if (group == $("#msgtitle").text()) {
+            if (group === $("#msgtitle").text()) {
                 table = $("#bjrxx");
             } else {
+                var $content = $(".t_content");
                 var div = $("<div class='import_form'>");
                 div.html("<h2 class='white_tit'>" + group + "</h2>");
-                $(".t_content").append(div);
+                $content.append(div);
                 div = $("<div class='listtable_wrap'>");
                 table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
                 div.append(table);
-                $(".t_content").append(div);
+                $content.append(div);
             }
             var view = biz.edit.getView({
                 list: list,
@@ -175,16 +177,14 @@ biz.create = {
                 case "eventManagement":
                     biz.create.type.event(view, group === "工单信息");
                     break;
-                case "maintainManagement":
-                    biz.create.type.maintain(view, group === "工单信息");
-                    break;
                 default:
                     biz.create.type.event(view, group === "工单信息");
             }
             view.addFile(bizId ? biz.create.draftData.annexs : null);
         }
-        $("#form").find('[name="actualCreator"]').val(createUser.fullname);
-        $("#form").find('[name="actualCreatePhone"]').val(createUser.mobile);
+        var $form = $("#form");
+        $form.find('[name="actualCreator"]').val(createUser.fullname);
+        $form.find('[name="actualCreatePhone"]').val(createUser.mobile);
     },
     createButtons: function (container, buttons) {
 

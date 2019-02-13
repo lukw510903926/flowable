@@ -57,14 +57,14 @@ biz.detail = {
      */
     loadProcessLabel: function (groups, flag) {
     	
-        if ($.inArray("工单信息", groups) == -1) {
+        if ($.inArray("工单信息", groups) === -1) {
             var table = biz.detail.getTable("工单信息");
             biz.detail.loadWorkTitle(table);
             biz.detail.setView(table, [], flag);
         }
         $.each(groups, function (key, list) {
             var table = biz.detail.getTable(key);
-            if (key == "工单信息") {
+            if (key === "工单信息") {
                 biz.detail.loadWorkTitle(table);
             }
             biz.detail.setView(table, list, flag);
@@ -124,24 +124,24 @@ biz.detail = {
      */
     loadProcessData: function (serviceInfo, ele) { //回显
 
-        if (ele == undefined) {
+        if (!ele) {
             ele = $("body");
         }
         for (var i in serviceInfo) {
             //特殊处理组件
-            if (serviceInfo[i].viewComponent == "REQUIREDFILE") {
+            if (serviceInfo[i].viewComponent === "REQUIREDFILE") {
                 biz.show.table.addReqFiles(serviceInfo[i]);
                 continue;
             }
-            if (serviceInfo[i].viewComponent == "CONFIRMUSER") {
+            if (serviceInfo[i].viewComponent === "CONFIRMUSER") {
                 biz.show.table.confirmUser.setConfirmUserValue(serviceInfo[i]);
                 continue;
             }
-            if (serviceInfo[i].viewComponent == "MEMBERBOX") {
+            if (serviceInfo[i].viewComponent === "MEMBERBOX") {
                 biz.show.table.userInfo.setUserNames(serviceInfo[i]);
                 continue;
             }
-            if (serviceInfo[i].viewComponent == "MEMBERLIST") {
+            if (serviceInfo[i].viewComponent === "MEMBERLIST") {
                 biz.show.table.userInfo.setUserNames(serviceInfo[i]);
                 continue;
             }
@@ -157,9 +157,10 @@ biz.detail = {
     },
     loadStatic: function (workInfo, createUser) {
         var key = biz.detail.bizKey.split(":")[0];
+        var $msgtitle = $("#msgtitle");
         switch (key) {
             case "eventManagement":
-                $("#msgtitle").text("报障人信息");
+                $msgtitle.text("报障人信息");
                 var list = [{
                     name: "workNum",
                     alias: "工单号"
@@ -191,7 +192,7 @@ biz.detail = {
                 biz.detail.setStatic(list, workInfo, createUser);
                 break;
             default:
-                $("#msgtitle").text("申请人信息");
+                $msgtitle.text("申请人信息");
                 var list = [{
                     name: "workNum",
                     alias: "工单号"
@@ -230,13 +231,13 @@ biz.detail = {
             list: []
         });
         for (var i = 0; i < list.length; i++) {
-            if (list[i].name == "status") {
-                var text = workInfo[list[i].name] == undefined ? createUser[list[i].name] : workInfo[list[i].name];
+            if (list[i].name === "status") {
+                var text = workInfo[list[i].name] === undefined ? createUser[list[i].name] : workInfo[list[i].name];
                 view.addTextField(list[i]).text(text);
-            } else if (list[i].name == "createUser") {
+            } else if (list[i].name === "createUser") {
                 view.addTextField(list[i]).text(createUser['name']);
             } else {
-                var text = workInfo[list[i].name] == undefined ? createUser[list[i].name] : workInfo[list[i].name];
+                var text = workInfo[list[i].name] === undefined ? createUser[list[i].name] : workInfo[list[i].name];
                 view.addTextField(list[i]).text(text == null ? "" : text);
             }
         }
@@ -262,9 +263,9 @@ biz.detail = {
             var logVar = [];
             var list = [];
 
-            if (workLogs[i].handleResult != "签收") {
+            if (workLogs[i].handleResult !== "签收") {
                 for (var key in logVars) {
-                    if (workLogs[i].id == key) {
+                    if (workLogs[i].id === key) {
                         logVar = logVars[key];
                         break;
                     }
@@ -301,9 +302,9 @@ biz.detail = {
             });
             view.addTextField({alias: "处理时间"}).text(workLogs[i].createTime == null ? "" : workLogs[i].createTime);
             view.addTextarea({alias: "处理结果"}).text(workLogs[i].handleResult == null ? "" : workLogs[i].handleResult);
-            if (workLogs[i].taskID != "START") {
+            if (workLogs[i].taskID !== "START") {
                 view.addTextarea({alias: "处理意见"}).text(workLogs[i].handleDescription == null ? "" : workLogs[i].handleDescription);
-                if (workLogs[i].handleResult != "签收" && workLogs[i].taskName != "申请人处理") {
+                if (workLogs[i].handleResult !== "签收" && workLogs[i].taskName !== "申请人处理") {
                     view.addFile(biz.detail.files[workLogs[i].id]);
                 }
             }
@@ -334,7 +335,7 @@ biz.detail = {
             var _sign = false;
             var buttons = biz.detail.buttonGroup ? biz.detail.buttonGroup.all : buttons;
             $.each(buttons, function (index, value) {
-                if (value == "签收") {
+                if (value === "签收") {
                     _sign = true;
                     biz.edit.form.addMessage({
                         alias: "处理意见",
@@ -365,7 +366,7 @@ biz.detail = {
         }
         //确定处理方式属性
         for (var i = 0; i < currentVariables.length; i++) {
-            if (currentVariables[i].viewComponent == "TREATMENT") {
+            if (currentVariables[i].viewComponent === "TREATMENT") {
                 treatment = currentVariables[i];
             }
         }
@@ -391,12 +392,12 @@ biz.detail = {
             //处理分组文本与按钮文本相同情况
             for (var key in flow) {
                 for (var i = 0; i < group.length; i++) {
-                    if (flow[key] == group[i]) {
-                        if (groupButtons[group[i]] == undefined) {
+                    if (flow[key] === group[i]) {
+                        if (!groupButtons[group[i]]) {
                             groupButtons[group[i]] = {};
                         }
                         groupButtons[group[i]][key] = flow[key];
-                        if (command[key] != undefined) {
+                        if (command[key]) {
                             for (var k in command[key]) {
                                 groupButtons[group[i]][k] = command[key][k];
                             }
@@ -409,11 +410,11 @@ biz.detail = {
             for (var key in flow) {
                 for (var i = 0; i < group.length; i++) {
                     if (group[i].match(flow[key])) {
-                        if (groupButtons[group[i]] == undefined) {
+                        if (!groupButtons[group[i]]) {
                             groupButtons[group[i]] = {};
                         }
                         groupButtons[group[i]][key] = flow[key];
-                        if (command[key] != undefined) {
+                        if (command[key]) {
                             for (var k in command[key]) {
                                 groupButtons[group[i]][k] = command[key][k];
                             }
@@ -455,12 +456,13 @@ biz.detail = {
             var title = "<h2 class='white_tit'>" + group +
                 "<a class='drop'  role='button' data-toggle='collapse' href='#collapse" + biz.detail.mark + "'></a></h2>";
             div.html(title);
-            $(".close_all").before(div);
+            var $closeAll = $(".close_all");
+            $closeAll.before(div);
             div = $("<div class='listtable_wrap panel-collapse collapse in'>");
             div.attr("id", "collapse" + biz.detail.mark);
             table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
             div.append(table);
-            $(".close_all").before(div);
+            $closeAll.before(div);
             biz.detail.mark++;
         }
         return table;
@@ -476,24 +478,21 @@ biz.detail = {
         var title = "<h2 class='white_tit'>我的处理：" + currentTaskName +
             "<a class='drop'  role='button' data-toggle='collapse' href='#workForm'></a></h2>";
         div.html(title);
-        $("#workLogs").append(div);
+        var $workLogs = $("#workLogs");
+        $workLogs.append(div);
         div = $("<div class='listtable_wrap panel-collapse collapse in'>");
         div.attr("id", "workForm");
         var table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
         div.append(table);
-        $("#workLogs").append(div);
+        $workLogs.append(div);
         return table;
     }
 };
 
 
 biz.detail.save = function (key) {
-    var url = path + "/workflow/submit";
-    var jwWorkChecked = $(":checkbox[name='jwWork']:checked");
-    if (jwWorkChecked.length > 0 || key == 'save')
-        $(":input[name='crossDimension']").val("true");
-    else $(":input[name='crossDimension']").val(null);
 
+    var url = path + "/workflow/submit";
     var input = $(":input[checkEmpty='true']");
     for (var i = 0; i < input.length; i++) {
         checkEmpty(input[i]);
@@ -504,7 +503,7 @@ biz.detail.save = function (key) {
     }
     var file = $(":file");
     for (var i = 0; i < file.length; i++) {
-        if (file.eq(i).val() == "")
+        if (file.eq(i).val() === "")
             file.eq(i).remove();
     }
     //重新提交，交维工作做了处理
@@ -541,7 +540,6 @@ biz.detail.save = function (key) {
             } else {
                 layer.close(index);
                 bsAlert("异常", result);
-                return;
             }
         },
         error: function (result) {

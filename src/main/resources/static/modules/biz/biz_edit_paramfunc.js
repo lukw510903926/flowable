@@ -28,7 +28,7 @@ biz.edit.form.memberbox = {
             th.text("姓名：");
             tr.append(th);
             td = $("<td colspan='1'>");
-            input = $("<input name='cnname' type='text' class='fslTextBox'>");
+            var input = $("<input name='cnname' type='text' class='fslTextBox'/>");
             td.append(input);
             tr.append(td);
             table.append(tr);
@@ -42,7 +42,7 @@ biz.edit.form.memberbox = {
             th.text("姓名：");
             tr.append(th);
             td = $("<td colspan='1'>");
-            input = $("<input name='cnname' type='text' class='fslTextBox'>");
+            var input = $("<input name='cnname' type='text' class='fslTextBox'/>");
             td.append(input);
             var a = "<a onclick='biz.edit.form.memberbox.search()' class='dt_btn'>查询</a>";
             td.append(a);
@@ -59,7 +59,7 @@ biz.edit.form.memberbox = {
             "<a role='button' data-toggle='collapse' href='#memberResconfigcollapse' aria-expanded='true' class='gray_drop'></a></h2>";
         import_form.html(title);
         listtable_wrap = $("<div class='listtable_wrap panel-collapse collapse in' id='memberResconfigcollapse' role='tabpanel'>");
-        div = $("<div id='member_table_div'>");
+        var div = $("<div id='member_table_div'>");
         table = $("<table id='member_table' />");
         div.append(table);
         listtable_wrap.append(div);
@@ -100,7 +100,7 @@ biz.edit.form.memberbox = {
             },
             onClick: function (e, treeId, treeNode) {
                 var zTree = $.fn.zTree.getZTreeObj("sectorTree");
-                nodes = zTree.getSelectedNodes(),
+                var nodes = zTree.getSelectedNodes(),
                     vId = "",
                     v = "";
                 nodes.sort(function compare(a, b) {
@@ -140,7 +140,7 @@ biz.edit.form.memberbox = {
         $("body").unbind("mousedown", biz.edit.form.memberbox.onBodyDown);
     },
     onBodyDown: function (event) {
-        if (!(event.target.id == "sectorCombo" || event.target.id == "sectorMenuContent" || $(event.target).parents("#sectorMenuContent").length > 0)) {
+        if (!(event.target.id === "sectorCombo" || event.target.id === "sectorMenuContent" || $(event.target).parents("#sectorMenuContent").length > 0)) {
             biz.edit.form.memberbox.hideMenu();
         }
     },
@@ -209,11 +209,10 @@ biz.edit.form.memberbox = {
 
         var rows = $("#member_table").bootstrapTable('getSelections');
         var username = $("[name='" + biz.edit.form.memberbox.data.input + "']").val();
-        ;
         var fullname = $("[name='" + biz.edit.form.memberbox.data.inputname + "']").val();
         if (rows.length > 0) {
             for (var i = 0; i < rows.length; i++) {
-                if (username.indexOf(rows[i].username + ',') == -1) {
+                if (username.indexOf(rows[i].username + ',') === -1) {
                     username += rows[i].username + ',';
                     fullname += rows[i].fullname + ',';
                 }
@@ -233,7 +232,6 @@ biz.edit.form.memberbox = {
     },
 
     search: function () {
-        var sector = $('#memberContainer #sectorComboVal').val();
         $('#member_table').bootstrapTable('refresh', {
             method: 'post', url: path + '/bizHandle/loadMembers', queryParams: function queryParams(params) {
                 params.sector = $('#memberContainer #sectorComboVal').val();
@@ -284,7 +282,7 @@ biz.edit.form.memberLinkage = {
         th.text("姓名：");
         tr.append(th);
         td = $("<td colspan='1'>");
-        input = $("<input style='margin-right: 20px;' name='cnname' type='text' class='fslTextBox'>");
+        var input = $("<input style='margin-right: 20px;' name='cnname' type='text' class='fslTextBox'>");
         var a = $("<a onclick='biz.edit.form.memberLinkage.search(\"" + containerName + "\")' class='btn btn-y'>查询</a>");
         td.append(input, a);
         tr.append(td);
@@ -297,7 +295,7 @@ biz.edit.form.memberLinkage = {
         title = "<div class='panel-heading'>查询结果</div>";
         import_form.html(title);
         listtable_wrap = $("<div class='panel-body panel-collapse collapse in' id='memberLinkageResconfigcollapse' role='tabpanel'>");
-        div = $("<div id='memberLinkage_table_div' class='base-table-wrap'>");
+        var div = $("<div id='memberLinkage_table_div' class='base-table-wrap'>");
         table = $("<table id='" + containerName + "memberLinkage_table' class='base-table table-striped' />");
         div.append(table);
         listtable_wrap.append(div);
@@ -305,7 +303,7 @@ biz.edit.form.memberLinkage = {
         container.append(import_form);
 
         //部门树图
-        if ($("#sectorMenuContent").length == 0) {
+        if ($("#sectorMenuContent").length === 0) {
             div = $('<div id="sectorMenuContent" class="menuContent" style="display:none; position: absolute;">');
             var ul = $('<ul id="sectorTree" class="ztree" style="margin-top:0; width:180px; height: 300px;">');
             div.append(ul);
@@ -346,7 +344,7 @@ biz.edit.form.memberLinkage = {
             onClick: function (e, treeId, treeNode) {
                 //点击部门树多选，隔开
                 var zTree = $.fn.zTree.getZTreeObj("sectorTree");
-                nodes = zTree.getSelectedNodes(),
+                var nodes = zTree.getSelectedNodes(),
                     vId = "",
                     v = "";
                 nodes.sort(function compare(a, b) {
@@ -388,7 +386,7 @@ biz.edit.form.memberLinkage = {
         $("body").unbind("mousedown", biz.edit.form.memberLinkage.onBodyDown);
     },
     onBodyDown: function (event) {//点击其他区域隐藏树图
-        if (!(event.target.id == "sectorCombo" || event.target.id == "sectorMenuContent" || $(event.target).parents("#sectorMenuContent").length > 0)) {
+        if (!(event.target.id === "sectorCombo" || event.target.id === "sectorMenuContent" || $(event.target).parents("#sectorMenuContent").length > 0)) {
             biz.edit.form.memberLinkage.hideMenu();
         }
     },
@@ -559,7 +557,7 @@ biz.edit.form.memberLinkage = {
         },
         onBodyDown: function (event) {
             var inputName = biz.edit.form.memberLinkage.data.inputName + 'Name';
-            if (!(event.target.name == inputName || event.target.id == "roleMenuContent" || $(event.target).parents("#roleMenuContent").length > 0)) {
+            if (!(event.target.name === inputName || event.target.id === "roleMenuContent" || $(event.target).parents("#roleMenuContent").length > 0)) {
                 biz.edit.form.memberLinkage.roleTree.hideMenu();
             }
         },
@@ -634,12 +632,8 @@ biz.edit.form.combobox = {
             });
         }
     },
-    limitTimechange: function () {
-        var newtime = $dp.cal.getNewDateStr();
-        $("#onLineTime").attr('onFocus', "WdatePicker({dateFmt:\"yyyy-MM-dd HH:mm:ss\",minDate:\"" + newtime + "\"})");
-    },
     otherUrgencyLevel: function (ele) {//紧急级别与最后解决时间联动
-        if (ele == undefined) {
+        if (!ele) {
             ele = this;
         } else if (ele.originalEvent) {
             ele = this;
@@ -952,7 +946,7 @@ biz.edit.form.memberList = {
                 for (var j = 0; j < data.length; j++) {
                     var flag = true;
                     for (var i = 0; i < rows.length; i++) {
-                        if (rows[i].username == data[j].username)
+                        if (rows[i].username === data[j].username)
                             flag = false;
                     }
                     if (flag)
@@ -961,7 +955,7 @@ biz.edit.form.memberList = {
             } else {
                 var flag = true;
                 for (var i = 0; i < rows.length; i++) {
-                    if (rows[i].username == data.username) {
+                    if (rows[i].username === data.username) {
                         flag = false;
                     }
                 }
@@ -990,7 +984,7 @@ biz.edit.form.memberList = {
                 for (var i = 0; i < rows.length; i++) {
                     var flag = true;
                     for (var j = 0; j < data.length; j++) {
-                        if (rows[i].username == data[j].username) {
+                        if (rows[i].username === data[j].username) {
                             flag = false;
                         }
                     }
@@ -1000,7 +994,7 @@ biz.edit.form.memberList = {
                 }
             } else {
                 for (var i = 0; i < rows.length; i++) {
-                    if (rows[i].username != data.username) {
+                    if (rows[i].username !== data.username) {
                         selected.push(rows[i]);
                     }
                 }
@@ -1101,7 +1095,7 @@ biz.edit.form.memberList = {
         $("body").unbind("mousedown", biz.edit.form.memberList.onBodyDown);
     },
     onBodyDown: function (event) {
-        if (!(event.target.name == "roleName" || event.target.id == "memberListRoleMenuContent" || $(event.target).parents("#memberListRoleMenuContent").length > 0)) {
+        if (!(event.target.name === "roleName" || event.target.id === "memberListRoleMenuContent" || $(event.target).parents("#memberListRoleMenuContent").length > 0)) {
             biz.edit.form.memberList.hideMenu();
         }
     },
