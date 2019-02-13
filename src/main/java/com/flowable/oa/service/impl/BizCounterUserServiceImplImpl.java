@@ -23,48 +23,48 @@ import com.flowable.oa.service.BizCounterUserService;
 @Service
 public class BizCounterUserServiceImplImpl extends BaseServiceImpl<BizCounterUser> implements BizCounterUserService {
 
-	@Override
-	public PageInfo<BizCounterUser> findBizCounterUser(PageInfo<BizCounterUser> page, BizCounterUser user) {
+    @Override
+    public PageInfo<BizCounterUser> findBizCounterUser(PageInfo<BizCounterUser> page, BizCounterUser user) {
 
-		if(page!= null) {
-			PageHelper.startPage(page.getPageNum(), page.getPageSize());
-		}
-		return new PageInfo<BizCounterUser>(this.findByModel(user, false));
-	}
+        if (page != null) {
+            PageHelper.startPage(page.getPageNum(), page.getPageSize());
+        }
+        return new PageInfo<>(this.findByModel(user, false));
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void deleteUser(BizCounterUser user) {
+    @Override
+    @Transactional
+    public void deleteUser(BizCounterUser user) {
 
-		List<BizCounterUser> list = this.findBizCounterUser(null, user).getList();
-		list.forEach(counter ->this.deleteById(counter.getId()));
-	}
+        List<BizCounterUser> list = this.findBizCounterUser(null, user).getList();
+        list.forEach(counter -> this.deleteById(counter.getId()));
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void saveUser(List<Map<String, String>> list, String bizId, String taskId) {
+    @Override
+    @Transactional
+    public void saveUser(List<Map<String, String>> list, String bizId, String taskId) {
 
-		if (!CollectionUtils.isNotEmpty(list)) {
-			list.forEach(map -> {
-				BizCounterUser user = new BizCounterUser();
-				user.setBizId(bizId);
-				user.setTaskId(StringUtils.isBlank(taskId) ? "START" : taskId);
-				user.setName(map.get("name"));
-				user.setUsername(map.get("username"));
-				user.setDeptmentName(map.get("deptmentName"));
-				this.save(user);
-			});
-		}
-	}
+        if (!CollectionUtils.isNotEmpty(list)) {
+            list.forEach(map -> {
+                BizCounterUser user = new BizCounterUser();
+                user.setBizId(bizId);
+                user.setTaskId(StringUtils.isBlank(taskId) ? "START" : taskId);
+                user.setName(map.get("name"));
+                user.setUsername(map.get("username"));
+                user.setDeptmentName(map.get("deptmentName"));
+                this.save(user);
+            });
+        }
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void updateUser(List<Map<String, String>> list, String bizId, String taskId) {
+    @Override
+    @Transactional
+    public void updateUser(List<Map<String, String>> list, String bizId, String taskId) {
 
-		BizCounterUser user = new BizCounterUser();
-		user.setBizId(bizId);
-		user.setTaskId(StringUtils.isBlank(taskId) ? "START" : taskId);
-		this.deleteUser(user);
-		this.saveUser(list, bizId, taskId);
-	}
+        BizCounterUser user = new BizCounterUser();
+        user.setBizId(bizId);
+        user.setTaskId(StringUtils.isBlank(taskId) ? "START" : taskId);
+        this.deleteUser(user);
+        this.saveUser(list, bizId, taskId);
+    }
 }
