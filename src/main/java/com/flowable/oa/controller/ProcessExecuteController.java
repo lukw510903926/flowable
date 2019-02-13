@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.flowable.oa.util.*;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -104,19 +105,19 @@ public class ProcessExecuteController {
     @RequestMapping(value = "/create/{key}", method = RequestMethod.GET)
     public Map<String, Object> create(@PathVariable("key") String key, HttpServletRequest request) {
 
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         WebUtil.getLoginUser(request);
         ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
         if (processDefinition != null) {
             String proDefId = processDefinition.getId();
-            data.put("base_tempID", proDefId);
+            data.put("baseTempId", proDefId);
             ProcessVariable variable = new ProcessVariable();
             variable.setProcessDefinitionId(proDefId);
             variable.setTaskId(Constants.TASK_START);
             List<ProcessVariable> list = this.processVariableService.findProcessVariables(variable);
             data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
             Map<String, List<ProcessVariable>> map = groupProcessValBean(list);
-            data.put("ProcessValBeanMap", map);
+            data.put("processValBeanMap", map);
             data.put("result", true);
         } else {
             data.put("result", false);
@@ -147,25 +148,23 @@ public class ProcessExecuteController {
      * 创建工单
      *
      * @param params
-     * @param startProc
-     * @param deleFileId
      * @param request
      * @return
      */
     @RequestMapping(value = "bizInfo/create")
-    public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params, boolean startProc,
-                                            String[] deleFileId, MultipartHttpServletRequest request) {
+    public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params,MultipartHttpServletRequest request) {
 
         WebUtil.getLoginUser(request);
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.TEXT_PLAIN);
         BizInfo bean;
+        Boolean startProc = MapUtils.getBoolean(params, "startProc");
         try {
-            bean = processExecuteService.createBizDraft(params, request.getMultiFileMap(), startProc, deleFileId);
+            bean = processExecuteService.createBizDraft(params, request.getMultiFileMap(), startProc);
         } catch (Exception e) {
             logger.error("工单创建失败 : {}", e);
             String msg = "操作失败: " + e.getLocalizedMessage();
-            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null,msg)), header, HttpStatus.OK);
+            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null, msg)), header, HttpStatus.OK);
         }
         String msg = "/biz/" + bean.getId();
         if (!startProc) {
@@ -192,7 +191,7 @@ public class ProcessExecuteController {
         } catch (Exception e) {
             logger.info("工单提交失败 : ", e);
             String msg = "操作失败: " + e.getLocalizedMessage();
-            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null,msg)), headers, HttpStatus.OK);
+            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null, msg)), headers, HttpStatus.OK);
         }
         return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), headers, HttpStatus.OK);
     }
@@ -267,11 +266,7 @@ public class ProcessExecuteController {
         for (ProcessVariable bean : list) {
             String groupName = bean.getGroupName();
             groupName = StringUtils.isEmpty(groupName) ? "其它信息" : groupName;
-            List<ProcessVariable> temp = map.get(groupName);
-            if (temp == null) {
-                temp = new ArrayList<>();
-                map.put(groupName, temp);
-            }
+            List<ProcessVariable> temp = map.computeIfAbsent(groupName, (key) -> new ArrayList<>());
             temp.add(bean);
         }
         return map;

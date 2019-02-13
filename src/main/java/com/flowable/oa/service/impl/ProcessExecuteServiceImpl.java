@@ -138,8 +138,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
 	@Override
 	@Transactional
-	public BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap,
-			boolean startProc, String[] deleFileId) {
+	public BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap,boolean startProc) {
 
 		String source = MapUtils.getString(params, "$source", "人工发起");
 		String procDefId = MapUtils.getString(params, "base.tempID");
@@ -179,7 +178,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 		task.setId(Constants.TASK_START);
 		task.setName((String) params.get("base.handleName"));
 		saveFile(multiValueMap, now, bizInfo, task);
-		this.deleteBizFiles(deleFileId);
 		return bizInfo;
 	}
 
@@ -341,7 +339,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
 		File file;
 		BizFile bizFile;
-		List<String> filePathList = new ArrayList<String>();
+		List<String> filePathList = new ArrayList<>();
 		if (ArrayUtils.isNotEmpty(ids)) {
 			for (String id : ids) {
 				bizFile = bizFileService.getBizFileById(id);

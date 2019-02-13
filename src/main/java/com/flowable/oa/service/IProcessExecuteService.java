@@ -59,11 +59,10 @@ public interface IProcessExecuteService {
      *
      * @param params
      * @param startProc  同时启动流程
-     * @param deleFileId
      * @return
      * @
      */
-    BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap, boolean startProc, String[] deleFileId);
+    BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap, boolean startProc);
 
     /**
      * 更新工单关联的任务信息（填充下一个（或初始）任务（环节）的信息）

@@ -1,7 +1,7 @@
 $.namespace("biz.edit");
 
 function checkEmpty(ele) {
-    if (ele == undefined) {
+    if (ele === undefined) {
         ele = this;
     } else if (ele.originalEvent) {
         ele = this;
@@ -27,14 +27,14 @@ function lastSevenDay() {
 
 function banNumber() {
     var keyCode = event.keyCode;
-    if ((keyCode < 48 && keyCode != 8) || (keyCode > 57 && keyCode < 96) || (keyCode > 105 && keyCode != 110 && keyCode != 190)) {
+    if ((keyCode < 48 && keyCode !== 8) || (keyCode > 57 && keyCode < 96) || (keyCode > 105 && keyCode !== 110 && keyCode !== 190)) {
         event.keyCode = 0;
         event.returnValue = false;
     }
 }
 
 function checkNumber(ele) {
-    if (ele == undefined) {
+    if (!ele) {
         ele = this;
     } else if (ele.originalEvent) {
         ele = this;
@@ -46,7 +46,7 @@ function checkNumber(ele) {
 }
 
 function cleanCheck(ele) {
-    if (ele == undefined) {
+    if (!ele) {
         ele = this;
     } else if (ele.originalEvent) {
         ele = this;
@@ -58,19 +58,19 @@ $(function () {
     biz.edit.data.form = $("#form");
 });
 biz.edit = {
-    ConfirmUser: {},
+    confirmUser: {},
     fileNumber: 0,
     data: {
         tr: $("<tr></tr>")
     },
     getView: function (option) {
-        for (var key in biz.edit.data) {
-            delete biz.edit.data[key];
+        for (var k in biz.edit.data) {
+            delete biz.edit.data[k];
         }
         for (var key in option) {
             biz.edit.data[key] = option[key];
         }
-        if (option.form == undefined) {
+        if (!option.form) {
             biz.edit.data.form = $("#form");
         } else {
             biz.edit.data.form = option.form;
@@ -83,17 +83,17 @@ biz.edit = {
 biz.edit.form = {
     //动态加载表单组件
     setDynamic: function (option) {
-        if (option != undefined) {
-            if (option.table != undefined) {
+        if (option !== undefined) {
+            if (option.table !== undefined) {
                 biz.edit.data.table = option.table;
             }
-            if (option.tr != undefined) {
+            if (option.tr !== undefined) {
                 biz.edit.data.tr = option.tr;
             }
         } else {
             option = {};
         }
-        if (option.list == undefined) {
+        if (option.list === undefined) {
             option.list = biz.edit.data.list;
         }
         if (!$.isEmptyObject(option.list)) {
@@ -129,32 +129,20 @@ biz.edit.form = {
                     case "BOOLEAN":
                         biz.edit.form.addBoolean(option.list[j]);
                         break;
-                    case "MCMGRID":
-                        biz.edit.form.addConfigItem(option.list[j]);
-                        break;
                     case "MEMBERLINKAGE":
                         biz.edit.form.addMemberLinkage(option.list[j], option.list);
                         break;
                     case "MEMBERLIST":
                         biz.edit.form.addMemberList(option.list[j]);
                         break;
-                    case "MEMBERSEELCT":
-                        biz.edit.form.addMemberSelect(option.list[j]);
-                        break;
                     case "CONFIRMUSER":
                         biz.edit.form.addConfirmUser(option.list[j]);
-                        break;
-                    case "EVENTBIZ":
-                        biz.edit.form.addEventBiz(option.list[j], option.list);
                         break;
                     case "GROUPHEAD":
                         biz.edit.form.addGroupHead(option.list[j]);
                         break;
                     case "REMARK":
                         biz.edit.form.addRemark(option.list[j]);
-                        break;
-                    case "ONLINETIME":
-                        biz.edit.form.addOnLineTime(option.list[j]);
                         break;
                     case "REQUIREDFILE":
                         biz.edit.form.addRequiredFile(option.list[j]);
@@ -163,32 +151,28 @@ biz.edit.form = {
                         biz.edit.form.addTextField(option.list[j]);
                 }
             }
-            if (option.end || option.end == undefined)
+            if (option.end || !option.end){
                 biz.edit.form.appendTd();
+            }
         }
         biz.edit.data.tr = $("<tr></tr>");
-        //			//联动节点数据
-        //			for(var i=0;i<option.list.length;i++){
-        //				if(option.list[i].refVariable&&!option.list[i].name=='processSystemName')
-        //					biz.edit.form.refVariable.setRefVariable(option.list,option.list[i]);
-        //			}
         return biz.edit.data.tr;
     },
 
     //处理方式分组表单元素
     variableGroup: function (option) {
 
-        if (option != undefined) {
-            if (option.table != undefined) {
+        if (option) {
+            if (option.table) {
                 biz.edit.data.table = option.table;
             }
-            if (option.tr != undefined) {
+            if (option.tr) {
                 biz.edit.data.tr = option.tr;
             }
         } else {
             option = {};
         }
-        if (option.list == undefined) {
+        if (!option.list) {
             option.list = biz.edit.data.list;
         }
         if (option.list == null) {
@@ -196,12 +180,12 @@ biz.edit.form = {
         }
         var treatment = null;
         var group = null;
-        if ($(option.ele).length > 0 && $(option.ele).val() != "") {
+        if ($(option.ele).length > 0 && $(option.ele).val() !== "") {
             group = $(option.ele).val();
         } else {
             if (option.list) {
                 for (var i = 0; i < option.list.length; i++) {
-                    if (option.list[i].viewComponent == "TREATMENT") {
+                    if (option.list[i].viewComponent === "TREATMENT") {
                         var treatmentList = [];
                         if ($.isEmptyObject(option.list[i].viewDatas)) {
                             $.each(biz.detail.buttons, function (index, entity) {
@@ -221,7 +205,7 @@ biz.edit.form = {
             var array = [];
             for (var i = 0; i < option.list.length; i++) {
                 var vgroup = option.list[i].variableGroup;
-                if ($.isEmptyObject(vgroup) || option.list[i].viewComponent == "TREATMENT") {
+                if ($.isEmptyObject(vgroup) || option.list[i].viewComponent === "TREATMENT") {
 
                     var treatments = [];
                     if ($.isEmptyObject(option.list[i].viewDatas)) {
@@ -236,7 +220,7 @@ biz.edit.form = {
                 }
                 var groups = vgroup.split(",");
                 for (var j = 0; j < groups.length; j++) {
-                    if (groups[j] == group) {
+                    if (groups[j] === group) {
                         array.push(option.list[i]);
                         break;
                     }
@@ -256,7 +240,7 @@ biz.edit.form = {
         biz.edit.form.variableButton({});
         biz.edit.form.setDynamic(option);
         if (biz.edit.data.buttonGroup) {
-            biz.edit.form.variableButton(biz.edit.data.buttonGroup[group] == undefined ? biz.edit.data.buttonGroup.all : biz.edit.data.buttonGroup[group]);
+            biz.edit.form.variableButton(!biz.edit.data.buttonGroup[group] ? biz.edit.data.buttonGroup.all : biz.edit.data.buttonGroup[group]);
         }
         if ($(option.ele).length > 0) {
             $(option.ele).val(group);
@@ -279,10 +263,10 @@ biz.edit.form = {
     },
     addTextarea: function (data, table, tr) {
 
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         biz.edit.form.appendTd();
@@ -300,10 +284,10 @@ biz.edit.form = {
     },
     addButton: function (data, list, table, tr) {
 
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         biz.edit.form.appendTd();
@@ -311,7 +295,7 @@ biz.edit.form = {
         var td = $("<td colspan='3'></td>");
         th.append(data.alias + ":");
         var viewParams = data.viewParams;
-        var viewDatas = data.viewDatas
+        var viewDatas = data.viewDatas;
         if (viewParams) {
             var buttons = viewParams.split(",");
             var urls = viewDatas.split(",");
@@ -332,13 +316,13 @@ biz.edit.form = {
 
     addTextField: function (data, list, table, tr) {
 
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
-        if (data.order == 1) {
+        if (data.order === 1) {
             biz.edit.form.appendTd();
         }
         var th = $("<th></th>");
@@ -346,11 +330,11 @@ biz.edit.form = {
         var input = $("<input type='text' class='fslTextBox'/>");
         biz.edit.form.addCkeckEmpty(data, th, input);
         //三个文本框类型不同组件
-        if (data.viewComponent == "NUMBER") {
+        if (data.viewComponent === "NUMBER") {
             input.keydown(banNumber).change(checkNumber).val(0);
-        } else if (data.viewComponent == "DATETIME") {
+        } else if (data.viewComponent === "DATETIME") {
             input.attr("readonly", "readonly").addClass("Wdate");
-            if (data.name == "lastHandleTime") {
+            if (data.name === "lastHandleTime") {
                 var lastHandleTime = biz.detail.workInfo.limitTime;
                 lastHandleTime = lastHandleTime.replace(/-/g, "/");
                 var date = new Date(lastHandleTime);
@@ -370,7 +354,7 @@ biz.edit.form = {
                         dateFmt: 'yyyy-MM-dd HH:mm:ss'
                     })
                 });
-        } else if (data.viewComponent == "DATE") {
+        } else if (data.viewComponent === "DATE") {
             input.attr("readonly", "readonly");
             input.addClass("Wdate");
             input.focus(function () {
@@ -382,7 +366,7 @@ biz.edit.form = {
         td.append(input);
         biz.edit.data.tr.append(th);
         biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length == 2) {
+        if (biz.edit.data.tr.children("td").length === 2) {
             table.append(biz.edit.data.tr);
             biz.edit.data.tr = $("<tr></tr>");
         }
@@ -391,10 +375,10 @@ biz.edit.form = {
 
     addComboBox: function (data, list, table, tr) {
 
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         var th = $("<th></th>");
@@ -405,7 +389,7 @@ biz.edit.form = {
         select.attr("name", data.name);
         select.addClass("js-example-basic-single");
         select.attr('data-width', '60%');
-        if (data.viewComponent == "TREATMENT") {
+        if (data.viewComponent === "TREATMENT") {
             select.attr("onchange", "biz.edit.form.variableGroup({list:biz.edit.data.list,ele:'[name=" + data.name + "]'});$('.js-example-basic-single').select2();");
             if ($.isEmptyObject(data.viewParams)) {
                 $.each(biz.detail.buttons, function (index, entity) {
@@ -416,43 +400,15 @@ biz.edit.form = {
                 });
             }
         }
-        if (data.viewComponent == "DICTCOMBOBOX") {
+        if (data.viewComponent === "DICTCOMBOBOX") {
             biz.edit.form.combobox.loadDictComboBox(select, data.viewParams);
-        } else if (data.viewComponent == "MCMLISTBOX") {
-            biz.edit.form.combobox.loadMcfComboBox(select, data.viewParams);
-        } else if (!$.isEmptyObject(data.viewDatas)) {
+        }  else if (!$.isEmptyObject(data.viewDatas)) {
             biz.edit.form.combobox.loadComboBox(select, data.viewDatas);
         }
         td.append(select);
         biz.edit.data.tr.append(th);
         biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length == 2) {
-            table.append(biz.edit.data.tr);
-            biz.edit.data.tr = $("<tr></tr>");
-        }
-        return biz.edit.data.tr;
-    },
-
-    addChangeUser: function (data, table, tr) {
-
-        if (table == undefined) {
-            table = biz.edit.data.table;
-        }
-        if (tr != undefined) {
-            biz.edit.data.tr = tr;
-        }
-        var th = $("<th></th>");
-        var td = $("<td></td>");
-        var select = $("<select class='fslTextBox'></select>");
-        biz.edit.form.addCkeckEmpty(data, th, select);
-        th.append(data.alias + ":");
-
-        select.attr("name", data.name);
-        biz.edit.form.config.loadChangeUser(select, data.viewParams);
-        td.append(select);
-        biz.edit.data.tr.append(th);
-        biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length == 2) {
+        if (biz.edit.data.tr.children("td").length === 2) {
             table.append(biz.edit.data.tr);
             biz.edit.data.tr = $("<tr></tr>");
         }
@@ -461,10 +417,10 @@ biz.edit.form = {
 
     //紧急级别组件
     addUrgencyLevel: function (data, table, tr) {
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         var th = $("<th></th>");
@@ -477,7 +433,7 @@ biz.edit.form = {
         td.append(select);
         biz.edit.data.tr.append(th);
         biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length == 2) {
+        if (biz.edit.data.tr.children("td").length === 2) {
             table.append(biz.edit.data.tr);
             biz.edit.data.tr = $("<tr></tr>");
         }
@@ -496,7 +452,7 @@ biz.edit.form = {
         td.append(input);
         biz.edit.data.tr.append(th);
         biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length == 2) {
+        if (biz.edit.data.tr.children("td").length === 2) {
             table.append(biz.edit.data.tr);
             biz.edit.data.tr = $("<tr></tr>");
         }
@@ -505,10 +461,10 @@ biz.edit.form = {
     
     addBoolean: function (data, table, tr) {
 
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         var th = $("<th></th>");
@@ -524,7 +480,7 @@ biz.edit.form = {
         td.append("否");
         biz.edit.data.tr.append(th);
         biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length == 2) {
+        if (biz.edit.data.tr.children("td").length === 2) {
             table.append(biz.edit.data.tr);
             biz.edit.data.tr = $("<tr></tr>");
         }
@@ -543,13 +499,13 @@ biz.edit.form = {
     },
     //补充本行单元格及生成新行
     appendTd: function (table, tr) {
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
-        if (biz.edit.data.tr.children("td").length == 1 && biz.edit.data.tr.children("td").attr("colspan") != 3) {
+        if (biz.edit.data.tr.children("td").length === 1 && biz.edit.data.tr.children("td").attr("colspan") !== 3) {
             var th = $("<th></th>");
             var td = $("<td></td>");
             biz.edit.data.tr.append(th);
@@ -561,10 +517,10 @@ biz.edit.form = {
     },
     addMessage: function (data, table, tr) {
 
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         biz.edit.form.appendTd();
@@ -581,10 +537,10 @@ biz.edit.form = {
         return biz.edit.data.tr;
     },
     addTitle: function (title, table, tr) {
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         var th = $("<th></th>");
@@ -602,13 +558,20 @@ biz.edit.form = {
         biz.edit.data.tr = $("<tr></tr>");
         return biz.edit.data.tr;
     },
-    //备注禁用文本框
+
+    /**
+     * 备注禁用文本框
+     * @param data
+     * @param table
+     * @param tr
+     * @returns {*|jQuery|HTMLElement}
+     */
     addRemark: function (data, table, tr) {
 
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
 
@@ -623,33 +586,11 @@ biz.edit.form = {
         biz.edit.data.tr = $("<tr></tr>");
         return biz.edit.data.tr;
     },
-    addOnLineTime: function (data, table, tr) {
-        if (table == undefined) {
-            table = biz.edit.data.table;
-        }
-        if (tr != undefined) {
-            biz.edit.data.tr = tr;
-        }
-        var th = $("<th></th>");
-        var td = $("<td></td>");
-        var minidate = $("input[name='base.limitTime']").val();
-        var input = $("<input name='onLineTime' id='onLineTime' class='fslTextBox Wdate' type='text' onFocus='WdatePicker({dateFmt:\"yyyy-MM-dd HH:mm:ss\",minDate:\"" + minidate + "\"})'/>");
-        biz.edit.form.addCkeckEmpty(data, th, input);
-        th.append(data.alias + ":");
-        td.append(input);
-        biz.edit.data.tr.append(th);
-        biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length == 2) {
-            table.append(biz.edit.data.tr);
-            biz.edit.data.tr = $("<tr></tr>");
-        }
-        return biz.edit.data.tr;
-    },
     addFile: function (data, table, tr) {
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         var th = $("<th></th>");
@@ -663,7 +604,7 @@ biz.edit.form = {
         td.html(tdText);
         if (data) {
             for (var i = 0; i < data.length; i++) {
-                if ($.isEmptyObject(data[i].fileCatalog) || data[i].fileCatalog == "uploadFile") {
+                if ($.isEmptyObject(data[i].fileCatalog) || data[i].fileCatalog === "uploadFile") {
                     biz.edit.fileNumber++;
                     span = $("<span style='margin-right: 10px; display: block;'></span>");
                     span.attr("id", "spanfile" + biz.edit.fileNumber);
@@ -688,10 +629,10 @@ biz.edit.form = {
 
     addRequiredFile: function (data, table, tr) {
 
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         biz.edit.form.appendTd();
@@ -712,20 +653,6 @@ biz.edit.form = {
         td.html(tdText);
         var hiddenInput = $("<input type='hidden' name='requiredFileCount' />");
         td.append(hiddenInput);
-        if (data.name == 'itPlanFile') {
-            var planInput = $('[name="isPlan"]');
-            planInput.on('change', function () {
-                var value = planInput.val();
-                if (value == '是') {
-                    data.required = true;
-                    biz.edit.form.addCkeckEmpty(data, th, hiddenInput);
-                } else {
-                    data.required = false;
-                    hiddenInput.removeAttr('checkempty');
-                    th.text(data.alias + ":");
-                }
-            });
-        }
         biz.edit.form.addCkeckEmpty(data, th, hiddenInput);
         if ((biz.create && biz.create.draftData && biz.create.draftData.annexs) || (biz.detail && biz.detail.annexs)) {
             var data2;
@@ -735,7 +662,7 @@ biz.edit.form = {
                 data2 = biz.detail.annexs;
             }
             for (var i = 0; i < data2.length; i++) {
-                if (data.name == data2[i].fileCatalog) {
+                if (data.name === data2[i].fileCatalog) {
                     biz.edit.fileNumber++;
                     var span = $("<span style='margin-right: 10px; display: block;'></span>");
                     span.attr("id", "spanfile" + biz.edit.fileNumber);
@@ -761,10 +688,10 @@ biz.edit.form = {
     addMember: function (data, table, tr) {
 
         biz.edit.form.memberbox.loadSectorBox();
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         biz.edit.form.appendTd();
@@ -801,10 +728,10 @@ biz.edit.form = {
     //人员及联系方式联动
     addMemberLinkage: function (data, list, table, tr, type) {
         biz.edit.form.memberLinkage.loadSectorBox();
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         biz.edit.form.appendTd();
@@ -822,32 +749,32 @@ biz.edit.form = {
         td.append(input);
         td.append(chInput);
         td.append(add);
-        if (type != 1 && type != 2) {
+        if (type !== 1 && type !== 2) {
             td.append(addRole);
         }
         td.append(remove);
         biz.edit.form.memberLinkage.data[data.name + "inputName"] = data.name;
         //加入联动，注意联系方式参数是否设置联动
         if (list) {
-            if (list != null && list.length > 0 && type != 2) {
+            if (list !== null && list.length > 0 && type !== 2) {
                 for (var i = 0; i < list.length; i++) {
                     if (!list[i].refVariable)
                         continue;
-                    if (data.id == list[i].refVariable) {
+                    if (data.id === list[i].refVariable) {
                         biz.edit.form.memberLinkage.data.mobileName = list[i].name;
                     }
                 }
-            } else if (list != null && list.length > 0 && type == 2) {
+            } else if (list != null && list.length > 0 && type === 2) {
                 for (var i = 0; i < list.length; i++) {
                     if (!list[i].refVariable){
                         continue;
                     }
-                    if (data.id == list[i].refVariable) {
-                        if (list[i].viewComponent == "TEXT"){
+                    if (data.id === list[i].refVariable) {
+                        if (list[i].viewComponent === "TEXT"){
                             biz.edit.form.memberLinkage.data[data.name + "department"] = list[i].name;
-                        }else if (list[i].viewComponent == "MOBILE"){
+                        }else if (list[i].viewComponent === "MOBILE"){
                             biz.edit.form.memberLinkage.data[data.name + "mobileName"] = list[i].name;
-                        } else if (list[i].viewComponent == "EMAIL"){
+                        } else if (list[i].viewComponent === "EMAIL"){
                             biz.edit.form.memberLinkage.data[data.name + "email"] = list[i].name;
                         }
                     }
@@ -867,37 +794,13 @@ biz.edit.form = {
         biz.edit.form.memberLinkage.roleTree.loadRoleTree();
         return biz.edit.data.tr;
     },
-    //角色人员下拉组件
-    addMemberSelect: function (data, table, tr) {
-
-        if (table == undefined) {
-            table = biz.edit.data.table;
-        }
-        if (tr != undefined) {
-            biz.edit.data.tr = tr;
-        }
-        var th = $("<th></th>");
-        var td = $("<td></td>");
-        var select = $("<select name='" + data.name + "' id='mainDepartment'></select>");
-        biz.edit.form.addCkeckEmpty(data, th, select);
-        biz.edit.form.combobox.loadMemberSelect(select, data);
-        th.append(data.alias + ":");
-        td.append(select);
-        biz.edit.data.tr.append(th);
-        biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length == 2) {
-            table.append(biz.edit.data.tr);
-            biz.edit.data.tr = $("<tr></tr>");
-        }
-        return biz.edit.data.tr;
-    },
     //角色人员组件
     addMemberList: function (data, table, tr) {
 
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         biz.edit.form.appendTd();
@@ -922,78 +825,6 @@ biz.edit.form = {
         return biz.edit.data.tr;
     },
 
-    //部门人员组件
-    addDeptMemberList: function (data, table, tr) {
-
-        if (table == undefined) {
-            table = biz.edit.data.table;
-        }
-        if (tr != undefined) {
-            biz.edit.data.tr = tr;
-        }
-        biz.edit.form.appendTd();
-        var th = $("<th></th>");
-        var td = $("<td colspan='3'></td>");
-        var input = $("<input type='text' class='fslTextBox' readonly='readonly' style='width:50%;'/>");
-        input.attr("id", data.name);
-        input.click(function () {
-            biz.edit.form.memberList.openWindow()
-        });
-        biz.edit.form.addCkeckEmpty(data, th, input);
-        th.append(data.alias + ":");
-        td.append(input);
-        var hidden = $("<input type='hidden' class='fslTextBox' readonly='readonly' style='width:50%;'/>");
-        hidden.attr("name", data.name);
-        td.append(hidden);
-        td.append(biz.edit.form.memberList.createWindow(data));
-        biz.edit.data.tr.append(th);
-        biz.edit.data.tr.append(td);
-        table.append(biz.edit.data.tr);
-        biz.edit.data.tr = $("<tr></tr>");
-        return biz.edit.data.tr;
-    },
-
-    //交维工单的交维工作组件
-    addJwWork: function (data, table, tr) {
-        if (table == undefined) {
-            table = biz.edit.data.table;
-        }
-        if (tr != undefined) {
-            biz.edit.data.tr = tr;
-        }
-        biz.edit.form.appendTd();
-        var th = $("<th></th>");
-        th.html("交维工作:");
-        var td = $("<td colspan='3'></td>");
-        //定义工作名称
-        var labels = {
-            "功能答疑": ["台账", "常见问题FAQ", "用户操作手册", "系统需求规格说明书", "系统概要设计说明书", "系统详细设计方案", "版本发布说明", "数据字典", "接口清单", "第三方支撑说明", "故障处理知识库", "安装部署手册"],
-            "数据维护": ["台账", "运维操作手册", "第三方支撑说明", "安装部署手册", "日志解读说明书", "接口清单", "接口规范说明书"],
-            "接口接入": ["台账", "运维操作手册", "第三方支撑说明", "安装部署手册", "接口清单", "接口规范说明书"],
-            "例行检查": ["系统健康检查操作指南", "健康检查报告", "日志解读说明书"],
-            "故障处理": ["台账", "故障处理知识库", "运维操作手册", "第三方支撑说明", "安装部署手册", "故障处理报告", "日志解读说明书"],
-            "应急演练": ["台账", "应急演练方案", "第三方支撑说明", "应急演练报告", "日志解读说明书"],
-            "节日保障": ["台账", "节日保障方案", "第三方支撑说明"],
-            "系统备份": ["台账", "节日保障方案", "第三方支撑说明"],
-            "发布部署": ["部署升级方案", "版本发布说明", "第三方支撑说明", "日志解读说明书"],
-            "容量管理": ["第三方支撑说明"],
-            "安全整改": ["第三方支撑说明"],
-            "培训计划": ["培训计划"]
-        };
-        var trs = biz.edit.form.jwWork.addCheckBox(td, labels, "jwWork");
-        var hidden = $("<input type='hidden' class='fslTextBox'/>");
-        hidden.attr("name", data.name);
-        td.append(hidden);
-        biz.edit.data.tr.append(th);
-        biz.edit.data.tr.append(td);
-        biz.edit.form.addCkeckEmpty(data, th, hidden);
-        table.append(biz.edit.data.tr);
-        for (var i = 0; i < trs.length; i++) {
-            table.append(trs[i]);
-        }
-        biz.edit.data.tr = $("<tr></tr>");
-        return biz.edit.data.tr;
-    },
     //非空处理
     addCkeckEmpty: function (data, th, component) {
         if (data.required) {
@@ -1009,41 +840,12 @@ biz.edit.form = {
             component.focus(cleanCheck);
         }
     },
-    //变更工单号
-    addChangeBiz: function (data, table, tr) {
-        if (table == undefined) {
-            table = biz.edit.data.table;
-        }
-        if (tr != undefined) {
-            biz.edit.data.tr = tr;
-        }
-        biz.edit.data.tr = $("<tr></tr>");
-        var th = $("<th></th>");
-        th.html("变更工单编号:");
-        var td = $("<td colspan='3'></td>");
-        var input = $("<input type='text' maxlength='100' class='fslTextBox' style='width:50%;' readonly='readonly'/>");
-        input.attr("name", data.name);
-        biz.edit.form.addCkeckEmpty(data, th, input);
-        td.append(input);
-        var a = $("<a data-toggle='modal' data-target='#selectChangeBiz' class='btn btn-y mrl10'></a>");
-        a.text("选择变更工单 ");
-        var a = "<a data-toggle='modal' data-target='#selectChangeBiz' class='btn btn-y mrl10'>选择变更工单</a>";
-        td.append(a);
-        a = "<a onclick=biz.edit.form.changeBiz.removeChangeBiz('" + data.name + "') class='btn btn-n mrl10'>删除变更工单</a>";
-        td.append(a);
-        biz.edit.data.tr.append(th);
-        biz.edit.data.tr.append(td);
-        table.append(biz.edit.data.tr);
-        biz.edit.data.tr = $("<tr></tr>");
-        biz.edit.form.changeBiz.createBizWindow(data.name);
-        return biz.edit.data.tr;
-    },
     //添加个分组头部
     addGroupHead: function (data, table, tr) {
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         biz.edit.form.appendTd();
@@ -1059,10 +861,10 @@ biz.edit.form = {
     },
     //确认人组件，包括确认人、联系方式、时间、部门
     addConfirmUser: function (data, table, tr) {
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         var hidden = $("<input type='hidden' name='" + data.name + "'/>");
@@ -1094,20 +896,20 @@ biz.edit.form = {
             }];
         for (var key in list) {
             var input = biz.edit.form.addDisable(list[key]);
-            biz.edit.ConfirmUser[list[key].name] = list[key].value;
+            biz.edit.confirmUser[list[key].name] = list[key].value;
             input.change(function () {
-                biz.edit.ConfirmUser[$(this).attr("title")] = $(this).val();
-                biz.edit.data.table.find("[name='" + data.name + "']").val(JSON.stringify(biz.edit.ConfirmUser));
+                biz.edit.confirmUser[$(this).attr("title")] = $(this).val();
+                biz.edit.data.table.find("[name='" + data.name + "']").val(JSON.stringify(biz.edit.confirmUser));
             });
         }
-        hidden.val(JSON.stringify(biz.edit.ConfirmUser));
+        hidden.val(JSON.stringify(biz.edit.confirmUser));
     },
     //加入禁用文本框，不属于流程组件
     addDisable: function (data, table, tr) {
-        if (table == undefined) {
+        if (!table) {
             table = biz.edit.data.table;
         }
-        if (tr != undefined) {
+        if (tr) {
             biz.edit.data.tr = tr;
         }
         var th = $("<th></th>");
@@ -1120,7 +922,7 @@ biz.edit.form = {
         td.append(input);
         biz.edit.data.tr.append(th);
         biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length == 2) {
+        if (biz.edit.data.tr.children("td").length === 2) {
             table.append(biz.edit.data.tr);
             biz.edit.data.tr = $("<tr></tr>");
         }
@@ -1161,7 +963,7 @@ biz.edit.form.orgTree = {
                     vId = vId.substring(0, vId.length - 1);
                 var cityObj = $("#orgSectorCombo"),
                     cityValue = $('#orgSectorComboVal');
-                if (vId == "") {
+                if (vId === "") {
                     cityObj.val("");
                     cityValue.val("");
                 } else {
@@ -1188,7 +990,7 @@ biz.edit.form.orgTree = {
         $("body").unbind("mousedown", biz.edit.form.orgTree.onBodyDown);
     },
     onBodyDown: function (event) {
-        if (!(event.target.id == "orgSectorCombo" || event.target.id == "orgSectorMenuContent" || $(event.target).parents("#orgSectorMenuContent").length > 0)) {
+        if (!(event.target.id === "orgSectorCombo" || event.target.id === "orgSectorMenuContent" || $(event.target).parents("#orgSectorMenuContent").length > 0)) {
             biz.edit.form.orgTree.hideMenu();
         }
     },

@@ -12,9 +12,9 @@ biz.create = {
             async: false,
             success: function (data) {
                 if (data.result) {
-                    biz.create.data = data.ProcessValBeanMap;
+                    biz.create.data = data.processValBeanMap;
                     biz.create.buttons = data.SYS_BUTTON;
-                    $("#base_tempID").val(data.base_tempID);
+                    $("#base_tempID").val(data.baseTempId);
                     if (bizId) {
                         biz.create.draftData = biz.create.loadDraftBiz();
                         biz.create.loadStatic(biz.create.draftData.workInfo, biz.create.draftData.extInfo.createUser);
@@ -173,13 +173,13 @@ biz.create = {
             });
             switch (key) {
                 case "eventManagement":
-                    biz.create.type.event(view, group == "工单信息");
+                    biz.create.type.event(view, group === "工单信息");
                     break;
                 case "maintainManagement":
-                    biz.create.type.maintain(view, group == "工单信息");
+                    biz.create.type.maintain(view, group === "工单信息");
                     break;
                 default:
-                    biz.create.type.event(view, group == "工单信息");
+                    biz.create.type.event(view, group === "工单信息");
             }
             view.addFile(bizId ? biz.create.draftData.annexs : null);
         }
@@ -200,13 +200,13 @@ biz.create = {
     submit: function (key) {
         var file = $(":file");
         for (var i = 0; i < file.length; i++) {
-            if (file.eq(i).val() == "") {
+            if (file.eq(i).val() === "") {
                 file.eq(i).remove();
             }
         }
         var input = $(":input[checkEmpty='true']");
 
-        if ("submit" == key) {
+        if ("submit" === key) {
             $("#form [name='startProc']").val(true);
             for (var i = 0; i < input.length; i++) {
                 checkEmpty(input[i]);
@@ -216,30 +216,12 @@ biz.create = {
                 return;
             }
         }
-        if ("saveTemp" == key) {
+        if ("saveTemp" === key) {
             $("#form [name='startProc']").val(false);
         }
         $("#form [name='base.buttonId']").val(key);
         $("#form [name='base.handleResult']").val(biz.create.buttons[key]);
         $("#form").attr("action", path + "/workflow/bizInfo");
-        if ($("[name='crossDimension']").length > 0) {
-            var jwWorkString = "";
-            var jwWork = $("[name='jwWork']:checked");
-            for (var i = 0; i < jwWork.length; i++) {
-                var dJwWork = jwWork.eq(i);
-                jwWorkString += dJwWork.val() + ":";
-                var ddJwWork = $("[name='jwWork" + dJwWork.val() + "']:checked");
-                for (var j = 0; j < ddJwWork.length; j++) {
-                    jwWorkString += ddJwWork.eq(j).val() + ",";
-                }
-                if (ddJwWork.length > 0)
-                    jwWorkString = jwWorkString.substring(0, jwWorkString.length - 1);
-                jwWorkString += ";";
-            }
-            if (jwWorkString != "")
-                jwWorkString = jwWorkString.substring(0, jwWorkString.length - 1);
-            $("[name='crossDimension']").val(jwWorkString);
-        }
         var index = layer.load(1, {
             shade: [0.1, '#fff']
         });
@@ -253,7 +235,7 @@ biz.create = {
             type: 'post',
             success: function (result) {
                 if (result) {
-                    if (!result || result.success == true) {
+                    if (!result || result.success) {
                         layer.close(index);
                         location.href = path + result.msg;
                     } else {
@@ -262,7 +244,7 @@ biz.create = {
                     }
                 }
             },
-            error: function (result) {
+            error: function () {
                 layer.close(index);
                 bsAlert("异常", "提交失败");
             }
@@ -276,17 +258,5 @@ biz.create.type = {
         }
         view.addTitle("工单标题");
         view.setDynamic();
-    },
-    maintain: function (view, flag) {
-        if (flag) {
-            view.addTitle("交维标题");
-            $("[name='base.workTitle']").attr("readonly", "readonly");
-        }
-        view.setDynamic();
-        $("[name='systemName']").attr("onchange", "createJwTitile(this)");
     }
 };
-
-function createJwTitile(ele) {
-    $("[name='base.workTitle']").val($(ele).val() + (new Date).Format("yyyyMdd") + "交维");
-}
