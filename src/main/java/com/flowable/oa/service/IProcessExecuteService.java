@@ -128,4 +128,11 @@ public interface IProcessExecuteService {
      */
     Object[] downloadFile(String action, String id);
 
+    /**
+     * 根据流程定义ID获取流程名
+     * @param procDefId
+     * @return
+     */
+    String getProcessDefinitionName(String procDefId);
+
 }
