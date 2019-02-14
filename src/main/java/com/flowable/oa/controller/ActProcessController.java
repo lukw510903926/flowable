@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,6 +15,7 @@ import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.DataGrid;
 import com.flowable.oa.util.ReflectionUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
@@ -58,25 +60,28 @@ public class ActProcessController {
      * 流程定义列表
      */
     @ResponseBody
-    @RequestMapping(value = "list")
-    public DataGrid<Map<String, Object>> processList(PageInfo<Object[]> page, @RequestParam Map<String, Object> params) {
+    @RequestMapping("list")
+    public DataGrid<Map<String, Object>> processList(@RequestParam Map<String, Object> params) {
 
         DataGrid<Map<String, Object>> grid = new DataGrid<>();
         try {
+            Integer pageNum = MapUtils.getInteger(params, "page", 1);
+            Integer rows = MapUtils.getInteger(params, "rows", 20);
             List<Map<String, Object>> result = new ArrayList<>();
-            page = actProcessService.processList(page, null);
-            List<Object[]> tempResult = page.getList();
+            List<Object[]> tempResult = actProcessService.processList();
             if (CollectionUtils.isNotEmpty(tempResult)) {
-                for (Object[] objects : tempResult) {
+                List<Object[]> list = tempResult.stream().skip((pageNum-1) * rows).limit(rows).collect(Collectors.toList());
+                for (Object[] objects : list) {
                     ProcessDefinitionEntity process = (ProcessDefinitionEntity) objects[0];
                     DeploymentEntity deployment = (DeploymentEntity) objects[1];
                     Map<String, Object> item = ReflectionUtils.beanToMap(process);
                     item.put("deploymentTime", deployment.getDeploymentTime());
                     result.add(item);
                 }
+                grid.setRows(result);
+                grid.setTotal(tempResult.size());
             }
-            grid.setRows(result);
-            grid.setTotal(page.getTotal());
+
         } catch (Exception e) {
             logger.error(" 流程列表获取失败 : {}", e);
         }

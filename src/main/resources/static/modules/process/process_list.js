@@ -13,13 +13,14 @@ $(function() {
 	processTable.bootstrapTable({
 		method : 'get',
 		queryParams : function queryParams(params) {
+			console.log(params);
 			return params;
 		},
 		sidePagination : 'server',
 		url : path + "/act/process/list",
 		pagination : true,
 		pageSize : 20,
-		pageList : [ 10, 25, 50 ],
+		pageList : [ 10, 25, 50],
 		columns : [ {
 			field : "id",
 			title : "流程ID",
@@ -88,12 +89,10 @@ function detailFormatter(index, row) {
 }
 
 function updateState(id, state) {
-	if (state != "active" && state != "suspend") {
+	if (state !== "active" && state !== "suspend") {
 		$.alert({
 			title : "错误",
 			content : "无效的状态.",
-			// content: 'This is some alert to the user. <br> with some
-			// <strong>HTML</strong> <em>contents</em>',
 			autoClose : 'cancel|3000',
 			confirmButton : '关闭',
 			confirmButtonClass : 'btn-primary',
