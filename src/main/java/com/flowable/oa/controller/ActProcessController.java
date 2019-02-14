@@ -13,6 +13,7 @@ import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.DataGrid;
 import com.flowable.oa.util.ReflectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
@@ -65,12 +66,14 @@ public class ActProcessController {
             List<Map<String, Object>> result = new ArrayList<>();
             page = actProcessService.processList(page, null);
             List<Object[]> tempResult = page.getList();
-            for (Object[] objects : tempResult) {
-                ProcessDefinitionEntity process = (ProcessDefinitionEntity) objects[0];
-                DeploymentEntity deployment = (DeploymentEntity) objects[1];
-                Map<String, Object> item = ReflectionUtils.beanToMap(process);
-                item.put("deploymentTime", deployment.getDeploymentTime());
-                result.add(item);
+            if (CollectionUtils.isNotEmpty(tempResult)) {
+                for (Object[] objects : tempResult) {
+                    ProcessDefinitionEntity process = (ProcessDefinitionEntity) objects[0];
+                    DeploymentEntity deployment = (DeploymentEntity) objects[1];
+                    Map<String, Object> item = ReflectionUtils.beanToMap(process);
+                    item.put("deploymentTime", deployment.getDeploymentTime());
+                    result.add(item);
+                }
             }
             grid.setRows(result);
             grid.setTotal(page.getTotal());
