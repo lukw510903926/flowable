@@ -5,30 +5,32 @@
         <title>模型列表</title>
     </head>
     <body>
-    <div class="panel panel-ex">
-        <div class="panel-heading">
-            模型管理
-            <span class="table_menu_w right">
+    <div class="container-fluid">
+        <div class="panel panel-ex">
+            <div class="panel-heading">
+                模型管理
+                <span class="table_menu_w right">
                 <a href="${ctx}/model/create" target="_self">新建</a>
                 <a href="javascript:void(0);" onclick="rmconfigtype()">删除</a>
 			</span>
-        </div>
-        <div class="panel-body">
-            <div class="base-table-wrap">
-                <table id="model-table" data-toggle="table"
-                       data-url="${ctx }/act/model/list" class="base-table table-striped">
-                    <thead>
-                    <tr>
-                        <th data-field="id">模型ID</th>
-                        <th data-field="key">模型标识</th>
-                        <th data-field="name">模型名称</th>
-                        <th data-field="version">版本号</th>
-                        <th data-field="createTime">创建时间</th>
-                        <th data-field="lastUpdateTime">更新时间</th>
-                        <th data-field="taskAssignee">操作</th>
-                    </tr>
-                    </thead>
-                </table>
+            </div>
+            <div class="panel-body">
+                <div class="base-table-wrap">
+                    <table id="model-table" data-toggle="table"
+                           data-url="${ctx }/act/model/list" class="base-table table-striped">
+                        <thead>
+                        <tr>
+                            <th data-field="id">模型ID</th>
+                            <th data-field="key">模型标识</th>
+                            <th data-field="name">模型名称</th>
+                            <th data-field="version">版本号</th>
+                            <th data-field="createTime">创建时间</th>
+                            <th data-field="lastUpdateTime">更新时间</th>
+                            <th data-field="taskAssignee">操作</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

@@ -369,10 +369,11 @@ biz.table = {
 			'class' : "data-resize",
 			sortable : true,
 			align : "center",
-			formatter : function(value, row, index) {
+			formatter : function(value, row) {
 				var url = path + "/biz/" + row.id;
-				if (row.status === "草稿")
+				if (row.status === "草稿"){
 					url = path + "/biz/create/" + row.processDefinitionId.split(":")[0] + "?bizId=" + row.id;
+				}
 				return "<a style='cursor: pointer' onclick=\"window.open('" + url + "');\">" + value + "</a>";
 			}
 		}, {
@@ -476,14 +477,6 @@ biz.table = {
 			opt.value = param[x];
 			temp.appendChild(opt);
 		}
-		var description = document.createElement("input");
-		description.name = 'description';
-		description.value = $("#description")[0].checked;
-		temp.appendChild(description);
-		var solution = document.createElement("input");
-		solution.name = 'solution';
-		solution.value = $("#solution")[0].checked;
-		temp.appendChild(solution);
 		document.body.appendChild(temp);
 		temp.submit();
 	}

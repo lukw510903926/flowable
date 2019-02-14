@@ -19,23 +19,28 @@
         </style>
     </head>
     <body>
-    <div class="panel panel-box">
-        <div class="panel-heading">部署流程</div>
-        <div class="panel-body">
-            <div class="mr5">
-                <form id="inputForm" action="/act/process/deploy" method="post" enctype="multipart/form-data" class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-xs-1 control-label">流程文件：</label>
-                        <div class="col-xs-11">
-                            <input type="file" id="file" name="file" class="required"/>
-                            <span class="help-inline">支持文件格式：zip、bar、bpmn、bpmn20.xml</span>
+    <div class="container-fluid">
+        <div class="panel panel-box">
+            <div class="panel-heading">部署流程</div>
+            <div class="panel-body">
+                <div class="mr5">
+                    <form id="inputForm" action="/act/process/deploy" method="post" enctype="multipart/form-data"
+                          class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">流程文件：</label>
+                            <div class="col-xs-11">
+                                <input type="file" id="file" name="file" class="required"/>
+                                <span class="help-inline">支持文件格式：zip、bar、bpmn、bpmn20.xml</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="btn-list">
-                        <button id="btnSubmit" class="btn btn-y" type="submit" >提交</button>
-                        <button id="btnCancel" class="btn btn-n mrl10" type="button" onclick="window.open('${ctx}/process', '_self');">返回</button>
-                    </div>
-                </form>
+                        <div class="btn-list">
+                            <button id="btnSubmit" class="btn btn-y" type="submit">提交</button>
+                            <button id="btnCancel" class="btn btn-n mrl10" type="button"
+                                    onclick="window.open('${ctx}/process', '_self');">返回
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
