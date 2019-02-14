@@ -373,7 +373,7 @@ biz.table = {
 				var url = path + "/biz/" + row.id;
 				if (row.status === "草稿")
 					url = path + "/biz/create/" + row.processDefinitionId.split(":")[0] + "?bizId=" + row.id;
-				return "<a onclick=\"window.open('" + url + "');\">" + value + "</a>";
+				return "<a style='cursor: pointer' onclick=\"window.open('" + url + "');\">" + value + "</a>";
 			}
 		}, {
 			field : "bizType",
