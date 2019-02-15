@@ -37,17 +37,18 @@
 
         /**
          * 表单校验
+         * 校验成功返回true 失败 false;
          * @returns {boolean}
          */
         validateForm: function () {
 
             let $this = this;
-            let checkEmpty = false;
+            let checkEmpty = true;
             let defaultMsg = '表单校验失败';
             $($this).find('[name]').each(function () {
                 $(this).siblings("i").remove();
                 if (this.required && !$(this).validateRule()) {
-                    checkEmpty = true;
+                    checkEmpty = false;
                     let msg = $(this).attr('message') ? $(this).attr('message') : defaultMsg;
                     $(this).after("<i style='color:red;'>&nbsp;" + msg + "</i>");
                 }

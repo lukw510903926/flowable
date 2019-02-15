@@ -83,7 +83,7 @@ dict.value = {
 
         let $dictForm = $('#dictForm');
         let validateForm = $dictForm.validateForm();
-        if(validateForm){
+        if(!validateForm){
             layer.msg('表单校验失败');
             return;
         }
