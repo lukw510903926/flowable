@@ -52,15 +52,6 @@ public interface IBizFileService extends IBaseService<BizFile> {
      */
     List<BizFile> loadBizFilesByBizId(String bizId, String taskId);
 
-    /**
-     * 根据ID获取附件对象
-     *
-     * @param id
-     * @return
-     * @
-     */
-    BizFile getBizFileById(String id);
-
     List<BizFile> findBizFile(BizFile bizFile);
 
 }

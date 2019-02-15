@@ -23,53 +23,51 @@ import tk.mybatis.mapper.entity.Example.Criteria;
 @Service
 public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> implements ISystemUserService {
 
-	@Autowired
-	private ISystemRoleService systemRoleService;
-	
-	@Override
-	public SystemUser getUserByUsername(String username) {
-		
-		if(StringUtils.isNotBlank(username)){
-			Example example = new Example(SystemUser.class);
-			Criteria criteria = example.createCriteria();
-			criteria.andEqualTo("username", username);
-			List<SystemUser> list = this.selectByExample(example);
-			return CollectionUtils.isEmpty(list) ? null : list.get(0);
-		}
-		return null;
-	}
+    @Autowired
+    private ISystemRoleService systemRoleService;
 
-	@Override
-	public List<String> findUserByRole(SystemRole systemRole) {
-		
-		systemRole.setUsers(null);
-		List<SystemRole> roles = this.systemRoleService.findByModel(systemRole, false);
-		Set<SystemUser> userSet = new HashSet<>();
-		if (CollectionUtils.isNotEmpty(roles)) {
-			roles.forEach(role -> userSet.addAll(role.getUsers()));
-		}
-		List<String> list = new ArrayList<>();
-		userSet.forEach(systemUser ->list.add(systemUser.getUsername()));
-		return list;
-	}
-	
-	@Override
-	public String findOnlyUser(SystemRole systemRole) {
+    @Override
+    public SystemUser getUserByUsername(String username) {
 
-		List<String> list = this.findUserByRole(systemRole);
-		if (list.size() == 1) {
-			return list.get(0);
-		}
-		return null;
-	}
+        if (StringUtils.isNotBlank(username)) {
+            SystemUser systemUser = new SystemUser();
+            systemUser.setUsername(username);
+            return this.selectOne(systemUser);
+        }
+        return null;
+    }
 
-	@Override
-	public List<String> findUserRoles(String username) {
-		
-		Optional<SystemUser> systemUser = Optional.ofNullable(this.getUserByUsername(username));
-		List<String> list = new ArrayList<>();
-		Set<SystemRole> roles = systemUser.map(SystemUser::getRoles).orElse(new HashSet<>());
-		roles.forEach(role ->list.add(role.getNameCn()));
-		return list;
-	}
+    @Override
+    public List<String> findUserByRole(SystemRole systemRole) {
+
+        systemRole.setUsers(null);
+        List<SystemRole> roles = this.systemRoleService.findByModel(systemRole, false);
+        Set<SystemUser> userSet = new HashSet<>();
+        if (CollectionUtils.isNotEmpty(roles)) {
+            roles.forEach(role -> userSet.addAll(role.getUsers()));
+        }
+        List<String> list = new ArrayList<>();
+        userSet.forEach(systemUser -> list.add(systemUser.getUsername()));
+        return list;
+    }
+
+    @Override
+    public String findOnlyUser(SystemRole systemRole) {
+
+        List<String> list = this.findUserByRole(systemRole);
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> findUserRoles(String username) {
+
+        Optional<SystemUser> systemUser = Optional.ofNullable(this.getUserByUsername(username));
+        List<String> list = new ArrayList<>();
+        Set<SystemRole> roles = systemUser.map(SystemUser::getRoles).orElse(new HashSet<>());
+        roles.forEach(role -> list.add(role.getNameCn()));
+        return list;
+    }
 }

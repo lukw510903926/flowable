@@ -43,11 +43,13 @@ import com.flowable.oa.service.IProcessDefinitionService;
 import com.flowable.oa.service.act.ActProcessService;
 
 /**
- * 流程定义相关Controller
+ * <p>
  *
- * @author ThinkGem
- * @version 2013-11-03
- */
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 19-2-15 下午11:10
+ **/
 @Controller
 @RequestMapping(value = "/act/process")
 public class ActProcessController {

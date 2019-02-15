@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.DataGrid;
@@ -27,6 +26,14 @@ import com.flowable.oa.entity.ProcessVariable;
 import com.flowable.oa.service.IProcessDefinitionService;
 import com.flowable.oa.service.IProcessVariableService;
 
+/**
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 19-2-15 下午11:09
+ **/
 @Controller
 @RequestMapping("/processModelMgr")
 public class ProcessModelMgrController {
@@ -50,7 +57,7 @@ public class ProcessModelMgrController {
     @RequestMapping(value = "processValList")
     public DataGrid<ProcessVariable> processValList(@RequestParam Map<String, Object> params, PageInfo<ProcessVariable> page) {
 
-        DataGrid<ProcessVariable> grid = new DataGrid<ProcessVariable>();
+        DataGrid<ProcessVariable> grid = new DataGrid<>();
         try {
             String processId = (String) params.get("processId");
             String version = (String) params.get("version");
@@ -85,7 +92,7 @@ public class ProcessModelMgrController {
         String processId = (String) params.get("processId");
         String taskId = (String) params.get("taskId");
         try {
-            ProcessVariable processValAbs = null;
+            ProcessVariable processValAbs;
             if (StringUtils.isBlank(taskId)) {
                 processValAbs = processValService.selectByKey(processId);
             } else {
@@ -192,13 +199,13 @@ public class ProcessModelMgrController {
                 processValBeans.forEach(process -> groups.add(process.getGroupName().trim()));
             }
             groups.forEach(group -> {
-                List<ProcessVariable> processes = new ArrayList<ProcessVariable>();
+                List<ProcessVariable> processes = new ArrayList<>();
                 for (ProcessVariable process : processValBeans) {
                     if (group != null && group.equals(process.getGroupName().trim())) {
                         processes.add(process);
                     }
                 }
-                Map<String, Object> data = new HashMap<String, Object>();
+                Map<String, Object> data = new HashMap<>();
                 data.put("grop", group);
                 data.put("list", processes);
                 list.add(data);

@@ -5,11 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.stream.XMLInputFactory;
@@ -18,9 +15,10 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.flowable.oa.service.IProcessDefinitionService;
 import com.flowable.oa.util.exception.ServiceException;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,17 +49,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * 流程定义相关Controller
+ * <p>
  *
- * @author ThinkGem
- * @version 2013-11-03
- */
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 19-2-15 下午10:02
+ **/
+@Slf4j
 @Service
 public class ActProcessService {
 
-    /**
-     * 日志对象
-     */
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -72,6 +70,16 @@ public class ActProcessService {
 
     @Autowired
     private IProcessDefinitionService processService;
+
+    public Set<String> loadProcessStatus(String processId) {
+
+        Set<String> set = new HashSet<>();
+        List<Map<String, Object>> result = this.getAllTaskByProcessKey(processId);
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.forEach(entity -> set.add(MapUtils.getString(entity, "name")));
+        }
+        return set;
+    }
 
     /**
      * 流程定义列表
@@ -96,8 +104,7 @@ public class ActProcessService {
      */
     public List<Object[]> processList() {
 
-        ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery().latestVersion().orderByProcessDefinitionKey().asc();
-        List<ProcessDefinition> processDefinitionList = processDefinitionQuery.list();
+        List<ProcessDefinition> processDefinitionList = this.findProcessDefinition(null);
         List<Object[]> result = new ArrayList<>();
         for (ProcessDefinition processDefinition : processDefinitionList) {
             String deploymentId = processDefinition.getDeploymentId();
@@ -129,23 +136,30 @@ public class ActProcessService {
      * 根据流程key得到
      *
      * @return
-     * @throws Exception
      */
-    public List<Map<String, Object>> getAllTaskByProcessKey(String processId) throws Exception {
-        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    public List<Map<String, Object>> getAllTaskByProcessKey(String processId) {
+
+        List<Map<String, Object>> result = new ArrayList<>();
         InputStream bpmnStream = resourceRead(processId, null, "xml");
+        if (bpmnStream == null) {
+            return result;
+        }
         XMLInputFactory xif = XMLInputFactory.newInstance();
-        InputStreamReader in = new InputStreamReader(bpmnStream, "UTF-8");
-        XMLStreamReader xtr = xif.createXMLStreamReader(in);
-        BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
-        List<Process> processes = bpmnModel.getProcesses();
-        if (CollectionUtils.isNotEmpty(processes)) {
-            for (Process process : processes) {
-                Collection<FlowElement> flowElements = process.getFlowElements();
-                if (CollectionUtils.isNotEmpty(flowElements)) {
-                    getAllUserTaskByFlowElements(flowElements, result);
+        InputStreamReader in = new InputStreamReader(bpmnStream, StandardCharsets.UTF_8);
+        try {
+            XMLStreamReader xtr = xif.createXMLStreamReader(in);
+            BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
+            List<Process> processes = bpmnModel.getProcesses();
+            if (CollectionUtils.isNotEmpty(processes)) {
+                for (Process process : processes) {
+                    Collection<FlowElement> flowElements = process.getFlowElements();
+                    if (CollectionUtils.isNotEmpty(flowElements)) {
+                        getAllUserTaskByFlowElements(flowElements, result);
+                    }
                 }
             }
+        } catch (XMLStreamException e) {
+            log.error("获取流程信息失败 ： {}", e);
         }
         return result;
     }
@@ -156,10 +170,11 @@ public class ActProcessService {
      * @param result
      */
     private void getAllUserTaskByFlowElements(Collection<FlowElement> flowElements, List<Map<String, Object>> result) {
+
         for (FlowElement flowElement : flowElements) {
             if (flowElement instanceof UserTask) {
                 UserTask userTask = (UserTask) flowElement;
-                Map<String, Object> temp = new HashMap<String, Object>();
+                Map<String, Object> temp = new HashMap<>();
                 temp.put("id", userTask.getId());
                 temp.put("name", userTask.getName());
                 result.add(temp);
@@ -177,7 +192,7 @@ public class ActProcessService {
      * @param processInstanceId   流程实例ID
      * @param resourceType        资源类型(xml|image)
      */
-    public InputStream resourceRead(String processDefinitionId, String processInstanceId, String resourceType) throws Exception {
+    public InputStream resourceRead(String processDefinitionId, String processInstanceId, String resourceType) {
 
         if (!StringUtils.isBlank(processInstanceId)) {
             ProcessInstance processInstance = processService.getProcessInstance(processInstanceId);
@@ -188,7 +203,6 @@ public class ActProcessService {
         List<ProcessDefinition> processDefinitions = processDefinitionQuery.list();
         if (CollectionUtils.isNotEmpty(processDefinitions)) {
             for (ProcessDefinition temp : processDefinitions) {
-                // if (temp.getKey().equals(procDefId)) {
                 if (temp.getId().equals(processDefinitionId)) {
                     processDefinition = temp;
                     break;
@@ -196,15 +210,16 @@ public class ActProcessService {
             }
         }
 
+        if (processDefinition == null) {
+            return null;
+        }
         String resourceName = "";
         if (resourceType.equals("image")) {
             resourceName = processDefinition.getDiagramResourceName();
         } else if (resourceType.equals("xml")) {
             resourceName = processDefinition.getResourceName();
         }
-
-        InputStream resourceAsStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), resourceName);
-        return resourceAsStream;
+        return repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), resourceName);
     }
 
     /**
@@ -217,9 +232,7 @@ public class ActProcessService {
     public String deploy(String exportDir, String category, MultipartFile file) {
 
         String message = "";
-
         String fileName = file.getOriginalFilename();
-
         try {
             InputStream fileInputStream = file.getInputStream();
             Deployment deployment = null;
@@ -332,20 +345,19 @@ public class ActProcessService {
      * 导出图片文件到硬盘
      */
     public List<String> exportDiagrams(String exportDir) throws IOException {
-        List<String> files = new ArrayList<String>();
+
+        List<String> files = new ArrayList<>();
         List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().list();
 
         for (ProcessDefinition processDefinition : list) {
             String diagramResourceName = processDefinition.getDiagramResourceName();
             String key = processDefinition.getKey();
             int version = processDefinition.getVersion();
-            String diagramPath = "";
+            String diagramPath;
 
             InputStream resourceAsStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), diagramResourceName);
             byte[] b = new byte[resourceAsStream.available()];
 
-            @SuppressWarnings("unused")
-            int len = -1;
             resourceAsStream.read(b, 0, b.length);
             // create file if not exist
             String diagramDir = exportDir + "/" + key + "/" + version;

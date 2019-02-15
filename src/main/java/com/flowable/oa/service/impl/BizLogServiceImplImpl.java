@@ -26,9 +26,4 @@ public class BizLogServiceImplImpl extends BaseServiceImpl<BizLog> implements IB
 		bizlog.setBizId(workID);
 		return this.findByModel(bizlog, false);
 	}
-
-	@Override
-	public BizLog getBizLogById(String logId){
-		return this.selectByKey(logId);
-	}
 }

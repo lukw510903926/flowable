@@ -34,17 +34,9 @@ public class BizCounterUserServiceImplImpl extends BaseServiceImpl<BizCounterUse
 
     @Override
     @Transactional
-    public void deleteUser(BizCounterUser user) {
-
-        List<BizCounterUser> list = this.findBizCounterUser(null, user).getList();
-        list.forEach(counter -> this.deleteById(counter.getId()));
-    }
-
-    @Override
-    @Transactional
     public void saveUser(List<Map<String, String>> list, String bizId, String taskId) {
 
-        if (!CollectionUtils.isNotEmpty(list)) {
+        if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(map -> {
                 BizCounterUser user = new BizCounterUser();
                 user.setBizId(bizId);
@@ -64,7 +56,7 @@ public class BizCounterUserServiceImplImpl extends BaseServiceImpl<BizCounterUse
         BizCounterUser user = new BizCounterUser();
         user.setBizId(bizId);
         user.setTaskId(StringUtils.isBlank(taskId) ? "START" : taskId);
-        this.deleteUser(user);
+        this.deleteByModel(user);
         this.saveUser(list, bizId, taskId);
     }
 }

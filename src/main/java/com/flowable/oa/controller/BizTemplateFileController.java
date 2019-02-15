@@ -7,12 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.flowable.oa.service.IProcessDefinitionService;
 import com.flowable.oa.service.act.ActProcessService;
 import com.flowable.oa.util.ReflectionUtils;
 import com.flowable.oa.util.RestResult;
@@ -21,8 +17,6 @@ import com.flowable.oa.util.LoginUser;
 import com.flowable.oa.util.WebUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.flowable.engine.impl.persistence.entity.DeploymentEntity;
-import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +36,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.entity.BizTemplateFile;
 import com.flowable.oa.service.BizTemplateFileService;
 
+/**
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 19-2-15 下午11:10
+ **/
 @Controller
 @RequestMapping("/bizTemplateFile")
 public class BizTemplateFileController {
@@ -64,9 +66,7 @@ public class BizTemplateFileController {
         if (CollectionUtils.isNotEmpty(list)) {
             List<Map<String,Object>> result = new ArrayList<>();
             for (Object[] objects : list) {
-                ProcessDefinitionEntityImpl process = (ProcessDefinitionEntityImpl) objects[0];
-                Map<String, Object> item = ReflectionUtils.beanToMap(process);
-                result.add(item);
+                result.add(ReflectionUtils.beanToMap(objects[0]));
                 model.addAttribute("processList",result);
             }
         }

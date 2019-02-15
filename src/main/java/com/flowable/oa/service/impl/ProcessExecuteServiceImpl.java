@@ -71,8 +71,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     @Override
     public Map<String, Object> loadBizLogInput(String logId) {
 
-        BizLog logBean = logService.getBizLogById(logId);
-        Map<String, Object> results = new HashMap<String, Object>();
+        BizLog logBean = logService.selectByKey(logId);
+        Map<String, Object> results = new HashMap<>();
         if (logBean == null) {
             return results;
         }
@@ -570,7 +570,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             result[0] = "IMAGE";
             result[1] = processDefinitionService.viewProcessImage(bean.getProcessInstanceId());
         } else {
-            BizFile bean = bizFileService.getBizFileById(id);
+            BizFile bean = bizFileService.selectByKey(id);
             if (bean == null) {
                 throw new ServiceException("找不到附件");
             }

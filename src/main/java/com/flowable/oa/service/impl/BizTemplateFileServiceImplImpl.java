@@ -67,8 +67,7 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
         if (StringUtils.isNotEmpty(params.get("id"))) {
             templateFile.setId(params.get("id"));
         }
-        List<BizTemplateFile> list = this.findTemplateFlies(null, templateFile, false).getList();
-        return CollectionUtils.isEmpty(list) ? null : list.get(0);
+        return this.selectOne(templateFile);
     }
 
     @Override
@@ -77,11 +76,9 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
         List<BizTemplateFile> list = new ArrayList<>();
         if (!CollectionUtils.isEmpty(ids)) {
             ids.forEach(id -> {
-                if (StringUtils.isNotBlank(id)) {
-                    BizTemplateFile file = this.selectByKey(id);
-                    if (file != null) {
-                        list.add(file);
-                    }
+                BizTemplateFile file = this.selectByKey(id);
+                if (file != null) {
+                    list.add(file);
                 }
             });
         }

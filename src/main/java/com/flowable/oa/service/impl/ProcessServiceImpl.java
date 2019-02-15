@@ -108,7 +108,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             }
         }
         if (curreOp != null && task != null) {
-            result = new HashMap<String, Object>();
+            result = new HashMap<>();
             result.put("taskID", task.getId());
             result.put("curreOp", curreOp);
         }
@@ -142,7 +142,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
     private List<StartEvent> getStartActivityImpl(String tempId) {
 
-        List<StartEvent> list = new ArrayList<StartEvent>();
+        List<StartEvent> list = new ArrayList<>();
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(tempId).singleResult();
         if (processDefinition != null) {
             BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinition.getId());
@@ -158,7 +158,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     @Override
     public Map<String, String> findOutGoingTransNames(String taskID) {
 
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         Activity activity = this.getCurrentActivity(taskID);
         List<SequenceFlow> list = this.getOutgoingFlows(activity);
         if (!CollectionUtils.isEmpty(list)) {
@@ -187,7 +187,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
         Process process = bpmnModel.getProcesses().get(0);
         FlowElement flowElement = process.getFlowElement(task.getTaskDefinitionKey());
-        if (flowElement != null && flowElement instanceof Activity) {
+        if (flowElement instanceof Activity) {
             currentTask = (Activity) flowElement;
         }
         return currentTask;
@@ -201,7 +201,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      */
     private List<SequenceFlow> getOutgoingFlows(Activity activity) {
 
-        List<SequenceFlow> list = new ArrayList<SequenceFlow>();
+        List<SequenceFlow> list = new ArrayList<>();
         if (activity == null) {
             return list;
         }
@@ -240,7 +240,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         Activity activity = this.getCurrentActivity(taskID);
         Optional<FlowElementsContainer> parent = Optional.ofNullable(activity.getParentContainer());
         return parent.map(container -> {
-            List<FlowElement> list = new ArrayList<FlowElement>(container.getFlowElements());
+            List<FlowElement> list = new ArrayList<>(container.getFlowElements());
             return list.get(0).getId();
         }).orElse(null);
     }
@@ -293,7 +293,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             Task task = this.getTaskBean(taskID);
             Activity activity = this.getCurrentActivity(taskID);
             taskService.complete(task.getId(), variables);
-            variables.put("SYS_CURRENT_TASKKEY", task == null ? null : task.getTaskDefinitionKey());
+            variables.put("SYS_CURRENT_TASKKEY", task.getTaskDefinitionKey());
             executeCommand(processInstanceId, activity, variables);
             autoClaim(processInstanceId);
         } catch (Exception e) {
@@ -358,13 +358,13 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                         if (!CollectionUtils.isEmpty(list)) {
                             HistoricTaskInstance hti = list.get(0);
                             if (StringUtils.isNotBlank(hti.getAssignee())) {
-                            	taskService.unclaim(nextTask.getId());
+                                taskService.unclaim(nextTask.getId());
                                 taskService.claim(nextTask.getId(), hti.getAssignee());
                             }
                         }
                         // 如果该线为循环，则将新的任务转派给当前用户 // 如果该线为转派，则将新的任务转派给制定的用户或组
                     } else if (documentation.startsWith("command:repeat")) {
-                    	taskService.unclaim(nextTask.getId());
+                        taskService.unclaim(nextTask.getId());
                         taskService.claim(nextTask.getId(), WebUtil.getLoginUser().getUsername());
                     } else if (documentation.startsWith("command:transfer")) {
                         assignmentTask(nextTask, transfer_value, transfer_type);
@@ -401,7 +401,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         }
         boolean flag = claimRole(task, username);
         if (flag) {
-        	taskService.unclaim(taskID);
+            taskService.unclaim(taskID);
             taskService.claim(taskID, username);
         }
         return true;
@@ -536,7 +536,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     @Override
     public List<Task> getNextTaskInfo(String processInstanceId) {
 
-        List<Task> taskList = new ArrayList<Task>();
+        List<Task> taskList = new ArrayList<>();
         // 由于逻辑问题，当前先不处理下一步任务，只处理该任务是否已经结束
         ProcessInstance processInstance = this.getProcessInstance(processInstanceId);
         if (processInstance != null) {// 已经结束
@@ -614,10 +614,10 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         return definition.getVersion();
     }
 
-    public HistoryActivityFlow getHighLightedElement(ProcessDefinitionEntity processDefinitionEntity,
+    private HistoryActivityFlow getHighLightedElement(ProcessDefinitionEntity processDefinitionEntity,
                                                      List<HistoricActivityInstance> historicActivityInstances) {
         // 用以保存高亮的节点
-        List<String> activities = new ArrayList<String>();
+        List<String> activities = new ArrayList<>();
         historicActivityInstances.forEach(historicActivityInstance -> {
             historicActivityInstance.getActivityId();
             activities.add(historicActivityInstance.getActivityId());
@@ -630,13 +630,13 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     private List<String> getHighLightedFlows(ProcessDefinitionEntity processDefinitionEntity, List<HistoricActivityInstance> historicActivityInstances) {
 
         // 用以保存高亮的线flowId
-        List<String> highFlows = new ArrayList<String>();
+        List<String> highFlows = new ArrayList<>();
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionEntity.getId());
         Process process = bpmnModel.getProcesses().get(0);
         for (int i = 0; i < historicActivityInstances.size() - 1; i++) {
 
             FlowElement flowElement = process.getFlowElement(historicActivityInstances.get(i).getActivityId());
-            List<FlowElement> sameStartTimeNodes = new ArrayList<FlowElement>();// 用以保存后需开始时间相同的节点
+            List<FlowElement> sameStartTimeNodes = new ArrayList<>();// 用以保存后需开始时间相同的节点
             FlowElement nextFlowElement = process.getFlowElement(historicActivityInstances.get(i + 1).getActivityId());
             // 将后面第一个节点放在时间相同节点的集合里
             sameStartTimeNodes.add(nextFlowElement);
