@@ -1,11 +1,18 @@
 (function ($) {
     $.fn.extend({
+
+        /**
+         * 清空表单
+         */
         clearForm: function () {
             let $this = this;
             $($this).find('[name]').each(function () {
                 $(this).val('');
             });
         },
+        /**
+         * 获取表单数据
+         */
         getForm: function () {
             let param = {};
             let $this = this;
@@ -17,6 +24,10 @@
             });
             return param;
         },
+        /***
+         * 设置表单数据
+         * @param params
+         */
         setForm: function (params) {
             let $this = this;
             $($this).find('[name]').each(function () {
@@ -35,9 +46,9 @@
             let defaultMsg = '表单校验失败';
             $($this).find('[name]').each(function () {
                 $(this).siblings("i").remove();
-                if (this.required && ! $(this).validateRule()) {
+                if (this.required && !$(this).validateRule()) {
                     checkEmpty = true;
-                    let msg =  $(this).attr('message') ?  $(this).attr('message') : defaultMsg;
+                    let msg = $(this).attr('message') ? $(this).attr('message') : defaultMsg;
                     $(this).after("<i style='color:red;'>&nbsp;" + msg + "</i>");
                 }
             });
@@ -65,6 +76,10 @@
             return result;
         },
 
+        /**
+         * 文本校验
+         * @returns {boolean}
+         */
         text: function () {
 
             let ele = $(this);
@@ -84,20 +99,24 @@
             if (!_min && _max) {
                 _result = (_val.length <= _max);
             }
-            let _parttern = ele.attr('parttern');
-            if (_parttern) {
-                let _reg = new RegExp(_parttern);
+            let _pattern = ele.attr('pattern');
+            if (_pattern) {
+                let _reg = new RegExp(_pattern);
                 _result = _reg.test(_val) && _result;
             }
             return _result;
         },
+        /**
+         * 邮件
+         * @returns {*|boolean}
+         */
         email: function () {
 
             let ele = $(this);
             let _result = true;
             let _val = $.trim(ele.val());
-            let _parttern = ele.attr('parttern');
-            if (!_parttern) {
+            let _pattern = ele.attr('pattern');
+            if (!_pattern) {
                 let _reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
                 _result = _reg.test(_val);
             } else {
@@ -106,6 +125,10 @@
             return _result;
         },
 
+        /**
+         * 数字
+         * @returns {boolean}
+         */
         checkNum: function () {
             let ele = $(this);
             return !/^((([1-9]+\d*)?|\d?)(\.\d*)?)?$/.test(ele.value);
