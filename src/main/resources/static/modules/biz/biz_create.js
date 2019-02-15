@@ -54,11 +54,12 @@ biz.create = {
         return DraftBizData;
     },
     loadStatic: function (workInfo, saveUser) {
-        var $msgtitle = $("#msgtitle");
+
+        $("#msgtitle").text("提单人信息");
+        var list = [];
         switch (key) {
             case "eventManagement":
-                $msgtitle.text("报障人信息");
-                var list = [{
+                list.push({
                     id: "workNum",
                     alias: "工单号"
                 }, {
@@ -82,12 +83,11 @@ biz.create = {
                 }, {
                     id: "createTime",
                     alias: "故障发生时间"
-                }];
+                });
                 biz.create.setStatic(list, workInfo, saveUser);
                 break;
             default:
-                $msgtitle.text("申请人信息");
-                var list = [{
+                list.push({
                     id: "workNum",
                     alias: "工单号"
                 }, {
@@ -105,7 +105,7 @@ biz.create = {
                 }, {
                     id: "email",
                     alias: "邮箱地址"
-                }];
+                });
                 biz.create.setStatic(list, workInfo, saveUser);
         }
 

@@ -26,7 +26,7 @@ public class ActBizInfoDelayTimeServiceImplImpl extends BaseServiceImpl<ActBizIn
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public ActBizInfoDelayTime findActBizInfoByBizId(String bizId, String taskId) {
 
 		if (StringUtils.isBlank(bizId)) {
@@ -40,7 +40,7 @@ public class ActBizInfoDelayTimeServiceImplImpl extends BaseServiceImpl<ActBizIn
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<ActBizInfoDelayTime> findActBizInfoDelayTime(ActBizInfoDelayTime delayTime) {
 
 		return this.findByModel(delayTime, false);

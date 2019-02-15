@@ -19,7 +19,7 @@ import com.flowable.oa.entity.BizTimedTask;
 public class BizTimedTaskServiceImplImpl extends BaseServiceImpl<BizTimedTask> implements BizTimedTaskService {
 
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public void saveTimedTask(BizInfo bizInfo, BizInfoConf bizConf) {
 
 		BizTimedTask bizTimedTask = this.buildTimeTask(bizInfo, bizConf);
@@ -33,7 +33,7 @@ public class BizTimedTaskServiceImplImpl extends BaseServiceImpl<BizTimedTask> i
 
 	@Override
 	@Scheduled(cron = "0 20 23 * * ? ")
-	@Transactional(readOnly = false)
+	@Transactional
 	public void submitBizTimedTask() {
 
 		/*BizTimedTask bizTimedTask = new BizTimedTask();
@@ -61,7 +61,7 @@ public class BizTimedTaskServiceImplImpl extends BaseServiceImpl<BizTimedTask> i
 
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional
 	public void deleteTimedTask(String id) {
 
 		this.deleteById(id);

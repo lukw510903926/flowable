@@ -132,7 +132,6 @@ public class ProcessModelMgrController {
         ProcessVariable processValAbs = processValService.selectByKey(id);
         if (processValAbs == null) {
             processValAbs = new ProcessVariable();
-            processValAbs.setId(StringUtils.replace(UUID.randomUUID().toString(), "-", ""));
             isUpdate = false;
         }
         processValAbs.setProcessDefinitionId((String) reqParams.get("processId"));

@@ -597,9 +597,9 @@ biz.edit.form = {
         th.text("相关附件:");
         var td = $("<td colspan='3'></td>");
         var tdText = "<span class='fslFileUpload' inputfileclass='FileUploadInputFileClass'><div class='fslFileUpload'>" +
-            "<div class='FileUploadOperation'><img src='" + path + "/img/attach.gif' style='border-width:0px;'/>" +
+            "<div class='FileUploadOperation'><img src='" + path + "/images/attach.gif' style='border-width:0px;'/>" +
             "<a onclick='biz.edit.form.file.addFileInput(this)' style='padding-right: 6px;' data-toggle='modal' data-target='#selectFile' class='UploadButton'>继续添加</a>" +
-            "<img src='" + path + "/img/deleteAll.gif' style='border-width:0px;'/>" +
+            "<img src='" + path + "/images/deleteAll.gif' style='border-width:0px;'/>" +
             "<a onclick='biz.edit.form.file.removeFile(this)' class='RemoveButton'>移除附件</a></div></div></span>";
         td.html(tdText);
         if (data) {

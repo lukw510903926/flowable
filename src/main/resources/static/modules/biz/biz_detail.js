@@ -36,7 +36,7 @@ biz.detail = {
 
                 $("[name='base.bizId']").val(biz.detail.workInfo.id);
                 biz.detail.loadStatic(biz.detail.workInfo, biz.detail.createUser);
-                var _flag = typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") != -1) : false;
+                var _flag = typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") !== -1) : false;
                 biz.detail.loadProcessLabel(biz.detail.groups, _flag);
                 biz.detail.loadProcessData(biz.detail.serviceInfo);
                 biz.detail.loadWorkLogs(biz.detail.workLogs);
@@ -156,12 +156,13 @@ biz.detail = {
         }
     },
     loadStatic: function (workInfo, createUser) {
+
         var key = biz.detail.bizKey.split(":")[0];
-        var $msgtitle = $("#msgtitle");
+        $("#msgtitle").text("提单人信息");
+        var list=[];
         switch (key) {
             case "eventManagement":
-                $msgtitle.text("报障人信息");
-                var list = [{
+                list.push({
                     name: "workNum",
                     alias: "工单号"
                 }, {
@@ -188,12 +189,11 @@ biz.detail = {
                 }, {
                     name: "limitTime",
                     alias: "最迟解决时间"
-                }];
+                });
                 biz.detail.setStatic(list, workInfo, createUser);
                 break;
             default:
-                $msgtitle.text("申请人信息");
-                var list = [{
+               list.push({
                     name: "workNum",
                     alias: "工单号"
                 }, {
@@ -220,7 +220,7 @@ biz.detail = {
                 }, {
                     name: "limitTime",
                     alias: "最迟解决时间"
-                }];
+                });
                 //回显
                 biz.detail.setStatic(list, workInfo, createUser);
         }
@@ -243,20 +243,23 @@ biz.detail = {
         }
         view.appendTd();
     },
+
     loadWorkLogs: function (workLogs) {
 
         var mark = 1;
         for (var i in workLogs) {
+
+            let $workLogs = $("#workLogs");
             var div = $("<div class='import_form'>");
             var title = "<h2 class='white_tit'>处理流程：" + workLogs[i].taskName +
                 "<a class='drop'  role='button' data-toggle='collapse' href='#workLogs" + mark + "'></a></h2>";
             div.html(title);
-            $("#workLogs").append(div);
+            $workLogs.append(div);
             div = $("<div class='listtable_wrap panel-collapse collapse in'>");
             div.attr("id", "workLogs" + mark);
             var table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
             div.append(table);
-            $("#workLogs").append(div);
+            $workLogs.append(div);
             mark++;
 
             var logVars = biz.detail.logVars;

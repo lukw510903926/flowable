@@ -13,7 +13,7 @@ import com.flowable.oa.service.CountersignService;
 public class CountersignServiceImplImpl extends BaseServiceImpl<Countersign> implements CountersignService {
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<Countersign> findCountersign(Countersign countersign) {
 
 		return this.findByModel(countersign, false);

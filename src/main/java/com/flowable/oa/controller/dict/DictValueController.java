@@ -2,20 +2,23 @@ package com.flowable.oa.controller.dict;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.flowable.oa.entity.dict.DictType;
+import com.flowable.oa.util.DataGrid;
 import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.WebUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.flowable.oa.entity.dict.DictValue;
 import com.flowable.oa.service.dict.IDictValueService;
+
+import java.util.List;
 
 /**
  * @author lukw
@@ -28,8 +31,6 @@ public class DictValueController {
 
     @Autowired
     private IDictValueService dictValueService;
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping("/list/{typeId}")
     public String dictValues(@PathVariable("typeId") String typeId, Model model) {
@@ -68,17 +69,20 @@ public class DictValueController {
 
     @ResponseBody
     @RequestMapping("delete")
-    public RestResult<Object> delete(HttpServletRequest request, DictValue dictValue) {
+    public RestResult<Object> delete(@RequestBody List<String> list) {
 
-        WebUtil.getLoginUser(request);
-        this.dictValueService.deleteById(dictValue.getId());
+        this.dictValueService.deleteByIds(list);
         return RestResult.success();
     }
 
     @ResponseBody
     @RequestMapping("list")
-    public PageInfo<DictValue> findDictValue(PageInfo<DictValue> page, DictValue dictValue) {
+    public DataGrid<DictValue> findDictValue(PageInfo<DictValue> page, DictValue dictValue) {
 
-        return this.dictValueService.findByModel(page, dictValue, false);
+        PageInfo<DictValue> helper = this.dictValueService.findByModel(page, dictValue, false);
+        DataGrid<DictValue> grid = new DataGrid<>();
+        grid.setRows(helper.getList());
+        grid.setTotal(helper.getTotal());
+        return grid;
     }
 }

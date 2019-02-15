@@ -10,11 +10,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.flowable.oa.entity.dict.DictType;
 import com.flowable.oa.service.dict.IDictTypeService;
+
+import java.util.List;
 
 /**
  * @author lukw
@@ -58,10 +61,9 @@ public class DictTypeController {
 
     @ResponseBody
     @RequestMapping("delete")
-    public RestResult<Object> delete(HttpServletRequest request, DictType dictType) {
+    public RestResult<Object> delete(@RequestBody List<String> list) {
 
-        WebUtil.getLoginUser(request);
-        this.dictTypeService.delete(dictType);
+        this.dictTypeService.delete(list);
         return RestResult.success();
     }
 

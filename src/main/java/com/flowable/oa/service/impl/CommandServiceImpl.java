@@ -49,7 +49,7 @@ public class CommandServiceImpl implements CommandService {
 	private Logger logger = LoggerFactory.getLogger(CommandServiceImpl.class);
 
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public BizInfo jumpCommand(Map<String,Object> params) {
 
 		try {

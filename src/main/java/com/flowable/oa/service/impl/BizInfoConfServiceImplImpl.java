@@ -29,7 +29,7 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
 	private BizInfoConfMapper bizInfoConfDao;
 
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public void saveOrUpdate(BizInfoConf bizInfoConf) {
 
 		BizInfoConf example = new BizInfoConf();
@@ -68,7 +68,6 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public BizInfoConf getMyWork(String bizId) {
 
 		if (StringUtils.isNotBlank(bizId)) {

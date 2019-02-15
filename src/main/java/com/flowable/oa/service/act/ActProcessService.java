@@ -213,7 +213,7 @@ public class ActProcessService {
      * @param file
      * @return
      */
-    @Transactional(readOnly = false)
+    @Transactional
     public String deploy(String exportDir, String category, MultipartFile file) {
 
         String message = "";
@@ -261,7 +261,7 @@ public class ActProcessService {
     /**
      * 设置流程分类
      */
-    @Transactional(readOnly = false)
+    @Transactional
     public void updateCategory(String procDefId, String category) {
         repositoryService.setProcessDefinitionCategory(procDefId, category);
     }
@@ -269,7 +269,7 @@ public class ActProcessService {
     /**
      * 挂起、激活流程实例
      */
-    @Transactional(readOnly = false)
+    @Transactional
     public String updateState(String state, String processDefinitionId) {
         ProcessDefinition processDefinition = repositoryService.getProcessDefinition(processDefinitionId);
         if (processDefinition.isSuspended() && state.equals("suspend")) {
@@ -296,7 +296,7 @@ public class ActProcessService {
      * @throws UnsupportedEncodingException
      * @throws XMLStreamException
      */
-    @Transactional(readOnly = false)
+    @Transactional
     public Model convertToModel(String procDefId) throws UnsupportedEncodingException, XMLStreamException {
 
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(procDefId).singleResult();
@@ -375,7 +375,7 @@ public class ActProcessService {
      *
      * @param deploymentId 流程部署ID
      */
-    @Transactional(readOnly = false)
+    @Transactional
     public void deleteDeployment(String deploymentId) {
         repositoryService.deleteDeployment(deploymentId, true);
     }
@@ -386,7 +386,7 @@ public class ActProcessService {
      * @param procInsId    流程实例ID
      * @param deleteReason 删除原因，可为空
      */
-    @Transactional(readOnly = false)
+    @Transactional
     public void deleteProcIns(String procInsId, String deleteReason) {
         runtimeService.deleteProcessInstance(procInsId, deleteReason);
     }

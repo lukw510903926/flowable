@@ -16,9 +16,11 @@ import java.util.Map;
 import java.util.Set;
 import javax.persistence.Transient;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -809,17 +811,13 @@ public class ReflectionUtils {
 	 * @param object
 	 */
 	public static Map<String,Object> beanToMap(Object object){
-		
-		try {
-			return PropertyUtils.describe(object);
-		} catch (IllegalAccessException e) {
-			logger.info("转换失败 :{}",e.getLocalizedMessage());
-		} catch (InvocationTargetException e) {
-			logger.info("转换失败 :{}",e.getLocalizedMessage());
-		} catch (NoSuchMethodException e) {
-			logger.info("转换失败 :{}",e.getLocalizedMessage());
+
+		HashMap<String, Object> item = new HashMap<>();
+		List<Field> fields = getFields(object);
+		if(CollectionUtils.isNotEmpty(fields)){
+			fields.forEach(field -> item.put(field.getName(),getFieldValue(object,field.getName())));
 		}
-		return new HashMap<String, Object>();
+		return item;
 	}
 	
 	/**

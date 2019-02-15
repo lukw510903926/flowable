@@ -3,24 +3,28 @@ package com.flowable.oa.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONObject;
+import com.flowable.oa.util.ReflectionUtils;
 import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.DataGrid;
-import com.flowable.oa.util.ReflectionUtils;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.impl.persistence.entity.DeploymentEntity;
-import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
@@ -70,9 +74,9 @@ public class ActProcessController {
             List<Map<String, Object>> result = new ArrayList<>();
             List<Object[]> tempResult = actProcessService.processList();
             if (CollectionUtils.isNotEmpty(tempResult)) {
-                List<Object[]> list = tempResult.stream().skip((pageNum-1) * rows).limit(rows).collect(Collectors.toList());
+                List<Object[]> list = tempResult.stream().skip((pageNum - 1) * rows).limit(rows).collect(Collectors.toList());
                 for (Object[] objects : list) {
-                    ProcessDefinitionEntity process = (ProcessDefinitionEntity) objects[0];
+                    ProcessDefinitionEntityImpl process = (ProcessDefinitionEntityImpl) objects[0];
                     DeploymentEntity deployment = (DeploymentEntity) objects[1];
                     Map<String, Object> item = ReflectionUtils.beanToMap(process);
                     item.put("deploymentTime", deployment.getDeploymentTime());

@@ -4,12 +4,11 @@
     <head>
         <title>参数设置</title>
         <script type="text/javascript">
-            var processId = [[${processDefinitionId}]];
-            var version = [[${version}]];
-            var taskId = [[${taskId}]];
-            var updateId = [[${vId}]];
+            var processId = '[[${processDefinitionId}]]';
+            var version = '[[${version}]]';
+            var taskId = '[[${taskId}]]';
+            var updateId = '[[${vId}]]';
         </script>
-        <script type="text/javascript" th:src="@{modules/process/variable_edit.js}"></script>
     </head>
 
     <body>
@@ -154,6 +153,7 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript" th:src="@{/modules/process/variable_edit.js}"></script>
     </body>
 </div>
 </html>

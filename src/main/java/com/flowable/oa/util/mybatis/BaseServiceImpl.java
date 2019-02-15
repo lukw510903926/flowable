@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
 
@@ -56,21 +57,25 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
+    @Transactional
     public int save(T entity) {
         return mapper.insert(entity);
     }
 
     @Override
+    @Transactional
     public int deleteById(String key) {
         return mapper.deleteByPrimaryKey(key);
     }
 
     @Override
+    @Transactional
     public int deleteByModel(T t) {
         return mapper.delete(t);
     }
 
     @Override
+    @Transactional
     public void deleteByIds(List<String> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
@@ -81,11 +86,13 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
+    @Transactional
     public int updateAll(T entity) {
         return mapper.updateByPrimaryKey(entity);
     }
 
     @Override
+    @Transactional
     public int updateNotNull(T entity) {
         return mapper.updateByPrimaryKeySelective(entity);
     }

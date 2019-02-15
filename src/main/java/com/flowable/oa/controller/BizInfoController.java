@@ -75,7 +75,7 @@ public class BizInfoController {
 	public String queryView(@PathVariable("action") String action, Model model) {
 
 		model.addAttribute("action", action);
-		List<String> processList = new ArrayList<String>();
+		List<String> processList = new ArrayList<>();
 		List<ProcessDefinition> list = actProcessService.findProcessDefinition(null);
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (ProcessDefinition processDefinition : list) {
@@ -96,19 +96,15 @@ public class BizInfoController {
 	@RequestMapping(value = "biz/create/{key}")
 	public String createView(@PathVariable String key, String bizId, Model model, HttpServletRequest request) {
 
-		model.addAttribute("key", key);
 		WebUtil.getLoginUser(request);
-		Map<String, String> userMap = new HashMap<String, String>();
-		userMap.put("username", "admin");
-		userMap.put("fullname", "管理员");
-		model.addAttribute("createUser", JSONObject.toJSON(userMap));
+		model.addAttribute("key", key);
+		model.addAttribute("createUser", WebUtil.getLoginUser());
 		model.addAttribute("bizId", bizId);
 		return "modules/biz/biz_create";
 	}
 
 	@RequestMapping(value = "biz/{id}", method = RequestMethod.GET)
-	public String detailView(@PathVariable String id, Model model, HttpServletRequest request,
-			HttpServletResponse response) {
+	public String detailView(@PathVariable String id, Model model, HttpServletRequest request) {
 
 		model.addAttribute("id", id);
 		LoginUser createUser = WebUtil.getLoginUser(request);
@@ -149,5 +145,4 @@ public class BizInfoController {
 		WebUtil.getLoginUser(request);
 		return processExecuteService.queryWorkOrder(bizId);
 	}
-
 }
