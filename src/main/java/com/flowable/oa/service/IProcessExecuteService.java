@@ -7,6 +7,7 @@ import java.util.Map;
 import com.flowable.oa.entity.BizInfo;
 import com.flowable.oa.entity.BizInfoConf;
 import com.flowable.oa.entity.ProcessVariable;
+import com.flowable.oa.vo.BizInfoVo;
 import org.flowable.task.api.Task;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -123,7 +124,7 @@ public interface IProcessExecuteService {
      * @param bizId
      * @return
      */
-    Map<String,Object> detail(String bizId);
+    BizInfoVo detail(String bizId);
 
     /**
      * 下载或查看文件

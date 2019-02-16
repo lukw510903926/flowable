@@ -11,6 +11,8 @@ import com.flowable.oa.service.BizInfoConfService;
 import com.flowable.oa.service.auth.ISystemUserService;
 import com.flowable.oa.util.*;
 import com.flowable.oa.util.exception.ServiceException;
+import com.flowable.oa.vo.BizInfoVo;
+import org.apache.commons.collections.BagUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -552,16 +554,16 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     }
 
     @Override
-    public Map<String, Object> detail(String bizId) {
+    public BizInfoVo detail(String bizId) {
 
-        Map<String, Object> result = new HashMap<>();
         BizInfo bizInfo = this.bizInfoService.selectByKey(bizId);
         if (bizInfo == null) {
             throw new ServiceException("工单不存在");
         }
-        result.put("bizInfo", bizInfo);
-        result.put("$currentTaskName", bizInfo.getTaskName());
-        result.put("$createUser", this.sysUserService.getUserByUsername(bizInfo.getCreateUser()));
+        BizInfoVo bizInfoVo = new BizInfoVo();
+        bizInfoVo.setBizInfo(bizInfo);
+        bizInfoVo.setCurrentTaskName(bizInfo.getTaskName());
+        bizInfoVo.setCreateUser(this.sysUserService.getUserByUsername(bizInfo.getCreateUser()));
         List<BizLog> bizLogs = this.logService.loadBizLogs(bizId);
         if (CollectionUtils.isNotEmpty(bizLogs)) {
             List<Map<String, Object>> logs = new ArrayList<>();
@@ -573,28 +575,26 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 logs.add(logInstances);
 
             });
-            result.put("logs", logs);
+            bizInfoVo.setLogs(logs);
         }
         BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(bizId);
         String taskId = Optional.ofNullable(bizInfoConf).map(BizInfoConf::getTaskId).orElse(null);
         String currentOp = Optional.ofNullable(taskId).map(task -> processDefinitionService.getWorkAccessTask(task, WebUtil.getLoginUser().getUsername())).orElse(null);
-        result.put("CURRE_OP", currentOp);
-        List<ProcessVariable> currentVariables = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
         if (Constants.HANDLE.equalsIgnoreCase(currentOp)) {
-            result.put("currentVariables", currentVariables);
+            bizInfoVo.setCurrentVariables(loadProcessVariables(bizInfo, bizInfo.getTaskDefKey()));
             Map<String, String> buttons = processDefinitionService.findOutGoingTransNames(taskId);
             if (MapUtils.isEmpty(buttons)) {
                 buttons = new HashMap<>();
                 buttons.put("submit", "提交");
             }
-            result.put("SYS_BUTTON", buttons);
+            bizInfoVo.setButtons(buttons);
         } else if (Constants.SIGN.equalsIgnoreCase(currentOp)) {
             Map<String, String> buttons = new HashMap<>(1);
             buttons.put(Constants.SIGN, "签收");
-            result.put("SYS_BUTTON", buttons);
+            bizInfoVo.setButtons(buttons);
         }
-        result.put("$currentUser", WebUtil.getLoginUser());
-        return result;
+        bizInfoVo.setCurrentUser(WebUtil.getLoginUser());
+        return bizInfoVo;
     }
 
     /**

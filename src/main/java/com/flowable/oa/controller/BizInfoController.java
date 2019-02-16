@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.flowable.oa.util.Constants;
 import com.flowable.oa.util.LoginUser;
 import com.flowable.oa.util.WebUtil;
+import com.flowable.oa.vo.BizInfoVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -127,7 +128,7 @@ public class BizInfoController {
 
     @ResponseBody
     @GetMapping("/bizInfo/detail/{bizId}")
-    public Map<String,Object> detail(@PathVariable("bizId")String bizId){
+    public BizInfoVo detail(@PathVariable("bizId")String bizId){
 
         return this.processExecuteService.detail(bizId);
     }
