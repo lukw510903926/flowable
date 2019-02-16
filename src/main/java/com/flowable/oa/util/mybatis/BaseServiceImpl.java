@@ -3,6 +3,7 @@ package com.flowable.oa.util.mybatis;
 import com.flowable.oa.util.ReflectionUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +35,6 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     @Autowired
     protected Mapper<T> mapper;
 
-    public Mapper<T> getMapper() {
-        return mapper;
-    }
-
     @Override
     public List<T> selectAll() {
 
@@ -62,11 +59,6 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
         return this.mapper.select(entity);
     }
 
-    @Override
-    @Transactional
-    public int save(T entity) {
-        return mapper.insert(entity);
-    }
 
     @Override
     @Transactional
@@ -88,6 +80,24 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
             for (String key : list) {
                 this.mapper.deleteByPrimaryKey(key);
             }
+        }
+    }
+
+    @Override
+    @Transactional
+    public int save(T entity) {
+        return mapper.insert(entity);
+    }
+
+    @Override
+    @Transactional
+    public void saveOrUpdate(T entity) {
+
+        String key = ReflectionUtils.getter(entity, "id") + "";
+        if (StringUtils.isBlank(key)) {
+            this.save(entity);
+        } else {
+            this.updateNotNull(entity);
         }
     }
 

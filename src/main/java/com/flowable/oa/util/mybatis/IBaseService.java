@@ -28,6 +28,8 @@ public interface IBaseService<T> {
      */
     int save(T entity);
 
+    void saveOrUpdate(T entity);
+
     /**
      * 根据key删除
      *
