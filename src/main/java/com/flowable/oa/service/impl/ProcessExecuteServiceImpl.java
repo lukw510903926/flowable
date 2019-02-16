@@ -6,10 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
+import com.flowable.oa.entity.auth.SystemUser;
 import com.flowable.oa.service.BizInfoConfService;
 import com.flowable.oa.service.auth.ISystemUserService;
 import com.flowable.oa.util.*;
 import com.flowable.oa.util.exception.ServiceException;
+import jdk.nashorn.internal.ir.LiteralNode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -417,9 +419,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             if (handleUser.startsWith(Constants.BIZ_GROUP)) {
                 String group = handleUser.replace(Constants.BIZ_GROUP, "");
                 if (StringUtils.isNotBlank(group)) {
-                    List<String> userNames = sysUserService.findUserByRole(new SystemRole(null, group));
-                    if (CollectionUtils.isNotEmpty(userNames)) {
-                        userNames.stream().filter(StringUtils::isNotBlank).forEach(list::add);
+                    List<SystemUser> systemUsers = sysUserService.findUserByRole(new SystemRole(null, group));
+                    if (CollectionUtils.isNotEmpty(systemUsers)) {
+                        systemUsers.stream().map(SystemUser::getUsername).filter(StringUtils::isNotBlank).forEach(list::add);
                     }
                 }
             } else {

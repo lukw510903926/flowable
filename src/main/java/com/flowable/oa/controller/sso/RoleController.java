@@ -1,12 +1,18 @@
 package com.flowable.oa.controller.sso;
 
+import com.flowable.oa.service.auth.ISystemRoleService;
 import com.flowable.oa.service.auth.ISystemUserService;
+import com.flowable.oa.util.DataGrid;
+import com.flowable.oa.util.RestResult;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import com.flowable.oa.entity.auth.SystemRole;
 import com.flowable.oa.entity.auth.SystemUser;
+
+import java.util.List;
 
 /**
  * <p>
@@ -22,6 +28,9 @@ public class RoleController {
 
 	@Autowired
 	private ISystemUserService sysUserService;
+
+	@Autowired
+	private ISystemRoleService systemRoleService;
 	
 	@RequestMapping("findUser")
 	public Object findUser(){
@@ -31,7 +40,54 @@ public class RoleController {
 	
 	@RequestMapping("/loadUsersByUserName")
 	public SystemUser loadUsersByUserName(String userName){
-		
+
 		return this.sysUserService.getUserByUsername(userName);
+	}
+
+	@GetMapping("/index")
+	public String index() {
+
+		return "modules/sso/role/index";
+	}
+
+	@GetMapping("/info/edit/{roleId}")
+	public String edit(@PathVariable("roleId") String roleId, Model model) {
+
+		model.addAttribute("roleId", roleId);
+		return "modules/sso/role/edit";
+	}
+
+	@ResponseBody
+	@GetMapping("/info/{roleId}")
+	public SystemRole info(@PathVariable("roleId") String roleId) {
+
+		return this.systemRoleService.selectByKey(roleId);
+	}
+
+	@ResponseBody
+	@PostMapping("/save")
+	public RestResult<SystemRole> save(SystemRole systemRole) {
+
+		this.systemRoleService.saveOrUpdate(systemRole);
+		return RestResult.success(systemRole);
+	}
+
+	@ResponseBody
+	@PostMapping("/delete")
+	public RestResult<Object> delete(@RequestBody List<String> list) {
+
+		this.systemRoleService.deleteByIds(list);
+		return RestResult.success();
+	}
+
+	@ResponseBody
+	@PostMapping("/list")
+	public DataGrid<SystemRole> list(PageInfo<SystemRole> pageInfo,SystemRole systemRole){
+
+		PageInfo<SystemRole> page = this.systemRoleService.findByModel(pageInfo, systemRole, true);
+		DataGrid<SystemRole> dataGrid = new DataGrid<>();
+		dataGrid.setRows(page.getList());
+		dataGrid.setTotal(page.getTotal());
+		return dataGrid;
 	}
 }

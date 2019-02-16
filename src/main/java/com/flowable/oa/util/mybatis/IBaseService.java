@@ -18,6 +18,8 @@ public interface IBaseService<T> {
 
     T selectOne(T entity);
 
+    List<T> select(T entity);
+
     /**
      * 保存
      *

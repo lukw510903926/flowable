@@ -255,8 +255,6 @@ public class ActProcessService {
 
             // 设置流程分类
             for (ProcessDefinition processDefinition : list) {
-                // ActUtils.exportDiagramToFile(repositoryService,
-                // processDefinition, exportDir);
                 repositoryService.setProcessDefinitionCategory(processDefinition.getId(), category);
                 message += "部署成功，流程ID=" + processDefinition.getId() + "<br/>";
             }
@@ -315,7 +313,7 @@ public class ActProcessService {
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(procDefId).singleResult();
         InputStream bpmnStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), processDefinition.getResourceName());
         XMLInputFactory xif = XMLInputFactory.newInstance();
-        InputStreamReader in = new InputStreamReader(bpmnStream, "UTF-8");
+        InputStreamReader in = new InputStreamReader(bpmnStream, StandardCharsets.UTF_8);
         XMLStreamReader xtr = xif.createXMLStreamReader(in);
         BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
 

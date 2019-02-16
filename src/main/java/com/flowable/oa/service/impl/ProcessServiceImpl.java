@@ -1,12 +1,9 @@
 package com.flowable.oa.service.impl;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import com.flowable.oa.service.auth.ISystemRoleService;
 import com.flowable.oa.service.auth.ISystemUserService;
 import com.flowable.oa.util.LoginUser;
 import com.flowable.oa.util.ReflectionUtils;
@@ -77,6 +74,9 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     @Autowired
     private ISystemUserService systemUserService;
 
+    @Autowired
+    private ISystemRoleService systemRoleService;
+
     @Override
     public Map<String, Object> getActivityTask(BizInfo bean, LoginUser user) {
 
@@ -95,7 +95,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             task = taskList.get(0);
             curreOp = Constants.HANDLE;
         } else {
-            List<String> roles = systemUserService.findUserRoles(user.getUsername());
+            List<String> roles = systemRoleService.findUserRoles(user.getUsername());
             if (!CollectionUtils.isEmpty(roles)) {
                 taskList = taskService.createTaskQuery().taskCandidateGroupIn(roles).list();
                 if (!CollectionUtils.isEmpty(taskList)) {
@@ -144,9 +144,8 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
         List<StartEvent> list = new ArrayList<>();
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(tempId).singleResult();
-        if (processDefinition != null) {
-            BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinition.getId());
-            List<Process> processes = bpmnModel.getProcesses();
+        List<Process> processes = Optional.ofNullable(processDefinition).map(definition -> repositoryService.getBpmnModel(definition.getId())).map(BpmnModel::getProcesses).orElse(new ArrayList<>());
+        if (!CollectionUtils.isEmpty(processes)) {
             processes.forEach(process -> list.addAll(process.findFlowElementsOfType(StartEvent.class)));
         }
         return list;
@@ -162,11 +161,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         Activity activity = this.getCurrentActivity(taskID);
         List<SequenceFlow> list = this.getOutgoingFlows(activity);
         if (!CollectionUtils.isEmpty(list)) {
-            list.forEach(sequence -> {
-                if (StringUtils.isNotBlank(sequence.getName())) {
-                    result.put(sequence.getId(), sequence.getName());
-                }
-            });
+            list.stream().filter(sequenceFlow -> StringUtils.isNotBlank(sequenceFlow.getName())).forEach(sequence -> result.put(sequence.getId(), sequence.getName()));
         }
         return result;
     }
@@ -258,18 +253,18 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         if (CollectionUtils.isEmpty(list)) {
             return null;
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         for (HistoricTaskInstance hti : list) {
             if (hti.getEndTime() == null) {
                 continue;
             }
             String tid = hti.getTaskDefinitionKey();
-            if (sb.toString().endsWith("," + tid)) {
+            if (builder.toString().endsWith("," + tid)) {
                 continue;
             }
-            sb.append("," + hti.getTaskDefinitionKey());
+            builder.append("," + hti.getTaskDefinitionKey());
         }
-        return sb.toString();
+        return builder.toString();
     }
 
     /**
@@ -339,7 +334,8 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         if (StringUtils.isNotEmpty(buttonValue)) { // 获取当前任务的流出，并判断是否为当前活动任务
             ProcessInstance processInstance = this.getProcessInstance(processInstanceId);
             if (processInstance == null) {
-                return true;// 流程已结束
+                // 流程已结束
+                return true;
             }
             Task nextTask = this.getNextTaskInfo(processInstanceId).get(0);
             List<SequenceFlow> outgoingFlows = this.getOutgoingFlows(activity);
@@ -413,7 +409,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         logger.info("group :" + list);
         boolean flag = false;
         if (!CollectionUtils.isEmpty(list)) {
-            List<String> roles = systemUserService.findUserRoles(username);
+            List<String> roles = systemRoleService.findUserRoles(username);
             logger.info("user roles :" + roles);
             for (String group : list) {
                 if (roles.contains(group)) {
@@ -475,7 +471,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     public List<String> getTaskCandidateGroup(Task task) {
 
         List<IdentityLink> links = taskService.getIdentityLinksForTask(task.getId());
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (!CollectionUtils.isEmpty(links)) {
             for (IdentityLink il : links) {
                 if ("candidate".equals(il.getType())) {
@@ -495,11 +491,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         List<String> groups = this.getTaskCandidateGroup(task);
         if (!CollectionUtils.isEmpty(groups)) {
-            for (String group : groups) {
-                if (StringUtils.isNotBlank(group)) {
-                    taskService.deleteCandidateGroup(task.getId(), group);
-                }
-            }
+            groups.stream().filter(StringUtils::isNotBlank).forEach(group -> taskService.deleteCandidateGroup(task.getId(), group));
         }
         taskService.addCandidateUser(task.getId(), WebUtil.getLoginUser().getUsername());
     }
@@ -513,11 +505,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         List<String> groups = getTaskCandidateGroup(task);
         if (!CollectionUtils.isEmpty(groups)) {
             try {
-                for (String group : groups) {
-                    if (StringUtils.isNotBlank(group)) {
-                        taskService.deleteCandidateGroup(task.getId(), group);
-                    }
-                }
+                groups.stream().filter(StringUtils::isNotBlank).forEach(group -> taskService.deleteCandidateGroup(task.getId(), group));
                 taskService.unclaim(task.getId());
             } catch (Exception e) {
                 logger.error("任务签收失败 : {}", e);
@@ -525,11 +513,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             }
         }
         String[] temps = toAssignment.split(",");
-        for (String t : temps) {
-            if (StringUtils.isNotEmpty(t)) {
-                taskService.addCandidateGroup(task.getId(), t);
-            }
-        }
+        Arrays.stream(temps).filter(StringUtils::isNotBlank).forEach(group -> taskService.addCandidateGroup(task.getId(), group));
         return true;
     }
 
@@ -545,14 +529,12 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                 return taskList;
             }
             for (Task task : tasks) {
-                StringBuffer groups = new StringBuffer();
+                StringBuilder groups = new StringBuilder();
                 Task taskCopy = new TaskEntityImpl();
                 ReflectionUtils.copyBean(task, taskCopy);
                 if (StringUtils.isEmpty(task.getAssignee())) {
                     List<String> list = getTaskCandidateGroup(task);
-                    for (String group : list) {
-                        groups.append(group + ",");
-                    }
+                    list.stream().filter(StringUtils::isNotBlank).forEach(group -> groups.append(group).append(","));
                     if (StringUtils.isNotBlank(groups.toString())) {
                         taskCopy.setAssignee(Constants.BIZ_GROUP + groups.deleteCharAt(groups.lastIndexOf(",")));
                     }
@@ -615,7 +597,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     }
 
     private HistoryActivityFlow getHighLightedElement(ProcessDefinitionEntity processDefinitionEntity,
-                                                     List<HistoricActivityInstance> historicActivityInstances) {
+                                                      List<HistoricActivityInstance> historicActivityInstances) {
         // 用以保存高亮的节点
         List<String> activities = new ArrayList<>();
         historicActivityInstances.forEach(historicActivityInstance -> {
