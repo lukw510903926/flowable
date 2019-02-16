@@ -57,7 +57,7 @@ public class BizInfoController {
 
     @ResponseBody
     @RequestMapping("/biz/process/status")
-    public List<String> getProcessStatus(ProcessDefinition processDefinition) {
+    public List<String> getProcessStatus(ProcessDefinitionEntityImpl processDefinition) {
 
         List<ProcessDefinition> processList = actProcessService.findProcessDefinition(null);
         return this.getProcessStatus(processList, processDefinition);

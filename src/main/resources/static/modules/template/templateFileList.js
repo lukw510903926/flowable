@@ -6,7 +6,6 @@ $(function () {
 template.file = {
 
     init: function () {
-        $('#flowSelect1').select2();
         template.file.flowCombobox($("[name='flowName']"));
         template.file.loadTable();
     },
@@ -64,18 +63,16 @@ template.file = {
     flowCombobox: function (ele) {
 
         if (processList) {
+            ele.empty();
             var option = $("<option>");
-            option.text("请选择");
-            option.val("");
+            option.html("请选择");
             ele.append(option);
             processList.forEach(function (entity) {
-                var option = $("<option></option>>");
-                option.text(entity.name);
+                var option = $("<option></option>");
+                option.html(entity.name);
                 option.val(entity.name);
                 ele.append(option);
             });
-            $('.selectpicker').selectpicker('render');
-            $('.selectpicker').selectpicker('refresh');
         }
     },
 

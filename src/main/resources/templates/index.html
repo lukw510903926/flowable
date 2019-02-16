@@ -10,11 +10,8 @@
         .left {
             width: 220px;
             float: left;
-            height: 100vh;
-            border-color: #fff;
-            color: white;
+            background-color: #001529;
             text-align: center;
-            margin-top: 10px;
         }
 
         .content {
@@ -27,8 +24,8 @@
 <body>
 <div class="container-fluid">
     <div th:include="top.html"></div>
-    <div class='left' th:include="menu.html"></div>
-    <div class="content" th:include="::content"></div>
+        <div class='left' th:include="menu.html"></div>
+        <div class="content" style="background-color: #FFFFFF" th:include="::content"></div>
 </div>
 </body>
 <script type="text/javascript" th:src="@{/modules/index/office_index.js}"></script>
