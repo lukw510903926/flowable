@@ -1,5 +1,6 @@
 package com.flowable.oa.dao.auth;
 
+import com.flowable.oa.entity.auth.SysUserRole;
 import com.flowable.oa.util.mybatis.MyMapper;
 
 /**
@@ -10,5 +11,5 @@ import com.flowable.oa.util.mybatis.MyMapper;
  * @email 13507615840@163.com
  * @since 2019/2/16 13:11
  **/
-public interface SysUserRoleMapper extends MyMapper<SysUserRoleMapper> {
+public interface SysUserRoleMapper extends MyMapper<SysUserRole> {
 }
