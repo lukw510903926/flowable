@@ -14,62 +14,20 @@
             border-color: #fff;
             color: white;
             text-align: center;
-            margin-top: 15px;
+            margin-top: 10px;
         }
-        .content{
+
+        .content {
             width: calc(100% - 220px);
             float: left;
-            margin-top: 15px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 <div class="container-fluid">
-    <div class='left'>
-        <!--一级菜单-->
-        <ul class="list-unstyled sidebar-nav1">
-            <li class="active">
-                <a class="mu collapsed" data-toggle="collapse" href="#ul0"><span class="pull-right">
-                    <i class="icon-chevron-up"></i></span><i class="ico-menu mrr5"></i>通用功能
-                </a>
-                <!--三级菜单-->
-                <ul id="ul0" class="list-unstyled sidebar-nav3 collapse in">
-                    <li><a class="mu3" href="/biz/list/myWork">统一待办</a></li>
-                    <li><a class="mu3" href="/biz/list/myTemp">工单草稿</a></li>
-                    <li><a class="mu3" href="/biz/list/myCreate">已创建工单</a></li>
-                    <li><a class="mu3" href="/biz/list/myHandle">已处理工单</a></li>
-                    <li><a class="mu3" href="/biz/list/all">工单查询</a></li>
-                </ul>
-            </li>
-            <li>
-                <a class="mu collapsed" data-toggle="collapse" href="#ul4"><span class="pull-right">
-                    <i class="icon-chevron-down"></i></span><i class="ico-menu mrr5"></i>运维流程创建
-                </a>
-                <ul id="ul4" class="list-unstyled sidebar-nav2 collapse">
-                    <li><a class="mu2" href="/biz/create/eventManagement" target="_blank"><i class="ico-dot mrr5"></i>事件管理</a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="mu collapsed" data-toggle="collapse" href="#ul5"><span class="pull-right"><i
-                        class="icon-chevron-down"></i></span><i class="ico-menu mrr5"></i>运维流程管理</a>
-                <ul id="ul5" class="list-unstyled sidebar-nav2 collapse">
-                    <li><a class="mu2" href="/model"><i class="ico-dot mrr5"></i>模型列表</a></li>
-                    <li><a class="mu2" href="/process/"><i class="ico-dot mrr5"></i>流程列表</a></li>
-                </ul>
-            </li>
-            <li>
-                <a class="mu active" data-toggle="collapse" href="#ul6"><span class="pull-right">
-                    <i class="icon-chevron-down"></i></span><i class="ico-menu mrr5"></i>运维流程配置
-                </a>
-                <ul id="ul6" class="list-unstyled sidebar-nav2 collapse">
-                    <li class="attr"><a class="mu2" href="/dictType/dicts"><i class="ico-dot mrr5"></i>字典管理</a></li>
-                    <li class="attr"><a class="mu2" href="/bizTemplateFile/index"><i class="ico-dot mrr5"></i>模版管理</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
+    <div th:include="top.html"></div>
+    <div class='left' th:include="menu.html"></div>
     <div class="content" th:include="::content"></div>
 </div>
 </body>

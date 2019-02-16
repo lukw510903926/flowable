@@ -129,7 +129,7 @@
 
 .panel-nor .panel-heading {
     background: #52a9ff;
-    border: 1px solid #1b8cf2;
+    border: 1px solid #2E363F;
     line-height: 20px;
     color: #fff;
     font-size: 14px;
@@ -153,7 +153,7 @@
 
 .panel-ex .panel-heading {
     position: relative;
-    background: #1b8cf2;
+    background: #2E363F;
     height: 31px;
     line-height: 20px;
     color: #fff;
@@ -224,7 +224,7 @@
 }
 
 .nor-list li a.item-link:hover {
-    color: #1b8cf2;
+    color: #2E363F;
 }
 
 /*标签页*/
@@ -264,7 +264,7 @@
 .nor-tabs > li.active > a, .nor-tabs > li.active > a:focus, .nor-tabs > li.active > a:hover {
     border: 1px solid transparent;
     border-right-color: #bdc6cf;
-    color: #1b8cf2;
+    color: #2E363F;
 }
 
 .nor-tabs-wp .tab-content {
@@ -394,16 +394,6 @@
     font-size: 12px;
 }
 
-/*侧边树图*/
-/*.sidebar-nav1{border:1px solid #bdc6cf;border-radius:4px;}
-.sidebar-nav1 li.panel{border: 0;border-radius: 0;box-shadow: none;}
-.sidebar-nav1 li a:hover{text-decoration:none;}
-.sidebar-nav1 li .mu{display:block;background:#1b8cf2;padding: 6px 10px;font-size: 14px;color: #fff;border-bottom:1px solid #fff;}
-.sidebar-nav2 li .mu2{display:block;background:#ecf0f5;padding: 4px 10px;font-size: 14px;color: #3f3f4d;}
-.sidebar-nav3 li .mu3{display:block;padding: 0 10px 0 16px;line-height: 23px;color:#576077;}
-.sidebar-nav3{padding:2px 0;}
-.sidebar-nav3 li.active .mu3, .sidebar-nav3 li:hover .mu3{background:#d9edff;}
-.sidebar-nav1 li.panel.active .mu{background:#455469;}*/
 .sidebar-nav1 {
     border: 1px solid #bdc6cf;
     border-radius: 4px;
@@ -415,7 +405,7 @@
 
 .sidebar-nav1 li .mu {
     display: block;
-    background: #1b8cf2;
+    background: #2E363F;
     padding: 6px 10px;
     font-size: 14px;
     color: #fff;
