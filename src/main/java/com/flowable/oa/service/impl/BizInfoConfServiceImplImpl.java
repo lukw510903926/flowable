@@ -45,26 +45,19 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
 	}
 
 	@Override
-	public List<BizInfoConf> findBizInfoConf(BizInfoConf bizInfoConf) {
-
-		return this.findByModel(bizInfoConf, false);
-	}
-	
-	@Override
 	public List<BizInfoConf> findByBizId(String bizId){
 		
 		BizInfoConf example = new BizInfoConf();
 		example.setBizId(bizId);
-		return this.findBizInfoConf(example);
+		return this.select(example);
 	}
 	
 	@Override
 	public void deleteByBizId(String bizId) {
-		
-		List<BizInfoConf> list = this.findByBizId(bizId);
-		if(CollectionUtils.isNotEmpty(list)) {
-			list.forEach(example ->this.deleteById(example.getId()));
-		}
+
+		BizInfoConf bizInfoConf = new BizInfoConf();
+		bizInfoConf.setBizId(bizId);
+		this.deleteByModel(bizInfoConf);
 	}
 
 	@Override

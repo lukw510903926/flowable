@@ -11,7 +11,6 @@ import com.flowable.oa.service.BizInfoConfService;
 import com.flowable.oa.service.auth.ISystemUserService;
 import com.flowable.oa.util.*;
 import com.flowable.oa.util.exception.ServiceException;
-import jdk.nashorn.internal.ir.LiteralNode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -549,6 +548,52 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         result.put("files", fileMap);
         result.put("workLogs", bizLogs);
         result.put("logVars", logVars);
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> detail(String bizId) {
+
+        Map<String, Object> result = new HashMap<>();
+        BizInfo bizInfo = this.bizInfoService.selectByKey(bizId);
+        if (bizInfo == null) {
+            throw new ServiceException("工单不存在");
+        }
+        result.put("bizInfo", bizInfo);
+        result.put("$currentTaskName", bizInfo.getTaskName());
+        result.put("$createUser", this.sysUserService.getUserByUsername(bizInfo.getCreateUser()));
+        List<BizLog> bizLogs = this.logService.loadBizLogs(bizId);
+        if (CollectionUtils.isNotEmpty(bizLogs)) {
+            List<Map<String, Object>> logs = new ArrayList<>();
+            bizLogs.forEach(log -> {
+                Map<String, Object> logInstances = new HashMap<>();
+                logInstances.put("log", log);
+                logInstances.put("variableInstance", this.instanceService.loadValueByLog(log));
+                logInstances.put("file", this.bizFileService.loadBizFilesByBizId(bizId, log.getTaskID()));
+                logs.add(logInstances);
+
+            });
+            result.put("logs", logs);
+        }
+        BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(bizId);
+        String taskId = Optional.ofNullable(bizInfoConf).map(BizInfoConf::getTaskId).orElse(null);
+        String currentOp = Optional.ofNullable(taskId).map(task -> processDefinitionService.getWorkAccessTask(task, WebUtil.getLoginUser().getUsername())).orElse(null);
+        result.put("CURRE_OP", currentOp);
+        List<ProcessVariable> currentVariables = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
+        if (Constants.HANDLE.equalsIgnoreCase(currentOp)) {
+            result.put("currentVariables", currentVariables);
+            Map<String, String> buttons = processDefinitionService.findOutGoingTransNames(taskId);
+            if (MapUtils.isEmpty(buttons)) {
+                buttons = new HashMap<>();
+                buttons.put("submit", "提交");
+            }
+            result.put("SYS_BUTTON", buttons);
+        } else if (Constants.SIGN.equalsIgnoreCase(currentOp)) {
+            Map<String, String> buttons = new HashMap<>(1);
+            buttons.put(Constants.SIGN, "签收");
+            result.put("SYS_BUTTON", buttons);
+        }
+        result.put("$currentUser", WebUtil.getLoginUser());
         return result;
     }
 

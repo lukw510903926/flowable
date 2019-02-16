@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface IProcessExecuteService {
 
-    static final String systemFormType = "_SYS_FORM_TYPE";
+    String systemFormType = "_SYS_FORM_TYPE";
 
     /**
      * 获取某个日志对应的输入数据
@@ -117,6 +117,13 @@ public interface IProcessExecuteService {
      * @
      */
     Map<String, Object> queryWorkOrder(String id);
+
+    /**
+     * 获取工单详情
+     * @param bizId
+     * @return
+     */
+    Map<String,Object> detail(String bizId);
 
     /**
      * 下载或查看文件
