@@ -2,6 +2,7 @@ package com.flowable.oa.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.flowable.oa.entity.BizInfo;
 import com.flowable.oa.util.mybatis.IBaseService;
@@ -69,8 +70,6 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      * @param list
      */
     void updateBizByIds(List<String> list);
-
-    List<String> loadBizInfoStatus(String processId);
 
     List<BizInfo> getBizByParentId(String parentId);
 }

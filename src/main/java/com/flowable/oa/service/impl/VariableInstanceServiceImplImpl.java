@@ -67,7 +67,7 @@ public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVari
     @Override
     public Map<String, ProcessVariableInstance> getVarMap(BizInfo bizInfo, String taskId, VariableLoadType type) {
 
-        Map<String, ProcessVariableInstance> map = new HashMap<String, ProcessVariableInstance>();
+        Map<String, ProcessVariableInstance> map = new HashMap<>();
         BizLog logBean = new BizLog();
         logBean.setBizId(bizInfo.getId());
         logBean.setTaskID(Constants.TASK_START);

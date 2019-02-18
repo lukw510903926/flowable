@@ -21,9 +21,12 @@ import com.flowable.oa.service.dict.IDictValueService;
 import java.util.List;
 
 /**
- * @author lukw
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
  * @email 13507615840@163.com
- * @create 2017-12-06 14:43
+ * @since 19-2-15 下午11:11
  **/
 @Controller
 @RequestMapping("dictValue")

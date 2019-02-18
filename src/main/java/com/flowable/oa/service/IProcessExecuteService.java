@@ -7,6 +7,7 @@ import java.util.Map;
 import com.flowable.oa.entity.BizInfo;
 import com.flowable.oa.entity.BizInfoConf;
 import com.flowable.oa.entity.ProcessVariable;
+import com.flowable.oa.vo.BizInfoVo;
 import org.flowable.task.api.Task;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface IProcessExecuteService {
 
-    static final String systemFormType = "_SYS_FORM_TYPE";
+    String systemFormType = "_SYS_FORM_TYPE";
 
     /**
      * 获取某个日志对应的输入数据
@@ -117,6 +118,13 @@ public interface IProcessExecuteService {
      * @
      */
     Map<String, Object> queryWorkOrder(String id);
+
+    /**
+     * 获取工单详情
+     * @param bizId
+     * @return
+     */
+    BizInfoVo detail(String bizId);
 
     /**
      * 下载或查看文件

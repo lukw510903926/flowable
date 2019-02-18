@@ -61,12 +61,6 @@ public class BizTimedTaskServiceImplImpl extends BaseServiceImpl<BizTimedTask> i
 
 	}
 
-	@Transactional
-	public void deleteTimedTask(String id) {
-
-		this.deleteById(id);
-	}
-
 	private BizTimedTask buildTimeTask(BizInfo bizInfo, BizInfoConf bizConf) {
 
 		BizTimedTask bizTimedTask = new BizTimedTask();

@@ -71,16 +71,11 @@ public class BizFileServiceImplImpl extends BaseServiceImpl<BizFile> implements 
 
     @Override
     public List<BizFile> loadBizFilesByBizId(String bizId, String taskId) {
+
         BizFile bizFile = new BizFile();
         bizFile.setBizId(bizId);
         bizFile.setTaskId(taskId);
         return this.findByModel(bizFile, false);
-    }
-
-    @Override
-    public BizFile getBizFileById(String id) {
-
-        return this.selectByKey(id);
     }
 
     @Override

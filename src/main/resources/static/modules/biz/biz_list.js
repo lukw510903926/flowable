@@ -10,14 +10,13 @@ biz.query = {
 	init : function() {
 		biz.query.$queryForm = $('#biz-query-form');
 		$("#queryBtn").click(biz.query.queryClick);
-		$("#pressBiz").click(biz.query.terminalPressBiz);
 		$('#bizType').change(biz.query.loadProcessStatus);
 	},
 
 	loadProcessStatus : function() {
 
 		$.ajax({
-			url : path + '/biz/getProcessStatus',
+			url : path + '/biz/process/status',
 			type : 'post',
 			async : false,
 			dataType : 'json',

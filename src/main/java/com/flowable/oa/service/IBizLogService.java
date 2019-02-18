@@ -11,5 +11,4 @@ public interface IBizLogService extends IBaseService<BizLog> {
 
 	List<BizLog> loadBizLogs(String bizId) ;
 
-	BizLog getBizLogById(String id) ;
 }

@@ -8,12 +8,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.flowable.oa.service.IProcessModelService;
 import com.flowable.oa.service.act.ActProcessService;
+
+import java.util.Map;
 
 @Controller
 public class ProcessController{
@@ -96,19 +99,13 @@ public class ProcessController{
 	 * @return
 	 */
 	@RequestMapping(value = "process/variable", method = RequestMethod.GET)
-	public String setProcessVariableView(String processDefinitionId, String version, String taskId, Model model) {
-		model.addAttribute("processDefinitionId", processDefinitionId);
-		model.addAttribute("version", version);
-		model.addAttribute("taskId", taskId);
+	public String setProcessVariableView(@RequestParam Map<String,Object> params, Model model) {
+		model.addAllAttributes(params);
 		return "modules/process/variable_list";
 	}
 	@RequestMapping(value = "process/variable/edit", method = RequestMethod.GET)
-	public String setProcessVariableEdit(String processDefinitionId, String version, String taskId, String vId,
-			Model model) {
-		model.addAttribute("processDefinitionId", processDefinitionId);
-		model.addAttribute("version", version);
-		model.addAttribute("taskId", taskId);
-		model.addAttribute("vId", vId);
+	public String setProcessVariableEdit(@RequestParam Map<String,Object> params, Model model) {
+		model.addAllAttributes(params);
 		return "modules/process/variable_edit";
 	}
 	/**
@@ -116,9 +113,8 @@ public class ProcessController{
 	 * @return
 	 */
 	@RequestMapping(value = "process/task/list", method = RequestMethod.GET)
-	public String setTaskView(String processDefinitionId, String version, Model model) {
-		model.addAttribute("processDefinitionId", processDefinitionId);
-		model.addAttribute("version", version);
+	public String setTaskView(@RequestParam Map<String,Object> params, Model model) {
+		model.addAllAttributes(params);
 		return "modules/process/task_list";
 	}
 }

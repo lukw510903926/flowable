@@ -18,6 +18,8 @@ public interface IBaseService<T> {
 
     T selectOne(T entity);
 
+    List<T> select(T entity);
+
     /**
      * 保存
      *
@@ -25,6 +27,8 @@ public interface IBaseService<T> {
      * @return
      */
     int save(T entity);
+
+    void saveOrUpdate(T entity);
 
     /**
      * 根据key删除

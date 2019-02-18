@@ -68,7 +68,7 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
 		if (page != null) {
 			PageHelper.startPage(page.getPageNum(), page.getPageSize());
 		}
-		return new PageInfo<ProcessVariable>(this.findByModel(variable, false));
+		return new PageInfo<>(this.findByModel(variable, false));
 	}
 
 	@Override
@@ -78,16 +78,16 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
 	}
 
 	@Override
-	public void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf) throws Exception {
+	public void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf){
 
 		if (oldPdf != null && newPdf != null) {
 			int version_ = newPdf.getVersion();
-			Map<String, String> refmap = new HashMap<String, String>();
+			Map<String, String> refmap = new HashMap<>();
 			// 拷贝全局配置
 			ProcessVariable example = new ProcessVariable();
 			example.setProcessDefinitionId(oldPdf.getId());
 			List<ProcessVariable> processValBeans = this.findByModel(example, false);
-			List<ProcessVariable> processRefList = new ArrayList<ProcessVariable>();
+			List<ProcessVariable> processRefList = new ArrayList<>();
 			if (CollectionUtils.isNotEmpty(processValBeans)) {
 				for (ProcessVariable valBean : processValBeans) {
 					ProcessVariable processVar = valBean.clone();

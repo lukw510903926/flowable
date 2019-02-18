@@ -6,10 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
+import com.flowable.oa.entity.auth.SystemUser;
 import com.flowable.oa.service.BizInfoConfService;
 import com.flowable.oa.service.auth.ISystemUserService;
 import com.flowable.oa.util.*;
 import com.flowable.oa.util.exception.ServiceException;
+import com.flowable.oa.vo.BizInfoVo;
+import org.apache.commons.collections.BagUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -71,8 +74,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     @Override
     public Map<String, Object> loadBizLogInput(String logId) {
 
-        BizLog logBean = logService.getBizLogById(logId);
-        Map<String, Object> results = new HashMap<String, Object>();
+        BizLog logBean = logService.selectByKey(logId);
+        Map<String, Object> results = new HashMap<>();
         if (logBean == null) {
             return results;
         }
@@ -417,9 +420,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             if (handleUser.startsWith(Constants.BIZ_GROUP)) {
                 String group = handleUser.replace(Constants.BIZ_GROUP, "");
                 if (StringUtils.isNotBlank(group)) {
-                    List<String> userNames = sysUserService.findUserByRole(new SystemRole(null, group));
-                    if (CollectionUtils.isNotEmpty(userNames)) {
-                        userNames.stream().filter(StringUtils::isNotBlank).forEach(list::add);
+                    List<SystemUser> systemUsers = sysUserService.findUserByRole(new SystemRole(null, group));
+                    if (CollectionUtils.isNotEmpty(systemUsers)) {
+                        systemUsers.stream().map(SystemUser::getUsername).filter(StringUtils::isNotBlank).forEach(list::add);
                     }
                 }
             } else {
@@ -550,6 +553,50 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         return result;
     }
 
+    @Override
+    public BizInfoVo detail(String bizId) {
+
+        BizInfo bizInfo = this.bizInfoService.selectByKey(bizId);
+        if (bizInfo == null) {
+            throw new ServiceException("工单不存在");
+        }
+        BizInfoVo bizInfoVo = new BizInfoVo();
+        bizInfoVo.setBizInfo(bizInfo);
+        bizInfoVo.setCurrentTaskName(bizInfo.getTaskName());
+        bizInfoVo.setCreateUser(this.sysUserService.getUserByUsername(bizInfo.getCreateUser()));
+        List<BizLog> bizLogs = this.logService.loadBizLogs(bizId);
+        if (CollectionUtils.isNotEmpty(bizLogs)) {
+            List<Map<String, Object>> logs = new ArrayList<>();
+            bizLogs.forEach(log -> {
+                Map<String, Object> logInstances = new HashMap<>();
+                logInstances.put("log", log);
+                logInstances.put("variableInstance", this.instanceService.loadValueByLog(log));
+                logInstances.put("file", this.bizFileService.loadBizFilesByBizId(bizId, log.getTaskID()));
+                logs.add(logInstances);
+
+            });
+            bizInfoVo.setLogs(logs);
+        }
+        BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(bizId);
+        String taskId = Optional.ofNullable(bizInfoConf).map(BizInfoConf::getTaskId).orElse(null);
+        String currentOp = Optional.ofNullable(taskId).map(task -> processDefinitionService.getWorkAccessTask(task, WebUtil.getLoginUser().getUsername())).orElse(null);
+        if (Constants.HANDLE.equalsIgnoreCase(currentOp)) {
+            bizInfoVo.setCurrentVariables(loadProcessVariables(bizInfo, bizInfo.getTaskDefKey()));
+            Map<String, String> buttons = processDefinitionService.findOutGoingTransNames(taskId);
+            if (MapUtils.isEmpty(buttons)) {
+                buttons = new HashMap<>();
+                buttons.put("submit", "提交");
+            }
+            bizInfoVo.setButtons(buttons);
+        } else if (Constants.SIGN.equalsIgnoreCase(currentOp)) {
+            Map<String, String> buttons = new HashMap<>(1);
+            buttons.put(Constants.SIGN, "签收");
+            bizInfoVo.setButtons(buttons);
+        }
+        bizInfoVo.setCurrentUser(WebUtil.getLoginUser());
+        return bizInfoVo;
+    }
+
     /**
      * 下载或查看文件
      *
@@ -570,7 +617,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             result[0] = "IMAGE";
             result[1] = processDefinitionService.viewProcessImage(bean.getProcessInstanceId());
         } else {
-            BizFile bean = bizFileService.getBizFileById(id);
+            BizFile bean = bizFileService.selectByKey(id);
             if (bean == null) {
                 throw new ServiceException("找不到附件");
             }
