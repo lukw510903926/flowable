@@ -126,6 +126,14 @@ public class BizInfoController {
         return "modules/biz/biz_detail";
     }
 
+    @RequestMapping(value = "bizInfo/{id}", method = RequestMethod.GET)
+    public String detail(@PathVariable String id, Model model) {
+
+        model.addAttribute("id", id);
+        model.addAttribute("currentUser", JSONObject.toJSON(WebUtil.getLoginUser()));
+        return "modules/biz/bizInfo_detail";
+    }
+
     @ResponseBody
     @GetMapping("/bizInfo/detail/{bizId}")
     public BizInfoVo detail(@PathVariable("bizId")String bizId){
