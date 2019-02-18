@@ -1,10 +1,10 @@
 $.namespace("biz.show");
 
 biz.show = {
-    data: {
-        tr: $("<tr></tr>")
+    data : {
+        tr : $("<tr></tr>")
     },
-    getView: function (option) {
+    getView : function(option) {
         for (var key in biz.edit.data) {
             delete biz.show.data[key];
         }
@@ -20,12 +20,12 @@ biz.show = {
 };
 
 biz.show.table = {
-    setDynamic: function (option) {
-        if (!option) {
-            if (!option.table) {
+    setDynamic : function(option) {
+        if (option) {
+            if (option.table) {
                 biz.show.data.table = option.table;
             }
-            if (!option.tr) {
+            if (option.tr) {
                 biz.show.data.tr = option.tr;
             }
         } else {
@@ -35,24 +35,24 @@ biz.show.table = {
             option.list = biz.show.data.list;
         }
         if (!$.isEmptyObject(option.list)) {
-            for (var j = 0; j < option.list.length; j++) {
-                switch (option.list[j].viewComponent) {
+            option.list.forEach(function(entity){
+                switch (entity.viewComponent) {
                     case "TEXTAREA":
-                        biz.show.table.addTextarea(option.list[j]);
+                        biz.show.table.addTextarea(entity);
                         break;
                     case "TEXT":
-                        biz.show.table.addTextField(option.list[j]);
+                        biz.show.table.addTextField(entity);
                         break;
                     case "REQUIREDFILE":
-                        biz.show.table.addQuiredFile(option.list[j]);
+                        biz.show.table.addQuiredFile(entity);
                         break;
                     case "GROUPHEAD":
-                        biz.show.table.addGroupHead(option.list[j]);
+                        biz.show.table.addGroupHead(entity);
                         break;
                     default:
-                        biz.show.table.addTextField(option.list[j]);
+                        biz.show.table.addTextField(entity);
                 }
-            }
+            });
             if (option.end || option.end === undefined) {
                 biz.show.table.appendTd(option.table);
             }
@@ -60,7 +60,7 @@ biz.show.table = {
         return biz.show.data.tr;
     },
 
-    addMemberLinkage: function (data, list, table, tr, type) {
+    addMemberLinkage : function(data, list, table, tr, type) {
 
         biz.edit.form.memberLinkage.loadSectorBox();
         if (!table) {
@@ -110,8 +110,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addTextarea: function (data, table, tr) {
-
+    addTextarea : function(data, table, tr) {
         if (!table) {
             table = biz.show.data.table;
         }
@@ -137,7 +136,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addQuiredFile: function (data, table, tr) {
+    addQuiredFile : function(data, table, tr) {
 
         if (!table) {
             table = biz.show.data.table;
@@ -164,8 +163,7 @@ biz.show.table = {
      * @param tr
      * @returns {*|jQuery|HTMLElement}
      */
-    addGroupHead: function (data, table, tr) {
-
+    addGroupHead : function(data, table, tr) {
         if (!table) {
             table = biz.show.data.table;
         }
@@ -191,7 +189,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addMessage: function (data, table, tr) {
+    addMessage : function(data, table, tr) {
 
         if (!table) {
             table = biz.show.data.table;
@@ -220,8 +218,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addTextField: function (data, table, tr) {
-
+    addTextField : function(data, table, tr) {
         if (!table) {
             table = biz.show.data.table;
         }
@@ -233,6 +230,7 @@ biz.show.table = {
         var td = $("<td></td>");
         var name = data.id ? data.id + "&" + biz.show.data.taskId : "";
         td.html("<span class='fslTextBoxR' name='" + name + "'></span>");
+        td.text(data.value);
         biz.show.data.tr.append(th);
         biz.show.data.tr.append(td);
         if (biz.show.data.tr.children("td").length === 2) {
@@ -249,7 +247,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addComboBox: function (data, table, tr) {
+    addComboBox : function(data, table, tr) {
 
         if (!table) {
             table = biz.show.data.table;
@@ -278,7 +276,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addUserInfo: function (data, table, tr) {
+    addUserInfo : function(data, table, tr) {
 
         if (!table) {
             table = biz.show.data.table;
@@ -300,8 +298,7 @@ biz.show.table = {
         ;
         return td.children("span");
     },
-    appendTd: function (table, tr) {
-
+    appendTd : function(table, tr) {
         if (!table) {
             table = biz.show.data.table;
         }
@@ -321,8 +318,7 @@ biz.show.table = {
     /**
      * 处理方式
      */
-    listByTreatment: function (list) {
-
+    listByTreatment : function(list) {
         var treatmentId = null;
         for (var i = 0; i < list.length; i++) {
             if (list[i].name === "treatment") {
@@ -360,11 +356,10 @@ biz.show.table = {
         }
         return array;
     },
-
     /**
      * 子单
      */
-    addSonBiz: function (data, table, tr) {
+    addSonBiz : function(data, table, tr) {
 
         if (!table) {
             table = biz.show.data.table;
@@ -394,14 +389,11 @@ biz.show.table = {
     /**
      * 附件
      */
-    addFile: function (annexs, table, tr) {
-
-        if (annexs) {
+    addFile : function(annexs, table, tr) {
+        if (annexs)
             biz.show.data.annexs = annexs;
-        }
-        if (!table) {
+        if (!table)
             table = biz.show.data.table;
-        }
         if (tr) {
             biz.show.data.tr = tr;
         }
@@ -427,19 +419,19 @@ biz.show.table = {
      * 必填附件
      * @param data
      */
-    addReqFiles: function (data) {
+    addReqFiles : function(data) {
 
         $.ajax({
-            url: path + '/biz/getBizFile',
-            type: 'post',
-            data: {
-                bizId: bizId,
-                taskId: data.taskId,
-                name: data.variable.name
+            url : path + '/biz/getBizFile',
+            type : 'post',
+            data : {
+                bizId : bizId,
+                taskId : data.taskId,
+                name : data.variable.name
             },
-            success: function (result) {
+            success : function(result) {
                 if (result) {
-                    $.each(result, function (index, entity) {
+                    $.each(result, function(index, entity) {
                         var span = $("<span style='margin-right:10px;display:block;'><a href='" + path + "/biz/download?id=" + entity.id + "'>" + entity.name + "</a></span>");
                         $("span[name='" + data.variable.id + "&" + data.taskId + "']").append(span);
                     });
@@ -452,7 +444,7 @@ biz.show.table = {
     /**
      * 必传附件
      */
-    addreqFile: function (list, annexs) {
+    addreqFile : function(list, annexs) {
         for (var i = 0; i < list.length; i++) {
             if (list[i].viewComponent === "REQUIREDFILE") {
                 var s = new Set();
@@ -467,7 +459,7 @@ biz.show.table = {
                         }
                     }
                 }
-                s.forEach(function (item) {
+                s.forEach(function(item) {
                     if ($("body").find("span[name='" + item + "']").children().length === 0) {
                         $("body").find("span[name='" + item + "']").append("无");
                     }
@@ -478,8 +470,7 @@ biz.show.table = {
     /**
      * 确认人信息
      */
-    addConfirmUser: function (data, table, tr) {
-
+    addConfirmUser : function(data, table, tr) {
         if (!table) {
             table = biz.show.data.table;
         }
@@ -488,21 +479,21 @@ biz.show.table = {
         }
         var list = [
             {
-                text: "处理人",
-                name: "user"
+                text : "处理人",
+                name : "user"
             }, {
-                text: "联系方式",
-                name: "mobile"
+                text : "联系方式",
+                name : "mobile"
             }, {
-                text: "邮箱",
-                name: "email"
+                text : "邮箱",
+                name : "email"
             }, {
-                text: "确认时间",
-                name: "date"
+                text : "确认时间",
+                name : "date"
             }, {
-                text: "确认部门",
-                name: "dep"
-            }];
+                text : "确认部门",
+                name : "dep"
+            } ];
         for (var i = 0; i < list.length; i++) {
 
             var th = $("<th></th>");
@@ -523,7 +514,7 @@ biz.show.table = {
 };
 
 biz.show.table.confirmUser = {
-    setConfirmUserValue: function (data) {
+    setConfirmUserValue : function(data) {
         var value = eval("(" + data.value + ")");
         for (var key in value) {
             $("span[name='" + data.variable.id + "&" + data.taskId + "'][title='" + key + "']").html(value[key]);
@@ -534,15 +525,15 @@ biz.show.table.confirmUser = {
  * 用户信息相关
  */
 biz.show.table.userInfo = {
-    setUserName: function (serviceInfo) {
+    setUserName : function(serviceInfo) {
         $.ajax({
-            url: path + '/role/loadUsersByUserName',
-            type: 'post',
-            async: false,
-            data: {
-                userName: serviceInfo.value
+            url : path + '/role/loadUsersByUserName',
+            type : 'post',
+            async : false,
+            data : {
+                userName : serviceInfo.value
             },
-            success: function (data) {
+            success : function(data) {
                 $("span[name='" + serviceInfo.variable.id + "&" + serviceInfo.taskId + "']").html(data.name);
                 $("input[name='" + serviceInfo.variable.name + "Name']").val(data.name);
                 $("input[name='" + serviceInfo.variable.name + "']").val(data.username);
@@ -550,20 +541,20 @@ biz.show.table.userInfo = {
         });
     },
 
-    setUserNames: function (serviceInfo) {
+    setUserNames : function(serviceInfo) {
         var userNames = serviceInfo.value.split(",");
         var userName = "";
         var fullName = "";
-        $.each(userNames, function (index, username) {
+        $.each(userNames, function(index, username) {
             if (!$.isEmptyObject(username)) {
                 $.ajax({
-                    url: path + '/role/loadUsersByUserName',
-                    type: 'post',
-                    async: false,
-                    data: {
-                        userName: username
+                    url : path + '/role/loadUsersByUserName',
+                    type : 'post',
+                    async : false,
+                    data : {
+                        userName : username
                     },
-                    success: function (data) {
+                    success : function(data) {
                         fullName += data.name + ",";
                         userName += data.username + ",";
                     }
@@ -577,46 +568,46 @@ biz.show.table.userInfo = {
 };
 
 biz.show.table.sonBiz = {
-    loadSonBiz: function (table, div, data) {
+    loadSonBiz : function(table, div, data) {
         table.bootstrapTable({
-            data: data,
-            classes: "table-no-bordered",
-            columns: [{
-                field: "workNum",
-                title: "工单号",
-                align: "center",
-                formatter: function (value, row, index) {
+            data : data,
+            classes : "table-no-bordered",
+            columns : [ {
+                field : "workNum",
+                title : "工单号",
+                align : "center",
+                formatter : function(value, row, index) {
                     var url = path + "/biz/" + row.id;
                     return "<a onclick=\"window.open('" + url + "');\">" + value + "</a>";
                 }
             }, {
-                field: "bizType",
-                title: "工单类型",
-                align: "center"
+                field : "bizType",
+                title : "工单类型",
+                align : "center"
             }, {
-                field: "title",
-                title: "工单标题",
-                align: "center"
+                field : "title",
+                title : "工单标题",
+                align : "center"
             }, {
-                field: "createUser",
-                title: "创建人",
-                align: "center"
+                field : "createUser",
+                title : "创建人",
+                align : "center"
             }, {
-                field: "createTime",
-                title: "创建时间",
-                align: "center"
+                field : "createTime",
+                title : "创建时间",
+                align : "center"
             }, {
-                field: "status",
-                title: "工单状态",
-                align: "center"
+                field : "status",
+                title : "工单状态",
+                align : "center"
             }, {
-                field: "taskAssignee",
-                title: "当前处理人",
-                align: "center"
-            }]
+                field : "taskAssignee",
+                title : "当前处理人",
+                align : "center"
+            } ]
         });
 
-        $.each(data, function (index, entity) {
+        $.each(data, function(index, entity) {
             var checkbox = $("<input type='checkbox'/>");
             var span = $("<span style='display: inline-block;'></span>");
             span.append(checkbox).append(entity.workNum);

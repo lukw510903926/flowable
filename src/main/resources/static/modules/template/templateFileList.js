@@ -65,7 +65,8 @@ template.file = {
         if (processList) {
             ele.empty();
             var option = $("<option>");
-            option.html("请选择");
+            option.val('');
+            option.text("请选择");
             ele.append(option);
             processList.forEach(function (entity) {
                 var option = $("<option></option>");

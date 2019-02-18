@@ -9,7 +9,9 @@ office.index = {
         var tag = $('ul').find('[href="' + currentPath + '"]');
         tag.css('background', '#1890ff');
         tag.parent().parent().removeClass('collapse');
-        var minHeight = ($(window).height() - 60) + 'px';
-        $('.left').css({"minHeight": minHeight,"backgroundColor": '#001529'});
+        var height = $(window).height() - 60;
+        height = Math.max(height, $('.content').height());
+        $('.left').css({"height": height + 'px', "backgroundColor": '#001529'});
+
     }
 };

@@ -63,7 +63,7 @@
             let type = _this.type;
             switch (type) {
                 case 'text':
-                    result = _this.text();
+                    result = _this._text();
                     break;
                 case  'email':
                     result = _this.email();
@@ -72,7 +72,7 @@
                     result = _this.checkNum();
                     break;
                 default:
-                    result = _this.text();
+                    result = _this._text();
             }
             return result;
         },
@@ -81,7 +81,7 @@
          * 文本校验
          * @returns {boolean}
          */
-        text: function () {
+        _text: function () {
 
             let _this = $(this);
             let _result = true;
@@ -121,7 +121,7 @@
                 let _reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
                 _result = _reg.test(_val);
             } else {
-                _result = _this.text();
+                _result = _this._text();
             }
             return _result;
         },

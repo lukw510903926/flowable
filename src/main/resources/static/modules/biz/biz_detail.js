@@ -9,6 +9,7 @@ biz.detail = {
             cache: false,
             async: false,
             success: function (result) {
+                console.log(result);
                 biz.detail.groups = result.processVariablesMap;
                 if (!result) {
                     bsAlert("错误", "异常数据，请验证数据正确性！", function () {
@@ -230,17 +231,17 @@ biz.detail = {
             table: $("#fqrxx"),
             list: []
         });
-        for (var i = 0; i < list.length; i++) {
-            if (list[i].name === "status") {
-                var text = workInfo[list[i].name] === undefined ? createUser[list[i].name] : workInfo[list[i].name];
-                view.addTextField(list[i]).text(text);
-            } else if (list[i].name === "createUser") {
-                view.addTextField(list[i]).text(createUser['name']);
+        $.each(list,function(index,entity){
+            if (entity.name === "status") {
+                var text = workInfo[entity.name] === undefined ? createUser[entity.name] : workInfo[entity.name];
+                view.addTextField(entity).text(text);
+            } else if (entity.name === "createUser") {
+                view.addTextField(entity).text(createUser['name']);
             } else {
-                var text = workInfo[list[i].name] === undefined ? createUser[list[i].name] : workInfo[list[i].name];
-                view.addTextField(list[i]).text(text == null ? "" : text);
+                var text = workInfo[entity.name] === undefined ? createUser[entity.name] : workInfo[entity.name];
+                view.addTextField(entity).text(text == null ? "" : text);
             }
-        }
+        });
         view.appendTd();
     },
 
