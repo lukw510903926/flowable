@@ -237,7 +237,7 @@ biz.create = {
                 if (result) {
                     if (!result || result.success) {
                         layer.close(index);
-                        location.href = path + result.msg;
+                        location.href = path + result.data;
                     } else {
                         layer.close(index);
                         bsAlert("异常", result.msg);
