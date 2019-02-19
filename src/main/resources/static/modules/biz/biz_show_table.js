@@ -268,17 +268,11 @@ biz.show.table = {
             biz.show.data.tr = tr;
         }
         biz.show.table.appendTd();
-        var th = $("<th></th>");
-        th.text(data.alias + ":");
-        var td = $("<td colspan='3'></td>");
-        var div = $("<div></div>");
-        td.append(div);
-        biz.show.data.tr.append(th);
-        biz.show.data.tr.append(td);
         table.append(biz.show.data.tr);
         biz.show.data.tr = $("<tr></tr>");
-        td = $("<td colspan='4' style='padding:0;'></td>");
-        var bizTable = $("<table style='width:100%;border:hidden;' class='table base-table table-striped'></table>");
+        var div = $("<div></div>");
+        var td = $("<td colspan='4' style='padding:0;'></td>");
+        var bizTable = $("<table class='table base-table table-striped'></table>");
         td.append(bizTable);
         biz.show.data.tr.append(td);
         table.append(biz.show.data.tr);
@@ -290,8 +284,9 @@ biz.show.table = {
      * 附件
      */
     addFile : function(annexs, table, tr) {
-        if (annexs)
+        if (annexs){
             biz.show.data.annexs = annexs;
+        }
         if (!table)
             table = biz.show.data.table;
         if (tr) {
@@ -524,13 +519,6 @@ biz.show.table.sonBiz = {
                 title : "当前处理人",
                 align : "center"
             } ]
-        });
-
-        $.each(data, function(index, entity) {
-            var checkbox = $("<input type='checkbox'/>");
-            var span = $("<span style='display: inline-block;'></span>");
-            span.append(checkbox).append(entity.workNum);
-            div.append(span);
         });
     }
 };

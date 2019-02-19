@@ -26,7 +26,6 @@ biz.detail = {
                 biz.detail.currentVariables = result.currentVariables;
                 biz.detail.buttons = result['SYS_BUTTON'];
                 biz.detail.currentTaskName = result['$currentTaskName'];
-                biz.detail.annexs = result.annexs;
                 biz.detail.curreop = result['CURRE_OP'];
                 biz.detail.subBizInfo = result.subBizInfo;
                 biz.detail.bizKey = biz.detail.workInfo.processDefinitionId;
@@ -90,7 +89,6 @@ biz.detail = {
             value: biz.detail.workInfo['createTime']
         }];
         biz.detail.setView(table, list, flag);
-        biz.show.table.addFile(biz.detail.annexs, table);
         if (!$.isEmptyObject(biz.detail.subBizInfo)) {
             var _table = biz.detail.getTable("子单信息");
             biz.show.table.addSonBiz({
@@ -383,7 +381,6 @@ biz.detail = {
      * @returns {*}
      */
     getTable: function (group) {
-        console.log(group);
         var table;
         if (group === $("#msgtitle").text()) {
             table = $("#fqrxx");
