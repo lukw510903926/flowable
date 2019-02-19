@@ -11,8 +11,6 @@ import com.flowable.oa.service.BizInfoConfService;
 import com.flowable.oa.service.auth.ISystemUserService;
 import com.flowable.oa.util.*;
 import com.flowable.oa.util.exception.ServiceException;
-import com.flowable.oa.vo.BizInfoVo;
-import org.apache.commons.collections.BagUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +39,8 @@ import com.flowable.oa.service.IProcessExecuteService;
 import com.flowable.oa.service.IProcessVariableService;
 import com.flowable.oa.service.IVariableInstanceService;
 import com.flowable.oa.service.IVariableInstanceService.VariableLoadType;
+
+import javax.security.auth.login.Configuration;
 
 @Service
 public class ProcessExecuteServiceImpl implements IProcessExecuteService {
@@ -322,11 +322,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 valueBean.setVariableAlias(processVariable.getAlias());
                 valueBean.setVariableName(processVariable.getName());
                 valueBean.setBizId(bizInfo.getId());
-                if (Constants.TASK_START.equalsIgnoreCase(processVariable.getTaskId())) {
-                    valueBean.setTaskId(Constants.TASK_START);
-                } else {
-                    valueBean.setTaskId(taskId);
-                }
+                taskId = Constants.TASK_START.equalsIgnoreCase(processVariable.getTaskId()) ? Constants.TASK_START : taskId;
+                valueBean.setTaskId(taskId);
                 instanceService.addProcessInstance(valueBean);
             }
         }
@@ -355,22 +352,20 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             }
             bizInfoConf.setBizId(bizId);
             this.bizInfoConfService.saveOrUpdate(bizInfoConf);
-            BizInfoConf bizConf;
             if (taskList.size() > 1) {
-                for (int i = 1; i < taskList.size(); i++) {
-                    bizConf = new BizInfoConf();
-                    taskInfo = taskList.get(i);
-                    bizConf.setTaskId(taskInfo.getId());
-                    bizConf.setTaskAssignee(taskInfo.getAssignee());
+                taskList.forEach(entity -> {
+                    BizInfoConf bizConf = new BizInfoConf();
+                    bizConf.setTaskId(entity.getId());
+                    bizConf.setTaskAssignee(entity.getAssignee());
                     bizConf.setBizId(bizId);
                     this.bizInfoConfService.saveOrUpdate(bizConf);
-                    taskIds.append(taskIds + taskInfo.getId()).append(",");
-                    if (StringUtils.isNotBlank(taskInfo.getAssignee())) {
-                        taskAssignee.append(taskAssignee + taskInfo.getAssignee()).append(",");
+                    taskIds.append(entity.getId()).append(",");
+                    if (StringUtils.isNotBlank(entity.getAssignee())) {
+                        taskAssignee.append(entity.getAssignee()).append(",");
                     }
                     bizInfoConf.setBizId(bizId);
                     this.bizInfoConfService.saveOrUpdate(bizConf);
-                }
+                });
             }
             bizInfo.setTaskId(taskIds.substring(0, taskIds.lastIndexOf(",")));
             String assignee = taskAssignee.toString();
@@ -445,6 +440,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         logBean.setHandleResult((String) params.get("base.handleResult"));
         LoginUser loginUser = WebUtil.getLoginUser();
         logBean.setHandleUser(loginUser.getUsername());
+        logBean.setHandleUserName(loginUser.getName());
         logBean.setHandleName((String) params.get("base.handleName"));
         logService.addBizLog(logBean);
     }
@@ -488,35 +484,25 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
         String loginUser = WebUtil.getLoginUser().getUsername();
         Map<String, Object> result = new HashMap<>();
-        // 加载工单对象
         BizInfo bizInfo = bizInfoService.selectByKey(bizId);
         if (bizInfo == null) {
             throw new ServiceException("找不到工单:" + bizId);
         }
         result.put("workInfo", bizInfo);
         BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(bizId);
-        String taskId = bizInfoConf == null ? null : bizInfoConf.getTaskId();
-        // 加载工单详情字段
-        result.put("processVariables", loadProcessVariables(bizInfo, Constants.TASK_START));
-
+        String taskId = Optional.ofNullable(bizInfoConf).map(BizInfoConf::getTaskId).orElse(null);
         // 处理扩展信息
         Map<String, Object> extInfo = new HashMap<>();
         extInfo.put("createUser", sysUserService.getUserByUsername(bizInfo.getCreateUser()));
         extInfo.put("base_taskID", taskId);
         result.put("extInfo", extInfo);
-
+        String currentOp = Optional.ofNullable(taskId).map(task -> processDefinitionService.getWorkAccessTask(task, WebUtil.getLoginUser().getUsername())).orElse(null);
         // 子工单信息
         result.put("subBizInfo", bizInfoService.getBizByParentId(bizId));
-        Task task = null;
-        String currentOp = null;
         if (StringUtils.isNotEmpty(taskId)) {
-            currentOp = processDefinitionService.getWorkAccessTask(taskId, loginUser);
-            task = processDefinitionService.getTaskBean(taskId);
         }
         result.put("CURRE_OP", currentOp);
-        if (task != null) {
-            result.put("$currentTaskName", task.getName());
-        }
+        result.put("$currentTaskName", bizInfo.getTaskName());
         List<ProcessVariable> currentVariables = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
         // 加载当前编辑的业务字段,只有当前操作为HANDLE的时候才加载
         if (Constants.HANDLE.equalsIgnoreCase(currentOp)) {
@@ -551,50 +537,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         result.put("workLogs", bizLogs);
         result.put("logVars", logVars);
         return result;
-    }
-
-    @Override
-    public BizInfoVo detail(String bizId) {
-
-        BizInfo bizInfo = this.bizInfoService.selectByKey(bizId);
-        if (bizInfo == null) {
-            throw new ServiceException("工单不存在");
-        }
-        BizInfoVo bizInfoVo = new BizInfoVo();
-        bizInfoVo.setBizInfo(bizInfo);
-        bizInfoVo.setCurrentTaskName(bizInfo.getTaskName());
-        bizInfoVo.setCreateUser(this.sysUserService.getUserByUsername(bizInfo.getCreateUser()));
-        List<BizLog> bizLogs = this.logService.loadBizLogs(bizId);
-        if (CollectionUtils.isNotEmpty(bizLogs)) {
-            List<Map<String, Object>> logs = new ArrayList<>();
-            bizLogs.forEach(log -> {
-                Map<String, Object> logInstances = new HashMap<>();
-                logInstances.put("log", log);
-                logInstances.put("variableInstance", this.instanceService.loadValueByLog(log));
-                logInstances.put("file", this.bizFileService.loadBizFilesByBizId(bizId, log.getTaskID()));
-                logs.add(logInstances);
-
-            });
-            bizInfoVo.setLogs(logs);
-        }
-        BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(bizId);
-        String taskId = Optional.ofNullable(bizInfoConf).map(BizInfoConf::getTaskId).orElse(null);
-        String currentOp = Optional.ofNullable(taskId).map(task -> processDefinitionService.getWorkAccessTask(task, WebUtil.getLoginUser().getUsername())).orElse(null);
-        if (Constants.HANDLE.equalsIgnoreCase(currentOp)) {
-            bizInfoVo.setCurrentVariables(loadProcessVariables(bizInfo, bizInfo.getTaskDefKey()));
-            Map<String, String> buttons = processDefinitionService.findOutGoingTransNames(taskId);
-            if (MapUtils.isEmpty(buttons)) {
-                buttons = new HashMap<>();
-                buttons.put("submit", "提交");
-            }
-            bizInfoVo.setButtons(buttons);
-        } else if (Constants.SIGN.equalsIgnoreCase(currentOp)) {
-            Map<String, String> buttons = new HashMap<>(1);
-            buttons.put(Constants.SIGN, "签收");
-            bizInfoVo.setButtons(buttons);
-        }
-        bizInfoVo.setCurrentUser(WebUtil.getLoginUser());
-        return bizInfoVo;
     }
 
     /**

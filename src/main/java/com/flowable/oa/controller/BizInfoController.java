@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.flowable.oa.util.Constants;
 import com.flowable.oa.util.LoginUser;
 import com.flowable.oa.util.WebUtil;
-import com.flowable.oa.vo.BizInfoVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -132,13 +131,6 @@ public class BizInfoController {
         model.addAttribute("id", id);
         model.addAttribute("currentUser", JSONObject.toJSON(WebUtil.getLoginUser()));
         return "modules/biz/bizInfo_detail";
-    }
-
-    @ResponseBody
-    @GetMapping("/bizInfo/detail/{bizId}")
-    public BizInfoVo detail(@PathVariable("bizId")String bizId){
-
-        return this.processExecuteService.detail(bizId);
     }
 
     @ResponseBody

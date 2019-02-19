@@ -5,7 +5,7 @@ biz.detail = {
     init: function () {
         var id = $('#bizId').val();
         $.ajax({
-            url: path + "/workflow/display/" + id,
+            url: "/workflow/display/" + id,
             cache: false,
             async: false,
             success: function (result) {
@@ -18,16 +18,16 @@ biz.detail = {
                 }
                 biz.detail.workInfo = result.workInfo;
                 document.title = biz.detail.workInfo.title;
-                $('#biz_detail_info').text('工单号 : ' + result.workInfo.workNum + ' 工单状态 : ' + result.workInfo.status);
+                $('#biz_detail_info').text('工单号 : ' + result.workInfo['workNum'] + ' 工单状态 : ' + result.workInfo.status);
                 biz.detail.workLogs = result.workLogs;
                 biz.detail.logVars = result.logVars;
                 biz.detail.serviceInfo = result.serviceInfo;
-                biz.detail.createUser = result.extInfo.createUser;
+                biz.detail.createUser = result['extInfo']['createUser'];
                 biz.detail.currentVariables = result.currentVariables;
-                biz.detail.buttons = result.SYS_BUTTON;
-                biz.detail.currentTaskName = result.$currentTaskName;
+                biz.detail.buttons = result['SYS_BUTTON'];
+                biz.detail.currentTaskName = result['$currentTaskName'];
                 biz.detail.annexs = result.annexs;
-                biz.detail.curreop = result.CURRE_OP;
+                biz.detail.curreop = result['CURRE_OP'];
                 biz.detail.subBizInfo = result.subBizInfo;
                 biz.detail.bizKey = biz.detail.workInfo.processDefinitionId;
                 biz.detail.files = result.files;
@@ -37,11 +37,10 @@ biz.detail = {
                 biz.detail.loadStatic(biz.detail.workInfo, biz.detail.createUser);
                 var _flag = typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") !== -1) : false;
                 biz.detail.loadBIzInfo(_flag);
-                biz.detail.loadProcessData(biz.detail.serviceInfo);
                 biz.detail.loadWorkLogs(biz.detail.workLogs);
                 biz.detail.loadWorkForm(biz.detail.buttons, biz.detail.currentVariables, biz.detail.currentTaskName);
                 $("#stepPicBizId").append(biz.detail.workInfo.bizId);
-                biz.stepPic.loadStepPic(biz.detail.workLogs, biz.detail.workInfo.bizType);
+                biz.stepPic.loadStepPic(biz.detail.workLogs, biz.detail.workInfo['bizType']);
                 if (!biz.detail.buttonGroup) {
                     biz.detail.createButtons("#workLogs", biz.detail.buttons);
                 }
@@ -67,7 +66,6 @@ biz.detail = {
 
     /**
      * 加载工单信息
-     * @param grops
      * @param flag
      */
     loadBIzInfo: function (flag) {
@@ -123,33 +121,6 @@ biz.detail = {
         view.setDynamic();
     },
 
-    /**
-     * 设定工单流程参数
-     * @param serviceInfo
-     * @param ele
-     */
-    loadProcessData: function (serviceInfo, ele) { //回显
-
-        for (var i in serviceInfo) {
-            //特殊处理组件
-            if (serviceInfo[i].viewComponent === "REQUIREDFILE") {
-                biz.show.table.addReqFiles(serviceInfo[i]);
-                continue;
-            }
-            if (serviceInfo[i].viewComponent === "CONFIRMUSER") {
-                biz.show.table.confirmUser.setConfirmUserValue(serviceInfo[i]);
-                continue;
-            }
-            if (serviceInfo[i].viewComponent === "MEMBERBOX") {
-                biz.show.table.userInfo.setUserNames(serviceInfo[i]);
-                continue;
-            }
-            if (serviceInfo[i].viewComponent === "MEMBERLIST") {
-                biz.show.table.userInfo.setUserNames(serviceInfo[i]);
-                continue;
-            }
-        }
-    },
     loadStatic: function (workInfo, createUser) {
 
         var key = biz.detail.bizKey.split(":")[0];
@@ -197,8 +168,6 @@ biz.detail = {
     /**
      * 提单人信息
      * @param list
-     * @param workInfo
-     * @param createUser
      */
     setStatic: function (list) {
 
@@ -231,18 +200,10 @@ biz.detail = {
             $workLogs.append(div);
             mark++;
 
-            var logVars = biz.detail.logVars;
-            var logVar = [];
             var list = [];
-
             if (entity['handleResult'] !== "签收") {
-                for (var key in logVars) {
-                    if (entity.id === key) {
-                        logVar = logVars[key];
-                        break;
-                    }
-                }
-                logVar.forEach(function (instance) {
+                var logVar = biz.detail.logVars[entity.id];
+                $.each(logVar, function (index, instance) {
                     list.push({
                         name: instance['variableName'],
                         viewComponent: instance.viewComponent,
@@ -250,15 +211,12 @@ biz.detail = {
                         id: instance.id,
                         value: instance.value
                     });
-                })
+                });
             }
-            var username = entity['handleUser'];
-            let handleUser = biz.show.table.userInfo.getUserByUsername(username);
-            let name = handleUser.name ? handleUser.name : username;
             list.push({
                 name: "handleUser",
                 alias: "处理人",
-                value: name
+                value: entity['handleUserName']
             }, {
                 name: "createTime",
                 alias: "处理时间",
@@ -287,7 +245,6 @@ biz.detail = {
                     view.addFile(biz.detail.files[entity.id]);
                 }
             }
-            biz.detail.loadProcessData(logVar, table);
         });
     },
 
@@ -324,7 +281,6 @@ biz.detail = {
                     return false;
                 }
             });
-            biz.detail.loadProcessData({}, table);
         }
     },
 
@@ -344,20 +300,20 @@ biz.detail = {
             return "";
         }
         //确定处理方式属性
-        for (var i = 0; i < currentVariables.length; i++) {
-            if (currentVariables[i].viewComponent === "TREATMENT") {
-                treatment = currentVariables[i];
+        $.each(currentVariables,function(index,entity){
+            if(entity.viewComponent === 'TREATMENT'){
+                treatment = entity;
             }
-        }
+        });
         //按钮分组，command为之前画图出错时出现的英文按钮可以去掉
         if (treatment) {
             var command = {};
             var flow = {};
-            for (var key in buttons) {
-                if (key.match("command_") != null) {
-                    command[key.substring(9)] = buttons[key];
+            for (var _key in buttons) {
+                if (_key.match("command_") != null) {
+                    command[_key.substring(9)] = buttons[_key];
                 } else {
-                    flow[key] = buttons[key];
+                    flow[_key] = buttons[_key];
                 }
             }
             var group = [];
@@ -427,6 +383,7 @@ biz.detail = {
      * @returns {*}
      */
     getTable: function (group) {
+        console.log(group);
         var table;
         if (group === $("#msgtitle").text()) {
             table = $("#fqrxx");
@@ -448,11 +405,11 @@ biz.detail = {
     },
 
     /**
-     * 工单日志
+     * 工单日志 创建获取当前流程布局table，传入流程名称
      * @param currentTaskName
      * @returns {*|jQuery|HTMLElement}
      */
-    getWorkLogsTable: function (currentTaskName) { //创建获取当前流程布局table，传入流程名称，早期改名有瑕疵
+    getWorkLogsTable: function (currentTaskName) {
         var div = $("<div class='import_form'>");
         var title = "<h2 class='white_tit'>我的处理：" + currentTaskName +
             "<a class='drop'  role='button' data-toggle='collapse' href='#workForm'></a></h2>";
@@ -471,7 +428,7 @@ biz.detail = {
 
 biz.detail.save = function (key) {
 
-    var url = path + "/workflow/submit";
+    var url = "/workflow/submit";
     var input = $(":input[checkEmpty='true']");
     for (var i = 0; i < input.length; i++) {
         checkEmpty(input[i]);
@@ -487,8 +444,7 @@ biz.detail.save = function (key) {
     }
     //重新提交，交维工作做了处理
     if (typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") !== -1) : false) {
-//		$("#form [name='startProc']").val(true);
-        url = path + "/workflow/bizInfo/updateBiz";
+        url = "/workflow/bizInfo/updateBiz";
     }
 
     $("[name='base.buttonId']").val(key);

@@ -1,12 +1,15 @@
 package com.flowable.oa.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.Date;
 
 /**
  * 流程日志
  */
+@Data
 @Entity
 @Table(name = "T_BIZ_LOG")
 public class BizLog implements java.io.Serializable {
@@ -34,6 +37,9 @@ public class BizLog implements java.io.Serializable {
 
 	@Column(nullable = false, length = 256, name = "HANDLE_USER")
 	private String handleUser;
+
+	@Column(name = "HANDLE_USER_NAME")
+	private String handleUserName;
 	
 	@Column(length = 64, name = "USER_PHONE")
 	private String userPhone;
@@ -49,97 +55,4 @@ public class BizLog implements java.io.Serializable {
 
 	@Column(nullable = false, length = 512, name = "HANDLE_NAME")
 	private String handleName;
-
-	public BizLog() {
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	
-	public String getBizId() {
-		return bizId;
-	}
-
-	public void setBizId(String bizId) {
-		this.bizId = bizId;
-	}
-
-	public String getTaskName() {
-		return taskName;
-	}
-
-	public void setTaskName(String taskName) {
-		this.taskName = taskName;
-	}
-
-	public String getTaskID() {
-		return taskID;
-	}
-
-	public void setTaskID(String taskID) {
-		this.taskID = taskID;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getHandleUser() {
-		return handleUser;
-	}
-
-	public void setHandleUser(String handleUser) {
-		this.handleUser = handleUser;
-	}
-
-	public String getHandleDescription() {
-		return handleDescription;
-	}
-
-	public void setHandleDescription(String handleDescription) {
-		this.handleDescription = handleDescription;
-	}
-
-	public String getHandleResult() {
-		return handleResult;
-	}
-
-	public void setHandleResult(String handleResult) {
-		this.handleResult = handleResult;
-	}
-
-	public String getHandleName() {
-		return handleName;
-	}
-
-	public void setHandleName(String handleName) {
-		this.handleName = handleName;
-	}
-
-	public String getUserPhone() {
-		return userPhone;
-	}
-
-	public void setUserPhone(String userPhone) {
-		this.userPhone = userPhone;
-	}
-
-	public String getUserDept() {
-		return userDept;
-	}
-
-	public void setUserDept(String userDept) {
-		this.userDept = userDept;
-	}
-
 }
