@@ -158,15 +158,15 @@ biz.detail = {
         switch (key) {
             case "eventManagement":
                 list.push({
-                    name: "dep",
-                    alias: "报障部门"
-                }, {
                     name: "createUser",
-                    alias: "报障人姓名",
+                    alias: "姓名",
                     value: createUser['name']
                 }, {
+                    name: "dep",
+                    alias: "部门"
+                }, {
                     name: "mobile",
-                    alias: "报障人联系方式"
+                    alias: "联系方式"
                 }, {
                     name: "email",
                     alias: "邮箱地址"
@@ -174,29 +174,24 @@ biz.detail = {
                     name: "city",
                     alias: "报障地市"
                 });
-                biz.detail.setStatic(list, workInfo, createUser);
                 break;
             default:
                 list.push({
                     name: "dep",
-                    alias: "申请人部门"
+                    alias: "部门"
                 }, {
                     name: "createUser",
-                    alias: "申请人姓名",
+                    alias: "姓名",
                     value: createUser['name']
                 }, {
                     name: "mobile",
-                    alias: "申请人联系方式"
+                    alias: "联系方式"
                 }, {
                     name: "email",
                     alias: "邮箱地址"
-                }, {
-                    name: "city",
-                    alias: "申请人地市"
                 });
-                //回显
-                biz.detail.setStatic(list, workInfo, createUser);
         }
+        biz.detail.setStatic(list);
     },
 
     /**
@@ -205,7 +200,7 @@ biz.detail = {
      * @param workInfo
      * @param createUser
      */
-    setStatic: function (list, workInfo, createUser) {
+    setStatic: function (list) {
 
         var view = biz.show.getView({
             table: $("#fqrxx"),
