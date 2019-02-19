@@ -1,10 +1,10 @@
 $.namespace("biz.show");
 
 biz.show = {
-    data : {
-        tr : $("<tr></tr>")
+    data: {
+        tr: $("<tr></tr>")
     },
-    getView : function(option) {
+    getView: function (option) {
         for (var key in biz.edit.data) {
             delete biz.show.data[key];
         }
@@ -20,7 +20,7 @@ biz.show = {
 };
 
 biz.show.table = {
-    setDynamic : function(option) {
+    setDynamic: function (option) {
         if (option) {
             if (option.table) {
                 biz.show.data.table = option.table;
@@ -35,7 +35,7 @@ biz.show.table = {
             option.list = biz.show.data.list;
         }
         if (!$.isEmptyObject(option.list)) {
-            option.list.forEach(function(entity){
+            option.list.forEach(function (entity) {
                 switch (entity.viewComponent) {
                     case "TEXTAREA":
                         biz.show.table.addTextarea(entity);
@@ -66,7 +66,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addTextarea : function(data, table, tr) {
+    addTextarea: function (data, table, tr) {
         if (!table) {
             table = biz.show.data.table;
         }
@@ -94,7 +94,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addRequiredFile : function(data, table, tr) {
+    addRequiredFile: function (data, table, tr) {
 
         if (!table) {
             table = biz.show.data.table;
@@ -121,7 +121,7 @@ biz.show.table = {
      * @param tr
      * @returns {*|jQuery|HTMLElement}
      */
-    addGroupHead : function(data, table, tr) {
+    addGroupHead: function (data, table, tr) {
         if (!table) {
             table = biz.show.data.table;
         }
@@ -147,7 +147,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addTextField : function(data, table, tr) {
+    addTextField: function (data, table, tr) {
         if (!table) {
             table = biz.show.data.table;
         }
@@ -169,36 +169,7 @@ biz.show.table = {
         return td.children("span");
     },
 
-    /**
-     * 用户信息
-     * @param data
-     * @param table
-     * @param tr
-     * @returns {*}
-     */
-    addUserInfo : function(data, table, tr) {
-
-        if (!table) {
-            table = biz.show.data.table;
-        }
-        if (tr) {
-            biz.show.data.tr = tr;
-        }
-        var th = $("<th></th>");
-        th.text(data.alias + ":");
-        var td = $("<td></td>");
-        var name = data.id ? data.id + "&" + biz.show.data.taskId : "";
-        td.html("<span class='fslTextBoxR' name='" + name + "'></span>");
-        biz.show.data.tr.append(th);
-        biz.show.data.tr.append(td);
-        if (biz.show.data.tr.children("td").length === 2) {
-            table.append(biz.show.data.tr);
-            biz.show.data.tr = $("<tr></tr>");
-        }
-        ;
-        return td.children("span");
-    },
-    appendTd : function(table, tr) {
+    appendTd: function (table, tr) {
         if (!table) {
             table = biz.show.data.table;
         }
@@ -218,14 +189,13 @@ biz.show.table = {
     /**
      * 处理方式
      */
-    listByTreatment : function(list) {
+    listByTreatment: function (list) {
         var treatmentId = null;
-        for (var i = 0; i < list.length; i++) {
-            if (list[i].name === "treatment") {
-                treatmentId = list[i].id;
-                break;
+        list.forEach(function (entity) {
+            if (entity.name === "treatment") {
+                treatmentId = entity.id;
             }
-        }
+        });
         var array = [];
         if (treatmentId != null) {
             var treatment = null;
@@ -259,7 +229,7 @@ biz.show.table = {
     /**
      * 子单
      */
-    addSonBiz : function(data, table, tr) {
+    loadTable: function (data, table, tr) {
 
         if (!table) {
             table = biz.show.data.table;
@@ -270,21 +240,24 @@ biz.show.table = {
         biz.show.table.appendTd();
         table.append(biz.show.data.tr);
         biz.show.data.tr = $("<tr></tr>");
-        var div = $("<div></div>");
         var td = $("<td colspan='4' style='padding:0;'></td>");
         var bizTable = $("<table class='table base-table table-striped'></table>");
         td.append(bizTable);
         biz.show.data.tr.append(td);
         table.append(biz.show.data.tr);
         biz.show.data.tr = $("<tr></tr>");
-        biz.show.table.sonBiz.loadSonBiz(bizTable, div, data.data);
+        bizTable.bootstrapTable({
+            data: data.data,
+            classes: "table-no-bordered",
+            columns: data.columns
+        });
         return biz.show.data.tr;
     },
     /**
      * 附件
      */
-    addFile : function(annexs, table, tr) {
-        if (annexs){
+    addFile: function (annexs, table, tr) {
+        if (annexs) {
             biz.show.data.annexs = annexs;
         }
         if (!table)
@@ -296,13 +269,14 @@ biz.show.table = {
         var th = $("<th></th>");
         th.text("相关附件:");
         var td = $("<td colspan='3'></td>");
-        if (biz.show.data.annexs && biz.show.data.annexs !== "")
-            for (var i = 0; i < biz.show.data.annexs.length; i++) {
-                if (annexs[i].fileCatalog == null || annexs[i].fileCatalog === "" || annexs[i].fileCatalog === "uploadFile") {
-                    td.append("<span style='margin-right:10px;display:block;'><a href='" + path + "/biz/download?id=" + annexs[i].id + "'>" + annexs[i].name + "</a></span>");
+        if (!$.isEmptyObject(biz.show.data.annexs)) {
+            $.each(biz.show.data.annexs, function (index, entity) {
+                if (entity['fileCatalog'] == null || entity['fileCatalog'] === "" || entity['fileCatalog'] === "uploadFile") {
+                    td.append("<span style='margin-right:10px;display:block;'><a href='/biz/download?id=" + entity.id + "'>" + annexs[i].name + "</a></span>");
                 }
-            }
-        if (td.children().length === 0){
+            });
+        }
+        if (td.children().length === 0) {
             td.text("无");
         }
         biz.show.data.tr.append(th);
@@ -314,20 +288,20 @@ biz.show.table = {
      * 必填附件
      * @param data
      */
-    addReqFiles : function(data) {
+    addReqFiles: function (data) {
 
         $.ajax({
-            url : path + '/biz/getBizFile',
-            type : 'post',
-            data : {
-                bizId : bizId,
-                taskId : data.taskId,
-                name : data.variable.name
+            url: '/biz/getBizFile',
+            type: 'post',
+            data: {
+                bizId: bizId,
+                taskId: data.taskId,
+                name: data.variable.name
             },
-            success : function(result) {
+            success: function (result) {
                 if (result) {
-                    $.each(result, function(index, entity) {
-                        var span = $("<span style='margin-right:10px;display:block;'><a href='" + path + "/biz/download?id=" + entity.id + "'>" + entity.name + "</a></span>");
+                    $.each(result, function (index, entity) {
+                        var span = $("<span style='margin-right:10px;display:block;'><a href='/biz/download?id=" + entity.id + "'>" + entity.name + "</a></span>");
                         $("span[name='" + data.variable.id + "&" + data.taskId + "']").append(span);
                     });
                 } else {
@@ -335,190 +309,14 @@ biz.show.table = {
                 }
             }
         });
-    },
-    /**
-     * 必传附件
-     */
-    addreqFile : function(list, annexs) {
-        for (var i = 0; i < list.length; i++) {
-            if (list[i].viewComponent === "REQUIREDFILE") {
-                var s = new Set();
-                if (annexs) {
-                    for (var j = 0; j < annexs.length; j++) {
-                        if (list[i].name === annexs[j].fileCatalog) {
-                            var span = $("<span style='margin-right:10px;display:block;'><a href='" + path + "/biz/download?id=" + annexs[j].id + "'>" + annexs[j].name + "</a></span>");
-                            var taskId = (annexs[j].taskId == null) ? "undefined" : annexs[j].taskId;
-                            var name = list[i].id + "&" + taskId;
-                            s.add(name);
-                            $("body").find("span[name='" + name + "']").append(span);
-                        }
-                    }
-                }
-                s.forEach(function(item) {
-                    if ($("body").find("span[name='" + item + "']").children().length === 0) {
-                        $("body").find("span[name='" + item + "']").append("无");
-                    }
-                });
-            }
-        }
-    },
-    /**
-     * 确认人信息
-     */
-    addConfirmUser : function(data, table, tr) {
-        if (!table) {
-            table = biz.show.data.table;
-        }
-        if (tr) {
-            biz.show.data.tr = tr;
-        }
-        var list = [
-            {
-                text : "处理人",
-                name : "user"
-            }, {
-                text : "联系方式",
-                name : "mobile"
-            }, {
-                text : "邮箱",
-                name : "email"
-            }, {
-                text : "确认时间",
-                name : "date"
-            }, {
-                text : "确认部门",
-                name : "dep"
-            } ];
-        for (var i = 0; i < list.length; i++) {
-
-            var th = $("<th></th>");
-            th.html(list[i].text);
-            var td = $("<td></td>");
-            var span = $("<span class='fslTextBoxR'></span>");
-            span.attr("name", data.id + "&" + biz.show.data.taskId);
-            span.attr("title", list[i].name);
-            td.append(span);
-            biz.show.data.tr.append(th);
-            biz.show.data.tr.append(td);
-            if (biz.show.data.tr.children("td").length === 2) {
-                table.append(biz.show.data.tr);
-                biz.show.data.tr = $("<tr></tr>");
-            }
-        }
     }
 };
 
 biz.show.table.confirmUser = {
-    setConfirmUserValue : function(data) {
+    setConfirmUserValue: function (data) {
         var value = eval("(" + data.value + ")");
         for (var key in value) {
             $("span[name='" + data.variable.id + "&" + data.taskId + "'][title='" + key + "']").html(value[key]);
         }
-    }
-};
-/**
- * 用户信息相关
- */
-biz.show.table.userInfo = {
-    setUserName : function(serviceInfo) {
-        $.ajax({
-            url : path + '/role/loadUsersByUserName',
-            type : 'post',
-            async : false,
-            data : {
-                userName : serviceInfo.value
-            },
-            success : function(data) {
-                $("span[name='" + serviceInfo.variable.id + "&" + serviceInfo.taskId + "']").html(data.name);
-                $("input[name='" + serviceInfo.variable.name + "Name']").val(data.name);
-                $("input[name='" + serviceInfo.variable.name + "']").val(data.username);
-            }
-        });
-    },
-
-    getUserByUsername : function(username){
-
-        let result = {};
-        $.ajax({
-            url: path + '/role/loadUsersByUserName',
-            type: 'post',
-            async: false,
-            data: {
-                userName: username
-            },
-            success: function (data) {
-                if (data) {
-                    result = data;
-                }
-            }
-        });
-        return result;
-    },
-
-    setUserNames : function(serviceInfo) {
-        var userNames = serviceInfo.value.split(",");
-        var userName = "";
-        var fullName = "";
-        $.each(userNames, function(index, username) {
-            if (!$.isEmptyObject(username)) {
-                $.ajax({
-                    url : path + '/role/loadUsersByUserName',
-                    type : 'post',
-                    async : false,
-                    data : {
-                        userName : username
-                    },
-                    success : function(data) {
-                        fullName += data.name + ",";
-                        userName += data.username + ",";
-                    }
-                });
-            }
-        });
-        $("span[name='" + serviceInfo.variable.id + "&" + serviceInfo.taskId + "']").html(fullName);
-        $("input[name='" + serviceInfo.variable.name + "Name']").val(fullName);
-        $("input[name='" + serviceInfo.variable.name + "']").val(userName);
-    }
-};
-
-biz.show.table.sonBiz = {
-    loadSonBiz : function(table, div, data) {
-        table.bootstrapTable({
-            data : data,
-            classes : "table-no-bordered",
-            columns : [ {
-                field : "workNum",
-                title : "工单号",
-                align : "center",
-                formatter : function(value, row, index) {
-                    var url = path + "/biz/" + row.id;
-                    return "<a style='cursor: pointer' onclick=\"window.open('" + url + "');\">" + value + "</a>";
-                }
-            }, {
-                field : "bizType",
-                title : "工单类型",
-                align : "center"
-            }, {
-                field : "title",
-                title : "工单标题",
-                align : "center"
-            }, {
-                field : "createUser",
-                title : "创建人",
-                align : "center"
-            }, {
-                field : "createTime",
-                title : "创建时间",
-                align : "center"
-            }, {
-                field : "status",
-                title : "工单状态",
-                align : "center"
-            }, {
-                field : "taskAssignee",
-                title : "当前处理人",
-                align : "center"
-            } ]
-        });
     }
 };

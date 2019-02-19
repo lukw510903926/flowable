@@ -40,8 +40,6 @@ import com.flowable.oa.service.IProcessVariableService;
 import com.flowable.oa.service.IVariableInstanceService;
 import com.flowable.oa.service.IVariableInstanceService.VariableLoadType;
 
-import javax.security.auth.login.Configuration;
-
 @Service
 public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 

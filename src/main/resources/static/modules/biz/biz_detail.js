@@ -91,9 +91,38 @@ biz.detail = {
         biz.detail.setView(table, list, flag);
         if (!$.isEmptyObject(biz.detail.subBizInfo)) {
             var _table = biz.detail.getTable("子单信息");
-            biz.show.table.addSonBiz({
+            var columns = [{
+                field: "workNum",
+                title: "工单号",
+                align: "center",
+                formatter: function (value, row) {
+                    return "<a style='cursor: pointer' onclick=\"window.open('" + "/biz/" + row.id + "');\">" + value + "</a>";
+                }
+            }, {
+                field: "bizType",
+                title: "工单类型",
+                align: "center"
+            }, {
+                field: "title",
+                title: "工单标题",
+                align: "center"
+            }, {
+                field: "createTime",
+                title: "创建时间",
+                align: "center"
+            }, {
+                field: "status",
+                title: "工单状态",
+                align: "center"
+            }, {
+                field: "taskAssignee",
+                title: "当前处理人",
+                align: "center"
+            }];
+            biz.show.table.loadTable({
                 alias: "推诿单",
-                data: biz.detail.subBizInfo
+                data: biz.detail.subBizInfo,
+                columns:columns
             }, _table, $("<tr></tr>"));
         }
     },
