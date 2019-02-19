@@ -492,7 +492,7 @@ biz.show.table.sonBiz = {
                 align : "center",
                 formatter : function(value, row, index) {
                     var url = path + "/biz/" + row.id;
-                    return "<a onclick=\"window.open('" + url + "');\">" + value + "</a>";
+                    return "<a style='cursor: pointer' onclick=\"window.open('" + url + "');\">" + value + "</a>";
                 }
             }, {
                 field : "bizType",
