@@ -3,13 +3,12 @@ $.namespace("biz");
 biz.detail = {
     mark: 0,
     init: function () {
-    	var id = $('#bizId').val();
+        var id = $('#bizId').val();
         $.ajax({
             url: path + "/workflow/display/" + id,
             cache: false,
             async: false,
             success: function (result) {
-                biz.detail.groups = result.processVariablesMap;
                 if (!result) {
                     bsAlert("错误", "异常数据，请验证数据正确性！", function () {
                         window.opener = null;
@@ -37,7 +36,7 @@ biz.detail = {
                 $("[name='base.bizId']").val(biz.detail.workInfo.id);
                 biz.detail.loadStatic(biz.detail.workInfo, biz.detail.createUser);
                 var _flag = typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") !== -1) : false;
-                biz.detail.loadProcessLabel(biz.detail.groups, _flag);
+                biz.detail.loadBIzInfo(_flag);
                 biz.detail.loadProcessData(biz.detail.serviceInfo);
                 biz.detail.loadWorkLogs(biz.detail.workLogs);
                 biz.detail.loadWorkForm(biz.detail.buttons, biz.detail.currentVariables, biz.detail.currentTaskName);
@@ -48,36 +47,6 @@ biz.detail = {
                 }
             }
         });
-    },
-
-    /**
-     * 加载工单流程参数信息
-     * @param grops
-     * @param flag
-     */
-    loadProcessLabel: function (groups, flag) {
-    	
-        if ($.inArray("工单信息", groups) === -1) {
-            var table = biz.detail.getTable("工单信息");
-            biz.detail.loadWorkTitle(table);
-            biz.detail.setView(table, [], flag);
-        }
-        $.each(groups, function (key, list) {
-            var table = biz.detail.getTable(key);
-            if (key === "工单信息") {
-                biz.detail.loadWorkTitle(table);
-            }
-            biz.detail.setView(table, list, flag);
-        });
-        biz.show.table.addFile(biz.detail.annexs, table);
-        if (!$.isEmptyObject(biz.detail.subBizInfo)) {
-            var table = biz.detail.getTable("子单信息");
-            biz.show.table.addSonBiz({
-                alias: "推诿单",
-                data: biz.detail.subBizInfo
-            }, table, $("<tr></tr>"));
-        }
-
     },
 
     /**
@@ -94,6 +63,43 @@ biz.detail = {
         td.append(span);
         tr.append(th).append(td);
         table.append(tr);
+    },
+
+    /**
+     * 加载工单信息
+     * @param grops
+     * @param flag
+     */
+    loadBIzInfo: function (flag) {
+
+        var table = biz.detail.getTable("工单信息");
+        biz.detail.loadWorkTitle(table);
+        var list = [{
+            name: "workNum",
+            alias: "工单号",
+            value: biz.detail.workInfo['workNum']
+        }, {
+            name: "bizType",
+            alias: "工单类型",
+            value: biz.detail.workInfo['bizType']
+        }, {
+            name: "status",
+            alias: "工单状态",
+            value: biz.detail.workInfo['status']
+        }, {
+            name: "createTime",
+            alias: "创建时间",
+            value: biz.detail.workInfo['createTime']
+        }];
+        biz.detail.setView(table, list, flag);
+        biz.show.table.addFile(biz.detail.annexs, table);
+        if (!$.isEmptyObject(biz.detail.subBizInfo)) {
+            var _table = biz.detail.getTable("子单信息");
+            biz.show.table.addSonBiz({
+                alias: "推诿单",
+                data: biz.detail.subBizInfo
+            }, _table, $("<tr></tr>"));
+        }
     },
 
     setView: function (table, list, flag) {
@@ -124,9 +130,6 @@ biz.detail = {
      */
     loadProcessData: function (serviceInfo, ele) { //回显
 
-        if (!ele) {
-            ele = $("body");
-        }
         for (var i in serviceInfo) {
             //特殊处理组件
             if (serviceInfo[i].viewComponent === "REQUIREDFILE") {
@@ -145,35 +148,22 @@ biz.detail = {
                 biz.show.table.userInfo.setUserNames(serviceInfo[i]);
                 continue;
             }
-            //文本类组件
-            if (ele.find(":input[name='" + serviceInfo[i].variableName + "']").length > 0) {
-                ele.find(":input[name='" + serviceInfo[i].variableName + "']").val(serviceInfo[i].value == null ? "" : serviceInfo[i].value);
-            } else if (ele.find(":input[name='" + serviceInfo[i].variableId + "&" + serviceInfo[i].taskId + "']").length > 0) {
-                ele.find(":input[name='" + serviceInfo[i].variableId + "&" + serviceInfo[i].taskId + "']").val(serviceInfo[i].value == null ? "" : serviceInfo[i].value);
-            } else {
-                ele.find("span[name='" + serviceInfo[i].variableId + "&" + serviceInfo[i].taskId + "']").text(serviceInfo[i].value == null ? "" : serviceInfo[i].value);
-            }
         }
     },
     loadStatic: function (workInfo, createUser) {
 
         var key = biz.detail.bizKey.split(":")[0];
         $("#msgtitle").text("提单人信息");
-        var list=[];
+        var list = [];
         switch (key) {
             case "eventManagement":
                 list.push({
-                    name: "workNum",
-                    alias: "工单号"
-                }, {
-                    name: "status",
-                    alias: "当前状态"
-                }, {
                     name: "dep",
                     alias: "报障部门"
                 }, {
-                    name: "name",
-                    alias: "报障人姓名"
+                    name: "createUser",
+                    alias: "报障人姓名",
+                    value: createUser['name']
                 }, {
                     name: "mobile",
                     alias: "报障人联系方式"
@@ -183,28 +173,17 @@ biz.detail = {
                 }, {
                     name: "city",
                     alias: "报障地市"
-                }, {
-                    name: "createTime",
-                    alias: "故障发生时间"
-                }, {
-                    name: "limitTime",
-                    alias: "最迟解决时间"
                 });
                 biz.detail.setStatic(list, workInfo, createUser);
                 break;
             default:
-               list.push({
-                    name: "workNum",
-                    alias: "工单号"
-                }, {
-                    name: "status",
-                    alias: "当前状态"
-                }, {
+                list.push({
                     name: "dep",
                     alias: "申请人部门"
                 }, {
                     name: "createUser",
-                    alias: "申请人姓名"
+                    alias: "申请人姓名",
+                    value: createUser['name']
                 }, {
                     name: "mobile",
                     alias: "申请人联系方式"
@@ -214,44 +193,39 @@ biz.detail = {
                 }, {
                     name: "city",
                     alias: "申请人地市"
-                }, {
-                    name: "createTime",
-                    alias: "申请时间"
-                }, {
-                    name: "limitTime",
-                    alias: "最迟解决时间"
                 });
                 //回显
                 biz.detail.setStatic(list, workInfo, createUser);
         }
     },
+
+    /**
+     * 提单人信息
+     * @param list
+     * @param workInfo
+     * @param createUser
+     */
     setStatic: function (list, workInfo, createUser) {
+
         var view = biz.show.getView({
             table: $("#fqrxx"),
-            list: []
+            bizId: biz.detail.workInfo.id,
+            list: list
         });
-        $.each(list,function(index,entity){
-            if (entity.name === "status") {
-                var text = workInfo[entity.name] === undefined ? createUser[entity.name] : workInfo[entity.name];
-                view.addTextField(entity).text(text);
-            } else if (entity.name === "createUser") {
-                view.addTextField(entity).text(createUser['name']);
-            } else {
-                var text = workInfo[entity.name] === undefined ? createUser[entity.name] : workInfo[entity.name];
-                view.addTextField(entity).text(text == null ? "" : text);
-            }
+        view.setDynamic({
+            end: false
         });
-        view.appendTd();
     },
+
 
     loadWorkLogs: function (workLogs) {
 
         var mark = 1;
-        for (var i in workLogs) {
+        $.each(workLogs, function (index, entity) {
 
             let $workLogs = $("#workLogs");
             var div = $("<div class='import_form'>");
-            var title = "<h2 class='white_tit'>处理流程：" + workLogs[i].taskName +
+            var title = "<h2 class='white_tit'>处理流程：" + entity['taskName'] +
                 "<a class='drop'  role='button' data-toggle='collapse' href='#workLogs" + mark + "'></a></h2>";
             div.html(title);
             $workLogs.append(div);
@@ -266,58 +240,60 @@ biz.detail = {
             var logVar = [];
             var list = [];
 
-            if (workLogs[i].handleResult !== "签收") {
+            if (entity['handleResult'] !== "签收") {
                 for (var key in logVars) {
-                    if (workLogs[i].id === key) {
+                    if (entity.id === key) {
                         logVar = logVars[key];
                         break;
                     }
                 }
                 logVar.forEach(function (instance) {
                     list.push({
-                        name: instance.variableName,
+                        name: instance['variableName'],
                         viewComponent: instance.viewComponent,
-                        alias: instance.variableAlias,
+                        alias: instance['variableAlias'],
                         id: instance.id,
                         value: instance.value
                     });
                 })
             }
+            var username = entity['handleUser'];
+            let handleUser = biz.show.table.userInfo.getUserByUsername(username);
+            let name = handleUser.name ? handleUser.name : username;
+            list.push({
+                name: "handleUser",
+                alias: "处理人",
+                value: name
+            }, {
+                name: "createTime",
+                alias: "处理时间",
+                value: entity['createTime']
+            }, {
+                name: "handleResult",
+                alias: "处理结果",
+                value: entity['handleResult']
+            }, {
+                name: "handleDescription",
+                alias: "处理意见",
+                viewComponent: 'TEXTAREA',
+                value: entity['handleDescription']
+            });
             var view = biz.show.getView({
                 table: table,
                 list: list,
-                taskId: workLogs[i].taskID,
+                taskId: entity['taskID'],
                 bizId: biz.detail.workInfo.id
             });
             view.setDynamic({
                 end: false
             });
-            var handleUser = workLogs[i].handleUser == null ? "" : workLogs[i].handleUser;
-            $.ajax({
-                url: path + '/role/loadUsersByUserName',
-                type: 'post',
-                async: false,
-                data: {
-                    userName: handleUser
-                },
-                success: function (data) {
-                    if (data) {
-                        view.addTextField({alias: "处理人"}).text(data.name);
-                    } else {
-                        view.addTextField({alias: "处理人"}).text(handleUser);
-                    }
-                }
-            });
-            view.addTextField({alias: "处理时间"}).text(workLogs[i].createTime == null ? "" : workLogs[i].createTime);
-            view.addTextarea({alias: "处理结果"}).text(workLogs[i].handleResult == null ? "" : workLogs[i].handleResult);
-            if (workLogs[i].taskID !== "START") {
-                view.addTextarea({alias: "处理意见"}).text(workLogs[i].handleDescription == null ? "" : workLogs[i].handleDescription);
-                if (workLogs[i].handleResult !== "签收" && workLogs[i].taskName !== "申请人处理") {
-                    view.addFile(biz.detail.files[workLogs[i].id]);
+            if (entity['taskID'] !== "START") {
+                if (entity['handleResult'] !== "签收" && entity['taskName'] !== "申请人处理") {
+                    view.addFile(biz.detail.files[entity.id]);
                 }
             }
             biz.detail.loadProcessData(logVar, table);
-        }
+        });
     },
 
     /**
@@ -341,8 +317,8 @@ biz.detail = {
             view.variableGroup();
             //判断是否签收
             var _sign = false;
-            var buttons = biz.detail.buttonGroup ? biz.detail.buttonGroup.all : buttons;
-            $.each(buttons, function (index, value) {
+            var groupButtons = biz.detail.buttonGroup ? biz.detail.buttonGroup.all : buttons;
+            $.each(groupButtons, function (index, value) {
                 if (value === "签收") {
                     _sign = true;
                     biz.edit.form.addMessage({
@@ -370,7 +346,7 @@ biz.detail = {
             all: buttons
         };
         if ($.isEmptyObject(currentVariables)) {
-            return;
+            return "";
         }
         //确定处理方式属性
         for (var i = 0; i < currentVariables.length; i++) {
@@ -457,7 +433,7 @@ biz.detail = {
      */
     getTable: function (group) {
         var table;
-        if (group == $("#msgtitle").text()) {
+        if (group === $("#msgtitle").text()) {
             table = $("#fqrxx");
         } else {
             var div = $("<div class='import_form mrt10'>");
@@ -515,7 +491,7 @@ biz.detail.save = function (key) {
             file.eq(i).remove();
     }
     //重新提交，交维工作做了处理
-    if (typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") != -1) : false) {
+    if (typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") !== -1) : false) {
 //		$("#form [name='startProc']").val(true);
         url = path + "/workflow/bizInfo/updateBiz";
     }
@@ -550,7 +526,7 @@ biz.detail.save = function (key) {
                 bsAlert("异常", result);
             }
         },
-        error: function (result) {
+        error: function () {
             layer.close(index);
             bsAlert("异常", "提交失败");
         }

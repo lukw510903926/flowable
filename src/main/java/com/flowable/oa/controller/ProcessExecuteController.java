@@ -124,8 +124,7 @@ public class ProcessExecuteController {
             variable.setTaskId(Constants.TASK_START);
             List<ProcessVariable> list = this.processVariableService.findProcessVariables(variable);
             data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
-            Map<String, List<ProcessVariable>> map = groupProcessValBean(list);
-            data.put("processValBeanMap", map);
+            data.put("processValBean", list);
             data.put("result", true);
         } else {
             data.put("result", false);
@@ -141,15 +140,9 @@ public class ProcessExecuteController {
      */
     @ResponseBody
     @RequestMapping(value = "/display/{id}")
-    public Map<String, Object> display(@PathVariable("id") String id, HttpServletRequest request) {
+    public Map<String, Object> display(@PathVariable("id") String id) {
 
-        Map<String, Object> result = processExecuteService.queryWorkOrder(id);
-        WebUtil.getLoginUser(request);
-        String processVal = JSONObject.toJSONString(result.get("processVariables"));
-        List<ProcessVariable> list = JSONArray.parseArray(processVal, ProcessVariable.class);
-        Map<String, List<ProcessVariable>> map = groupProcessValBean(list);
-        result.put("processVariablesMap", map);
-        return result;
+        return processExecuteService.queryWorkOrder(id);
     }
 
     /**

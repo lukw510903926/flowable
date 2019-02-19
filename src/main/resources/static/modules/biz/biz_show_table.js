@@ -441,6 +441,25 @@ biz.show.table.userInfo = {
         });
     },
 
+    getUserByUsername : function(username){
+
+        let result = {};
+        $.ajax({
+            url: path + '/role/loadUsersByUserName',
+            type: 'post',
+            async: false,
+            data: {
+                userName: username
+            },
+            success: function (data) {
+                if (data) {
+                    result = data;
+                }
+            }
+        });
+        return result;
+    },
+
     setUserNames : function(serviceInfo) {
         var userNames = serviceInfo.value.split(",");
         var userName = "";

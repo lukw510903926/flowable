@@ -12,7 +12,7 @@ biz.create = {
             async: false,
             success: function (data) {
                 if (data.result) {
-                    biz.create.data = data.processValBeanMap;
+                    biz.create.data = data.processValBean;
                     biz.create.buttons = data.SYS_BUTTON;
                     $("#base_tempID").val(data.baseTempId);
                     if (bizId) {
@@ -152,36 +152,29 @@ biz.create = {
         });
 
     },
-    loadForm: function (data) {
-        for (var group in data) {
-            var list = data[group];
-            var table;
-            if (group === $("#msgtitle").text()) {
-                table = $("#bjrxx");
-            } else {
-                var $content = $(".t_content");
-                var div = $("<div class='import_form'>");
-                div.html("<h2 class='white_tit'>" + group + "</h2>");
-                $content.append(div);
-                div = $("<div class='listtable_wrap'>");
-                table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
-                div.append(table);
-                $content.append(div);
-            }
-            var view = biz.edit.getView({
-                list: list,
-                table: table,
-                bizId: bizId
-            });
-            switch (key) {
-                case "eventManagement":
-                    biz.create.type.event(view, group === "工单信息");
-                    break;
-                default:
-                    biz.create.type.event(view, group === "工单信息");
-            }
-            view.addFile(bizId ? biz.create.draftData.annexs : null);
+    loadForm: function (list) {
+
+        var $content = $(".t_content");
+        var div = $("<div class='import_form'>");
+        div.html("<h2 class='white_tit'>工单信息</h2>");
+        $content.append(div);
+        div = $("<div class='listtable_wrap'>");
+        var table = $("<table cellpadding='0' cellspacing='0' class='listtable'></table>");
+        div.append(table);
+        $content.append(div);
+        var view = biz.edit.getView({
+            list: list,
+            table: table,
+            bizId: bizId
+        });
+        switch (key) {
+            case "eventManagement":
+                biz.create.type.event(view, true);
+                break;
+            default:
+                biz.create.type.event(view, true);
         }
+        view.addFile(bizId ? biz.create.draftData.annexs : null);
         var $form = $("#form");
         $form.find('[name="actualCreator"]').val(createUser.fullname);
         $form.find('[name="actualCreatePhone"]').val(createUser.mobile);
