@@ -12,12 +12,12 @@ biz.create = {
             async: false,
             success: function (data) {
                 if (data.result) {
-                    biz.create.data = data.processValBean;
-                    biz.create.buttons = data.SYS_BUTTON;
-                    $("#base_tempID").val(data.baseTempId);
+                    biz.create.data = data['processValBean'];
+                    biz.create.buttons = data['SYS_BUTTON'];
+                    $("#base_tempID").val(data['baseTempId']);
                     if (bizId) {
                         biz.create.draftData = biz.create.loadDraftBiz();
-                        biz.create.loadStatic(biz.create.draftData.workInfo, biz.create.draftData.extInfo.createUser);
+                        biz.create.loadStatic(biz.create.draftData.workInfo, biz.create.draftData['extInfo'].createUser);
                     } else {
                         biz.create.loadStatic();
                     }
@@ -25,7 +25,7 @@ biz.create = {
                     biz.create.createButtons(".t_content", biz.create.buttons);
                     if (bizId) {
                         $("input[name='base.workTitle']").val(biz.create.draftData.workInfo.title);
-                        $("input[name='base.limitTime']").val(biz.create.draftData.workInfo.limitTime);
+                        $("input[name='base.limitTime']").val(biz.create.draftData.workInfo['limitTime']);
                         var hidden = $("<input type='hidden' name='tempBizId'>");
                         hidden.val(biz.create.draftData.workInfo.id);
                         $("#form").append(hidden);
@@ -84,7 +84,7 @@ biz.create = {
                     id: "createTime",
                     alias: "故障发生时间"
                 });
-                biz.create.setStatic(list, workInfo, saveUser);
+
                 break;
             default:
                 list.push({
@@ -106,8 +106,8 @@ biz.create = {
                     id: "email",
                     alias: "邮箱地址"
                 });
-                biz.create.setStatic(list, workInfo, saveUser);
         }
+        biz.create.setStatic(list, workInfo, saveUser);
 
     },
     setStatic: function (list, workInfo, saveUser) {
