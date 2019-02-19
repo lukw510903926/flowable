@@ -9,7 +9,6 @@ biz.detail = {
             cache: false,
             async: false,
             success: function (result) {
-                console.log(result);
                 biz.detail.groups = result.processVariablesMap;
                 if (!result) {
                     bsAlert("错误", "异常数据，请验证数据正确性！", function () {
@@ -274,10 +273,15 @@ biz.detail = {
                         break;
                     }
                 }
-                for (var j = 0; j < logVar.length; j++) {
-                	var instance = logVar[j];
-					list.push({name : instance.variableName, viewComponent : instance.viewComponent,alias :instance.variableAlias});
-				}
+                logVar.forEach(function (instance) {
+                    list.push({
+                        name: instance.variableName,
+                        viewComponent: instance.viewComponent,
+                        alias: instance.variableAlias,
+                        id: instance.id,
+                        value: instance.value
+                    });
+                })
             }
             var view = biz.show.getView({
                 table: table,

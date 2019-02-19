@@ -44,7 +44,7 @@ biz.show.table = {
                         biz.show.table.addTextField(entity);
                         break;
                     case "REQUIREDFILE":
-                        biz.show.table.addQuiredFile(entity);
+                        biz.show.table.addRequiredFile(entity);
                         break;
                     case "GROUPHEAD":
                         biz.show.table.addGroupHead(entity);
@@ -57,50 +57,6 @@ biz.show.table = {
                 biz.show.table.appendTd(option.table);
             }
         }
-        return biz.show.data.tr;
-    },
-
-    addMemberLinkage : function(data, list, table, tr, type) {
-
-        biz.edit.form.memberLinkage.loadSectorBox();
-        if (!table) {
-            table = biz.show.data.table;
-        }
-        if (tr) {
-            biz.show.data.tr = tr;
-        }
-        biz.show.table.appendTd();
-        var th = $("<th></th>");
-        var td = $("<td colspan='3'></td>");
-        th.append(data.alias + ":");
-        var handleUser = "ActualApplicant";
-        var input = $("<input type='hidden' name='" + handleUser + "' class='fslTextBox' />");
-        var input2 = $("<input type='hidden' name='applicantMobile' class='fslTextBox'/>");
-        handleUser = 'ActualApplicantName';
-        var chInput = $("<input type='text' name='" + handleUser + "' class='fslTextBox' style='width:40%;' readonly='readonly'/>");
-        biz.edit.form.addCkeckEmpty(data, th, input);
-        var add = "<a class='btn btn-y' onclick='biz.edit.form.memberLinkage.openMemberContainer()'>人员</a>";
-        var remove = "<a class='btn btn-n' onclick='biz.edit.form.memberLinkage.clearMember()'>清空</a>";
-        td.append(input);
-        td.append(input2);
-        td.append(chInput);
-        td.append(add);
-        td.append(remove);
-        biz.edit.form.memberLinkage.data.inputName = "ActualApplicant";
-        //加入联动，注意联系方式参数是否设置联动
-        biz.edit.form.memberLinkage.data.mobileName = "applicantMobile";
-
-        var container = biz.edit.form.memberLinkage.createMemberContainer(data.name);
-        td.append(container);
-        var div = $('<div id="roleMenuContent" class="menuContent" style="display:none; position: absolute;"></div>');
-        var ul = $('<ul id="roleTree" class="ztree" style="margin-top:0; width:180px; height: 300px;"></ul>');
-        div.append(ul);
-        td.append(div);
-        biz.show.data.tr.append(th);
-        biz.show.data.tr.append(td);
-        table.append(biz.show.data.tr);
-        biz.show.data.tr = $("<tr></tr>");
-        biz.edit.form.memberLinkage.roleTree.loadRoleTree();
         return biz.show.data.tr;
     },
     /**
@@ -123,6 +79,8 @@ biz.show.table = {
         var td = $("<td colspan='3'></td>");
         var name = data.id ? data.id + "&" + biz.show.data.taskId : "";
         td.html("<span class='fslTextBoxR' name='" + name + "'></span>");
+
+        td.text(data.value);
         biz.show.data.tr.append(th);
         biz.show.data.tr.append(td);
         table.append(biz.show.data.tr);
@@ -136,7 +94,7 @@ biz.show.table = {
      * @param tr
      * @returns {*}
      */
-    addQuiredFile : function(data, table, tr) {
+    addRequiredFile : function(data, table, tr) {
 
         if (!table) {
             table = biz.show.data.table;
@@ -183,35 +141,6 @@ biz.show.table = {
     },
 
     /**
-     * 处理信息
-     * @param data
-     * @param table
-     * @param tr
-     * @returns {*}
-     */
-    addMessage : function(data, table, tr) {
-
-        if (!table) {
-            table = biz.show.data.table;
-        }
-        if (tr) {
-            biz.show.data.tr = tr;
-        }
-        biz.edit.form.appendTd();
-        var th = $("<th></th>");
-        var td = $("<td colspan='3'></td>");
-        th.append(data.alias + ":");
-        var textarea = "<textarea name='base.handleMessage' rows='2' cols='20' class='fslTextBox' style='height:81px;width:90%;'></textarea>";
-        td.html(textarea);
-        biz.edit.form.addCkeckEmpty(data, th, td.children("textarea"));
-        biz.edit.data.tr.append(th);
-        biz.edit.data.tr.append(td);
-        table.append(biz.edit.data.tr);
-        biz.edit.data.tr = $("<tr></tr>");
-        return biz.edit.data.tr;
-    },
-
-    /**
      * 文本框
      * @param data
      * @param table
@@ -231,35 +160,6 @@ biz.show.table = {
         var name = data.id ? data.id + "&" + biz.show.data.taskId : "";
         td.html("<span class='fslTextBoxR' name='" + name + "'></span>");
         td.text(data.value);
-        biz.show.data.tr.append(th);
-        biz.show.data.tr.append(td);
-        if (biz.show.data.tr.children("td").length === 2) {
-            table.append(biz.show.data.tr);
-            biz.show.data.tr = $("<tr></tr>");
-        }
-        return td.children("span");
-    },
-
-    /**
-     * 下拉
-     * @param data
-     * @param table
-     * @param tr
-     * @returns {*}
-     */
-    addComboBox : function(data, table, tr) {
-
-        if (!table) {
-            table = biz.show.data.table;
-        }
-        if (tr) {
-            biz.show.data.tr = tr;
-        }
-        var th = $("<th></th>");
-        th.text(data.alias + ":");
-        var td = $("<td></td>");
-        var name = data.id ? data.id + "&" + biz.show.data.taskId : "";
-        td.html("<span class='fslTextBoxR' name='" + name + "'></span>");
         biz.show.data.tr.append(th);
         biz.show.data.tr.append(td);
         if (biz.show.data.tr.children("td").length === 2) {
@@ -378,12 +278,12 @@ biz.show.table = {
         table.append(biz.show.data.tr);
         biz.show.data.tr = $("<tr></tr>");
         td = $("<td colspan='4' style='padding:0;'></td>");
-        var biztable = $("<table style='width:100%;border:hidden;' class='table base-table table-striped'></table>");
-        td.append(biztable);
+        var bizTable = $("<table style='width:100%;border:hidden;' class='table base-table table-striped'></table>");
+        td.append(bizTable);
         biz.show.data.tr.append(td);
         table.append(biz.show.data.tr);
         biz.show.data.tr = $("<tr></tr>");
-        biz.show.table.sonBiz.loadSonBiz(biztable, div, data.data);
+        biz.show.table.sonBiz.loadSonBiz(bizTable, div, data.data);
         return biz.show.data.tr;
     },
     /**

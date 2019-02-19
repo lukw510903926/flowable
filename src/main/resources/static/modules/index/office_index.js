@@ -6,6 +6,7 @@ $(function () {
 office.index = {
     init: function () {
         var currentPath = window.document.location.pathname;
+        currentPath = currentPath.split(';')[0];
         var tag = $('ul').find('[href="' + currentPath + '"]');
         tag.css('background', '#1890ff');
         tag.parent().parent().removeClass('collapse');
