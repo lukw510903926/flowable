@@ -978,22 +978,25 @@ biz.edit.form.orgTree = {
 };
 
 $(window).resize(function () {
-    if ($('#configcontainer').length > 0 && !$('#configcontainer').is(":hidden")) {
-        $('#configcontainer').css('width', "0");
-        var width = $("[name='configtable']").css('width');
-        var width = width.substring(0, width.length - 2);
-        $('#configcontainer').css('width', (parseInt(width) + 2));
+    let $configContainer = $('#configcontainer');
+    var width;
+    if ($configContainer.length > 0 && !$configContainer.is(":hidden")) {
+        $configContainer.css('width', "0");
+        width = $("[name='configtable']").css('width');
+        width = width.substring(0, width.length - 2);
+        $configContainer.css('width', (parseInt(width) + 2));
     }
-    if ($('#memberContainer').length > 0 && !$('#memberContainer').is(":hidden")) {
-        $('#memberContainer').css('width', "0");
-        var width = $("[name='" + biz.edit.form.memberbox.data.inputname + "']").parent('td').css('width');
+    if ($configContainer.length > 0 && !$configContainer.is(":hidden")) {
+        $configContainer.css('width', "0");
+        width = $("[name='" + biz.edit.form.memberbox.data.inputname + "']").parent('td').css('width');
         width = width.substring(0, width.length - 2) - 10;
-        $('#memberContainer').css('width', (parseInt(width) + 2));
+        $configContainer.css('width', (parseInt(width) + 2));
     }
-    if ($('#memberLinkageContainer').length > 0 && !$('#memberLinkageContainer').is(":hidden")) {
-        $('#memberLinkageContainer').css('width', "0");
-        var width = $("#memberLinkageContainer").parent('td').css('width');
+    let $memberLinkageContainer = $('#memberLinkageContainer');
+    if ($memberLinkageContainer.length > 0 && !$memberLinkageContainer.is(":hidden")) {
+        $memberLinkageContainer.css('width', "0");
+        width = $memberLinkageContainer.parent('td').css('width');
         width = width.substring(0, width.length - 2) - 10;
-        $('#memberLinkageContainer').css('width', (parseInt(width) + 2));
+        $memberLinkageContainer.css('width', (parseInt(width) + 2));
     }
 });
