@@ -46,4 +46,10 @@ ul,.panel,p,.breadcrumb,.well{margin-bottom:0;}
 /*模态框*/
 .modal-header, .modal-footer{padding:7px 10px;}
 .modal-body { padding: 10px; }
+.container-fluid-index {
+    padding-right: 0px;
+    padding-left: 0px;
+    margin-right: auto;
+    margin-left: auto;
+}
 
