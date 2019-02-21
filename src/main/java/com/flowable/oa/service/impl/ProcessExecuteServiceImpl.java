@@ -20,6 +20,7 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
@@ -68,6 +69,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
     @Autowired
     private IVariableInstanceService instanceService;
+
+    @Value("${biz.file.path}")
+    private String bizFileRootPath;
 
     @Override
     public Map<String, Object> loadBizLogInput(String logId) {
@@ -273,7 +277,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                                              List<ProcessVariable> processValList) {
 
         String buttonId = MapUtils.getString(params, "base.buttonId");
-        Map<String, Object> variables = new HashMap<String, Object>();
+        Map<String, Object> variables = new HashMap<>();
         // 设置流程参数
         for (ProcessVariable variable : processValList) {
             if (variable.getIsProcessVariable() != null && variable.getIsProcessVariable()) {
@@ -390,7 +394,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 List<MultipartFile> files = fileMap.get(fileCatalog);
                 if (CollectionUtils.isNotEmpty(files)) {
                     files.forEach(file -> {
-                        BizFile bizFile = UploadFileUtil.saveFile(file);
+                        BizFile bizFile = UploadFileUtil.saveFile(file,bizFileRootPath);
                         if (bizFile != null) {
                             bizFile.setCreateDate(now);
                             bizFile.setFileCatalog(fileCatalog);
@@ -561,7 +565,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             if (bean == null) {
                 throw new ServiceException("找不到附件");
             }
-            File file = UploadFileUtil.getUploadFile(bean);
+            File file = UploadFileUtil.getUploadFile(bean,bizFileRootPath);
             if (!file.exists()) {
                 throw new ServiceException("找不到附件");
             }

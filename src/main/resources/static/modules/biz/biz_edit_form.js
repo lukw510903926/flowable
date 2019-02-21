@@ -415,50 +415,6 @@ biz.edit.form = {
         return biz.edit.data.tr;
     },
 
-    //紧急级别组件
-    addUrgencyLevel: function (data, table, tr) {
-        if (!table) {
-            table = biz.edit.data.table;
-        }
-        if (tr) {
-            biz.edit.data.tr = tr;
-        }
-        var th = $("<th></th>");
-        var td = $("<td></td>");
-        var select = $("<select class='fslTextBox'></select>");
-        biz.edit.form.addCkeckEmpty(data, th, select);
-        th.append(data.alias + ":");
-        select.attr("name", data.name);
-        biz.edit.form.combobox.loadComboBox(select, data.viewDatas);
-        td.append(select);
-        biz.edit.data.tr.append(th);
-        biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length === 2) {
-            table.append(biz.edit.data.tr);
-            biz.edit.data.tr = $("<tr></tr>");
-        }
-        ;
-        th = $("<th></th>");
-        td = $("<td></td>");
-        th.append("最迟解决时间:");
-        select.change(biz.edit.form.combobox.otherUrgencyLevel);
-        var input = $("<input type='text' class='fslTextBox' readonly='readonly'/>");
-        input.attr("name", "base.limitTime");
-        input.addClass("Wdate");
-        input.attr("style", "height: 22px;");
-        var now = new Date();
-        now.setDate(now.getDate() + 7);
-        input.val(now.Format("yyyy-MM-dd hh:mm:ss"));
-        td.append(input);
-        biz.edit.data.tr.append(th);
-        biz.edit.data.tr.append(td);
-        if (biz.edit.data.tr.children("td").length === 2) {
-            table.append(biz.edit.data.tr);
-            biz.edit.data.tr = $("<tr></tr>");
-        }
-        return biz.edit.data.tr;
-    },
-    
     addBoolean: function (data, table, tr) {
 
         if (!table) {

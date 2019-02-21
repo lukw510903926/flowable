@@ -7,7 +7,7 @@
     <meta charset="UTF-8"/>
     <title>夲远科技后台管理系统</title>
     <style type="text/css">
-        .left {
+        .leftMenu {
             width: 220px;
             float: left;
             height: 100vh;
@@ -15,7 +15,7 @@
             text-align: center;
         }
 
-        .content {
+        .right_content {
             width: calc(100% - 220px);
             float: left;
             margin-top: 10px;
@@ -25,8 +25,8 @@
 <body>
 <div class="container-fluid">
     <div th:include="top.html"></div>
-    <div class='left' th:include="menu.html"></div>
-    <div class="content" th:include="::content"></div>
+    <div class='leftMenu' th:include="menu.html"></div>
+    <div class="right_content" th:include="::content"></div>
 </div>
 </body>
 <script type="text/javascript" th:src="@{/modules/index/office_index.js}"></script>

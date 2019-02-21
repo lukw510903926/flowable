@@ -18,6 +18,7 @@ import org.flowable.engine.repository.ProcessDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,9 @@ public class BizInfoController {
 
     @Autowired
     private IBizFileService bizFileService;
+
+    @Value("${biz.file.path}")
+    private String bizFileRootPath;
 
     private Logger logger = LoggerFactory.getLogger(BizInfoController.class);
 
@@ -139,7 +143,7 @@ public class BizInfoController {
         try {
             BizFile bizFile = bizFileService.selectByKey(id);
             response.setContentType("application/octet-stream;charset=UTF-8");
-            File file = new File("/home/ipnet/esflowFilePath/" + bizFile.getPath());
+            File file = new File(bizFileRootPath + bizFile.getPath());
             if (file.exists()) {
                 response.setHeader("Content-Disposition",
                         "attachment;filename=" + new String(bizFile.getName().getBytes("gb2312"), StandardCharsets.ISO_8859_1));

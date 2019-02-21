@@ -19,8 +19,6 @@ import com.flowable.oa.entity.BizFile;
  * @author 26223
  */
 public class UploadFileUtil {
-    //	private static String rootPath = "E:\\temp\\workfile\\";
-    private static String rootPath = "/home/ipnet/esflowFilePath/";
 
     private static Logger logger = LoggerFactory.getLogger(UploadFileUtil.class);
 
@@ -30,7 +28,7 @@ public class UploadFileUtil {
      * @param file
      * @return
      */
-    public static BizFile saveFile(MultipartFile file) {
+    public static BizFile saveFile(MultipartFile file,String bizFileRootPath) {
 
         if (file == null || file.getSize() == 0) {
             return null;
@@ -41,7 +39,7 @@ public class UploadFileUtil {
         String dp = file.getOriginalFilename();
         dp = dp.substring(dp.lastIndexOf(".") + 1);
         filePath2 = filePath2 + "." + dp;
-        String filePath = rootPath + filePath2;
+        String filePath = bizFileRootPath + filePath2;
         File pFile = new File(filePath);
         pFile.getParentFile().mkdirs();
         BizFile bean = new BizFile();
@@ -50,23 +48,19 @@ public class UploadFileUtil {
             bean.setCreateDate(date);
             bean.setPath(filePath2);
             bean.setName(file.getOriginalFilename());
-        } catch (IllegalStateException e) {
-            logger.error("文件上传失败 : {}", e);
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
             logger.error("文件上传失败 : {}", e);
         }
-        if (bean != null) {
-            try {
-                Image image = ImageIO.read(pFile);
-                if (image == null) {
-                    bean.setFileType("FILE");
-                } else {
-                    bean.setFileType("IMAGE");
-                }
-            } catch (IOException ex) {
+        try {
+            Image image = ImageIO.read(pFile);
+            if (image == null) {
                 bean.setFileType("FILE");
-                logger.error("获取文件类型失败 : {}", ex);
+            } else {
+                bean.setFileType("IMAGE");
             }
+        } catch (IOException ex) {
+            bean.setFileType("FILE");
+            logger.error("获取文件类型失败 : {}", ex);
         }
         return bean;
     }
@@ -77,9 +71,7 @@ public class UploadFileUtil {
      * @param bean
      * @return
      */
-    public static File getUploadFile(BizFile bean) {
-        String fielPath = rootPath + bean.getPath();
-        File file = new File(fielPath);
-        return file;
+    public static File getUploadFile(BizFile bean,String bizFileRootPath) {
+        return new File(bizFileRootPath + bean.getPath());
     }
 }

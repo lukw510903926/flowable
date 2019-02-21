@@ -272,7 +272,7 @@ biz.show.table = {
         if (!$.isEmptyObject(biz.show.data.annexs)) {
             $.each(biz.show.data.annexs, function (index, entity) {
                 if (entity['fileCatalog'] == null || entity['fileCatalog'] === "" || entity['fileCatalog'] === "uploadFile") {
-                    td.append("<span style='margin-right:10px;display:block;'><a href='/biz/download?id=" + entity.id + "'>" + annexs[i].name + "</a></span>");
+                    td.append("<span style='margin-right:10px;display:block;'><a href='/biz/download?id=" + entity.id + "'>" + entity.name + "</a></span>");
                 }
             });
         }

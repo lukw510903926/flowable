@@ -1,6 +1,7 @@
 package com.flowable.oa.controller;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -214,8 +215,7 @@ public class ProcessExecuteController {
             processExecuteService.submit(params, request.getMultiFileMap());
         } catch (Exception e) {
             logger.error("表单提交失败 : {}", e);
-            String msg = "操作失败: " + e.getLocalizedMessage();
-            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null, msg)), headers, HttpStatus.OK);
+            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null, "表单提交失败")), headers, HttpStatus.OK);
         }
         return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), headers, HttpStatus.OK);
     }
@@ -238,16 +238,14 @@ public class ProcessExecuteController {
         }
         InputStream inputStream = (InputStream) result[1];
         String fileType = (String) result[0];
-        Long fileLong = (Long) result[2];
         String fileName = (String) result[3];
         try {
             if ("IMAGE".equalsIgnoreCase(fileType)) {
                 response.setContentType("image/PNG;charset=GB2312");
             } else {
-                fileName = new String(fileName.getBytes("utf-8"), "ISO8859-1");
+                fileName = new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
                 response.setContentType("application/x-download");
                 response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-                response.setHeader("Content-Length", fileLong == null ? "0" : String.valueOf(fileLong));
                 IOUtils.copy(inputStream, response.getOutputStream());
             }
         } catch (Exception e) {

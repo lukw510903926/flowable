@@ -73,16 +73,17 @@ biz.edit.form.memberbox = {
         return container;
     },
     openMemberContainer: function () {
-        var inputname = biz.edit.form.memberbox.data.inputname;
-        if ($('#memberContainer').is(":hidden")) {
-            var width = $("[name='" + inputname + "']").parent('td').css('width');
+        var inputName = biz.edit.form.memberbox.data.inputname;
+        let $memberContainer = $('#memberContainer');
+        if ($memberContainer.is(":hidden")) {
+            var width = $("[name='" + inputName + "']").parent('td').css('width');
             width = width.substring(0, width.length - 2) - 10;
-            $('#memberContainer').css('width', (parseInt(width) + 2));
-            $('#memberContainer').show();
+            $memberContainer.css('width', (parseInt(width) + 2));
+            $memberContainer.show();
             biz.edit.form.memberbox.sectorInit();
             biz.edit.form.memberbox.queryMember();
         } else {
-            $('#memberContainer').hide();
+            $memberContainer.hide();
         }
     },
     setting: {
@@ -113,7 +114,7 @@ biz.edit.form.memberbox = {
                 if (v.length > 0) v = v.substring(0, v.length - 1);
                 if (vId.length > 0) vId = vId.substring(0, vId.length - 1);
                 var cityObj = $("#sectorCombo"), cityValue = $('#sectorComboVal');
-                if (vId == "") {
+                if (vId === "") {
                     cityObj.val("");
                     cityValue.val("");
                 } else {
@@ -357,7 +358,7 @@ biz.edit.form.memberLinkage = {
                 if (v.length > 0) v = v.substring(0, v.length - 1);
                 if (vId.length > 0) vId = vId.substring(0, vId.length - 1);
                 var cityObj = biz.edit.form.memberLinkage.currentNode, cityValue = cityObj.next();
-                if (vId == "") {
+                if (vId === "") {
                     cityObj.val("");
                     cityValue.val("");
                 } else {
@@ -580,7 +581,7 @@ biz.edit.form.combobox = {
     },
     loadDictComboBox: function (select, params) {//数据字典下拉框
         $.ajax({
-            url: path + "/dictValue/list",
+            url: "/dictValue/list",
             type: "post",
             async: false,
             data: {dictTypeId: params},
@@ -602,21 +603,6 @@ biz.edit.form.combobox = {
 
     },
 
-    loadUserInfo: function (dataId, type) {
-
-        var userInfo = '';
-        $.ajax({
-            url: path + '/actBizModel/getUserInfo',
-            type: 'post',
-            data: {dataId: dataId, type: type},
-            async: false,
-            success: function (result) {
-                userInfo = result;
-            }
-        });
-        return userInfo;
-    },
-
     /**
      * 根据数组生成下拉框选项
      * @param select
@@ -630,40 +616,6 @@ biz.edit.form.combobox = {
                 option.text(entity);
                 select.append(option);
             });
-        }
-    },
-    otherUrgencyLevel: function (ele) {//紧急级别与最后解决时间联动
-        if (!ele) {
-            ele = this;
-        } else if (ele.originalEvent) {
-            ele = this;
-        }
-        if ($(ele).val().replace(/(^\s*)|(\s*$)/g, "") == "其他") {
-            $("input[name='base.limitTime']").attr("onfocus", "WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss',onpicked:biz.edit.form.combobox.limitTimechange})");
-        } else {
-            var num = 0;
-            switch ($(ele).val().replace(/(^\s*)|(\s*$)/g, "")) {
-                case "低(7天)":
-                    num = 7;
-                    break;
-                case "中(3天)":
-                    num = 3;
-                    break;
-                case "高(1天)":
-                    num = 1;
-                    break;
-                default:
-                    var value = $(ele).val().replace(/(^\D*)|(\D*$)/g, "");
-                    num = parseInt(value ? value : 0);
-            }
-            var now = new Date();
-            now.setDate(now.getDate() + num);
-            var input = $("<input type='text' class='fslTextBox' readonly='readonly'>");
-            input.attr("name", "base.limitTime");
-            input.addClass("Wdate");
-            input.val(now.Format("yyyy-MM-dd hh:mm:ss"));
-            $("input[name='base.limitTime']").replaceWith(input);
-            $("#onLineTime").attr('onFocus', "WdatePicker({dateFmt:\"yyyy-MM-dd HH:mm:ss\",minDate:\"" + now.Format("yyyy-MM-dd hh:mm:ss") + "\"})");
         }
     }
 };
@@ -685,14 +637,21 @@ biz.edit.form.file = {
         $fileTd.append(file);
         biz.edit.form.file.handleDiv = $(element).parent().parent().parent();
     },
-    selectFile: function () {//触发隐藏文件域的点击事件，弹窗选择框
+
+    /**
+     * 触发隐藏文件域的点击事件，弹窗选择框
+     */
+    selectFile: function () {
         $("#file" + (biz.edit.fileNumber)).click();
     },
 
-    uploadFile: function () {//在附件单元格显示附件名，未入库
+    /**
+     * 在附件单元格显示附件名，未入库
+     */
+    uploadFile: function () {
 
         var path = $("#file" + (biz.edit.fileNumber)).val();
-        if (path !== "" && !path) {
+        if (path !== "" && path) {
             var filename = path.substring(path.lastIndexOf("\\") + 1);
             var span = "<span style='margin-right:10px;display:block;' id='spanfile" + biz.edit.fileNumber + "'>" +
                 "<input type='checkbox'/>" + filename + "</span>";
@@ -704,21 +663,21 @@ biz.edit.form.file = {
     downLoadFile: function () {
 
         var fileName = encodeURI(biz.edit.form.file.data.downLoadFile);
-        window.location.href = path + "/bizTemplateFile/downloadTemplate?&fileName=" + encodeURIComponent(fileName) + "&bizType=" + key + "&bizId=" + bizId;
+        window.location.href = "/bizTemplateFile/downloadTemplate?&fileName=" + encodeURIComponent(fileName) + "&bizType=" + key + "&bizId=" + bizId;
     },
 
     removeFile: function (element) {//删除附件
         var checkbox = $(element).parent().parent().parent().parent().find(":checked");
         for (var i = 0; i < checkbox.length; i++) {
-            var spanfile = checkbox.eq(i).parent().attr("id");
-            $("#" + spanfile.substring(4)).remove();
+            var spanFile = checkbox.eq(i).parent().attr("id");
+            $("#" + spanFile.substring(4)).remove();
             if (checkbox.eq(i).next("a").length > 0) {
                 if (confirm("是否删除已有附件" + checkbox.eq(i).next("a").text())) {
                     //删除已入库附件没加上
                     var fileId = checkbox.eq(i).next("a").attr("id");
                     if (fileId && fileId !== "") {
                         $.ajax({
-                            url: path + "/actBizConf/deleteFile",
+                            url: "/actBizConf/deleteFile",
                             data: {id: fileId}
                         });
                     }
@@ -730,8 +689,9 @@ biz.edit.form.file = {
         checkbox.parent().remove();
         biz.edit.form.file.handleDiv = $(element).parent().parent().parent();
         var existCheckBox = biz.edit.form.file.handleDiv.parent().find(":checkbox");
-        if (existCheckBox.length === 0)
+        if (existCheckBox.length === 0) {
             biz.edit.form.file.handleDiv.parent().find("input:hidden").val("");
+        }
     },
 
     creatFileWindow: function () {//创建容器html代码
@@ -751,7 +711,7 @@ biz.edit.form.file = {
         td = $("<td id='fileTd'>");
         tr.append(td);
         td = $("<td>");
-        td.html("<a onclick='biz.edit.form.file.uploadFile()' data-dismiss='modal' class='dt_btn' style='margin-left:5px;'>上传</a>");
+        td.html("<a onclick='biz.edit.form.file.uploadFile()' data-dismiss='modal' class='dt_btn' style='margin-left:5px; cursor: pointer'>上传</a>");
         tr.append(td);
         table.append(tr);
         tr = $("<tr>");
@@ -844,7 +804,7 @@ biz.edit.form.refVariable = {
                     dom.empty();
                     if (data.viewComponent === "DICTCOMBOBOX") {
                         biz.edit.form.combobox.loadDictComboBox(dom, refDom.val());
-                    }  else {
+                    } else {
                         biz.edit.form.combobox.loadComboBox(dom, refDom.val());
                     }
                 } else {

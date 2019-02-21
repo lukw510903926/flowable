@@ -16,7 +16,7 @@ office.index = {
 
     restHeight:function(){
         var height = $(window).height() - 60;
-        height = Math.max(height, $('.content').height());
-        $('.left').css({"height": height + 'px', "backgroundColor": '#001529'});
+        height = Math.max(height, $('.right_content').height());
+        $('.leftMenu').css({"height": height + 'px', "backgroundColor": '#001529'});
     }
 };
