@@ -37,13 +37,6 @@ public interface IProcessExecuteService {
     Map<String, String> loadStartButtons(String tempId);
 
     /**
-     * 加载当前在运行的所有流程
-     *
-     * @return
-     */
-    Map<String, Object> loadProcessList();
-
-    /**
      * 保存参数，如果是草稿，那么流程实例ID、任务ID皆留空，还不保存到流程参数；<br />
      * 如果是创单，流程实例ID非空，任务ID留空；<br />
      * 正常流转，流程实例ID、任务ID都非空。

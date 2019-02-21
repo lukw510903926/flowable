@@ -26,7 +26,7 @@ import com.flowable.oa.entity.BizInfoConf;
 public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> implements BizInfoConfService {
 
 	@Autowired
-	private BizInfoConfMapper bizInfoConfDao;
+	private BizInfoConfMapper bizInfoConfMapper;
 
 	@Override
 	@Transactional
@@ -69,7 +69,7 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
 			example.setLoginUser(loginUser.getUsername());
 			example.setBizId(bizId);
 			example.setRoles(loginUser.getRoles());
-			List<BizInfoConf> list = this.bizInfoConfDao.getMyWork(example);
+			List<BizInfoConf> list = this.bizInfoConfMapper.getMyWork(example);
 			return CollectionUtils.isEmpty(list) ? null : list.get(0);
 		}
 		return null;

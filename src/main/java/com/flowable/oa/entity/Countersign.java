@@ -1,6 +1,7 @@
 package com.flowable.oa.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Date;
  * @author : lukewei
  * @description :
  */
+@Data
 @Entity
 @Table(name="T_COUNTER_SIGN")
 public class Countersign implements Serializable{
@@ -44,80 +46,7 @@ public class Countersign implements Serializable{
 	@Column(name="IS_COMPLETE", length = 10, nullable = false)
 	private Integer isComplete = 0;//当前会签是否结束 0 没有,1 结束
 	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_TIME")
-	private Date createTime = new Date();
+	private Date createTime ;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-	
-	public String getBizId() {
-		return bizId;
-	}
-
-	public void setBizId(String bizId) {
-		this.bizId = bizId;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getProcessInstanceId() {
-		return processInstanceId;
-	}
-
-	public void setProcessInstanceId(String processInstanceId) {
-		this.processInstanceId = processInstanceId;
-	}
-
-	public String getProcessDefinitionId() {
-		return processDefinitionId;
-	}
-
-	public void setProcessDefinitionId(String processDefinitionId) {
-		this.processDefinitionId = processDefinitionId;
-	}
-
-	public String getTaskAssignee() {
-		return taskAssignee;
-	}
-
-	public void setTaskAssignee(String taskAssignee) {
-		this.taskAssignee = taskAssignee;
-	}
-
-	public Integer getResultType() {
-		return resultType;
-	}
-
-	public void setResultType(Integer resultType) {
-		this.resultType = resultType;
-	}
-
-	public Integer getIsComplete() {
-		return isComplete;
-	}
-
-	public void setIsComplete(Integer isComplete) {
-		this.isComplete = isComplete;
-	}
 }

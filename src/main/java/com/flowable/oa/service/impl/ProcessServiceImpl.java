@@ -128,11 +128,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                     if (flowElement instanceof Gateway) {
                         Gateway gateway = (Gateway) flowElement;
                         List<SequenceFlow> outgoingFlows = gateway.getOutgoingFlows();
-                        outgoingFlows.forEach(outgoingFlow -> {
-                            if (StringUtils.isNotBlank(outgoingFlow.getName())) {
-                                result.put(outgoingFlow.getId(), outgoingFlow.getName());
-                            }
-                        });
+                        outgoingFlows.stream().filter(entity -> StringUtils.isNotBlank(entity.getName())).forEach(outgoingFlow -> result.put(outgoingFlow.getId(), outgoingFlow.getName()));
                     }
                 });
             });
@@ -428,21 +424,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             }
             throw new ServiceException("没有权限签收该任务,当前任务代办角色为 :" + roles.toString());
         }
-        return flag;
-    }
-
-    @Override
-    public Map<String, Object> loadProcessList() {
-
-        List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().list();
-        Map<String, Object> result = new HashMap<String, Object>();
-        for (ProcessDefinition processDefinition : list) {
-            if (processDefinition.getResourceName() != null) {
-                continue;
-            }
-            result.put(processDefinition.getKey(), processDefinition.getName());
-        }
-        return result;
+        return true;
     }
 
     /**

@@ -2,8 +2,6 @@ package com.flowable.oa.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import com.flowable.oa.entity.BizInfo;
 import com.flowable.oa.util.mybatis.IBaseService;
 import com.github.pagehelper.PageInfo;
@@ -65,11 +63,6 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      * @return
      */
     PageInfo<BizInfo> findBizInfo(Map<String, Object> params, PageInfo<BizInfo> page);
-
-    /**
-     * @param list
-     */
-    void updateBizByIds(List<String> list);
 
     List<BizInfo> getBizByParentId(String parentId);
 }

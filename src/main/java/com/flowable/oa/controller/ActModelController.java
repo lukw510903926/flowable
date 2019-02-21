@@ -55,8 +55,8 @@ public class ActModelController {
     public RestResult<Object> deploy(String id) {
 
         try {
-            String procdefId = processModelService.deploy(id);
-            return RestResult.success("部署成功: " + procdefId);
+            String deploy = processModelService.deploy(id);
+            return RestResult.success("部署成功: " + deploy);
         } catch (Exception e) {
             logger.error("流程部署失败 : {}", e);
             return RestResult.fail(null, "部署失败");

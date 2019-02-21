@@ -20,10 +20,10 @@ public class BizLogServiceImplImpl extends BaseServiceImpl<BizLog> implements IB
 	}
 
 	@Override
-	public List<BizLog> loadBizLogs(String workID)  {
+	public List<BizLog> loadBizLogs(String bizId)  {
 		
 		BizLog bizlog = new BizLog();
-		bizlog.setBizId(workID);
-		return this.findByModel(bizlog, false);
+		bizlog.setBizId(bizId);
+		return this.select(bizlog);
 	}
 }

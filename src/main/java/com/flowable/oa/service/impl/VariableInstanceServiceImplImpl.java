@@ -49,19 +49,7 @@ public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVari
 
     	ProcessVariableInstance instance = new ProcessVariableInstance();
     	instance.setBizId(bean.getId());
-        return this.findByModel(instance, false);
-    }
-
-    /**
-     * 加载某个工单所填写的所有数据
-     * @param instance
-     * @param isLike
-     * @return
-     */
-    @Override
-    public List<ProcessVariableInstance> findVariableInstances(ProcessVariableInstance instance,boolean isLike) {
-
-        return this.findByModel(instance, isLike);
+        return this.select(instance);
     }
 
     @Override
@@ -97,6 +85,6 @@ public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVari
     	ProcessVariableInstance instance = new ProcessVariableInstance();
     	instance.setBizId(logBean.getBizId());
     	instance.setTaskId(logBean.getTaskID());
-    	return this.findByModel(instance, false);
+    	return this.select(instance);
     }
 }

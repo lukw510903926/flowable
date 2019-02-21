@@ -6,6 +6,7 @@ package com.flowable.oa.service.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -74,7 +75,6 @@ public class ProcessModelServiceImpl implements IProcessModelService {
     @Transactional
     public Model create(String name, String key, String description, String category) {
 
-        try {
             ObjectMapper objectMapper = new ObjectMapper();
             ObjectNode editorNode = objectMapper.createObjectNode();
             editorNode.put("id", "canvas");
@@ -83,7 +83,6 @@ public class ProcessModelServiceImpl implements IProcessModelService {
             stencilSetNode.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");
             editorNode.put("stencilset", stencilSetNode);
             Model modelData = repositoryService.newModel();
-
             description = StringUtils.defaultString(description);
             modelData.setKey(StringUtils.defaultString(key));
             modelData.setName(name);
@@ -96,12 +95,8 @@ public class ProcessModelServiceImpl implements IProcessModelService {
             modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, description);
             modelData.setMetaInfo(modelObjectNode.toString());
             repositoryService.saveModel(modelData);
-            repositoryService.addModelEditorSource(modelData.getId(), editorNode.toString().getBytes("utf-8"));
+            repositoryService.addModelEditorSource(modelData.getId(), editorNode.toString().getBytes(StandardCharsets.UTF_8));
             return modelData;
-        } catch (UnsupportedEncodingException e) {
-            logger.error("模型创建失败 : {}", e);
-            throw new ServiceException("模型创建失败 !");
-        }
 
     }
 
@@ -143,7 +138,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
                 processDefinitionId = "";
             }
         } catch (Exception e) {
-            logger.error("设计模型图不正确，检查模型正确性 :", e);
+            logger.error("设计模型图不正确，检查模型正确性 :{}", e);
             throw new ServiceException("设计模型图不正确，检查模型正确性，模型ID=" + id, e);
         }
         return processDefinitionId;
@@ -172,7 +167,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
             response.flushBuffer();
         } catch (Exception e) {
             logger.error(" 导出model的xml文件失败 :", e);
-            throw new ServiceException("导出model的xml文件失败，模型ID=" + id, e);
+            throw new ServiceException("导出model的xml文件失败，模型ID=" + id);
         }
 
     }
@@ -181,7 +176,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
      * 更新Model分类
      */
     @Override
-    @Transactional()
+    @Transactional
     public void updateCategory(String id, String category) {
 
         Model modelData = repositoryService.getModel(id);
@@ -196,9 +191,8 @@ public class ProcessModelServiceImpl implements IProcessModelService {
      * @return
      */
     @Override
-    @Transactional()
+    @Transactional
     public void delete(String id) {
         repositoryService.deleteModel(id);
     }
-
 }

@@ -1,9 +1,11 @@
 package com.flowable.oa.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ import com.flowable.oa.util.DataGrid;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
@@ -102,14 +105,10 @@ public class ActProcessController {
     public DataGrid<Map<String, Object>> processTaskList(@RequestParam Map<String, Object> params) {
 
         DataGrid<Map<String, Object>> grid = new DataGrid<>();
-        try {
             String processId = (String) params.get("processId");
             List<Map<String, Object>> result = actProcessService.getAllTaskByProcessKey(processId);
             grid.setRows(result);
             grid.setTotal((long) result.size());
-        } catch (Exception e) {
-            logger.error("流程所有任务列表失败 :{}", e);
-        }
         return grid;
     }
 
@@ -121,13 +120,9 @@ public class ActProcessController {
     public DataGrid<ProcessInstance> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey) {
 
         DataGrid<ProcessInstance> grid = new DataGrid<>();
-        try {
             PageInfo<ProcessInstance> helper = actProcessService.runningList(page, procInsId, procDefKey);
             grid.setRows(helper.getList());
             grid.setTotal(helper.getTotal());
-        } catch (Exception e) {
-            logger.error("获取运行中的实例列表失败 : {}", e);
-        }
         return grid;
     }
 
@@ -135,36 +130,21 @@ public class ActProcessController {
      * 读取资源，通过部署ID
      *
      * @param processDefinitionId 流程定义ID
-     * @param processInstanceId   流程实例ID
      * @param response
      * @throws Exception
      */
     @RequestMapping(value = "resource/read")
-    public void resourceRead(String processDefinitionId, String processInstanceId, String type, HttpServletResponse response) throws Exception {
+    public void resourceRead(String processDefinitionId, String type, HttpServletResponse response) throws Exception {
 
-        InputStream resourceAsStream = actProcessService.resourceRead(processDefinitionId, processInstanceId, type);
-        if (type.equals("image")) {
-            byte[] b = new byte[1024];
-            int len;
-            while ((len = resourceAsStream.read(b, 0, 1024)) != -1) {
-                response.getOutputStream().write(b, 0, len);
-            }
+        InputStream resourceAsStream = actProcessService.resourceRead(processDefinitionId, type);
+        if (resourceAsStream != null) {
+            response.setHeader("Content-Disposition","attachment;filename=" + type);
+            IOUtils.copyLarge(resourceAsStream,response.getOutputStream());
         } else {
-            StringBuilder builder = new StringBuilder();
-            LineIterator it = IOUtils.lineIterator(resourceAsStream, "utf-8");
-            while (it.hasNext()) {
-                try {
-                    String line = it.nextLine();
-                    builder.append(line);
-                    builder.append("\n");
-                } catch (Exception e) {
-                    logger.error("读取资源失败 : {}", e);
-                }
-            }
-            response.setContentType("text/plain;charset=utf-8");
-            PrintWriter out = response.getWriter();
-            out.println(builder.toString());
-            out.close();
+            response.setHeader("Content-Disposition",
+                    "attachment;filename=" + new String("文件不存在".getBytes("gb2312"), StandardCharsets.ISO_8859_1));
+            File file = File.createTempFile("FLOW_" + type, type);
+            FileUtils.copyFile(file, response.getOutputStream());
         }
     }
 
@@ -181,7 +161,7 @@ public class ActProcessController {
         String exportDir = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
                 + request.getContextPath() + "/deployments/";
         boolean result = false;
-        String message = null;
+        String message;
         if (StringUtils.isBlank(fileName)) {
             message = "请选择要部署的流程文件";
         } else {

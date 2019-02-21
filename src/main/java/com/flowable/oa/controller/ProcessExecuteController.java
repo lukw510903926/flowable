@@ -2,9 +2,7 @@ package com.flowable.oa.controller;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +13,6 @@ import com.flowable.oa.util.*;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.entity.BizInfo;
 import com.flowable.oa.entity.ProcessVariable;
@@ -72,14 +67,6 @@ public class ProcessExecuteController {
     @RequestMapping(value = "/loadWorkLogInput")
     public Map<String, Object> loadWorkLogInput(String logId) {
         return processExecuteService.loadBizLogInput(logId);
-    }
-
-    @RequestMapping(value = "index")
-    public String index(Model model) {
-
-        Map<String, Object> map = processExecuteService.loadProcessList();
-        model.addAttribute("ProcessMapJson", JSONObject.toJSONString(map));
-        return "modules/work/index";
     }
 
     /**
@@ -154,20 +141,13 @@ public class ProcessExecuteController {
      * @return
      */
     @RequestMapping(value = "bizInfo/create")
-    public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params,MultipartHttpServletRequest request) {
+    public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
         WebUtil.getLoginUser(request);
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.TEXT_PLAIN);
-        BizInfo bean;
         Boolean startProc = MapUtils.getBoolean(params, "startProc");
-        try {
-            bean = processExecuteService.createBizDraft(params, request.getMultiFileMap(), startProc);
-        } catch (Exception e) {
-            logger.error("工单创建失败 : {}", e);
-            String msg = "操作失败: " + e.getLocalizedMessage();
-            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null, msg)), header, HttpStatus.OK);
-        }
+        BizInfo bean = processExecuteService.createBizDraft(params, request.getMultiFileMap(), startProc);
         String msg = "/biz/" + bean.getId();
         if (!startProc) {
             msg = "/biz/list/myWork";
@@ -187,14 +167,8 @@ public class ProcessExecuteController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        try {
-            WebUtil.getLoginUser(request);
-            processExecuteService.updateBiz(params, request.getMultiFileMap());
-        } catch (Exception e) {
-            logger.info("工单提交失败 : ", e);
-            String msg = "操作失败: " + e.getLocalizedMessage();
-            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null, msg)), headers, HttpStatus.OK);
-        }
+        WebUtil.getLoginUser(request);
+        processExecuteService.updateBiz(params, request.getMultiFileMap());
         return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), headers, HttpStatus.OK);
     }
 
@@ -210,13 +184,8 @@ public class ProcessExecuteController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        try {
-            WebUtil.getLoginUser(request);
-            processExecuteService.submit(params, request.getMultiFileMap());
-        } catch (Exception e) {
-            logger.error("表单提交失败 : {}", e);
-            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null, "表单提交失败")), headers, HttpStatus.OK);
-        }
+        WebUtil.getLoginUser(request);
+        processExecuteService.submit(params, request.getMultiFileMap());
         return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), headers, HttpStatus.OK);
     }
 
@@ -224,7 +193,7 @@ public class ProcessExecuteController {
     @RequestMapping(value = "/bizInfo/delete")
     public RestResult<Object> deleteBizInfo(@RequestParam List<String> ids) {
 
-        bizInfoService.updateBizByIds(ids);
+        bizInfoService.deleteByIds(ids);
         return RestResult.success();
     }
 
@@ -251,23 +220,5 @@ public class ProcessExecuteController {
         } catch (Exception e) {
             logger.error("文件下载失败 : {}", e);
         }
-    }
-
-    /**
-     * 将属性进行分组
-     *
-     * @param list
-     * @return
-     */
-    private static Map<String, List<ProcessVariable>> groupProcessValBean(List<ProcessVariable> list) {
-
-        Map<String, List<ProcessVariable>> map = new LinkedHashMap<>();
-        for (ProcessVariable bean : list) {
-            String groupName = bean.getGroupName();
-            groupName = StringUtils.isEmpty(groupName) ? "其它信息" : groupName;
-            List<ProcessVariable> temp = map.computeIfAbsent(groupName, (key) -> new ArrayList<>());
-            temp.add(bean);
-        }
-        return map;
     }
 }

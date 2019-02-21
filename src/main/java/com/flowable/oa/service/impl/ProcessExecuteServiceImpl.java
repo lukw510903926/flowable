@@ -89,14 +89,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     }
 
     /**
-     * 加载所有的流程
-     */
-    @Override
-    public Map<String, Object> loadProcessList() {
-        return processDefinitionService.loadProcessList();
-    }
-
-    /**
      * 根据流程定义ID获取流程名
      */
     @Override

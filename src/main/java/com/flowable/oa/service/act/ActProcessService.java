@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.ZipInputStream;
@@ -13,7 +12,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import com.flowable.oa.service.IProcessDefinitionService;
 import com.flowable.oa.util.exception.ServiceException;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -68,9 +66,6 @@ public class ActProcessService {
     @Autowired
     private RuntimeService runtimeService;
 
-    @Autowired
-    private IProcessDefinitionService processService;
-
     public Set<String> loadProcessStatus(String processId) {
 
         Set<String> set = new HashSet<>();
@@ -120,7 +115,6 @@ public class ActProcessService {
     public PageInfo<ProcessInstance> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey) {
 
         ProcessInstanceQuery processInstanceQuery = runtimeService.createProcessInstanceQuery();
-
         if (StringUtils.isNotBlank(procInsId)) {
             processInstanceQuery.processInstanceId(procInsId);
         }
@@ -140,12 +134,12 @@ public class ActProcessService {
     public List<Map<String, Object>> getAllTaskByProcessKey(String processId) {
 
         List<Map<String, Object>> result = new ArrayList<>();
-        InputStream bpmnStream = resourceRead(processId, null, "xml");
-        if (bpmnStream == null) {
+        InputStream inputStream = resourceRead(processId, "xml");
+        if (inputStream == null) {
             return result;
         }
         XMLInputFactory xif = XMLInputFactory.newInstance();
-        InputStreamReader in = new InputStreamReader(bpmnStream, StandardCharsets.UTF_8);
+        InputStreamReader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         try {
             XMLStreamReader xtr = xif.createXMLStreamReader(in);
             BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
@@ -189,27 +183,11 @@ public class ActProcessService {
      * 读取资源，通过部署ID
      *
      * @param processDefinitionId 流程定义ID
-     * @param processInstanceId   流程实例ID
      * @param resourceType        资源类型(xml|image)
      */
-    public InputStream resourceRead(String processDefinitionId, String processInstanceId, String resourceType) {
+    public InputStream resourceRead(String processDefinitionId, String resourceType) {
 
-        if (!StringUtils.isBlank(processInstanceId)) {
-            ProcessInstance processInstance = processService.getProcessInstance(processInstanceId);
-            processDefinitionId = processInstance.getProcessDefinitionId();
-        }
-        ProcessDefinition processDefinition = null;
-        ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery().latestVersion().orderByProcessDefinitionKey().asc();
-        List<ProcessDefinition> processDefinitions = processDefinitionQuery.list();
-        if (CollectionUtils.isNotEmpty(processDefinitions)) {
-            for (ProcessDefinition temp : processDefinitions) {
-                if (temp.getId().equals(processDefinitionId)) {
-                    processDefinition = temp;
-                    break;
-                }
-            }
-        }
-
+        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
         if (processDefinition == null) {
             return null;
         }
@@ -231,42 +209,38 @@ public class ActProcessService {
     @Transactional
     public String deploy(String exportDir, String category, MultipartFile file) {
 
-        String message = "";
+        StringBuilder builder = new StringBuilder();
         String fileName = file.getOriginalFilename();
-        try {
-            InputStream fileInputStream = file.getInputStream();
+        try (InputStream fileInputStream = file.getInputStream()) {
             Deployment deployment = null;
             String extension = FilenameUtils.getExtension(fileName);
-            if (extension.equals("zip") || extension.equals("bar")) {
+            if ("zip".equals(extension) || "bar".equals(extension)) {
                 ZipInputStream zip = new ZipInputStream(fileInputStream);
                 deployment = repositoryService.createDeployment().addZipInputStream(zip).deploy();
-            } else if (extension.equals("png")) {
+            } else if ("png".equals(extension)) {
                 deployment = repositoryService.createDeployment().addInputStream(fileName, fileInputStream).deploy();
-            } else if (fileName.indexOf("bpmn20.xml") != -1) {
+            } else if (StringUtils.isNotBlank(fileName) && fileName.contains("bpmn20.xml")) {
                 deployment = repositoryService.createDeployment().addInputStream(fileName, fileInputStream).deploy();
-            } else if (extension.equals("bpmn")) { // bpmn扩展名特殊处理，转换为bpmn20.xml
+            } else if ("bpmn".equals(extension)) { // bpmn扩展名特殊处理，转换为bpmn20.xml
                 String baseName = FilenameUtils.getBaseName(fileName);
                 deployment = repositoryService.createDeployment().addInputStream(baseName + ".bpmn20.xml", fileInputStream).deploy();
             } else {
-                message = "不支持的文件类型：" + extension;
+                builder.append("不支持的文件类型：").append(extension);
             }
+            List<ProcessDefinition> list = Optional.ofNullable(deployment).map(entity -> repositoryService.createProcessDefinitionQuery().deploymentId(entity.getId()).list()).orElse(null);
 
-            List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().deploymentId(deployment.getId()).list();
-
-            // 设置流程分类
-            for (ProcessDefinition processDefinition : list) {
-                repositoryService.setProcessDefinitionCategory(processDefinition.getId(), category);
-                message += "部署成功，流程ID=" + processDefinition.getId() + "<br/>";
+            if (CollectionUtils.isEmpty(list)) {
+                builder.append("部署失败，没有流程。");
+            } else {
+                list.forEach(entity -> {
+                    repositoryService.setProcessDefinitionCategory(entity.getId(), category);
+                    builder.append("部署成功，流程ID=").append(entity.getId()).append("<br/>");
+                });
             }
-
-            if (list.size() == 0) {
-                message = "部署失败，没有流程。";
-            }
-
         } catch (Exception e) {
             throw new ServiceException("部署失败！", e);
         }
-        return message;
+        return builder.toString();
     }
 
     /**
@@ -282,13 +256,13 @@ public class ActProcessService {
      */
     @Transactional
     public String updateState(String state, String processDefinitionId) {
+
         ProcessDefinition processDefinition = repositoryService.getProcessDefinition(processDefinitionId);
         if (processDefinition.isSuspended() && state.equals("suspend")) {
             return "挂起ID为[" + processDefinitionId + "]的流程中断，流程已挂起。";
         } else if (!processDefinition.isSuspended() && state.equals("active")) {
             return "激活ID为[" + processDefinitionId + "]的流程中断，流程已激活。";
         }
-
         if (state.equals("active")) {
             repositoryService.activateProcessDefinitionById(processDefinitionId, true, null);
             return "已激活ID为[" + processDefinitionId + "]的流程定义。";
@@ -304,16 +278,15 @@ public class ActProcessService {
      * 将部署的流程转换为模型
      *
      * @param procDefId
-     * @throws UnsupportedEncodingException
      * @throws XMLStreamException
      */
     @Transactional
-    public Model convertToModel(String procDefId) throws UnsupportedEncodingException, XMLStreamException {
+    public Model convertToModel(String procDefId) throws XMLStreamException {
 
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(procDefId).singleResult();
-        InputStream bpmnStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), processDefinition.getResourceName());
+        InputStream resource = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), processDefinition.getResourceName());
         XMLInputFactory xif = XMLInputFactory.newInstance();
-        InputStreamReader in = new InputStreamReader(bpmnStream, StandardCharsets.UTF_8);
+        InputStreamReader in = new InputStreamReader(resource, StandardCharsets.UTF_8);
         XMLStreamReader xtr = xif.createXMLStreamReader(in);
         BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
 
@@ -333,9 +306,7 @@ public class ActProcessService {
         modelData.setMetaInfo(modelObjectNode.toString());
 
         repositoryService.saveModel(modelData);
-
-        repositoryService.addModelEditorSource(modelData.getId(), modelNode.toString().getBytes("utf-8"));
-
+        repositoryService.addModelEditorSource(modelData.getId(), modelNode.toString().getBytes(StandardCharsets.UTF_8));
         return modelData;
     }
 
@@ -346,34 +317,20 @@ public class ActProcessService {
 
         List<String> files = new ArrayList<>();
         List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().list();
-
         for (ProcessDefinition processDefinition : list) {
             String diagramResourceName = processDefinition.getDiagramResourceName();
             String key = processDefinition.getKey();
             int version = processDefinition.getVersion();
-            String diagramPath;
-
             InputStream resourceAsStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), diagramResourceName);
-            byte[] b = new byte[resourceAsStream.available()];
-
-            resourceAsStream.read(b, 0, b.length);
-            // create file if not exist
-            String diagramDir = exportDir + "/" + key + "/" + version;
-            File diagramDirFile = new File(diagramDir);
-            if (!diagramDirFile.exists()) {
-                diagramDirFile.mkdirs();
-            }
-            diagramPath = diagramDir + "/" + diagramResourceName;
-            File file = new File(diagramPath);
-            // 文件存在退出
-            if (file.exists()) {
-                // 文件大小相同时直接返回否则重新创建文件(可能损坏)
-                logger.debug("diagram exist, ignore... : {}", diagramPath);
-                files.add(diagramPath);
-            } else {
-                file.createNewFile();
-                logger.debug("export diagram to : {}", diagramPath);
-                FileUtils.writeByteArrayToFile(file, b, true);
+            if (resourceAsStream != null) {
+                String diagramDir = exportDir + "/" + key + "/" + version;
+                File diagramDirFile = new File(diagramDir);
+                if (!diagramDirFile.exists()) {
+                    diagramDirFile.mkdirs();
+                }
+                String diagramPath = diagramDir + "/" + diagramResourceName;
+                File file = new File(diagramPath);
+                FileUtils.copyInputStreamToFile(resourceAsStream,file);
                 files.add(diagramPath);
             }
         }
@@ -400,5 +357,4 @@ public class ActProcessService {
     public void deleteProcIns(String procInsId, String deleteReason) {
         runtimeService.deleteProcessInstance(procInsId, deleteReason);
     }
-
 }

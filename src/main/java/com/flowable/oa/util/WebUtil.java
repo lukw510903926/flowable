@@ -58,6 +58,11 @@ public class WebUtil extends WebUtils {
         return Optional.ofNullable(getLoginUser()).map(LoginUser::getId).orElse(null);
     }
 
+    public static String getLoginUsername(){
+
+        return Optional.ofNullable(getLoginUser()).map(LoginUser::getUsername).orElse(null);
+    }
+
     public static void setSessionUser(LoginUser loginUser) {
         setSessionAttribute(getRequest(),LOGIN_USER, loginUser);
     }

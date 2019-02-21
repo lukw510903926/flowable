@@ -128,8 +128,6 @@ public interface IProcessDefinitionService {
      */
     int getWorkOrderVersion(String processDefinitionId);
 
-    Map<String, Object> loadProcessList();
-
     /**
      * @param id 流程定义ID
      * @return

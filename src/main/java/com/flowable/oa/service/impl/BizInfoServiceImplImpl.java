@@ -11,6 +11,7 @@ import com.flowable.oa.util.WebUtil;
 import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.mybatis.BaseServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     private Logger logger = LoggerFactory.getLogger(BizInfoServiceImplImpl.class);
 
     @Autowired
-    private BizInfoMapper bizInfoDao;
+    private BizInfoMapper bizInfoMapper;
 
     @Autowired
     private BizInfoConfService bizInfoConfService;
@@ -53,7 +54,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
 
         BizInfo bizInfo = new BizInfo();
         bizInfo.setParentId(parentId);
-        return this.findByModel(bizInfo, false);
+        return this.select(bizInfo);
     }
 
     @Override
@@ -79,10 +80,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     public BizInfo copyBizInfo(String bizId, String processInstanceId, Map<String, Object> variables) {
 
         BizInfo oldBiz = this.selectByKey(bizId);
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("parentId", bizId);
-        params.put("status", Constants.BIZ_NEW);
-        List<BizInfo> list = this.findBizInfo(params, null).getList();
+        List<BizInfo> list = this.getBizByParentId(bizId);
         BizInfo newBiz = oldBiz.clone();
         newBiz.setId(null);
         if (CollectionUtils.isEmpty(list)) {
@@ -95,7 +93,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         newBiz.setCreateTime(new Date());
         newBiz.setParentTaskName(oldBiz.getTaskName());
         newBiz.setStatus(Constants.BIZ_NEW);
-        String username = WebUtil.getLoginUser().getUsername();
+        String username = WebUtil.getLoginUsername();
         newBiz.setCreateUser(username);
         this.addBizInfo(newBiz);
         this.copyProcessVarInstance(processInstanceId, oldBiz, newBiz);
@@ -109,7 +107,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         ProcessVariableInstance instance = new ProcessVariableInstance();
         instance.setBizId(oldBiz.getId());
         instance.setTaskId(Constants.TASK_START);
-        List<ProcessVariableInstance> processInstances = variableInstanceService.findVariableInstances(instance, false);
+        List<ProcessVariableInstance> processInstances = variableInstanceService.select(instance);
         if (CollectionUtils.isNotEmpty(processInstances)) {
             processInstances.forEach(oldInstance -> {
                 ProcessVariableInstance processVariableInstance = oldInstance.clone();
@@ -141,7 +139,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
 
         BizInfoConf example = new BizInfoConf();
         example.setBizId(bizId);
-        List<BizInfoConf> list = this.bizInfoConfService.findByModel(example, false);
+        List<BizInfoConf> list = this.bizInfoConfService.select(example);
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(bizConf -> {
                 BizInfoConf newConf = bizConf.clone();
@@ -179,15 +177,14 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
 
     @Override
     @Transactional
-    public void updateBizByIds(List<String> list) {
+    public void deleteByIds(List<String> list) {
 
         list.forEach(id -> {
             if (StringUtils.isNotBlank(id)) {
-                BizInfo bizInfo = this.selectByKey(id);
-                if (bizInfo != null) {
-                    bizInfo.setStatus(Constants.BIZ_DELETE);
-                    this.updateBizInfo(bizInfo);
-                }
+                BizInfo bizInfo = new BizInfo();
+                bizInfo.setId(id);
+                bizInfo.setStatus(Constants.BIZ_DELETE);
+                this.updateNotNull(bizInfo);
             }
         });
     }
@@ -196,7 +193,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     public PageInfo<BizInfo> findBizInfo(Map<String, Object> params, PageInfo<BizInfo> page) {
 
         logger.info("工单查询 params : " + params);
-        String action = (String) params.get("action");
+        String action =  MapUtils.getString(params,"action");
         String createTime = (String) params.get("createTime");
         String createTime2 = (String) params.get("createTime2");
         if (!(createTime == null && createTime2 == null)) {
@@ -227,7 +224,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         if (page != null) {
             PageHelper.startPage(page.getPageNum(), page.getPageSize());
         }
-        List<BizInfo> list = bizInfoDao.queryWorkOrder(params);
+        List<BizInfo> list = bizInfoMapper.queryWorkOrder(params);
         if (CollectionUtils.isNotEmpty(list)) {
             for (BizInfo bizInfo : list) {
                 bizInfo.setCreateUser(this.getUserNameCn(bizInfo.getCreateUser(), userCache));
