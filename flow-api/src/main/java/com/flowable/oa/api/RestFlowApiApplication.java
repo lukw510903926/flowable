@@ -14,7 +14,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @email 13507615840@163.com
  * @since 2019/2/22 22:00
  **/
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.flowable.oa")
 @MapperScan(basePackages = "com.flowable.oa.core.dao")
 public class RestFlowApiApplication {
 
