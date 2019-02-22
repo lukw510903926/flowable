@@ -86,7 +86,7 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
     public String findOnlyUser(SystemRole systemRole) {
 
         List<SystemUser> list = this.findUserByRole(systemRole);
-        return list.size() == 1 ? list.get(0).getUsername() : null;
+        return CollectionUtils.isNotEmpty(list) && list.size() == 1 ? list.get(0).getUsername() : null;
     }
 
     private boolean check(SystemUser systemUser) {
