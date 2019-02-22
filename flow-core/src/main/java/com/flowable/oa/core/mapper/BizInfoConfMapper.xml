@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.flowable.oa.core.dao.BizInfoConfMapper">
+
+	<resultMap id="BaseResultMap" type="com.flowable.oa.core.entity.BizInfoConf">
+		<id column="ID" property="id" />
+		<result column="TASK_ID" property="taskId" />
+		<result column="CREATE_TIME" property="createTime" />
+		<result column="TASK_ASSIGNEE" property="taskAssignee" />
+		<result column="BIZ_ID" property="bizId" />
+	</resultMap>
+
+	<!-- 通过规格查询活动 -->
+	<select id="getMyWork" parameterType="com.flowable.oa.core.entity.BizInfoConf"
+		resultMap="BaseResultMap">
+		SELECT
+		ID,
+		CREATE_TIME,
+		TASK_ASSIGNEE,
+		TASK_ID,
+		BIZ_ID FROM T_BIZ_INFO_CONF where BIZ_ID = #{bizId}
+		<if test="loginUser != null">
+			and (TASK_ASSIGNEE = #{loginUser} or TASK_ASSIGNEE is null
+			<if test="roles != null">
+				<foreach collection="roles" item="role"	separator=" ">
+					or TASK_ASSIGNEE = CONCAT('GROUP:', #{role})
+				</foreach>
+			</if>
+			)
+		</if>
+	</select>
+
+</mapper>
