@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="index">
+<div th:fragment="content">
+    <head>
+        <title>流程模板文件管理</title>
+        <script th:inline="javascript">
+            var processList = [[${processList}]];
+        </script>
+    </head>
+    <body>
+    <div class="container-fluid">
+        <div class="panel panel-box">
+            <div class="panel-heading">模版查询</div>
+            <div class="panel-body">
+                <div class="mr5">
+                    <form class="form-horizontal" role="form" id="queryForm">
+                        <div class="form-group col-md-6">
+                            <label class="col-md-2 control-label">所属流程:</label>
+                            <div class="col-md-10">
+                                <select id='flowSelect1' name="flowName" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="form-group  col-md-6">
+                            <label class="col-md-2 control-label">附件名称:</label>
+                            <div class="col-md-10">
+                                <input type="text" name="fileName" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="btn-list">
+                            <a class="btn btn-y mrr10" onclick="template.file.queryFile()">查询</a>
+                            <a class="btn btn-n" onclick="template.file.resetQueryForm()">重置</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-ex">
+            <div class="panel-heading">模板文件列表
+                <div class="func-btn-list">
+                    <span class="table_menu_w right">
+                        <a href="#" onclick="return false" data-toggle="modal" data-target="#attachmentModal">上传</a>
+                        <a href="#" onclick="template.file.downLoad()">下载</a>
+                        <a href="#" onclick="template.file.deleteFile()">删除</a>
+                    </span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="base-table-wrap">
+                    <table id="fileList" class="base-table table-striped"></table>
+                </div>
+            </div>
+        </div>
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="attachmentModal" tabindex="-1"
+             data-backdrop='static' role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times; </button>
+                        <h5 class="modal-title">模板文件上传</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" role="form" id="uploadFileForm">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">所属流程:</label>
+                                <div class="col-md-10">
+                                    <select class="selectpicker form-control" data-live-search="true" name="flowName"></select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">附件名称:</label>
+                                <div class="col-md-10">
+                                    <input type='file' multiple name='file'/>
+                                </div>
+                            </div>
+                            <div class="btn-list">
+                                <a class="btn btn-y" onclick="template.file.upload()">保存</a>
+                                <a class="btn btn-n mrl10" id='closeBtn' data-dismiss="modal">取消</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+    <script type="text/javascript" th:src="@{/modules/template/templateFileList.js}"></script>
+</div>
+</html>

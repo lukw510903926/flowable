@@ -3,27 +3,32 @@ package com.flowable.oa.controller;
 import java.io.File;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.flowable.oa.service.act.ActProcessService;
+import com.flowable.oa.util.ReflectionUtils;
 import com.flowable.oa.util.RestResult;
 import com.github.pagehelper.PageInfo;
 import com.flowable.oa.util.LoginUser;
 import com.flowable.oa.util.WebUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,22 +38,41 @@ import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.entity.BizTemplateFile;
 import com.flowable.oa.service.BizTemplateFileService;
 
+/**
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 19-2-15 下午11:10
+ **/
 @Controller
 @RequestMapping("/bizTemplateFile")
 public class BizTemplateFileController {
 
-    @Autowired
-    private Environment environment;
+    @Value("${biz.file.path}")
+    private String bizFileRootPath;
 
     @Autowired
     private BizTemplateFileService bizTemplateFileService;
 
-    private Logger logger = LoggerFactory.getLogger("bizTemplateFileController");
+    @Autowired
+    private ActProcessService actProcessService;
+
+    private Logger logger = LoggerFactory.getLogger(BizTemplateFileController.class);
 
     @RequestMapping("/index")
-    public String index() {
+    public String index(Model model) {
 
-        return "modules/process/config/bizTemplateFileList";
+        List<Object[]> list = actProcessService.processList();
+        if (CollectionUtils.isNotEmpty(list)) {
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (Object[] objects : list) {
+                result.add(ReflectionUtils.beanToMap(objects[0]));
+                model.addAttribute("processList", result);
+            }
+        }
+        return "modules/template/bizTemplateFileList";
     }
 
     @ResponseBody
@@ -56,7 +80,7 @@ public class BizTemplateFileController {
     public Map<String, Object> list(PageInfo<BizTemplateFile> page, BizTemplateFile file) {
 
         PageInfo<BizTemplateFile> helper = bizTemplateFileService.findTemplateFlies(page, file, true);
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("total", helper.getTotal());
         data.put("rows", helper.getList());
         return data;
@@ -68,54 +92,36 @@ public class BizTemplateFileController {
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.TEXT_PLAIN);
-        try {
-            LoginUser loginUser = WebUtil.getLoginUser(request);
-            String username = loginUser.getUsername();
-            String flowName = request.getParameter("flowName");
-            BizTemplateFile bizTemplateFile = new BizTemplateFile();
-            bizTemplateFile.setCreateUser(username);
-            bizTemplateFile.setFlowName(flowName);
-            bizTemplateFileService.saveOrUpdate(bizTemplateFile, file);
-        } catch (Exception e) {
-            logger.error("上传失败 : ", e);
-            return new ResponseEntity<>(JSONObject.toJSONString(RestResult.fail(null,"上传失败")), responseHeaders, HttpStatus.OK);
-        }
+        String flowName = request.getParameter("flowName");
+        BizTemplateFile bizTemplateFile = new BizTemplateFile();
+        bizTemplateFile.setCreateUser(WebUtil.getLoginUsername());
+        bizTemplateFile.setFlowName(flowName);
+        bizTemplateFileService.saveOrUpdate(bizTemplateFile, file);
         return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), responseHeaders, HttpStatus.OK);
     }
 
     @ResponseBody
-    @RequestMapping("/downloadTemplate")
+    @RequestMapping("/download")
     public void downloadTemplate(@RequestParam Map<String, String> params, HttpServletResponse response) {
 
-        try {
-            OutputStream outputStream = response.getOutputStream();
+        try (OutputStream outputStream = response.getOutputStream()) {
             response.setContentType("application/octet-stream;charset=UTF-8");
             BizTemplateFile templateFile = bizTemplateFileService.getBizTemplateFile(params);
-            String headfilename = null;
             if (templateFile != null) {
                 String fileName = templateFile.getFileName();
                 String suffix = "";
                 if (fileName.lastIndexOf(".") != -1) {
                     suffix = fileName.substring(fileName.lastIndexOf("."));
                 }
-                String templateFilePath = environment.getProperty("templateFilePath");
-                File inputFile = new File(templateFilePath + File.separator + templateFile.getId() + suffix);
+                response.setHeader("Content-Disposition", "attachment;");
+                File inputFile = new File(bizFileRootPath + File.separator + templateFile.getId() + suffix);
                 if (inputFile.exists() && inputFile.isFile()) {
-                    headfilename = new String((templateFile.getFileName()).getBytes("gb2312"),  StandardCharsets.ISO_8859_1);
-                    response.setHeader("Content-Disposition", "attachment;filename=" + headfilename);
-                    FileUtils.copyFile(inputFile, response.getOutputStream());
+                    FileUtils.copyFile(inputFile, outputStream);
                 } else {
-                    headfilename = new String("错误报告.txt".getBytes("gb2312"),  StandardCharsets.ISO_8859_1);
-                    response.setHeader("Content-Disposition", "attachment;filename=" + headfilename);
-                    outputStream.write("文件不存在!".getBytes());
+                    FileUtils.copyFile(File.createTempFile("文件不存在!", ".txt"), outputStream);
                 }
             } else {
-                logger.info(" templateFile is null ");
-                headfilename = new String("错误报告.txt".getBytes("gb2312"), StandardCharsets.ISO_8859_1);
-                response.setHeader("Content-Disposition", "attachment;filename=" + headfilename);
-                outputStream.write("文件不存在!请检查文件参数配置是否正确!".getBytes());
-                outputStream.flush();
-                outputStream.close();
+                FileUtils.copyFile(File.createTempFile("文件不存在!", ".txt"), outputStream);
             }
         } catch (Exception e) {
             logger.error("文件不存在 !{}", e);

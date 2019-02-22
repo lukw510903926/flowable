@@ -11,7 +11,7 @@
                 function detailFormatter(index, row) {
                     var content = '<div class="btn-toolbar" role="toolbar" aria-label="...">';
                     content += '<div class="btn-group" role="group" aria-label="...">';
-                    content += '<button type="button" class="btn btn-default" onclick="window.open(\'${ctx}/process/variable?processDefinitionId='
+                    content += '<button type="button" class="btn btn-default" onclick="window.open(\'/process/variable?processDefinitionId='
                         + row.id + '\', \'_self\');">设置流程任务参数</button>';
                     content += '	</div>';
                     content += '</div>';
@@ -22,15 +22,17 @@
         <script type="text/javascript" th:src="@{/modules/process/task_list.js}"></script>
     </head>
     <body>
-    <div class="panel panel-ex">
-        <div class="panel-heading">流程任务
-            <span class="table_menu_w right">
-				<a href="javascript:refreshData();">刷新</a>
+    <div class="container-fluid">
+        <div class="panel panel-ex">
+            <div class="panel-heading">流程任务
+                <span class="table_menu_w right">
+				<a href="javascript:biz.processVariable.refreshData();">刷新</a>
 			</span>
-        </div>
-        <div class="panel-body">
-            <div class="base-table-wrap">
-                <table id="process-task-table" class="base-table table-striped"></table>
+            </div>
+            <div class="panel-body">
+                <div class="base-table-wrap">
+                    <table id="process-task-table" class="base-table table-striped"></table>
+                </div>
             </div>
         </div>
     </div>

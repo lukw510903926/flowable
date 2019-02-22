@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface IProcessExecuteService {
 
-    static final String systemFormType = "_SYS_FORM_TYPE";
+    String systemFormType = "_SYS_FORM_TYPE";
 
     /**
      * 获取某个日志对应的输入数据
@@ -35,13 +35,6 @@ public interface IProcessExecuteService {
      * @
      */
     Map<String, String> loadStartButtons(String tempId);
-
-    /**
-     * 加载当前在运行的所有流程
-     *
-     * @return
-     */
-    Map<String, Object> loadProcessList();
 
     /**
      * 保存参数，如果是草稿，那么流程实例ID、任务ID皆留空，还不保存到流程参数；<br />
@@ -127,5 +120,12 @@ public interface IProcessExecuteService {
      * @
      */
     Object[] downloadFile(String action, String id);
+
+    /**
+     * 根据流程定义ID获取流程名
+     * @param procDefId
+     * @return
+     */
+    String getProcessDefinitionName(String procDefId);
 
 }

@@ -7,6 +7,7 @@ import com.flowable.oa.service.dict.IDictValueService;
 import com.flowable.oa.util.WebUtil;
 import com.flowable.oa.util.mybatis.BaseServiceImpl;
 import com.flowable.oa.util.exception.ServiceException;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,32 +28,41 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
     private IDictValueService dictValueService;
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional
     public void saveOrUpdate(DictType dictType) {
 
         if (!this.check(dictType)) {
             throw new ServiceException("字典名称不可重复");
         }
         dictType.setModified(new Date());
-        dictType.setModifier(WebUtil.getLoginUser().getUsername());
+        dictType.setModifier(WebUtil.getLoginUserId());
         if (StringUtils.isNotBlank(dictType.getId())) {
             this.updateNotNull(dictType);
         } else {
-            dictType.setCreator(WebUtil.getLoginUser().getUsername());
+            dictType.setCreator(WebUtil.getLoginUserId());
             dictType.setCreateTime(new Date());
             this.save(dictType);
         }
     }
 
     @Override
-    @Transactional(readOnly = false)
-    public void delete(DictType dictType) {
+    @Transactional
+    public void delete(String id) {
 
-        if (dictType != null) {
-            this.deleteById(dictType.getId());
+        if (StringUtils.isNotEmpty(id)) {
+            this.deleteById(id);
             DictValue dictValue = new DictValue();
-            dictValue.setDictTypeId(dictType.getId());
+            dictValue.setDictTypeId(id);
             this.dictValueService.deleteByModel(dictValue);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void delete(List<String> list) {
+
+        if(CollectionUtils.isNotEmpty(list)){
+            list.forEach(this::delete);
         }
     }
 

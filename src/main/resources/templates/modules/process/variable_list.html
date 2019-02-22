@@ -11,20 +11,22 @@
         <script type="text/javascript" th:src="@{/modules/process/variable_list.js}"></script>
     </head>
     <body>
-    <div class="panel panel-ex">
-        <div class="panel-heading">
-            流程参数管理
-            <span class="table_menu_w right">
-				<a href="javascript:addData();">新增</a>
-				<a href="javascript:editData();">修改</a>
-				<a href="javascript:delData();">删除</a>
-				<a href="javascript:refreshTable();">刷新</a>
-            </span>
-        </div>
-        <div class="panel-body">
-            <div class="base-table-wrap">
-                <table id="variable-table" class="base-table table-striped">
-                </table>
+    <div class="container-fluid">
+        <div class="panel panel-ex">
+            <div class="panel-heading"> 流程参数管理
+                <div class="func-btn-list">
+                    <span class="table_menu_w right">
+                        <a href="javascript:biz.variable.list.addData();">新增</a>
+                        <a href="javascript:biz.variable.list.editData();">修改</a>
+                        <a href="javascript:biz.variable.list.delData();">删除</a>
+                        <a href="javascript:biz.variable.list.refreshTable();">刷新</a>
+                    </span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="base-table-wrap">
+                    <table id="variable-table" class="base-table table-striped"></table>
+                </div>
             </div>
         </div>
     </div>

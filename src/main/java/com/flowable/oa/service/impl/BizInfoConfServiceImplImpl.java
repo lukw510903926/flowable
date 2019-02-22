@@ -26,10 +26,10 @@ import com.flowable.oa.entity.BizInfoConf;
 public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> implements BizInfoConfService {
 
 	@Autowired
-	private BizInfoConfMapper bizInfoConfDao;
+	private BizInfoConfMapper bizInfoConfMapper;
 
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public void saveOrUpdate(BizInfoConf bizInfoConf) {
 
 		BizInfoConf example = new BizInfoConf();
@@ -45,30 +45,22 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
 	}
 
 	@Override
-	public List<BizInfoConf> findBizInfoConf(BizInfoConf bizInfoConf) {
-
-		return this.findByModel(bizInfoConf, false);
-	}
-	
-	@Override
 	public List<BizInfoConf> findByBizId(String bizId){
 		
 		BizInfoConf example = new BizInfoConf();
 		example.setBizId(bizId);
-		return this.findBizInfoConf(example);
+		return this.select(example);
 	}
 	
 	@Override
 	public void deleteByBizId(String bizId) {
-		
-		List<BizInfoConf> list = this.findByBizId(bizId);
-		if(CollectionUtils.isNotEmpty(list)) {
-			list.forEach(example ->this.deleteById(example.getId()));
-		}
+
+		BizInfoConf bizInfoConf = new BizInfoConf();
+		bizInfoConf.setBizId(bizId);
+		this.deleteByModel(bizInfoConf);
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public BizInfoConf getMyWork(String bizId) {
 
 		if (StringUtils.isNotBlank(bizId)) {
@@ -77,7 +69,7 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
 			example.setLoginUser(loginUser.getUsername());
 			example.setBizId(bizId);
 			example.setRoles(loginUser.getRoles());
-			List<BizInfoConf> list = this.bizInfoConfDao.getMyWork(example);
+			List<BizInfoConf> list = this.bizInfoConfMapper.getMyWork(example);
 			return CollectionUtils.isEmpty(list) ? null : list.get(0);
 		}
 		return null;

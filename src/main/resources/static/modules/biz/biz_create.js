@@ -1,4 +1,4 @@
-$.namespace("biz");
+$.namespace("biz.create");
 $(function () {
     biz.create.init();
 });
@@ -8,16 +8,16 @@ biz.create = {
     fileNumber: 0,
     init: function () {
         $.ajax({
-            url: path + "/workflow/create/" + key,
+            url: "/workflow/create/" + key,
             async: false,
             success: function (data) {
                 if (data.result) {
-                    biz.create.data = data.processValBeanMap;
-                    biz.create.buttons = data.SYS_BUTTON;
-                    $("#base_tempID").val(data.baseTempId);
+                    biz.create.data = data['processValBean'];
+                    biz.create.buttons = data['SYS_BUTTON'];
+                    $("#base_tempID").val(data['baseTempId']);
                     if (bizId) {
                         biz.create.draftData = biz.create.loadDraftBiz();
-                        biz.create.loadStatic(biz.create.draftData.workInfo, biz.create.draftData.extInfo.createUser);
+                        biz.create.loadStatic(biz.create.draftData.workInfo);
                     } else {
                         biz.create.loadStatic();
                     }
@@ -25,11 +25,10 @@ biz.create = {
                     biz.create.createButtons(".t_content", biz.create.buttons);
                     if (bizId) {
                         $("input[name='base.workTitle']").val(biz.create.draftData.workInfo.title);
-                        $("input[name='base.limitTime']").val(biz.create.draftData.workInfo.limitTime);
-                        var hidden = $("<input type='hidden' name='tempBizId'>");
+                        var hidden = $("<input type='hidden' name='tempBizId'/>");
                         hidden.val(biz.create.draftData.workInfo.id);
-                        $("#form").append(hidden);
                         biz.create.loadProcessData(biz.create.draftData.serviceInfo);
+                        $("#form").append(hidden);
                     }
                 } else {
                     bsAlert("提示", data.msg);
@@ -43,93 +42,91 @@ biz.create = {
      * @returns {*}
      */
     loadDraftBiz: function () {
-        var DraftBizData = null;
+        var draftBizData = null;
         $.ajax({
-            url: path + "/biz/workInfo/" + bizId,
+            url: "/biz/workInfo/" + bizId,
             async: false,
             success: function (data) {
-                DraftBizData = data;
+                draftBizData = data;
             }
         });
-        return DraftBizData;
+        return draftBizData;
     },
-    loadStatic: function (workInfo, saveUser) {
+    loadStatic: function (workInfo) {
+        workInfo = workInfo | {};
+        $("#msgtitle").text("提单人信息");
+        var list = [];
         switch (key) {
             case "eventManagement":
-                $("#msgtitle").text("报障人信息");
-                var list = [{
+                list.push({
                     id: "workNum",
-                    alias: "工单号"
+                    alias: "工单号",
+                    value: workInfo['workNum']
                 }, {
                     id: "status",
-                    alias: "当前状态"
-                }, {
-                    id: "dep",
-                    alias: "报障部门"
+                    alias: "当前状态",
+                    value: workInfo['status']
                 }, {
                     id: "name",
-                    alias: "报障人姓名"
+                    alias: "姓名",
+                    value: createUser['name']
                 }, {
                     id: "mobile",
-                    alias: "报障人联系方式"
+                    alias: "联系方式",
+                    value: createUser['mobile']
                 }, {
                     id: "email",
-                    alias: "邮箱地址"
+                    alias: "邮箱"
                 }, {
-                    id: "city",
-                    alias: "报障地市"
+                    id: "dep",
+                    alias: "部门",
+                    value: createUser['dep']
                 }, {
                     id: "createTime",
-                    alias: "故障发生时间"
-                }];
-                biz.create.setStatic(list, workInfo, saveUser);
+                    alias: "提单时间",
+                    value: workInfo['createTime'] ? workInfo['createTime'] : (new Date()).Format("yyyy/MM/dd hh:mm:ss")
+                });
                 break;
             default:
-                $("#msgtitle").text("申请人信息");
-                var list = [{
+                list.push({
                     id: "workNum",
-                    alias: "工单号"
+                    alias: "工单号",
+                    value: workInfo['workNum']
                 }, {
                     id: "status",
-                    alias: "当前状态"
-                }, {
-                    id: "dep",
-                    alias: "所在部门"
+                    alias: "当前状态",
+                    value: workInfo['status']
                 }, {
                     id: "name",
-                    alias: "姓名"
+                    alias: "姓名",
+                    value: createUser['name']
                 }, {
                     id: "mobile",
-                    alias: "联系方式"
+                    alias: "联系方式",
+                    value: createUser['mobile']
                 }, {
                     id: "email",
-                    alias: "邮箱地址"
-                }];
-                biz.create.setStatic(list, workInfo, saveUser);
+                    alias: "邮箱"
+                }, {
+                    id: "dep",
+                    alias: "部门",
+                    value: createUser['dep']
+                }, {
+                    id: "createTime",
+                    alias: "提单时间",
+                    value: workInfo['createTime'] ? workInfo['createTime'] : (new Date()).Format("yyyy/MM/dd hh:mm:ss")
+                });
         }
+        biz.create.setStatic(list);
 
     },
-    setStatic: function (list, workInfo, saveUser) {
-        var view = biz.show.getView({
+    setStatic: function (list) {
+        biz.show.getView({
             table: $("#bjrxx"),
-            list: []
+            list: list
+        }).setDynamic({
+            end: true
         });
-        if (workInfo && saveUser) {
-            $.each(list, function (index, entity) {
-                var text = workInfo[entity.id] == undefined ? saveUser[entity.id] : workInfo[entity.id];
-                view.addTextField(entity).text(text == null ? "" : text);
-            });
-            view.appendTd();
-        } else {
-            $.each(list, function (index, entity) {
-                var text = createUser[entity.id];
-                if (entity.id == "createTime") {
-                    text = (new Date()).Format("yyyy/MM/dd hh:mm:ss");
-                }
-                view.addTextField(entity).text(text == null ? "" : text);
-            });
-            view.appendTd();
-        }
     },
 
     /**
@@ -139,52 +136,44 @@ biz.create = {
      */
     loadProcessData: function (serviceInfo, ele) {
 
-        if (ele == undefined) {
+        if (!ele) {
             ele = $("body");
         }
-        $.each(serviceInfo, function (index, entity) {
-            if (entity.variable.viewComponent == "CONFIRMUSER") {
-                biz.show.table.confirmUser.setConfirmUserValue(entity);
-            } else if (ele.find(":input[name='" + entity.variable.name + "']").length > 0) {
-                ele.find(":input[name='" + entity.variable.name + "']").val(entity.value == null ? "" : entity.value);
-            }
-        });
-
-    },
-    loadForm: function (data) {
-        for (var group in data) {
-            var list = data[group];
-            var table;
-            if (group == $("#msgtitle").text()) {
-                table = $("#bjrxx");
-            } else {
-                var div = $("<div class='import_form'>");
-                div.html("<h2 class='white_tit'>" + group + "</h2>");
-                $(".t_content").append(div);
-                div = $("<div class='listtable_wrap'>");
-                table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
-                div.append(table);
-                $(".t_content").append(div);
-            }
-            var view = biz.edit.getView({
-                list: list,
-                table: table,
-                bizId: bizId
-            });
-            switch (key) {
-                case "eventManagement":
-                    biz.create.type.event(view, group === "工单信息");
-                    break;
-                case "maintainManagement":
-                    biz.create.type.maintain(view, group === "工单信息");
-                    break;
-                default:
-                    biz.create.type.event(view, group === "工单信息");
-            }
-            view.addFile(bizId ? biz.create.draftData.annexs : null);
+        if (!$.isEmptyObject(serviceInfo)) {
+            serviceInfo.forEach(function (entity) {
+                if (ele.find(":input[name='" + entity['variableName'] + "']").length > 0) {
+                    ele.find(":input[name='" + entity['variableName'] + "']").val(entity.value == null ? "" : entity.value);
+                }
+            })
         }
-        $("#form").find('[name="actualCreator"]').val(createUser.fullname);
-        $("#form").find('[name="actualCreatePhone"]').val(createUser.mobile);
+    },
+
+    loadForm: function (list) {
+
+        var $content = $(".t_content");
+        var div = $("<div class='import_form'>");
+        div.html("<h2 class='white_tit'>工单信息</h2>");
+        $content.append(div);
+        div = $("<div class='listtable_wrap'>");
+        var table = $("<table cellpadding='0' cellspacing='0' class='listtable'></table>");
+        div.append(table);
+        $content.append(div);
+        var view = biz.edit.getView({
+            list: list,
+            table: table,
+            bizId: bizId
+        });
+        switch (key) {
+            case "eventManagement":
+                biz.create.type.event(view, true);
+                break;
+            default:
+                biz.create.type.event(view, true);
+        }
+        view.addFile(bizId ? biz.create.draftData.annexs : null);
+        var $form = $("#form");
+        $form.find('[name="actualCreator"]').val(createUser.fullname);
+        $form.find('[name="actualCreatePhone"]').val(createUser.mobile);
     },
     createButtons: function (container, buttons) {
 
@@ -227,7 +216,7 @@ biz.create = {
         });
 
         $('#form').ajaxSubmit({
-            url: path + '/workflow/bizInfo/create',
+            url: '/workflow/bizInfo/create',
             traditional: true,
             dataType: 'json',
             async: false,
@@ -237,7 +226,7 @@ biz.create = {
                 if (result) {
                     if (!result || result.success) {
                         layer.close(index);
-                        location.href = path + result.msg;
+                        location.href = result.data;
                     } else {
                         layer.close(index);
                         bsAlert("异常", result.msg);

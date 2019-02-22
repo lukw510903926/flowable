@@ -2,6 +2,8 @@ package com.flowable.oa.config;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import com.flowable.oa.util.thymeleaf.HasPermissionDialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.dialect.IDialect;
@@ -21,7 +23,8 @@ public class TemplateEngineConfig {
     public SpringTemplateEngine templateEngine(ITemplateResolver templateResolver) {
     	
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        Set<IDialect> additionalDialects = new LinkedHashSet<IDialect>();
+        Set<IDialect> additionalDialects = new LinkedHashSet<>();
+        additionalDialects.add(new HasPermissionDialect());
         templateEngine.setAdditionalDialects(additionalDialects);
         templateEngine.setTemplateResolver(templateResolver);
         return templateEngine;

@@ -1,5 +1,7 @@
 package com.flowable.oa.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -9,6 +11,7 @@ import java.sql.Timestamp;
  * @author 26223
  *
  */
+@Data
 @Entity
 @Table(name = "T_BIZ_TEMPLATE_FILE")
 public class BizTemplateFile implements Serializable{
@@ -32,46 +35,9 @@ public class BizTemplateFile implements Serializable{
 	@Column(name = "FLOW_NAME", nullable = false, length = 32)
 	private String flowName;
 
-	public BizTemplateFile() {
-	}
-
-	public String getId() {
-		return this.id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getCreateUser() {
-		return this.createUser;
-	}
-
-	public void setCreateUser(String createUser) {
-		this.createUser = createUser;
-	}
-
-	public String getFileName() {
-		return this.fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-	public Timestamp getCreateTime() {
-		return this.createTime;
-	}
-
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
-	}
-	
-	public String getFlowName() {
-		return flowName;
-	}
-
-	public void setFlowName(String flowName) {
-		this.flowName = flowName;
-	}
+	/**
+	 * 创建人姓名
+	 */
+	@Column(name = "FULL_NAME")
+	private String fullName;
 }

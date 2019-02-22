@@ -9,6 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 19-2-15 下午11:11
+ **/
 @WebFilter(urlPatterns = "/*", displayName = "loginFilter")
 public class LoginFilter implements Filter {
 

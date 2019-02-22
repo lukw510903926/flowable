@@ -20,8 +20,6 @@ public interface BizCounterUserService extends IBaseService<BizCounterUser> {
 
 	PageInfo<BizCounterUser> findBizCounterUser(PageInfo<BizCounterUser> page, BizCounterUser user);
 
-    void deleteUser(BizCounterUser user);
-
     void saveUser(List<Map<String, String>> list, String bizId, String taskId);
 
     void updateUser(List<Map<String, String>> list, String bizId, String taskId);

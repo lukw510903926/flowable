@@ -8,11 +8,11 @@ import com.flowable.oa.util.mybatis.IBaseService;
 
 public interface ISystemUserService  extends IBaseService<SystemUser> {
 
+	void saveOrUpdate(SystemUser systemUser);
+
 	SystemUser getUserByUsername(String username);
 
-	List<String> findUserByRole(SystemRole systemRole);
-
-	List<String> findUserRoles(String username);
+	List<SystemUser> findUserByRole(SystemRole systemRole);
 
 	String findOnlyUser(SystemRole systemRole);
 }

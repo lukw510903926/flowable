@@ -1,262 +1,5 @@
 $.namespace("biz.edit.form");
 
-//人员组件相关方法
-biz.edit.form.memberbox = {
-    data: {},
-    createMemberContainer: function () {
-        var container = $("<div id='memberContainer'>");
-        container.hide();
-        var import_form = $("<div class='import_form'>");
-        var title = "<h2 class='white_tit'><span class='white_tit_icon'></span>查询条件" +
-            "<a role='button' data-toggle='collapse' href='#memberContainerQuerycollapse' aria-expanded='true' class='gray_drop'></a></h2>";
-        import_form.html(title);
-        var listtable_wrap = $("<div class='listtable_wrap panel-collapse collapse in' id='memberContainerQuerycollapse' role='tabpanel'>");
-        var table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
-        var tr = $("<tr>");
-        var showDept = biz.edit.form.memberbox.data.showDept;
-        if (showDept) {
-            var th = $("<th>");
-            th.text("部门：");
-            tr.append(th);
-            var td = $("<td>");
-            var sectorCombo = $("<input id='sectorCombo' type='text' readonly value='' class='fslTextBox' style='width:120px;' onclick='biz.edit.form.memberbox.showMenu();' />"),
-                sectorComboVal = $("<input id='sectorComboVal' type='hidden'/>");
-            td.append(sectorCombo);
-            td.append(sectorComboVal);
-            tr.append(td);
-            th = $("<th>");
-            th.text("姓名：");
-            tr.append(th);
-            td = $("<td colspan='1'>");
-            input = $("<input name='cnname' type='text' class='fslTextBox'>");
-            td.append(input);
-            tr.append(td);
-            table.append(tr);
-            td = $("<td colspan='1' style='text-align:left;'>");
-            var a = "<a onclick='biz.edit.form.memberbox.search()' class='dt_btn'>查询</a>";
-            td.append(a);
-            tr.append(td);
-            table.append(tr);
-        } else {
-            var th = $("<th>");
-            th.text("姓名：");
-            tr.append(th);
-            td = $("<td colspan='1'>");
-            input = $("<input name='cnname' type='text' class='fslTextBox'>");
-            td.append(input);
-            var a = "<a onclick='biz.edit.form.memberbox.search()' class='dt_btn'>查询</a>";
-            td.append(a);
-            tr.append(td);
-            table.append(tr);
-            table.append(tr);
-        }
-        listtable_wrap.append(table);
-        container.append(import_form);
-        container.append(listtable_wrap);
-
-        import_form = $("<div class='import_form'>");
-        title = "<h2 class='white_tit'><span class='white_tit_icon'></span>查询结果" +
-            "<a role='button' data-toggle='collapse' href='#memberResconfigcollapse' aria-expanded='true' class='gray_drop'></a></h2>";
-        import_form.html(title);
-        listtable_wrap = $("<div class='listtable_wrap panel-collapse collapse in' id='memberResconfigcollapse' role='tabpanel'>");
-        div = $("<div id='member_table_div'>");
-        table = $("<table id='member_table' />");
-        div.append(table);
-        listtable_wrap.append(div);
-        container.append(import_form);
-        container.append(listtable_wrap);
-
-        div = $('<div id="sectorMenuContent" class="menuContent" style="display:none; position: absolute;">');
-        var ul = $('<ul id="sectorTree" class="ztree" style="margin-top:0; width:180px; height: 300px;">');
-        div.append(ul);
-        container.append(div);
-        return container;
-    },
-    openMemberContainer: function () {
-        var inputname = biz.edit.form.memberbox.data.inputname;
-        if ($('#memberContainer').is(":hidden")) {
-            var width = $("[name='" + inputname + "']").parent('td').css('width');
-            width = width.substring(0, width.length - 2) - 10;
-            $('#memberContainer').css('width', (parseInt(width) + 2));
-            $('#memberContainer').show();
-            biz.edit.form.memberbox.sectorInit();
-            biz.edit.form.memberbox.queryMember();
-        } else {
-            $('#memberContainer').hide();
-        }
-    },
-    setting: {
-        view: {
-            dblClickExpand: false
-        },
-        data: {
-            simpleData: {
-                enable: true
-            }
-        },
-        callback: {
-            beforeClick: function (treeId, treeNode) {
-                var check = (treeNode && !treeNode.isParent);
-            },
-            onClick: function (e, treeId, treeNode) {
-                var zTree = $.fn.zTree.getZTreeObj("sectorTree");
-                nodes = zTree.getSelectedNodes(),
-                    vId = "",
-                    v = "";
-                nodes.sort(function compare(a, b) {
-                    return a.id - b.id;
-                });
-                for (var i = 0, l = nodes.length; i < l; i++) {
-                    v += nodes[i].name + ",";
-                    vId += nodes[i].id + ",";
-                }
-                if (v.length > 0) v = v.substring(0, v.length - 1);
-                if (vId.length > 0) vId = vId.substring(0, vId.length - 1);
-                var cityObj = $("#sectorCombo"), cityValue = $('#sectorComboVal');
-                if (vId == "") {
-                    cityObj.val("");
-                    cityValue.val("");
-                } else {
-                    cityObj.val(v);
-                    cityValue.val(vId);
-                }
-                biz.edit.form.memberbox.hideMenu();
-            }
-        }
-    },
-    zNodes: null,
-    showMenu: function () {
-        var cityObj = $("#sectorCombo");
-        var cityOffset = $("#sectorCombo").offset();
-        $("#sectorMenuContent").css({
-            left: cityOffset.left + "px",
-            top: cityOffset.top + cityObj.outerHeight() + "px"
-        }).slideDown("fast");
-
-        $("body").bind("mousedown", biz.edit.form.memberbox.onBodyDown);
-    },
-    hideMenu: function () {
-        $("#sectorMenuContent").fadeOut("fast");
-        $("body").unbind("mousedown", biz.edit.form.memberbox.onBodyDown);
-    },
-    onBodyDown: function (event) {
-        if (!(event.target.id == "sectorCombo" || event.target.id == "sectorMenuContent" || $(event.target).parents("#sectorMenuContent").length > 0)) {
-            biz.edit.form.memberbox.hideMenu();
-        }
-    },
-    sectorInit: function () {
-        $.fn.zTree.init($("#sectorTree"), biz.edit.form.memberbox.setting, biz.edit.form.memberbox.zNodes);
-
-        //初始化选择第一个
-        var zTree = $.fn.zTree.getZTreeObj("sectorTree");
-        zTree.addNodes(null, 0, {
-            id: "",
-            name: "选空",
-            nocheck: true
-        });
-        var nodes = zTree.getNodes();
-        zTree.selectNode(nodes[0]);
-        zTree.setting.callback.onClick(null, zTree.setting.treeId, nodes[0]);
-    },
-    loadSectorBox: function () {
-        $.ajax({
-            type: "post",
-            url: path + "/bizHandle/loadSectors",
-            async: false,
-            success: function (data) {
-                if (data != null && data.success && data.obj != null) {
-                    biz.edit.form.memberbox.zNodes = data.obj;
-                } else {
-                }
-            }
-        });
-    },
-    queryMember: function () {
-        var isSingle = biz.edit.form.memberbox.data.isSingle;
-        $("#member_table").bootstrapTable({
-            url: path + '/bizHandle/loadMembers',
-            method: 'get',
-            striped: true,
-            queryParams: function queryParams(params) {
-                params.sector = $('#memberContainer #sectorComboVal').val();
-                params.portalname = $('#memberContainer input[name="portalname"]').val();
-                params.cnname = encodeURI($('#memberContainer input[name="cnname"]').val());
-                params.bizId = bizId;
-                if (!biz.edit.form.memberbox.data.showDept) {
-                    params.headQuarter = 'headQuarter';
-                }
-                return params;
-            },
-            sidePagination: 'server',
-            clickToSelect: true,
-            pagination: true,
-            singleSelect: isSingle,
-            pageSize: 10,
-            columns: [
-                {"field": "state", checkbox: true},
-                {"field": "fullname", "title": "用户名称", "align": "center"},
-                {"field": "username", "title": "账号", "align": "center"},
-                {field: "structure_name", title: "部门名称", align: "center"}
-            ]
-            , onCheck: this.onCheck,
-            onUncheck: function (row) {
-                biz.edit.form.memberbox.onUnCheck(row);
-            }
-        });
-    },
-
-    onCheck: function () {//表格选择人员，人员值加上选择人员，隔开
-
-        var rows = $("#member_table").bootstrapTable('getSelections');
-        var username = $("[name='" + biz.edit.form.memberbox.data.input + "']").val();
-        ;
-        var fullname = $("[name='" + biz.edit.form.memberbox.data.inputname + "']").val();
-        if (rows.length > 0) {
-            for (var i = 0; i < rows.length; i++) {
-                if (username.indexOf(rows[i].username + ',') == -1) {
-                    username += rows[i].username + ',';
-                    fullname += rows[i].fullname + ',';
-                }
-            }
-        }
-        $("[name='" + biz.edit.form.memberbox.data.input + "']").val(username);
-        $("[name='" + biz.edit.form.memberbox.data.inputname + "']").val(fullname);
-    },
-
-    onUnCheck: function (row) {//表格选择人员，人员值加上选择人员，隔开
-
-        var oldusername = $("[name='" + biz.edit.form.memberbox.data.input + "']").val();
-        var oldfullname = $("[name='" + biz.edit.form.memberbox.data.inputname + "']").val();
-        $("[name='" + biz.edit.form.memberbox.data.input + "']").val(oldusername.replace(row.username + ",", ""));
-        $("[name='" + biz.edit.form.memberbox.data.inputname + "']").val(oldfullname.replace(row.fullname + ",", ""));
-        this.onCheck();
-    },
-
-    search: function () {
-        var sector = $('#memberContainer #sectorComboVal').val();
-        $('#member_table').bootstrapTable('refresh', {
-            method: 'post', url: path + '/bizHandle/loadMembers', queryParams: function queryParams(params) {
-                params.sector = $('#memberContainer #sectorComboVal').val();
-                params.portalname = $('#memberContainer input[name="portalname"]').val();
-                params.cnname = encodeURI($('#memberContainer input[name="cnname"]').val());
-                return params;
-            }
-        });
-    },
-    checkMember: function () {
-        var rows = $("#member_table").bootstrapTable("getSelections");
-        if (rows.length < 1 || rows.length > 1) {
-            bsAlert("提示", "请选择一个选项");
-        }
-        var row = rows[0];
-        $("[name='" + biz.edit.form.memberbox.data.input + "']").val(row.id);
-        $("[name='" + biz.edit.form.memberbox.data.inputname + "']").val(row.fullname);
-    },
-    clearMember: function () {
-        $("[name='" + biz.edit.form.memberbox.data.input + "']").val('');
-        $("[name='" + biz.edit.form.memberbox.data.inputname + "']").val('');
-    }
-};
 //人员及联系方式联动相关方法
 biz.edit.form.memberLinkage = {
     data: {},
@@ -284,7 +27,7 @@ biz.edit.form.memberLinkage = {
         th.text("姓名：");
         tr.append(th);
         td = $("<td colspan='1'>");
-        input = $("<input style='margin-right: 20px;' name='cnname' type='text' class='fslTextBox'>");
+        var input = $("<input style='margin-right: 20px;' name='cnname' type='text' class='fslTextBox'>");
         var a = $("<a onclick='biz.edit.form.memberLinkage.search(\"" + containerName + "\")' class='btn btn-y'>查询</a>");
         td.append(input, a);
         tr.append(td);
@@ -297,7 +40,7 @@ biz.edit.form.memberLinkage = {
         title = "<div class='panel-heading'>查询结果</div>";
         import_form.html(title);
         listtable_wrap = $("<div class='panel-body panel-collapse collapse in' id='memberLinkageResconfigcollapse' role='tabpanel'>");
-        div = $("<div id='memberLinkage_table_div' class='base-table-wrap'>");
+        var div = $("<div id='memberLinkage_table_div' class='base-table-wrap'>");
         table = $("<table id='" + containerName + "memberLinkage_table' class='base-table table-striped' />");
         div.append(table);
         listtable_wrap.append(div);
@@ -305,7 +48,7 @@ biz.edit.form.memberLinkage = {
         container.append(import_form);
 
         //部门树图
-        if ($("#sectorMenuContent").length == 0) {
+        if ($("#sectorMenuContent").length === 0) {
             div = $('<div id="sectorMenuContent" class="menuContent" style="display:none; position: absolute;">');
             var ul = $('<ul id="sectorTree" class="ztree" style="margin-top:0; width:180px; height: 300px;">');
             div.append(ul);
@@ -346,7 +89,7 @@ biz.edit.form.memberLinkage = {
             onClick: function (e, treeId, treeNode) {
                 //点击部门树多选，隔开
                 var zTree = $.fn.zTree.getZTreeObj("sectorTree");
-                nodes = zTree.getSelectedNodes(),
+                var nodes = zTree.getSelectedNodes(),
                     vId = "",
                     v = "";
                 nodes.sort(function compare(a, b) {
@@ -359,7 +102,7 @@ biz.edit.form.memberLinkage = {
                 if (v.length > 0) v = v.substring(0, v.length - 1);
                 if (vId.length > 0) vId = vId.substring(0, vId.length - 1);
                 var cityObj = biz.edit.form.memberLinkage.currentNode, cityValue = cityObj.next();
-                if (vId == "") {
+                if (vId === "") {
                     cityObj.val("");
                     cityValue.val("");
                 } else {
@@ -388,7 +131,7 @@ biz.edit.form.memberLinkage = {
         $("body").unbind("mousedown", biz.edit.form.memberLinkage.onBodyDown);
     },
     onBodyDown: function (event) {//点击其他区域隐藏树图
-        if (!(event.target.id == "sectorCombo" || event.target.id == "sectorMenuContent" || $(event.target).parents("#sectorMenuContent").length > 0)) {
+        if (!(event.target.id === "sectorCombo" || event.target.id === "sectorMenuContent" || $(event.target).parents("#sectorMenuContent").length > 0)) {
             biz.edit.form.memberLinkage.hideMenu();
         }
     },
@@ -559,7 +302,7 @@ biz.edit.form.memberLinkage = {
         },
         onBodyDown: function (event) {
             var inputName = biz.edit.form.memberLinkage.data.inputName + 'Name';
-            if (!(event.target.name == inputName || event.target.id == "roleMenuContent" || $(event.target).parents("#roleMenuContent").length > 0)) {
+            if (!(event.target.name === inputName || event.target.id === "roleMenuContent" || $(event.target).parents("#roleMenuContent").length > 0)) {
                 biz.edit.form.memberLinkage.roleTree.hideMenu();
             }
         },
@@ -582,7 +325,7 @@ biz.edit.form.combobox = {
     },
     loadDictComboBox: function (select, params) {//数据字典下拉框
         $.ajax({
-            url: path + "/dictValue/list",
+            url: "/dictValue/list",
             type: "post",
             async: false,
             data: {dictTypeId: params},
@@ -604,21 +347,6 @@ biz.edit.form.combobox = {
 
     },
 
-    loadUserInfo: function (dataId, type) {
-
-        var userInfo = '';
-        $.ajax({
-            url: path + '/actBizModel/getUserInfo',
-            type: 'post',
-            data: {dataId: dataId, type: type},
-            async: false,
-            success: function (result) {
-                userInfo = result;
-            }
-        });
-        return userInfo;
-    },
-
     /**
      * 根据数组生成下拉框选项
      * @param select
@@ -632,44 +360,6 @@ biz.edit.form.combobox = {
                 option.text(entity);
                 select.append(option);
             });
-        }
-    },
-    limitTimechange: function () {
-        var newtime = $dp.cal.getNewDateStr();
-        $("#onLineTime").attr('onFocus', "WdatePicker({dateFmt:\"yyyy-MM-dd HH:mm:ss\",minDate:\"" + newtime + "\"})");
-    },
-    otherUrgencyLevel: function (ele) {//紧急级别与最后解决时间联动
-        if (ele == undefined) {
-            ele = this;
-        } else if (ele.originalEvent) {
-            ele = this;
-        }
-        if ($(ele).val().replace(/(^\s*)|(\s*$)/g, "") == "其他") {
-            $("input[name='base.limitTime']").attr("onfocus", "WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss',onpicked:biz.edit.form.combobox.limitTimechange})");
-        } else {
-            var num = 0;
-            switch ($(ele).val().replace(/(^\s*)|(\s*$)/g, "")) {
-                case "低(7天)":
-                    num = 7;
-                    break;
-                case "中(3天)":
-                    num = 3;
-                    break;
-                case "高(1天)":
-                    num = 1;
-                    break;
-                default:
-                    var value = $(ele).val().replace(/(^\D*)|(\D*$)/g, "");
-                    num = parseInt(value ? value : 0);
-            }
-            var now = new Date();
-            now.setDate(now.getDate() + num);
-            var input = $("<input type='text' class='fslTextBox' readonly='readonly'>");
-            input.attr("name", "base.limitTime");
-            input.addClass("Wdate");
-            input.val(now.Format("yyyy-MM-dd hh:mm:ss"));
-            $("input[name='base.limitTime']").replaceWith(input);
-            $("#onLineTime").attr('onFocus', "WdatePicker({dateFmt:\"yyyy-MM-dd HH:mm:ss\",minDate:\"" + now.Format("yyyy-MM-dd hh:mm:ss") + "\"})");
         }
     }
 };
@@ -691,14 +381,14 @@ biz.edit.form.file = {
         $fileTd.append(file);
         biz.edit.form.file.handleDiv = $(element).parent().parent().parent();
     },
-    selectFile: function () {//触发隐藏文件域的点击事件，弹窗选择框
-        $("#file" + (biz.edit.fileNumber)).click();
-    },
 
-    uploadFile: function () {//在附件单元格显示附件名，未入库
+    /**
+     * 在附件单元格显示附件名，未入库
+     */
+    uploadFile: function () {
 
         var path = $("#file" + (biz.edit.fileNumber)).val();
-        if (path !== "" && !path) {
+        if (path !== "" && path) {
             var filename = path.substring(path.lastIndexOf("\\") + 1);
             var span = "<span style='margin-right:10px;display:block;' id='spanfile" + biz.edit.fileNumber + "'>" +
                 "<input type='checkbox'/>" + filename + "</span>";
@@ -710,21 +400,21 @@ biz.edit.form.file = {
     downLoadFile: function () {
 
         var fileName = encodeURI(biz.edit.form.file.data.downLoadFile);
-        window.location.href = path + "/bizTemplateFile/downloadTemplate?&fileName=" + encodeURIComponent(fileName) + "&bizType=" + key + "&bizId=" + bizId;
+        window.location.href = "/bizTemplateFile/downloadTemplate?&fileName=" + encodeURIComponent(fileName) + "&bizType=" + key + "&bizId=" + bizId;
     },
 
     removeFile: function (element) {//删除附件
         var checkbox = $(element).parent().parent().parent().parent().find(":checked");
         for (var i = 0; i < checkbox.length; i++) {
-            var spanfile = checkbox.eq(i).parent().attr("id");
-            $("#" + spanfile.substring(4)).remove();
+            var spanFile = checkbox.eq(i).parent().attr("id");
+            $("#" + spanFile.substring(4)).remove();
             if (checkbox.eq(i).next("a").length > 0) {
                 if (confirm("是否删除已有附件" + checkbox.eq(i).next("a").text())) {
                     //删除已入库附件没加上
                     var fileId = checkbox.eq(i).next("a").attr("id");
                     if (fileId && fileId !== "") {
                         $.ajax({
-                            url: path + "/actBizConf/deleteFile",
+                            url: "/actBizConf/deleteFile",
                             data: {id: fileId}
                         });
                     }
@@ -736,8 +426,9 @@ biz.edit.form.file = {
         checkbox.parent().remove();
         biz.edit.form.file.handleDiv = $(element).parent().parent().parent();
         var existCheckBox = biz.edit.form.file.handleDiv.parent().find(":checkbox");
-        if (existCheckBox.length === 0)
+        if (existCheckBox.length === 0) {
             biz.edit.form.file.handleDiv.parent().find("input:hidden").val("");
+        }
     },
 
     creatFileWindow: function () {//创建容器html代码
@@ -757,7 +448,7 @@ biz.edit.form.file = {
         td = $("<td id='fileTd'>");
         tr.append(td);
         td = $("<td>");
-        td.html("<a onclick='biz.edit.form.file.uploadFile()' data-dismiss='modal' class='dt_btn' style='margin-left:5px;'>上传</a>");
+        td.html("<a onclick='biz.edit.form.file.uploadFile()' data-dismiss='modal' class='dt_btn' style='margin-left:5px; cursor: pointer'>上传</a>");
         tr.append(td);
         table.append(tr);
         tr = $("<tr>");
@@ -850,7 +541,7 @@ biz.edit.form.refVariable = {
                     dom.empty();
                     if (data.viewComponent === "DICTCOMBOBOX") {
                         biz.edit.form.combobox.loadDictComboBox(dom, refDom.val());
-                    }  else {
+                    } else {
                         biz.edit.form.combobox.loadComboBox(dom, refDom.val());
                     }
                 } else {
@@ -952,7 +643,7 @@ biz.edit.form.memberList = {
                 for (var j = 0; j < data.length; j++) {
                     var flag = true;
                     for (var i = 0; i < rows.length; i++) {
-                        if (rows[i].username == data[j].username)
+                        if (rows[i].username === data[j].username)
                             flag = false;
                     }
                     if (flag)
@@ -961,7 +652,7 @@ biz.edit.form.memberList = {
             } else {
                 var flag = true;
                 for (var i = 0; i < rows.length; i++) {
-                    if (rows[i].username == data.username) {
+                    if (rows[i].username === data.username) {
                         flag = false;
                     }
                 }
@@ -990,7 +681,7 @@ biz.edit.form.memberList = {
                 for (var i = 0; i < rows.length; i++) {
                     var flag = true;
                     for (var j = 0; j < data.length; j++) {
-                        if (rows[i].username == data[j].username) {
+                        if (rows[i].username === data[j].username) {
                             flag = false;
                         }
                     }
@@ -1000,7 +691,7 @@ biz.edit.form.memberList = {
                 }
             } else {
                 for (var i = 0; i < rows.length; i++) {
-                    if (rows[i].username != data.username) {
+                    if (rows[i].username !== data.username) {
                         selected.push(rows[i]);
                     }
                 }
@@ -1101,7 +792,7 @@ biz.edit.form.memberList = {
         $("body").unbind("mousedown", biz.edit.form.memberList.onBodyDown);
     },
     onBodyDown: function (event) {
-        if (!(event.target.name == "roleName" || event.target.id == "memberListRoleMenuContent" || $(event.target).parents("#memberListRoleMenuContent").length > 0)) {
+        if (!(event.target.name === "roleName" || event.target.id === "memberListRoleMenuContent" || $(event.target).parents("#memberListRoleMenuContent").length > 0)) {
             biz.edit.form.memberList.hideMenu();
         }
     },

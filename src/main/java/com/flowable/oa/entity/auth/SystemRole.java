@@ -41,7 +41,7 @@ public class SystemRole implements Serializable {
 	private String nameCn;
 
 	@Transient
-	private Set<SystemUser> users = new HashSet<SystemUser>();
+	private Set<SystemUser> users = new HashSet<>();
 
 	public SystemRole() {
 	}

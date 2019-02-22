@@ -6,18 +6,22 @@
     </head>
     <body>
     <script type="text/javascript" th:src="@{/modules/process/process_list.js}"></script>
-    <div class="panel panel-ex">
-        <div class="panel-heading">流程管理
-            <span class="func-btn-list">
+    <div class="container-fluid">
+        <div class="panel panel-ex">
+            <div class="panel-heading">流程管理
+                <span class="func-btn-list">
 				<a href="/process/deploy" target="_self" class="item-link mrl10">部署</a>
 				<a href="javascript:$('#table').bootstrapTable('refresh');" class="item-link mrl10">刷新</a>
 			</span>
-        </div>
-        <div class="panel-body">
-            <div class="base-table-wrap">
-                <table id="process-table" data-detail-view="true"
-                       data-detail-formatter="detailFormatter" class="base-table table-striped">
-                </table>
+            </div>
+            <div class="panel-body">
+                <div class="base-table-wrap">
+                    <table id="process-table"
+                           data-detail-view="true"
+                           data-detail-formatter="detailFormatter"
+                           class="base-table table-striped">
+                    </table>
+                </div>
             </div>
         </div>
     </div>

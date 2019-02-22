@@ -45,10 +45,11 @@ ul,.panel,p,.breadcrumb,.well{margin-bottom:0;}
 
 /*模态框*/
 .modal-header, .modal-footer{padding:7px 10px;}
-.modal-header {background: url(../img/btn_bg.png) repeat-x 0 bottom;}
 .modal-body { padding: 10px; }
-/*.modal-dialog{min-width:600px;max-width:800px;margin:90px auto 30px;}
-@media (min-width: 768px){
-	.modal-dialog{margin:90px auto 30px;}
-	}*/
+.container-fluid-index {
+    padding-right: 0px;
+    padding-left: 0px;
+    margin-right: auto;
+    margin-left: auto;
+}
 

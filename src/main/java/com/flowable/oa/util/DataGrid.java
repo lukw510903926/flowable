@@ -1,6 +1,7 @@
 package com.flowable.oa.util;
 
 import java.io.Serializable;
+import java.nio.channels.DatagramChannel;
 import java.util.List;
 
 /**
@@ -35,4 +36,5 @@ public class DataGrid<T> implements Serializable {
     public void setTotal(long total) {
         this.total = total;
     }
+
 }

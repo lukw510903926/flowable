@@ -30,57 +30,12 @@ public class BizFileServiceImplImpl extends BaseServiceImpl<BizFile> implements 
     }
 
     @Override
-    @Transactional
-    public void updateBizFile(BizFile... beans) {
-        if (beans == null) {
-            return;
-        }
-        for (BizFile bean : beans) {
-            if (bean.getId() == null) {
-                continue;
-            }
-           this.updateNotNull(bean);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void deleteBizFile(BizFile... beans) {
-    	
-        if (beans == null) {
-            return;
-        }
-        for (BizFile bean : beans) {
-            if (bean.getId() == null) {
-                continue;
-            }
-            this.deleteById(bean.getId());
-        }
-    }
-
-    @Override
-    @Transactional
-    public void deleteBizFile(String... ids) {
-        if (ids == null) {
-            return;
-        }
-        for (String id : ids) {
-            this.deleteById(id);
-        }
-    }
-
-    @Override
     public List<BizFile> loadBizFilesByBizId(String bizId, String taskId) {
+
         BizFile bizFile = new BizFile();
         bizFile.setBizId(bizId);
         bizFile.setTaskId(taskId);
         return this.findByModel(bizFile, false);
-    }
-
-    @Override
-    public BizFile getBizFileById(String id) {
-
-        return this.selectByKey(id);
     }
 
     @Override

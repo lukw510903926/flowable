@@ -14,9 +14,9 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 public class HasPermissionProcessor extends AbstractStandardConditionalVisibilityTagProcessor {
 
-	public static final int PRECEDENCE = 300;
+	private static final int PRECEDENCE = 300;
 
-	public static final String ATTR_NAME = "permission";
+	private static final String ATTR_NAME = "permission";
 
 	private Logger logger = LoggerFactory.getLogger(HasPermissionProcessor.class);
 

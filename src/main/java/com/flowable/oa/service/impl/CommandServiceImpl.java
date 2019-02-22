@@ -49,7 +49,7 @@ public class CommandServiceImpl implements CommandService {
 	private Logger logger = LoggerFactory.getLogger(CommandServiceImpl.class);
 
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public BizInfo jumpCommand(Map<String,Object> params) {
 
 		try {
@@ -69,7 +69,7 @@ public class CommandServiceImpl implements CommandService {
 			managementService.executeCommand(cmd);
 			processExecuteService.updateBizTaskInfo(bizInfo, conf);
 			processExecuteService.writeBizLog(bizInfo, task, new Date(), params);
-			this.bizInfoService.updateBizInfo(bizInfo);
+			this.bizInfoService.saveOrUpdate(bizInfo);
 			this.bizInfoConfService.saveOrUpdate(conf);
 			return bizInfo;
 		} catch (Exception e) {

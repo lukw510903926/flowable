@@ -10,14 +10,13 @@ biz.query = {
 	init : function() {
 		biz.query.$queryForm = $('#biz-query-form');
 		$("#queryBtn").click(biz.query.queryClick);
-		$("#pressBiz").click(biz.query.terminalPressBiz);
 		$('#bizType').change(biz.query.loadProcessStatus);
 	},
 
 	loadProcessStatus : function() {
 
 		$.ajax({
-			url : path + '/biz/getProcessStatus',
+			url : path + '/biz/process/status',
 			type : 'post',
 			async : false,
 			dataType : 'json',
@@ -61,7 +60,7 @@ biz.query = {
 		param.taskDefKey = taskDefKey;
 		$("#biz-query-form").find("[name]").each(function() {
 			var value = $.trim($(this).val());
-			if (value != null && value != "" && value != 'undefined') {
+			if (value != null && value !== "" && value !== 'undefined') {
 				param[this.name] = value;
 			}
 		});
@@ -87,7 +86,7 @@ biz.query = {
 			bsAlert('提示', "请选择要删除的数据");
 			return;
 		}
-		var ids = new Array();
+		var ids = [];
 		for (var i = 0; i < rows.length; i++) {
 			ids[i] = rows[i].id;
 		}
@@ -170,19 +169,19 @@ biz.query.form = {
 			queryFormList[5].type = "hidden";
 		}
 
-		if (action == 'myTemp') {
+		if (action === 'myTemp') {
 			queryFormList[3].type = "hidden";
 			queryFormList[5].type = "hidden";
 			queryFormList[6].type = "hidden";
 		}
-		if (action == 'myWork') {
+		if (action === 'myWork') {
 			queryFormList[5].type = "hidden";
 		}
-		if (action == 'myCreate') {
+		if (action === 'myCreate') {
 			queryFormList[5].type = "hidden";
 			queryFormList[6].type = "hidden";
 		}
-		if (action == 'myHandle') {
+		if (action === 'myHandle') {
 			queryFormList[5].type = "hidden";
 		}
 		biz.query.form.createForm(queryFormList);
@@ -190,10 +189,10 @@ biz.query.form = {
 	createForm : function(list) {
 		var length = 0;
 		for (var i = 0; i < list.length; i++) {
-			if (list[i].type == "createTime") {
+			if (list[i].type === "createTime") {
 				length = length + 2;
-			} else if (list[i].type == "hidden") {
-				continue;
+			} else if (list[i].type === "hidden") {
+				length++;
 			} else {
 				length++;
 			}
@@ -243,7 +242,7 @@ biz.query.form = {
 		col.append(lable);
 		col.append(div);
 		this.row.append(col);
-		if (this.row.children(".col-md-4").length == 3) {
+		if (this.row.children(".col-md-4").length === 3) {
 			if (!this.collapse) {
 				this.collapse = $("<div class='col-md-11 panel-collapse collapse' id='more-condition'>");
 				$("#queryBtn").parent().before(this.collapse);
@@ -282,7 +281,7 @@ biz.query.form = {
 		col.append(lable);
 		col.append(div);
 		this.row.append(col);
-		if (this.row.children(".col-md-4").length == 3) {
+		if (this.row.children(".col-md-4").length === 3) {
 			if (!this.collapse) {
 				this.collapse = $("<div class='col-md-11 panel-collapse collapse' id='more-condition'>");
 				$("#queryBtn").parent().before(this.collapse);
@@ -304,7 +303,7 @@ biz.query.form = {
 		col.append(lable);
 		col.append(div);
 		this.row.append(col);
-		if (this.row.children(".col-md-4").length == 3) {
+		if (this.row.children(".col-md-4").length === 3) {
 			if (!this.collapse) {
 				this.collapse = $("<div class='col-md-11 panel-collapse collapse' id='more-condition'>");
 				$("#queryBtn").parent().before(this.collapse);
@@ -318,27 +317,27 @@ biz.query.form = {
 
 		for (var k in params) {
 			var option = $("<option>");
-			if (type == "list" || type == undefined) {
+			if (type === "list" || !type) {
 				option.val(params[k]);
 				option.text(params[k]);
-			} else if (type == "map") {
-				if (key == "value") {
+			} else if (type === "map") {
+				if (key === "value") {
 					option.val(params[k]);
 				} else {
 					option.val(k);
 				}
-				if (value == "key") {
+				if (value === "key") {
 					option.text(k);
 				} else {
 					option.text(params[k]);
 				}
 			} else {
-				if (key == true || key == undefined) {
+				if (key|| !key) {
 					for (var i in params[k]) {
 						option.val(i);
 						option.text(params[k][i]);
 					}
-				} else if (key == "value") {
+				} else if (key === "value") {
 					for (var i in params[k]) {
 						option.val(params[k][i]);
 						option.text(params[k][i]);
@@ -362,18 +361,19 @@ biz.table = {
 	init : function() {
 		var single = false;
 		var clickSelect = false;
-		var columns = new Array();
+		var columns =[];
 		columns.push({
 			field : "workNum",
 			title : "工单号",
 			'class' : "data-resize",
 			sortable : true,
 			align : "center",
-			formatter : function(value, row, index) {
+			formatter : function(value, row) {
 				var url = path + "/biz/" + row.id;
-				if (row.status == "草稿")
+				if (row.status === "草稿"){
 					url = path + "/biz/create/" + row.processDefinitionId.split(":")[0] + "?bizId=" + row.id;
-				return "<a onclick=\"window.open('" + url + "');\">" + value + "</a>";
+				}
+				return "<a style='cursor: pointer' onclick=\"window.open('" + url + "');\">" + value + "</a>";
 			}
 		}, {
 			field : "bizType",
@@ -419,7 +419,7 @@ biz.table = {
 			sortable : true,
 			align : "center"
 		});
-		if (action == 'myCreate') {
+		if (action === 'myCreate') {
 			columns.splice(0, 0, {
 				field : "state",
 				checkbox : true,
@@ -435,7 +435,7 @@ biz.table = {
 				param.action = action;
 				$("#biz-query-form").find("[name]").each(function() {
 					var value = $.trim($(this).val());
-					if (value != null && value != "" && value != 'undefined') {
+					if (value != null && value !== "" && value !== 'undefined') {
 						param[this.name] = value;
 					}
 				});
@@ -451,55 +451,18 @@ biz.table = {
 			columns : columns
 		});
 	},
-	refresh : function(param) {
+	refresh : function() {
 		biz.$table.bootstrapTable('refresh');
 	},
 	getSelections : function() {
 		return biz.$table.bootstrapTable("getSelections");
-	},
-	removeLeft : function() {
-		var rows = this.getSelections();
-		if (rows.length < 1) {
-			bsAlert("提示", "请选择要移除的工单!");
-			return;
-		}
-		var ids = [];
-		for (var i = 0; i < rows.length; i++) {
-			ids.push(rows[i].id);
-		}
-		$.confirm({
-			title : "提示",
-			content : "确认移除选中的工单？",
-			confirmButton : "确认",
-			cancelButton : "取消",
-			confirm : function() {
-				$.ajax({
-					url : path + "/biz/removeLeft",
-					type : "post",
-					data : {
-						bizIds : ids
-					},
-					async : false,
-					traditional : true,
-					success : function(data) {
-						if (data.success) {
-							bsAlert("提示", data.msg);
-							biz.$table.bootstrapTable('refresh');
-						} else {
-							bsAlert("提示", data.msg);
-						}
-					}
-				});
-			}
-		});
-
 	},
 	exportDetail : function() {
 
 		var param = {};
 		$("#biz-query-form").find("[name]").each(function() {
 			var value = $.trim($(this).val());
-			if (value != null && value != "" && value != 'undefined') {
+			if (value != null && value !== "" && value !== 'undefined') {
 				param[this.name] = value;
 			}
 		});
@@ -513,14 +476,6 @@ biz.table = {
 			opt.value = param[x];
 			temp.appendChild(opt);
 		}
-		var description = document.createElement("input");
-		description.name = 'description';
-		description.value = $("#description")[0].checked;
-		temp.appendChild(description);
-		var solution = document.createElement("input");
-		solution.name = 'solution';
-		solution.value = $("#solution")[0].checked;
-		temp.appendChild(solution);
 		document.body.appendChild(temp);
 		temp.submit();
 	}

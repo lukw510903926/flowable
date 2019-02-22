@@ -12,8 +12,6 @@ import com.flowable.oa.util.mybatis.IBaseService;
  */
 public interface BizInfoConfService extends IBaseService<BizInfoConf> {
 
-    List<BizInfoConf> findBizInfoConf(BizInfoConf bizInfoConf);
-
     /**
      * 当前工单中我的待办
      *

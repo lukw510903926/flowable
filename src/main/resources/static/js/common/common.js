@@ -170,7 +170,6 @@ function bsAlert(title, msg, func) {
 	$.alert({
 		title : title,
 		content : msg,
-		//content: 'This is some alert to the user. <br> with some <strong>HTML</strong> <em>contents</em>',
 		autoClose : 'cancel|3000',
 		confirmButton : '关闭',
 		confirmButtonClass : 'btn-primary',

@@ -1,15 +1,34 @@
 $.namespace("biz");
-
+$(function () {
+    biz.detail.init();
+    $(".gray_drop").on('click', function () {
+        if ($(this).hasClass("gray_drop")) {
+            $(this).removeClass("gray_drop");
+            $(this).addClass("gray_droped");
+        } else {
+            $(this).removeClass("gray_droped");
+            $(this).addClass("gray_drop");
+        }
+    });
+    $(".drop").on('click', function () {
+        if ($(this).hasClass("drop")) {
+            $(this).removeClass("drop");
+            $(this).addClass("droped");
+        } else {
+            $(this).removeClass("droped");
+            $(this).addClass("drop");
+        }
+    });
+});
 biz.detail = {
     mark: 0,
     init: function () {
-    	var id = $('#bizId').val();
+        var id = $('#bizId').val();
         $.ajax({
-            url: path + "/workflow/display/" + id,
+            url: "/workflow/display/" + id,
             cache: false,
             async: false,
             success: function (result) {
-                biz.detail.groups = result.processVariablesMap;
                 if (!result) {
                     bsAlert("错误", "异常数据，请验证数据正确性！", function () {
                         window.opener = null;
@@ -19,16 +38,15 @@ biz.detail = {
                 }
                 biz.detail.workInfo = result.workInfo;
                 document.title = biz.detail.workInfo.title;
-                $('#biz_detail_info').text('工单号 : ' + result.workInfo.workNum + ' 工单状态 : ' + result.workInfo.status);
+                $('#biz_detail_info').text('工单号 : ' + result.workInfo['workNum'] + ' 工单状态 : ' + result.workInfo.status);
                 biz.detail.workLogs = result.workLogs;
                 biz.detail.logVars = result.logVars;
                 biz.detail.serviceInfo = result.serviceInfo;
-                biz.detail.createUser = result.extInfo.createUser;
+                biz.detail.createUser = result['extInfo']['createUser'];
                 biz.detail.currentVariables = result.currentVariables;
-                biz.detail.buttons = result.SYS_BUTTON;
-                biz.detail.currentTaskName = result.$currentTaskName;
-                biz.detail.annexs = result.annexs;
-                biz.detail.curreop = result.CURRE_OP;
+                biz.detail.buttons = result['SYS_BUTTON'];
+                biz.detail.currentTaskName = result['$currentTaskName'];
+                biz.detail.curreop = result['CURRE_OP'];
                 biz.detail.subBizInfo = result.subBizInfo;
                 biz.detail.bizKey = biz.detail.workInfo.processDefinitionId;
                 biz.detail.files = result.files;
@@ -36,48 +54,17 @@ biz.detail = {
 
                 $("[name='base.bizId']").val(biz.detail.workInfo.id);
                 biz.detail.loadStatic(biz.detail.workInfo, biz.detail.createUser);
-                var _flag = typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") != -1) : false;
-                biz.detail.loadProcessLabel(biz.detail.groups, _flag);
-                biz.detail.loadProcessData(biz.detail.serviceInfo);
+                var _flag = typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") !== -1) : false;
+                biz.detail.loadBIzInfo(_flag);
                 biz.detail.loadWorkLogs(biz.detail.workLogs);
                 biz.detail.loadWorkForm(biz.detail.buttons, biz.detail.currentVariables, biz.detail.currentTaskName);
                 $("#stepPicBizId").append(biz.detail.workInfo.bizId);
-                biz.stepPic.loadStepPic(biz.detail.workLogs, biz.detail.workInfo.bizType);
+                biz.stepPic.loadStepPic(biz.detail.workLogs, biz.detail.workInfo['bizType']);
                 if (!biz.detail.buttonGroup) {
                     biz.detail.createButtons("#workLogs", biz.detail.buttons);
                 }
             }
         });
-    },
-
-    /**
-     * 加载工单流程参数信息
-     * @param grops
-     * @param flag
-     */
-    loadProcessLabel: function (groups, flag) {
-    	
-        if ($.inArray("工单信息", groups) == -1) {
-            var table = biz.detail.getTable("工单信息");
-            biz.detail.loadWorkTitle(table);
-            biz.detail.setView(table, [], flag);
-        }
-        $.each(groups, function (key, list) {
-            var table = biz.detail.getTable(key);
-            if (key == "工单信息") {
-                biz.detail.loadWorkTitle(table);
-            }
-            biz.detail.setView(table, list, flag);
-        });
-        biz.show.table.addFile(biz.detail.annexs, table);
-        if (!$.isEmptyObject(biz.detail.subBizInfo)) {
-            var table = biz.detail.getTable("子单信息");
-            biz.show.table.addSonBiz({
-                alias: "推诿单",
-                data: biz.detail.subBizInfo
-            }, table, $("<tr></tr>"));
-        }
-
     },
 
     /**
@@ -94,6 +81,70 @@ biz.detail = {
         td.append(span);
         tr.append(th).append(td);
         table.append(tr);
+    },
+
+    /**
+     * 加载工单信息
+     * @param flag
+     */
+    loadBIzInfo: function (flag) {
+
+        var table = biz.detail.getTable("工单信息");
+        biz.detail.loadWorkTitle(table);
+        var list = [{
+            name: "workNum",
+            alias: "工单号",
+            value: biz.detail.workInfo['workNum']
+        }, {
+            name: "bizType",
+            alias: "工单类型",
+            value: biz.detail.workInfo['bizType']
+        }, {
+            name: "status",
+            alias: "工单状态",
+            value: biz.detail.workInfo['status']
+        }, {
+            name: "createTime",
+            alias: "创建时间",
+            value: biz.detail.workInfo['createTime']
+        }];
+        biz.detail.setView(table, list, flag);
+        if (!$.isEmptyObject(biz.detail.subBizInfo)) {
+            var _table = biz.detail.getTable("子单信息");
+            var columns = [{
+                field: "workNum",
+                title: "工单号",
+                align: "center",
+                formatter: function (value, row) {
+                    return "<a style='cursor: pointer' onclick=\"window.open('" + "/biz/" + row.id + "');\">" + value + "</a>";
+                }
+            }, {
+                field: "bizType",
+                title: "工单类型",
+                align: "center"
+            }, {
+                field: "title",
+                title: "工单标题",
+                align: "center"
+            }, {
+                field: "createTime",
+                title: "创建时间",
+                align: "center"
+            }, {
+                field: "status",
+                title: "工单状态",
+                align: "center"
+            }, {
+                field: "taskAssignee",
+                title: "当前处理人",
+                align: "center"
+            }];
+            biz.show.table.loadTable({
+                alias: "推诿单",
+                data: biz.detail.subBizInfo,
+                columns: columns
+            }, _table, $("<tr></tr>"));
+        }
     },
 
     setView: function (table, list, flag) {
@@ -117,198 +168,138 @@ biz.detail = {
         view.setDynamic();
     },
 
-    /**
-     * 设定工单流程参数
-     * @param serviceInfo
-     * @param ele
-     */
-    loadProcessData: function (serviceInfo, ele) { //回显
-
-        if (ele == undefined) {
-            ele = $("body");
-        }
-        for (var i in serviceInfo) {
-            //特殊处理组件
-            if (serviceInfo[i].viewComponent == "REQUIREDFILE") {
-                biz.show.table.addReqFiles(serviceInfo[i]);
-                continue;
-            }
-            if (serviceInfo[i].viewComponent == "CONFIRMUSER") {
-                biz.show.table.confirmUser.setConfirmUserValue(serviceInfo[i]);
-                continue;
-            }
-            if (serviceInfo[i].viewComponent == "MEMBERBOX") {
-                biz.show.table.userInfo.setUserNames(serviceInfo[i]);
-                continue;
-            }
-            if (serviceInfo[i].viewComponent == "MEMBERLIST") {
-                biz.show.table.userInfo.setUserNames(serviceInfo[i]);
-                continue;
-            }
-            //文本类组件
-            if (ele.find(":input[name='" + serviceInfo[i].variableName + "']").length > 0) {
-                ele.find(":input[name='" + serviceInfo[i].variableName + "']").val(serviceInfo[i].value == null ? "" : serviceInfo[i].value);
-            } else if (ele.find(":input[name='" + serviceInfo[i].variableId + "&" + serviceInfo[i].taskId + "']").length > 0) {
-                ele.find(":input[name='" + serviceInfo[i].variableId + "&" + serviceInfo[i].taskId + "']").val(serviceInfo[i].value == null ? "" : serviceInfo[i].value);
-            } else {
-                ele.find("span[name='" + serviceInfo[i].variableId + "&" + serviceInfo[i].taskId + "']").text(serviceInfo[i].value == null ? "" : serviceInfo[i].value);
-            }
-        }
-    },
     loadStatic: function (workInfo, createUser) {
+
         var key = biz.detail.bizKey.split(":")[0];
+        $("#msgtitle").text("提单人信息");
+        var list = [];
         switch (key) {
             case "eventManagement":
-                $("#msgtitle").text("报障人信息");
-                var list = [{
-                    name: "workNum",
-                    alias: "工单号"
-                }, {
-                    name: "status",
-                    alias: "当前状态"
+                list.push({
+                    name: "createUser",
+                    alias: "姓名",
+                    value: createUser['name']
                 }, {
                     name: "dep",
-                    alias: "报障部门"
-                }, {
-                    name: "name",
-                    alias: "报障人姓名"
+                    alias: "部门",
+                    value: createUser['dep']
                 }, {
                     name: "mobile",
-                    alias: "报障人联系方式"
+                    alias: "联系方式",
+                    value: createUser['mobile']
                 }, {
                     name: "email",
-                    alias: "邮箱地址"
+                    alias: "邮箱",
+                    value: createUser['email']
                 }, {
                     name: "city",
-                    alias: "报障地市"
-                }, {
-                    name: "createTime",
-                    alias: "故障发生时间"
-                }, {
-                    name: "limitTime",
-                    alias: "最迟解决时间"
-                }];
-                biz.detail.setStatic(list, workInfo, createUser);
+                    alias: "报障地市",
+                    value: createUser['city']
+                });
                 break;
             default:
-                $("#msgtitle").text("申请人信息");
-                var list = [{
-                    name: "workNum",
-                    alias: "工单号"
-                }, {
-                    name: "status",
-                    alias: "当前状态"
-                }, {
+                list.push({
                     name: "dep",
-                    alias: "申请人部门"
+                    alias: "部门",
+                    value: createUser['dep']
                 }, {
                     name: "createUser",
-                    alias: "申请人姓名"
+                    alias: "姓名",
+                    value: createUser['name']
                 }, {
                     name: "mobile",
-                    alias: "申请人联系方式"
+                    alias: "联系方式",
+                    value: createUser['mobile']
                 }, {
                     name: "email",
-                    alias: "邮箱地址"
-                }, {
-                    name: "city",
-                    alias: "申请人地市"
-                }, {
-                    name: "createTime",
-                    alias: "申请时间"
-                }, {
-                    name: "limitTime",
-                    alias: "最迟解决时间"
-                }];
-                //回显
-                biz.detail.setStatic(list, workInfo, createUser);
+                    alias: "邮箱",
+                    value: createUser['email']
+                });
         }
+        biz.detail.setStatic(list);
     },
-    setStatic: function (list, workInfo, createUser) {
+
+    /**
+     * 提单人信息
+     * @param list
+     */
+    setStatic: function (list) {
+
         var view = biz.show.getView({
             table: $("#fqrxx"),
-            list: []
+            bizId: biz.detail.workInfo.id,
+            list: list
         });
-        for (var i = 0; i < list.length; i++) {
-            if (list[i].name == "status") {
-                var text = workInfo[list[i].name] == undefined ? createUser[list[i].name] : workInfo[list[i].name];
-                view.addTextField(list[i]).text(text);
-            } else if (list[i].name == "createUser") {
-                view.addTextField(list[i]).text(createUser['name']);
-            } else {
-                var text = workInfo[list[i].name] == undefined ? createUser[list[i].name] : workInfo[list[i].name];
-                view.addTextField(list[i]).text(text == null ? "" : text);
-            }
-        }
-        view.appendTd();
+        view.setDynamic({
+            end: false
+        });
     },
+
+
     loadWorkLogs: function (workLogs) {
 
         var mark = 1;
-        for (var i in workLogs) {
+        $.each(workLogs, function (index, entity) {
+
+            let $workLogs = $("#workLogs");
             var div = $("<div class='import_form'>");
-            var title = "<h2 class='white_tit'>处理流程：" + workLogs[i].taskName +
+            var title = "<h2 class='white_tit'>处理流程：" + entity['taskName'] +
                 "<a class='drop'  role='button' data-toggle='collapse' href='#workLogs" + mark + "'></a></h2>";
             div.html(title);
-            $("#workLogs").append(div);
+            $workLogs.append(div);
             div = $("<div class='listtable_wrap panel-collapse collapse in'>");
             div.attr("id", "workLogs" + mark);
             var table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
             div.append(table);
-            $("#workLogs").append(div);
+            $workLogs.append(div);
             mark++;
 
-            var logVars = biz.detail.logVars;
-            var logVar = [];
             var list = [];
-
-            if (workLogs[i].handleResult != "签收") {
-                for (var key in logVars) {
-                    if (workLogs[i].id == key) {
-                        logVar = logVars[key];
-                        break;
-                    }
-                }
-                for (var j = 0; j < logVar.length; j++) {
-                	var instance = logVar[j];
-					list.push({name : instance.variableName, viewComponent : instance.viewComponent,alias :instance.variableAlias});
-				}
+            if (entity['handleResult'] !== "签收") {
+                var logVar = biz.detail.logVars[entity.id];
+                $.each(logVar, function (index, instance) {
+                    list.push({
+                        name: instance['variableName'],
+                        viewComponent: instance.viewComponent,
+                        alias: instance['variableAlias'],
+                        id: instance.id,
+                        value: instance.value
+                    });
+                });
             }
+            list.push({
+                name: "handleUser",
+                alias: "处理人",
+                value: entity['handleUserName']
+            }, {
+                name: "createTime",
+                alias: "处理时间",
+                value: entity['createTime']
+            }, {
+                name: "handleResult",
+                alias: "处理结果",
+                value: entity['handleResult']
+            }, {
+                name: "handleDescription",
+                alias: "处理意见",
+                viewComponent: 'TEXTAREA',
+                value: entity['handleDescription']
+            });
             var view = biz.show.getView({
                 table: table,
                 list: list,
-                taskId: workLogs[i].taskID,
+                taskId: entity['taskID'],
                 bizId: biz.detail.workInfo.id
             });
             view.setDynamic({
                 end: false
             });
-            var handleUser = workLogs[i].handleUser == null ? "" : workLogs[i].handleUser;
-            $.ajax({
-                url: path + '/role/loadUsersByUserName',
-                type: 'post',
-                async: false,
-                data: {
-                    userName: handleUser
-                },
-                success: function (data) {
-                    if (data) {
-                        view.addTextField({alias: "处理人"}).text(data.name);
-                    } else {
-                        view.addTextField({alias: "处理人"}).text(handleUser);
-                    }
-                }
-            });
-            view.addTextField({alias: "处理时间"}).text(workLogs[i].createTime == null ? "" : workLogs[i].createTime);
-            view.addTextarea({alias: "处理结果"}).text(workLogs[i].handleResult == null ? "" : workLogs[i].handleResult);
-            if (workLogs[i].taskID != "START") {
-                view.addTextarea({alias: "处理意见"}).text(workLogs[i].handleDescription == null ? "" : workLogs[i].handleDescription);
-                if (workLogs[i].handleResult != "签收" && workLogs[i].taskName != "申请人处理") {
-                    view.addFile(biz.detail.files[workLogs[i].id]);
+            if (entity['taskID'] !== "START") {
+                if (entity['handleResult'] !== "签收" && entity['taskName'] !== "申请人处理") {
+                    view.addFile(biz.detail.files[entity.id]);
                 }
             }
-            biz.detail.loadProcessData(logVar, table);
-        }
+        });
     },
 
     /**
@@ -332,9 +323,9 @@ biz.detail = {
             view.variableGroup();
             //判断是否签收
             var _sign = false;
-            var buttons = biz.detail.buttonGroup ? biz.detail.buttonGroup.all : buttons;
-            $.each(buttons, function (index, value) {
-                if (value == "签收") {
+            var groupButtons = biz.detail.buttonGroup ? biz.detail.buttonGroup.all : buttons;
+            $.each(groupButtons, function (index, value) {
+                if (value === "签收") {
                     _sign = true;
                     biz.edit.form.addMessage({
                         alias: "处理意见",
@@ -344,7 +335,6 @@ biz.detail = {
                     return false;
                 }
             });
-            biz.detail.loadProcessData({}, table);
         }
     },
 
@@ -361,23 +351,23 @@ biz.detail = {
             all: buttons
         };
         if ($.isEmptyObject(currentVariables)) {
-            return;
+            return "";
         }
         //确定处理方式属性
-        for (var i = 0; i < currentVariables.length; i++) {
-            if (currentVariables[i].viewComponent == "TREATMENT") {
-                treatment = currentVariables[i];
+        $.each(currentVariables, function (index, entity) {
+            if (entity.viewComponent === 'TREATMENT') {
+                treatment = entity;
             }
-        }
+        });
         //按钮分组，command为之前画图出错时出现的英文按钮可以去掉
         if (treatment) {
             var command = {};
             var flow = {};
-            for (var key in buttons) {
-                if (key.match("command_") != null) {
-                    command[key.substring(9)] = buttons[key];
+            for (var _key in buttons) {
+                if (_key.match("command_") != null) {
+                    command[_key.substring(9)] = buttons[_key];
                 } else {
-                    flow[key] = buttons[key];
+                    flow[_key] = buttons[_key];
                 }
             }
             var group = [];
@@ -391,12 +381,12 @@ biz.detail = {
             //处理分组文本与按钮文本相同情况
             for (var key in flow) {
                 for (var i = 0; i < group.length; i++) {
-                    if (flow[key] == group[i]) {
-                        if (groupButtons[group[i]] == undefined) {
+                    if (flow[key] === group[i]) {
+                        if (!groupButtons[group[i]]) {
                             groupButtons[group[i]] = {};
                         }
                         groupButtons[group[i]][key] = flow[key];
-                        if (command[key] != undefined) {
+                        if (command[key]) {
                             for (var k in command[key]) {
                                 groupButtons[group[i]][k] = command[key][k];
                             }
@@ -409,11 +399,11 @@ biz.detail = {
             for (var key in flow) {
                 for (var i = 0; i < group.length; i++) {
                     if (group[i].match(flow[key])) {
-                        if (groupButtons[group[i]] == undefined) {
+                        if (!groupButtons[group[i]]) {
                             groupButtons[group[i]] = {};
                         }
                         groupButtons[group[i]][key] = flow[key];
-                        if (command[key] != undefined) {
+                        if (command[key]) {
                             for (var k in command[key]) {
                                 groupButtons[group[i]][k] = command[key][k];
                             }
@@ -448,52 +438,50 @@ biz.detail = {
      */
     getTable: function (group) {
         var table;
-        if (group == $("#msgtitle").text()) {
+        if (group === $("#msgtitle").text()) {
             table = $("#fqrxx");
         } else {
             var div = $("<div class='import_form mrt10'>");
             var title = "<h2 class='white_tit'>" + group +
                 "<a class='drop'  role='button' data-toggle='collapse' href='#collapse" + biz.detail.mark + "'></a></h2>";
             div.html(title);
-            $(".close_all").before(div);
+            var $closeAll = $(".close_all");
+            $closeAll.before(div);
             div = $("<div class='listtable_wrap panel-collapse collapse in'>");
             div.attr("id", "collapse" + biz.detail.mark);
             table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
             div.append(table);
-            $(".close_all").before(div);
+            $closeAll.before(div);
             biz.detail.mark++;
         }
         return table;
     },
 
     /**
-     * 工单日志
+     * 工单日志 创建获取当前流程布局table，传入流程名称
      * @param currentTaskName
      * @returns {*|jQuery|HTMLElement}
      */
-    getWorkLogsTable: function (currentTaskName) { //创建获取当前流程布局table，传入流程名称，早期改名有瑕疵
+    getWorkLogsTable: function (currentTaskName) {
         var div = $("<div class='import_form'>");
         var title = "<h2 class='white_tit'>我的处理：" + currentTaskName +
             "<a class='drop'  role='button' data-toggle='collapse' href='#workForm'></a></h2>";
         div.html(title);
-        $("#workLogs").append(div);
+        var $workLogs = $("#workLogs");
+        $workLogs.append(div);
         div = $("<div class='listtable_wrap panel-collapse collapse in'>");
         div.attr("id", "workForm");
         var table = $("<table cellpadding='0' cellspacing='0' class='listtable'>");
         div.append(table);
-        $("#workLogs").append(div);
+        $workLogs.append(div);
         return table;
     }
 };
 
 
 biz.detail.save = function (key) {
-    var url = path + "/workflow/submit";
-    var jwWorkChecked = $(":checkbox[name='jwWork']:checked");
-    if (jwWorkChecked.length > 0 || key == 'save')
-        $(":input[name='crossDimension']").val("true");
-    else $(":input[name='crossDimension']").val(null);
 
+    var url = "/workflow/submit";
     var input = $(":input[checkEmpty='true']");
     for (var i = 0; i < input.length; i++) {
         checkEmpty(input[i]);
@@ -504,13 +492,13 @@ biz.detail.save = function (key) {
     }
     var file = $(":file");
     for (var i = 0; i < file.length; i++) {
-        if (file.eq(i).val() == "")
+        if (file.eq(i).val() === "") {
             file.eq(i).remove();
+        }
     }
     //重新提交，交维工作做了处理
-    if (typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") != -1) : false) {
-//		$("#form [name='startProc']").val(true);
-        url = path + "/workflow/bizInfo/updateBiz";
+    if (typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") !== -1) : false) {
+        url = "/workflow/bizInfo/updateBiz";
     }
 
     $("[name='base.buttonId']").val(key);
@@ -541,35 +529,11 @@ biz.detail.save = function (key) {
             } else {
                 layer.close(index);
                 bsAlert("异常", result);
-                return;
             }
         },
-        error: function (result) {
+        error: function () {
             layer.close(index);
             bsAlert("异常", "提交失败");
         }
     });
 };
-
-
-$(function () {
-    biz.detail.init();
-    $(".gray_drop").click(function () {
-        if ($(this).hasClass("gray_drop")) {
-            $(this).removeClass("gray_drop");
-            $(this).addClass("gray_droped");
-        } else {
-            $(this).removeClass("gray_droped");
-            $(this).addClass("gray_drop");
-        }
-    });
-    $(".drop").click(function () {
-        if ($(this).hasClass("drop")) {
-            $(this).removeClass("drop");
-            $(this).addClass("droped");
-        } else {
-            $(this).removeClass("droped");
-            $(this).addClass("drop");
-        }
-    });
-});

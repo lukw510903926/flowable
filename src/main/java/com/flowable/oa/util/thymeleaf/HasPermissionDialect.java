@@ -26,7 +26,7 @@ public class HasPermissionDialect extends AbstractProcessorDialect {
 
 	@Override
 	public Set<IProcessor> getProcessors(String dialectPrefix) {
-		final Set<IProcessor> processors = new HashSet<IProcessor>();
+		final Set<IProcessor> processors = new HashSet<>();
 		processors.add(new HasPermissionProcessor(TemplateMode.HTML,dialectPrefix));
 		return processors;
 	}

@@ -25,7 +25,7 @@
 
 	<!-- 通过规格查询活动 -->
 	<select id="queryWorkOrder" parameterType="Map"	resultMap="BaseResultMap">
-		select * from t_biz_info
+		select * from T_BIZ_INFO
 	</select>
 
 </mapper>

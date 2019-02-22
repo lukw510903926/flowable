@@ -43,12 +43,7 @@ public interface IVariableInstanceService extends IBaseService<ProcessVariableIn
 	 */
 	List<ProcessVariableInstance> loadValueByLog(BizLog logBean) ;
 	
-	List<ProcessVariableInstance> findVariableInstances(ProcessVariableInstance instance, boolean isLike);
-
 	enum VariableLoadType {
 		ALL, UPDATABLE
 	}
-
-
-
 }
