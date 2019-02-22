@@ -161,32 +161,39 @@ biz.detail = {
                     value: createUser['name']
                 }, {
                     name: "dep",
-                    alias: "部门"
+                    alias: "部门",
+                    value: createUser['dep']
                 }, {
                     name: "mobile",
-                    alias: "联系方式"
+                    alias: "联系方式",
+                    value: createUser['mobile']
                 }, {
                     name: "email",
-                    alias: "邮箱地址"
+                    alias: "邮箱",
+                    value: createUser['email']
                 }, {
                     name: "city",
-                    alias: "报障地市"
+                    alias: "报障地市",
+                    value: createUser['city']
                 });
                 break;
             default:
                 list.push({
                     name: "dep",
-                    alias: "部门"
+                    alias: "部门",
+                    value: createUser['dep']
                 }, {
                     name: "createUser",
                     alias: "姓名",
                     value: createUser['name']
                 }, {
                     name: "mobile",
-                    alias: "联系方式"
+                    alias: "联系方式",
+                    value: createUser['mobile']
                 }, {
                     name: "email",
-                    alias: "邮箱地址"
+                    alias: "邮箱",
+                    value: createUser['email']
                 });
         }
         biz.detail.setStatic(list);
