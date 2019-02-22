@@ -17,6 +17,8 @@ import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.DateUtils;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
+import com.flowable.oa.core.vo.BaseVo;
+import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -158,7 +160,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     }
 
     @Override
-    public PageInfo<BizInfo> findBizInfo(Map<String, Object> params, PageInfo<BizInfo> page) {
+    public PageInfo<BizInfo> findBizInfo(Map<String, Object> params, PageInfo<BaseVo> page) {
 
         logger.info("工单查询 params : " + params);
         String action =  MapUtils.getString(params,"action");

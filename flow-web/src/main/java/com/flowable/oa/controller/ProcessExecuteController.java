@@ -11,6 +11,8 @@ import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.util.WebUtil;
+import com.flowable.oa.core.vo.BaseVo;
+import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -77,7 +79,7 @@ public class ProcessExecuteController {
      */
     @ResponseBody
     @RequestMapping(value = "/queryWorkOrder")
-    public DataGrid<BizInfo> queryWorkOrder(@RequestParam Map<String, Object> params, PageInfo<BizInfo> page) {
+    public DataGrid<BizInfo> queryWorkOrder(@RequestParam Map<String, Object> params, PageInfo<BaseVo> page) {
 
         PageInfo<BizInfo> helper = bizInfoService.findBizInfo(params, page);
         DataGrid<BizInfo> grid = new DataGrid<>();

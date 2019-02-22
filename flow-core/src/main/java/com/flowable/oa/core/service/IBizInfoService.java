@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.util.mybatis.IBaseService;
+import com.flowable.oa.core.vo.BaseVo;
 import com.github.pagehelper.PageInfo;
 
 /**
@@ -29,7 +30,7 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      *
      * @return
      */
-    PageInfo<BizInfo> findBizInfo(Map<String, Object> params, PageInfo<BizInfo> page);
+    PageInfo<BizInfo> findBizInfo(Map<String, Object> params, PageInfo<BaseVo> page);
 
     List<BizInfo> getBizByParentId(String parentId);
 }
