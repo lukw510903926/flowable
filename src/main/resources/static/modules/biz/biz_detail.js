@@ -1,5 +1,25 @@
 $.namespace("biz");
-
+$(function () {
+    biz.detail.init();
+    $(".gray_drop").on('click', function () {
+        if ($(this).hasClass("gray_drop")) {
+            $(this).removeClass("gray_drop");
+            $(this).addClass("gray_droped");
+        } else {
+            $(this).removeClass("gray_droped");
+            $(this).addClass("gray_drop");
+        }
+    });
+    $(".drop").on('click', function () {
+        if ($(this).hasClass("drop")) {
+            $(this).removeClass("drop");
+            $(this).addClass("droped");
+        } else {
+            $(this).removeClass("droped");
+            $(this).addClass("drop");
+        }
+    });
+});
 biz.detail = {
     mark: 0,
     init: function () {
@@ -122,7 +142,7 @@ biz.detail = {
             biz.show.table.loadTable({
                 alias: "推诿单",
                 data: biz.detail.subBizInfo,
-                columns:columns
+                columns: columns
             }, _table, $("<tr></tr>"));
         }
     },
@@ -334,8 +354,8 @@ biz.detail = {
             return "";
         }
         //确定处理方式属性
-        $.each(currentVariables,function(index,entity){
-            if(entity.viewComponent === 'TREATMENT'){
+        $.each(currentVariables, function (index, entity) {
+            if (entity.viewComponent === 'TREATMENT') {
                 treatment = entity;
             }
         });
@@ -472,8 +492,9 @@ biz.detail.save = function (key) {
     }
     var file = $(":file");
     for (var i = 0; i < file.length; i++) {
-        if (file.eq(i).val() === "")
+        if (file.eq(i).val() === "") {
             file.eq(i).remove();
+        }
     }
     //重新提交，交维工作做了处理
     if (typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") !== -1) : false) {
@@ -516,26 +537,3 @@ biz.detail.save = function (key) {
         }
     });
 };
-
-
-$(function () {
-    biz.detail.init();
-    $(".gray_drop").click(function () {
-        if ($(this).hasClass("gray_drop")) {
-            $(this).removeClass("gray_drop");
-            $(this).addClass("gray_droped");
-        } else {
-            $(this).removeClass("gray_droped");
-            $(this).addClass("gray_drop");
-        }
-    });
-    $(".drop").click(function () {
-        if ($(this).hasClass("drop")) {
-            $(this).removeClass("drop");
-            $(this).addClass("droped");
-        } else {
-            $(this).removeClass("droped");
-            $(this).addClass("drop");
-        }
-    });
-});
