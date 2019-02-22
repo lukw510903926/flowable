@@ -121,7 +121,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         String username = WebUtil.getLoginUser().getUsername();
         processDefinitionService.claimTask(taskId, username);
         bizInfoConf.setTaskAssignee(username);
-        bizInfoService.updateBizInfo(bizInfo);
+        bizInfoService.saveOrUpdate(bizInfo);
         bizInfo.setTaskAssignee(username);
         this.bizInfoConfService.saveOrUpdate(bizInfoConf);
         return bizInfo;
@@ -187,7 +187,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         task.setName((String) params.get("base.handleName"));
         writeBizLog(bizInfo, task, now, params);
         updateBizTaskInfo(bizInfo, bizInfoConf);
-        bizInfoService.updateBizInfo(bizInfo);
+        bizInfoService.saveOrUpdate(bizInfo);
         // 保存流程字段
         saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
         return bizInfo;
@@ -206,7 +206,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
         logger.info("params :" + params);
         String bizId = (String) params.get("base.bizId");
-        BizInfo bizInfo = bizInfoService.getByBizId(bizId);
+        BizInfo bizInfo = bizInfoService.selectByKey(bizId);
         if (null == bizInfo) {
             throw new ServiceException("工单不存在");
         }
@@ -224,7 +224,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     public BizInfo updateBiz(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
         String bizId = (String) params.get("base.bizId");
-        BizInfo bizInfo = bizInfoService.getByBizId(bizId);
+        BizInfo bizInfo = bizInfoService.selectByKey(bizId);
         if (null == bizInfo) {
             throw new ServiceException("工单不存在");
         }
@@ -251,7 +251,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         } else {
             completeTask(params, now, bizInfo, bizInfoConf, processValList);
         }
-        bizInfoService.updateBizInfo(bizInfo);
+        bizInfoService.saveOrUpdate(bizInfo);
         saveFile(fileMap, now, bizInfo, task);
         writeBizLog(bizInfo, task, now, params);
         return bizInfo;

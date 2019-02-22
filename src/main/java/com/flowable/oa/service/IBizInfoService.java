@@ -11,21 +11,7 @@ import com.github.pagehelper.PageInfo;
  */
 public interface IBizInfoService extends IBaseService<BizInfo> {
 
-    /**
-     * 添加工单信息
-     *
-     * @param beans
-     */
-    void addBizInfo(BizInfo... beans);
-
     void saveOrUpdate(BizInfo bizInfo);
-
-    /**
-     * 更新工单系信息
-     *
-     * @param beans
-     */
-    void updateBizInfo(BizInfo... beans);
 
     /**
      * 复制工单
@@ -36,28 +22,6 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      * @return
      */
     BizInfo copyBizInfo(String bizId, String processInstanceId, Map<String, Object> variables);
-
-    /**
-     * 删除工单信息
-     *
-     * @param beans
-     */
-    void deleteBizInfo(BizInfo... beans);
-
-    /**
-     * 删除工单信息
-     *
-     * @param ids
-     */
-    void deleteBizInfo(String... ids);
-
-    /**
-     * 包含配置信息 taskId
-     *
-     * @param id
-     * @return
-     */
-    BizInfo getByBizId(String id);
 
     /**
      * 分页查询指定用户创建的工单

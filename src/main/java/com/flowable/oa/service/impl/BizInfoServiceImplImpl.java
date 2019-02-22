@@ -59,31 +59,12 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
 
     @Override
     @Transactional
-    public void addBizInfo(BizInfo... beans) {
-        for (BizInfo bean : beans) {
-            this.save(bean);
-        }
-    }
-
-    @Override
-    @Transactional
     public void saveOrUpdate(BizInfo bizInfo){
 
         if(bizInfo.getId() != null){
             this.updateNotNull(bizInfo);
         }else {
             this.save(bizInfo);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void updateBizInfo(BizInfo... beans) {
-
-        for (BizInfo bean : beans) {
-            if (bean.getId() != null) {
-                this.updateNotNull(bean);
-            }
         }
     }
 
@@ -106,7 +87,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         newBiz.setStatus(Constants.BIZ_NEW);
         String username = WebUtil.getLoginUsername();
         newBiz.setCreateUser(username);
-        this.addBizInfo(newBiz);
+        this.saveOrUpdate(newBiz);
         this.copyProcessVarInstance(processInstanceId, oldBiz, newBiz);
         this.copyBizInfoConf(newBiz, oldBiz.getId());
         this.copyBizFile(bizId, oldBiz, newBiz, username);
@@ -160,30 +141,6 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
                 bizInfoConfService.save(newConf);
             });
         }
-    }
-
-    @Override
-    @Transactional
-    public void deleteBizInfo(BizInfo... beans) {
-
-        for (BizInfo bean : beans) {
-            this.deleteById(bean.getId());
-        }
-    }
-
-    @Override
-    @Transactional
-    public void deleteBizInfo(String... ids) {
-
-        for (String id : ids) {
-            this.deleteById(id);
-        }
-    }
-
-    @Override
-    public BizInfo getByBizId(String id) {
-
-        return this.selectByKey(id);
     }
 
     @Override
