@@ -19,9 +19,9 @@ import java.util.regex.Pattern;
  */
 public class WebUtil extends WebUtils {
 
-    public final static String LOGIN_USER = "_SESSION_LOGIN_USER";
+    private final static String LOGIN_USER = "_SESSION_LOGIN_USER";
 
-    public final static String SSO_TOKEN_COOKIE = "_SSO_TOKEN_COOKIE";
+    private final static String SSO_TOKEN_COOKIE = "_SSO_TOKEN_COOKIE";
 
     public static LoginUser getLoginUser(HttpServletRequest request) {
 
