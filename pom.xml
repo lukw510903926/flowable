@@ -93,7 +93,6 @@
         </dependencies>
     </dependencyManagement>
     <build>
-        <finalName>tykj-oa</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
