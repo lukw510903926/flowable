@@ -29,7 +29,7 @@ public class DictTypeController {
     @Autowired
     private IDictTypeService dictTypeService;
 
-    @RequestMapping("/dicts")
+    @RequestMapping("/index")
     public String tables() {
 
         return "modules/dict/dict_list";
