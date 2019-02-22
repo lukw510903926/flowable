@@ -14,17 +14,16 @@ import com.flowable.oa.core.service.IBizInfoService;
 import com.flowable.oa.core.service.IVariableInstanceService;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.Constants;
-import com.flowable.oa.core.util.DateUtils;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,11 +60,11 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
 
     @Override
     @Transactional
-    public void saveOrUpdate(BizInfo bizInfo){
+    public void saveOrUpdate(BizInfo bizInfo) {
 
-        if(bizInfo.getId() != null){
+        if (bizInfo.getId() != null) {
             this.updateNotNull(bizInfo);
-        }else {
+        } else {
             this.save(bizInfo);
         }
     }
@@ -160,46 +159,19 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     }
 
     @Override
-    public PageInfo<BizInfo> findBizInfo(Map<String, Object> params, PageInfo<BaseVo> page) {
+    public PageInfo<BizInfo> findBizInfo(BizInfoVo bizInfoVo, PageInfo<BaseVo> page) {
 
-        logger.info("工单查询 params : " + params);
-        String action =  MapUtils.getString(params,"action");
-        String createTime = (String) params.get("createTime");
-        String createTime2 = (String) params.get("createTime2");
-        if (!(createTime == null && createTime2 == null)) {
-            String key = createTime == null ? "createTime" : "createTime2";
-            params.put(key, new Date());
-        }
-        Date dt1 = DateUtils.parseDate(createTime);
-        Date dt2 = DateUtils.parseDate(createTime2);
-        if (dt1 == null) {
-            params.remove("createTime");
-        } else {
-            params.put("createTime", dt1);
-        }
-        if (dt2 == null) {
-            params.remove("createTime2");
-        } else {
-            params.put("createTime2", dt2);
-        }
-        if ("myCreate".equalsIgnoreCase(action)) {
-            params.remove("createUser");
-        } else if ("myClose".equalsIgnoreCase(action)) {
-            params.put("status", Constants.BIZ_END);
-        } else if ("myTemp".equalsIgnoreCase(action)) {
-            params.put("status", "草稿");
-            params.remove("createUser");
-        }
+        logger.info("工单查询 bizInfoVo : " + bizInfoVo);
         Map<String, SystemUser> userCache = new HashMap<>();
-        if (page != null) {
-            PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        }
-        List<BizInfo> list = bizInfoMapper.queryWorkOrder(params);
+        PageHelper.startPage(bizInfoVo);
+        BizInfo bizInfo = new BizInfo();
+        BeanUtils.copyProperties(bizInfoVo, bizInfo);
+        List<BizInfo> list = this.select(bizInfo);
         if (CollectionUtils.isNotEmpty(list)) {
-            for (BizInfo bizInfo : list) {
-                bizInfo.setCreateUser(this.getUserNameCn(bizInfo.getCreateUser(), userCache));
-                bizInfo.setTaskAssignee(this.getUserNameCn(bizInfo.getTaskAssignee(), userCache));
-            }
+            list.forEach(entity -> {
+                entity.setCreateUser(this.getUserNameCn(entity.getCreateUser(), userCache));
+                entity.setTaskAssignee(this.getUserNameCn(entity.getTaskAssignee(), userCache));
+            });
         }
         userCache.clear();
         return new PageInfo<>(list);
