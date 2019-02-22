@@ -16,13 +16,13 @@ menu.index = {
             $('#ul1').removeClass('collapse');
             $('#ul1_i').removeClass('icon-chevron-down').addClass('icon-chevron-up');
         }
-        window.addEventListener("resize", menu.index.restHeight);
-        $(window).load(menu.index.restHeight);
+        $(window).resize("resize", menu.index.restHeight);
+        $(document).scroll('onscroll', menu.index.restHeight);
     },
 
     restHeight: function () {
         var height = $(window).height() - 60;
         height = Math.max(height, $('.right_content').height());
-        $('.leftMenu').css({"height": height + 'px', "backgroundColor": '#001529'});
+        $('.leftMenu').css({"height": (height + 20) + 'px', "backgroundColor": '#001529'});
     }
 };
