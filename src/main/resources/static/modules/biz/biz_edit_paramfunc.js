@@ -383,13 +383,6 @@ biz.edit.form.file = {
     },
 
     /**
-     * 触发隐藏文件域的点击事件，弹窗选择框
-     */
-    selectFile: function () {
-        $("#file" + (biz.edit.fileNumber)).click();
-    },
-
-    /**
      * 在附件单元格显示附件名，未入库
      */
     uploadFile: function () {
