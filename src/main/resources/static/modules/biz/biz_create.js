@@ -1,4 +1,4 @@
-$.namespace("biz");
+$.namespace("biz.create");
 $(function () {
     biz.create.init();
 });
@@ -8,7 +8,7 @@ biz.create = {
     fileNumber: 0,
     init: function () {
         $.ajax({
-            url: path + "/workflow/create/" + key,
+            url: "/workflow/create/" + key,
             async: false,
             success: function (data) {
                 if (data.result) {
@@ -17,7 +17,7 @@ biz.create = {
                     $("#base_tempID").val(data['baseTempId']);
                     if (bizId) {
                         biz.create.draftData = biz.create.loadDraftBiz();
-                        biz.create.loadStatic(biz.create.draftData.workInfo, biz.create.draftData['extInfo'].createUser);
+                        biz.create.loadStatic(biz.create.draftData.workInfo);
                     } else {
                         biz.create.loadStatic();
                     }
@@ -25,11 +25,10 @@ biz.create = {
                     biz.create.createButtons(".t_content", biz.create.buttons);
                     if (bizId) {
                         $("input[name='base.workTitle']").val(biz.create.draftData.workInfo.title);
-                        $("input[name='base.limitTime']").val(biz.create.draftData.workInfo['limitTime']);
-                        var hidden = $("<input type='hidden' name='tempBizId'>");
+                        var hidden = $("<input type='hidden' name='tempBizId'/>");
                         hidden.val(biz.create.draftData.workInfo.id);
-                        $("#form").append(hidden);
                         biz.create.loadProcessData(biz.create.draftData.serviceInfo);
+                        $("#form").append(hidden);
                     }
                 } else {
                     bsAlert("提示", data.msg);
@@ -43,94 +42,91 @@ biz.create = {
      * @returns {*}
      */
     loadDraftBiz: function () {
-        var DraftBizData = null;
+        var draftBizData = null;
         $.ajax({
-            url: path + "/biz/workInfo/" + bizId,
+            url: "/biz/workInfo/" + bizId,
             async: false,
             success: function (data) {
-                DraftBizData = data;
+                draftBizData = data;
             }
         });
-        return DraftBizData;
+        return draftBizData;
     },
-    loadStatic: function (workInfo, saveUser) {
-
+    loadStatic: function (workInfo) {
+        workInfo = workInfo | {};
         $("#msgtitle").text("提单人信息");
         var list = [];
         switch (key) {
             case "eventManagement":
                 list.push({
                     id: "workNum",
-                    alias: "工单号"
+                    alias: "工单号",
+                    value: workInfo['workNum']
                 }, {
                     id: "status",
-                    alias: "当前状态"
-                }, {
-                    id: "dep",
-                    alias: "报障部门"
+                    alias: "当前状态",
+                    value: workInfo['status']
                 }, {
                     id: "name",
-                    alias: "报障人姓名"
+                    alias: "姓名",
+                    value: createUser['name']
                 }, {
                     id: "mobile",
-                    alias: "报障人联系方式"
+                    alias: "联系方式",
+                    value: createUser['mobile']
                 }, {
                     id: "email",
-                    alias: "邮箱地址"
+                    alias: "邮箱"
                 }, {
-                    id: "city",
-                    alias: "报障地市"
+                    id: "dep",
+                    alias: "部门",
+                    value: createUser['dep']
                 }, {
                     id: "createTime",
-                    alias: "故障发生时间"
+                    alias: "提单时间",
+                    value: workInfo['createTime'] ? workInfo['createTime'] : (new Date()).Format("yyyy/MM/dd hh:mm:ss")
                 });
-
                 break;
             default:
                 list.push({
                     id: "workNum",
-                    alias: "工单号"
+                    alias: "工单号",
+                    value: workInfo['workNum']
                 }, {
                     id: "status",
-                    alias: "当前状态"
-                }, {
-                    id: "dep",
-                    alias: "所在部门"
+                    alias: "当前状态",
+                    value: workInfo['status']
                 }, {
                     id: "name",
-                    alias: "姓名"
+                    alias: "姓名",
+                    value: createUser['name']
                 }, {
                     id: "mobile",
-                    alias: "联系方式"
+                    alias: "联系方式",
+                    value: createUser['mobile']
                 }, {
                     id: "email",
-                    alias: "邮箱地址"
+                    alias: "邮箱"
+                }, {
+                    id: "dep",
+                    alias: "部门",
+                    value: createUser['dep']
+                }, {
+                    id: "createTime",
+                    alias: "提单时间",
+                    value: workInfo['createTime'] ? workInfo['createTime'] : (new Date()).Format("yyyy/MM/dd hh:mm:ss")
                 });
         }
-        biz.create.setStatic(list, workInfo, saveUser);
+        biz.create.setStatic(list);
 
     },
-    setStatic: function (list, workInfo, saveUser) {
-        var view = biz.show.getView({
+    setStatic: function (list) {
+        biz.show.getView({
             table: $("#bjrxx"),
-            list: []
+            list: list
+        }).setDynamic({
+            end: true
         });
-        if (workInfo && saveUser) {
-            $.each(list, function (index, entity) {
-                var text = workInfo[entity.id] === undefined ? saveUser[entity.id] : workInfo[entity.id];
-                view.addTextField(entity).text(text == null ? "" : text);
-            });
-            view.appendTd();
-        } else {
-            $.each(list, function (index, entity) {
-                var text = createUser[entity.id];
-                if (entity.id === "createTime") {
-                    text = (new Date()).Format("yyyy/MM/dd hh:mm:ss");
-                }
-                view.addTextField(entity).text(text == null ? "" : text);
-            });
-            view.appendTd();
-        }
     },
 
     /**
@@ -143,15 +139,15 @@ biz.create = {
         if (!ele) {
             ele = $("body");
         }
-        $.each(serviceInfo, function (index, entity) {
-            if (entity.variable.viewComponent === "CONFIRMUSER") {
-                biz.show.table.confirmUser.setConfirmUserValue(entity);
-            } else if (ele.find(":input[name='" + entity.variable.name + "']").length > 0) {
-                ele.find(":input[name='" + entity.variable.name + "']").val(entity.value == null ? "" : entity.value);
-            }
-        });
-
+        if (!$.isEmptyObject(serviceInfo)) {
+            serviceInfo.forEach(function (entity) {
+                if (ele.find(":input[name='" + entity['variableName'] + "']").length > 0) {
+                    ele.find(":input[name='" + entity['variableName'] + "']").val(entity.value == null ? "" : entity.value);
+                }
+            })
+        }
     },
+
     loadForm: function (list) {
 
         var $content = $(".t_content");
@@ -220,7 +216,7 @@ biz.create = {
         });
 
         $('#form').ajaxSubmit({
-            url: path + '/workflow/bizInfo/create',
+            url: '/workflow/bizInfo/create',
             traditional: true,
             dataType: 'json',
             async: false,
@@ -230,7 +226,7 @@ biz.create = {
                 if (result) {
                     if (!result || result.success) {
                         layer.close(index);
-                        location.href = path + result.data;
+                        location.href = result.data;
                     } else {
                         layer.close(index);
                         bsAlert("异常", result.msg);

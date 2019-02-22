@@ -16,8 +16,8 @@ menu.index = {
             $('#ul1').removeClass('collapse');
             $('#ul1_i').removeClass('icon-chevron-down').addClass('icon-chevron-up');
         }
-        menu.index.restHeight();
         window.addEventListener("resize", menu.index.restHeight);
+        $(window).load(menu.index.restHeight);
     },
 
     restHeight: function () {

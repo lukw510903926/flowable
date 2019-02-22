@@ -138,12 +138,16 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         Date limitTime = DateUtils.parseDate(dt1);
         Date now = new Date();
         BizInfo bizInfo;
+        BizInfoConf bizInfoConf;
         String createUser = WebUtil.getLoginUser().getUsername();
         if (StringUtils.isNotBlank(tempBizId)) {
             bizInfo = bizInfoService.selectByKey(tempBizId);
+            bizInfoConf = this.bizInfoConfService.getMyWork(tempBizId);
         } else {
             bizInfo = new BizInfo();
             bizInfo.setWorkNum(WorkOrderUtil.builWorkNumber(procDefId));
+            bizInfoConf =  new BizInfoConf();
+            bizInfoConf.setTaskAssignee(createUser);
         }
         bizInfo.setCreateUser(createUser);
         bizInfo.setSource(source);
@@ -153,10 +157,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         bizInfo.setStatus(Constants.BIZ_TEMP);
         bizInfo.setCreateTime(now);
         bizInfo.setTitle(MapUtils.getString(params, "base.workTitle"));
-        bizInfoService.addBizInfo(bizInfo);
-
-        BizInfoConf bizInfoConf = new BizInfoConf();
-        bizInfoConf.setTaskAssignee(createUser);
+        bizInfoService.saveOrUpdate(bizInfo);
         bizInfoConf.setBizId(bizInfo.getId());
         this.bizInfoConfService.saveOrUpdate(bizInfoConf);
         if (startProc) {
@@ -493,8 +494,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         String currentOp = Optional.ofNullable(taskId).map(task -> processDefinitionService.getWorkAccessTask(task, WebUtil.getLoginUser().getUsername())).orElse(null);
         // 子工单信息
         result.put("subBizInfo", bizInfoService.getBizByParentId(bizId));
-        if (StringUtils.isNotEmpty(taskId)) {
-        }
         result.put("CURRE_OP", currentOp);
         result.put("$currentTaskName", bizInfo.getTaskName());
         List<ProcessVariable> currentVariables = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());

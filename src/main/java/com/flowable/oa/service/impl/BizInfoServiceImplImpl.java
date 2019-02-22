@@ -67,6 +67,17 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
 
     @Override
     @Transactional
+    public void saveOrUpdate(BizInfo bizInfo){
+
+        if(bizInfo.getId() != null){
+            this.updateNotNull(bizInfo);
+        }else {
+            this.save(bizInfo);
+        }
+    }
+
+    @Override
+    @Transactional
     public void updateBizInfo(BizInfo... beans) {
 
         for (BizInfo bean : beans) {

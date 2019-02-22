@@ -311,12 +311,3 @@ biz.show.table = {
         });
     }
 };
-
-biz.show.table.confirmUser = {
-    setConfirmUserValue: function (data) {
-        var value = eval("(" + data.value + ")");
-        for (var key in value) {
-            $("span[name='" + data.variable.id + "&" + data.taskId + "'][title='" + key + "']").html(value[key]);
-        }
-    }
-};

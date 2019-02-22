@@ -42,7 +42,7 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
     @Autowired
     private IBizInfoService bizInfoService;
 
-    @Value("${templateFilePath}")
+    @Value("${biz.file.path}")
     private String filePath = "/home/file";
 
     @Override

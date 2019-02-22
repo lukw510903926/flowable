@@ -18,6 +18,8 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      */
     void addBizInfo(BizInfo... beans);
 
+    void saveOrUpdate(BizInfo bizInfo);
+
     /**
      * 更新工单系信息
      *
