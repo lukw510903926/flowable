@@ -14,13 +14,11 @@ import java.util.Date;
  * @since 2019/2/22 22:43
  **/
 @Data
-public class BizInfoVo implements Serializable {
+public class BizInfoVo extends BaseVo implements Serializable {
 
 
 
     private static final long serialVersionUID = -9003521142344551524L;
-
-    private String id;
 
     /**
      * 工单号
