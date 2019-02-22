@@ -2,7 +2,6 @@ package com.flowable.oa.core.service.impl;
 
 import java.util.*;
 
-import com.flowable.oa.core.dao.BizInfoMapper;
 import com.flowable.oa.core.entity.BizFile;
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.BizInfoConf;
@@ -34,9 +33,6 @@ import com.github.pagehelper.PageHelper;
 public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements IBizInfoService {
 
     private Logger logger = LoggerFactory.getLogger(BizInfoServiceImplImpl.class);
-
-    @Autowired
-    private BizInfoMapper bizInfoMapper;
 
     @Autowired
     private BizInfoConfService bizInfoConfService;
