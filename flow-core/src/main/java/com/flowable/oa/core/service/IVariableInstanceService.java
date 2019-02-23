@@ -15,16 +15,6 @@ import java.util.Map;
 public interface IVariableInstanceService extends IBaseService<ProcessVariableInstance> {
 
 	/**
-	 * 添加
-	 * 
-	 * @param beans
-	 * @
-	 */
-	void addProcessInstance(ProcessVariableInstance... beans) ;
-
-	void updateProcessInstance(ProcessVariableInstance... beans) ;
-
-	/**
 	 * 加载某个工单所填写的所有数据
 	 * 
 	 * @param bean

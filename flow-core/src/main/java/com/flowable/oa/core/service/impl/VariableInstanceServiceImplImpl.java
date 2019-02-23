@@ -8,34 +8,12 @@ import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.BizLog;
 import com.flowable.oa.core.entity.ProcessVariableInstance;
 import com.flowable.oa.core.service.IVariableInstanceService;
-import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVariableInstance> implements IVariableInstanceService {
-
-    @Override
-    @Transactional
-    public void addProcessInstance(ProcessVariableInstance... beans) {
-
-        for (ProcessVariableInstance bean : beans) {
-            this.save(bean);
-        }
-    }
-
-    @Override
-    public void updateProcessInstance(ProcessVariableInstance... beans) {
-
-        for (ProcessVariableInstance bean : beans) {
-            if (bean.getId() == null) {
-                continue;
-            }
-            this.updateNotNull(bean);
-        }
-    }
 
     /**
      * 加载某个工单所填写的所有数据
@@ -58,8 +36,6 @@ public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVari
         Map<String, ProcessVariableInstance> map = new HashMap<>();
         BizLog logBean = new BizLog();
         logBean.setBizId(bizInfo.getId());
-        logBean.setTaskID(Constants.TASK_START);
-        List<ProcessVariableInstance> pList = this.loadValueByLog(logBean);
         List<ProcessVariableInstance> tList = null;
         switch (type) {
             case ALL:
@@ -70,11 +46,8 @@ public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVari
                 tList = this.loadValueByLog(logBean);
                 break;
         }
-        if (!CollectionUtils.isEmpty(pList)) {
-            pList.forEach(var -> map.put(var.getVariableName(), var));
-        }
-        if (!CollectionUtils.isEmpty(tList)) {
-            tList.forEach(var -> map.put(var.getVariableName() + (type == VariableLoadType.ALL ? ('-' + taskId) : ""), var));
+        if (CollectionUtils.isNotEmpty(tList)) {
+            tList.forEach(var -> map.put(var.getVariableName(), var));
         }
         return map;
     }

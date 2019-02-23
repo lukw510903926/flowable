@@ -13,6 +13,7 @@ import tk.mybatis.mapper.entity.Example;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 基础类
@@ -93,8 +94,8 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     @Transactional
     public void saveOrUpdate(T entity) {
 
-        String key = ReflectionUtils.getter(entity, "id") + "";
-        if (StringUtils.isBlank(key)) {
+        String key = Optional.ofNullable(ReflectionUtils.getter(entity, "id")).map(Object::toString).orElse(null);
+        if (StringUtils.isEmpty(key)) {
             this.save(entity);
         } else {
             this.updateNotNull(entity);

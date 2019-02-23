@@ -40,8 +40,6 @@ biz.detail = {
                 document.title = biz.detail.workInfo.title;
                 $('#biz_detail_info').text('工单号 : ' + result.workInfo['workNum'] + ' 工单状态 : ' + result.workInfo.status);
                 biz.detail.workLogs = result.workLogs;
-                biz.detail.logVars = result.logVars;
-                biz.detail.serviceInfo = result.serviceInfo;
                 biz.detail.createUser = result['extInfo']['createUser'];
                 biz.detail.currentVariables = result.currentVariables;
                 biz.detail.buttons = result['SYS_BUTTON'];
@@ -49,7 +47,6 @@ biz.detail = {
                 biz.detail.curreop = result['CURRE_OP'];
                 biz.detail.subBizInfo = result.subBizInfo;
                 biz.detail.bizKey = biz.detail.workInfo.processDefinitionId;
-                biz.detail.files = result.files;
                 biz.detail.buttonGroup = biz.detail.groupButton(biz.detail.currentVariables, biz.detail.buttons);
 
                 $("[name='base.bizId']").val(biz.detail.workInfo.id);
@@ -241,7 +238,7 @@ biz.detail = {
         var mark = 1;
         $.each(workLogs, function (index, entity) {
 
-            let $workLogs = $("#workLogs");
+            var $workLogs = $("#workLogs");
             var div = $("<div class='import_form'>");
             var title = "<h2 class='white_tit'>处理流程：" + entity['taskName'] +
                 "<a class='drop'  role='button' data-toggle='collapse' href='#workLogs" + mark + "'></a></h2>";
@@ -256,16 +253,18 @@ biz.detail = {
 
             var list = [];
             if (entity['handleResult'] !== "签收") {
-                var logVar = biz.detail.logVars[entity.id];
-                $.each(logVar, function (index, instance) {
-                    list.push({
-                        name: instance['variableName'],
-                        viewComponent: instance.viewComponent,
-                        alias: instance['variableAlias'],
-                        id: instance.id,
-                        value: instance.value
+                var logVar = entity['variableInstances'];
+                if (!$.isEmptyObject(logVar)) {
+                    $.each(logVar, function (index, instance) {
+                        list.push({
+                            name: instance['variableName'],
+                            viewComponent: instance.viewComponent,
+                            alias: instance['variableAlias'],
+                            id: instance.id,
+                            value: instance.value
+                        });
                     });
-                });
+                }
             }
             list.push({
                 name: "handleUser",
@@ -294,10 +293,8 @@ biz.detail = {
             view.setDynamic({
                 end: false
             });
-            if (entity['taskID'] !== "START") {
-                if (entity['handleResult'] !== "签收" && entity['taskName'] !== "申请人处理") {
-                    view.addFile(biz.detail.files[entity.id]);
-                }
+            if (entity['handleResult'] !== "签收" && entity['taskName'] !== "申请人处理") {
+                view.addFile(entity['bizFiles']);
             }
         });
     },
@@ -490,13 +487,17 @@ biz.detail.save = function (key) {
         bsAlert("提示", "请完善表单再提交！");
         return;
     }
+    if (input.siblings("i").length > 0) {
+        bsAlert("提示", "请完善表单再提交！");
+        return;
+    }
     var file = $(":file");
     for (var i = 0; i < file.length; i++) {
         if (file.eq(i).val() === "") {
             file.eq(i).remove();
         }
     }
-    //重新提交，交维工作做了处理
+    //重新提交
     if (typeof biz.detail.currentTaskName == "string" ? (biz.detail.currentTaskName.indexOf("重新提交") !== -1) : false) {
         url = "/workflow/bizInfo/updateBiz";
     }

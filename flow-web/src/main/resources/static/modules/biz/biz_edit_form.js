@@ -281,6 +281,7 @@ biz.edit.form = {
         //三个文本框类型不同组件
         if (data.viewComponent === "NUMBER") {
             input.keydown(banNumber).change(checkNumber).val(0);
+            input.attr('checkNumber',true);
         } else if (data.viewComponent === "DATETIME") {
             input.attr("readonly", "readonly").addClass("Wdate");
             input.focus(function () {
@@ -544,9 +545,9 @@ biz.edit.form = {
         th.append(data.alias + ":");
         var td = $("<td colspan='3'></td>");
         var tdText = "<span class='fslFileUpload' inputfileclass='FileUploadInputFileClass'><div class='fslFileUpload'>" +
-            "<div class='FileUploadOperation'><img src='/themes/default/img/attach.gif' style='border-width:0px;'/>" +
+            "<div class='FileUploadOperation'><img src='/images/attach.gif' style='border-width:0px;'/>" +
             "<a onclick='biz.edit.form.file.addFileInput(this,\"" + data.name + "\")' style='padding-right: 6px;' data-toggle='modal' data-target='#selectFile' class='UploadButton'>继续添加</a>" +
-            "<img src='/themes/default/img/deleteAll.gif' style='border-width:0px;'/>" +
+            "<img src='/images/deleteAll.gif' style='border-width:0px;'/>" +
             "<a onclick='biz.edit.form.file.removeFile(this)' style='padding-right: 6px;' class='RemoveButton'>移除附件</a>";
         if (data.viewDatas) {
             biz.edit.form.file.data.downLoadFile = data.viewDatas;
@@ -731,7 +732,7 @@ biz.edit.form.orgTree = {
 };
 
 $(window).resize(function () {
-    let $memberLinkageContainer = $('#memberLinkageContainer');
+    var $memberLinkageContainer = $('#memberLinkageContainer');
     if ($memberLinkageContainer.length > 0 && !$memberLinkageContainer.is(":hidden")) {
         $memberLinkageContainer.css('width', "0");
         var width = $memberLinkageContainer.parent('td').css('width');

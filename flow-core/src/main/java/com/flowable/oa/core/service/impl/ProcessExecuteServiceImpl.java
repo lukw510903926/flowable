@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.core.entity.*;
 import com.flowable.oa.core.entity.auth.SystemRole;
 import com.flowable.oa.core.entity.auth.SystemUser;
@@ -13,6 +15,7 @@ import com.flowable.oa.core.service.*;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.*;
 import com.flowable.oa.core.util.exception.ServiceException;
+import com.flowable.oa.core.vo.BizLogVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +24,7 @@ import org.flowable.task.api.Task;
 import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -133,7 +137,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         } else {
             bizInfo = new BizInfo();
             bizInfo.setWorkNum(WorkOrderUtil.builWorkNumber(procDefId));
-            bizInfoConf =  new BizInfoConf();
+            bizInfoConf = new BizInfoConf();
             bizInfoConf.setTaskAssignee(createUser);
         }
         bizInfo.setCreateUser(createUser);
@@ -201,36 +205,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         if (bizInfoConf == null) {
             throw new ServiceException("请确认是否有提交工单权限");
         }
-        List<ProcessVariable> processValList = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
-        this.submitBizInfo(params, fileMap, bizInfo, bizInfoConf, processValList);
-        return bizInfo;
-    }
-
-    @Override
-    @Transactional
-    public BizInfo updateBiz(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
-
-        String bizId = (String) params.get("base.bizId");
-        BizInfo bizInfo = bizInfoService.selectByKey(bizId);
-        if (null == bizInfo) {
-            throw new ServiceException("工单不存在");
-        }
-        BizInfoConf bizInfoConf = this.bizInfoConfService.getMyWork(bizId);
-        if (bizInfoConf == null) {
-            throw new ServiceException("请确认是否有提交工单权限");
-        }
-        List<ProcessVariable> processValList = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
-        processValList.addAll(loadProcessVariables(bizInfo, Constants.TASK_START));
-
-        this.submitBizInfo(params, fileMap, bizInfo, bizInfoConf, processValList);
-        return bizInfo;
-    }
-
-    private BizInfo submitBizInfo(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap, BizInfo bizInfo,
-                                  BizInfoConf bizInfoConf, List<ProcessVariable> processValList) {
-
-        logger.info("params :" + params);
         Date now = new Date();
+        List<ProcessVariable> processValList = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
         Task task = processDefinitionService.getTaskBean(bizInfoConf.getTaskId());
         String buttonId = (String) params.get("base.buttonId");
         if (Constants.SIGN.equalsIgnoreCase(buttonId)) {
@@ -243,6 +219,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         writeBizLog(bizInfo, task, now, params);
         return bizInfo;
     }
+
 
     private void completeTask(Map<String, Object> params, Date now, BizInfo bizInfo, BizInfoConf bizInfoConf,
                               List<ProcessVariable> processValList) {
@@ -273,9 +250,16 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         return variables;
     }
 
-    @Override
-    public void saveOrUpdateVars(BizInfo bizInfo, String taskId, List<ProcessVariable> processValList,
-                                 Map<String, Object> params, Date now) {
+    /**
+     * 保存参数，如果是草稿，那么流程实例ID、任务ID皆留空，还不保存到流程参数；<br />
+     * 如果是创单，流程实例ID非空，任务ID留空；<br />
+     * 正常流转，流程实例ID、任务ID都非空。
+     *
+     * @param params
+     * @param now
+     */
+    private void saveOrUpdateVars(BizInfo bizInfo, String taskId, List<ProcessVariable> processValList,
+                                  Map<String, Object> params, Date now) {
 
         String procInstId = bizInfo.getProcessInstanceId();
         Map<String, ProcessVariableInstance> currentVars = instanceService.getVarMap(bizInfo, taskId,
@@ -292,7 +276,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 valueBean.setValue(value);
                 valueBean.setCreateTime(now);
                 valueBean.setHandleUser(WebUtil.getLoginUser().getUsername());
-                instanceService.updateProcessInstance(valueBean);
+                instanceService.saveOrUpdate(valueBean);
             } else {
                 valueBean = new ProcessVariableInstance();
                 valueBean.setProcessInstanceId(procInstId);
@@ -304,9 +288,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 valueBean.setVariableAlias(processVariable.getAlias());
                 valueBean.setVariableName(processVariable.getName());
                 valueBean.setBizId(bizInfo.getId());
-                taskId = Constants.TASK_START.equalsIgnoreCase(processVariable.getTaskId()) ? Constants.TASK_START : taskId;
+                taskId = Constants.TASK_START.equals(processVariable.getTaskId()) ? Constants.TASK_START : taskId;
                 valueBean.setTaskId(taskId);
-                instanceService.addProcessInstance(valueBean);
+                instanceService.saveOrUpdate(valueBean);
             }
         }
     }
@@ -367,14 +351,16 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * @param bizInfo
      * @param task
      */
-    private void saveFile(MultiValueMap<String, MultipartFile> fileMap, Date now, BizInfo bizInfo, Task task) {
+    private Map<String, List<BizFile>> saveFile(MultiValueMap<String, MultipartFile> fileMap, Date now, BizInfo bizInfo, Task task) {
 
+        Map<String, List<BizFile>> bizFileMap = new HashMap<>();
         if (MapUtils.isNotEmpty(fileMap)) {
             for (String fileCatalog : fileMap.keySet()) {
                 List<MultipartFile> files = fileMap.get(fileCatalog);
                 if (CollectionUtils.isNotEmpty(files)) {
+                    List<BizFile> list = new ArrayList<>();
                     files.forEach(file -> {
-                        BizFile bizFile = UploadFileUtil.saveFile(file,bizFileRootPath);
+                        BizFile bizFile = UploadFileUtil.saveFile(file, bizFileRootPath);
                         if (bizFile != null) {
                             bizFile.setCreateDate(now);
                             bizFile.setFileCatalog(fileCatalog);
@@ -383,11 +369,14 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                             bizFile.setTaskName(Optional.ofNullable(task).map(Task::getName).orElse(null));
                             bizFile.setBizId(bizInfo.getId());
                             bizFileService.addBizFile(bizFile);
+                            list.add(bizFile);
                         }
                     });
+                    bizFileMap.put(fileCatalog, list);
                 }
             }
         }
+        return bizFileMap;
     }
 
     private ArrayList<String> getUserNames(String handleUser) {
@@ -499,24 +488,70 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             buttons.put(Constants.SIGN, "签收");
             result.put("SYS_BUTTON", buttons);
         }
-        // 加载工单流程参数
-        result.put("serviceInfo", instanceService.loadInstances(bizInfo));
-        // 加载流程参数附件
-        result.put("annexs", bizFileService.loadBizFilesByBizId(bizInfo.getId(), Constants.TASK_START));
-        // 加载日志
+        List<BizLogVo> bizLogVos = this.loadBizLog(bizInfo);
+        this.loadBizFile(bizInfo, bizLogVos);
+        this.loadVariableInstance(bizInfo, bizLogVos);
+        result.put("workLogs", bizLogVos);
+        return result;
+    }
+
+    /**
+     * 加载日志
+     *
+     * @param bizInfo
+     * @return
+     */
+    private List<BizLogVo> loadBizLog(BizInfo bizInfo) {
+
         List<BizLog> bizLogs = logService.loadBizLogs(bizInfo.getId());
-        Map<String, List<ProcessVariableInstance>> logVars = new HashMap<>(0);
-        Map<String, Object> fileMap = new HashMap<>();
+        List<BizLogVo> bizLogVos = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(bizLogs)) {
             bizLogs.forEach(bizLog -> {
-                fileMap.put(bizLog.getId(), bizFileService.loadBizFilesByBizId(bizId, bizLog.getTaskID()));
-                logVars.put(bizLog.getId(), instanceService.loadValueByLog(bizLog));
+                BizLogVo bizLogVo = new BizLogVo();
+                BeanUtils.copyProperties(bizLog, bizLogVo);
+                bizLogVos.add(bizLogVo);
             });
         }
-        result.put("files", fileMap);
-        result.put("workLogs", bizLogs);
-        result.put("logVars", logVars);
-        return result;
+        return bizLogVos;
+    }
+
+    /**
+     * 加载工单附件
+     *
+     * @param bizInfo
+     * @param bizLogVos
+     */
+    private void loadBizFile(BizInfo bizInfo, List<BizLogVo> bizLogVos) {
+
+        List<BizFile> bizFiles = this.bizFileService.loadBizFilesByBizId(bizInfo.getId(), null);
+        if (CollectionUtils.isNotEmpty(bizFiles) && CollectionUtils.isNotEmpty(bizLogVos)) {
+            Map<String, List<BizFile>> taskFileMap = bizFiles.stream().collect(Collectors.groupingBy(BizFile::getTaskId));
+            bizLogVos.forEach(entity -> entity.setBizFiles(taskFileMap.get(entity.getTaskID())));
+        }
+    }
+
+    /**
+     * 处理参数中的配置值
+     *
+     * @param bizInfo
+     * @param bizLogVos
+     */
+    private void loadVariableInstance(BizInfo bizInfo, List<BizLogVo> bizLogVos) {
+
+        List<ProcessVariableInstance> variableInstances = this.instanceService.loadInstances(bizInfo);
+        if (CollectionUtils.isNotEmpty(variableInstances) && CollectionUtils.isNotEmpty(bizLogVos)) {
+            variableInstances.forEach(instance -> {
+                if ("REQUIREDFILE".equals(instance.getViewComponent())) {
+                    BizFile bizFile = new BizFile();
+                    bizFile.setTaskId(instance.getTaskId());
+                    bizFile.setBizId(instance.getBizId());
+                    bizFile.setFileCatalog(instance.getVariableName());
+                    instance.setValue(Optional.ofNullable(this.bizFileService.findBizFile(bizFile)).map(JSONObject::toJSONString).orElse(null));
+                }
+            });
+            Map<String, List<ProcessVariableInstance>> taskInstanceMap = variableInstances.stream().collect(Collectors.groupingBy(ProcessVariableInstance::getTaskId));
+            bizLogVos.forEach(log -> log.setVariableInstances(taskInstanceMap.get(log.getTaskID())));
+        }
     }
 
     /**
@@ -543,7 +578,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             if (bean == null) {
                 throw new ServiceException("找不到附件");
             }
-            File file = UploadFileUtil.getUploadFile(bean,bizFileRootPath);
+            File file = UploadFileUtil.getUploadFile(bean, bizFileRootPath);
             if (!file.exists()) {
                 throw new ServiceException("找不到附件");
             }

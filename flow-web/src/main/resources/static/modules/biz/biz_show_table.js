@@ -106,8 +106,12 @@ biz.show.table = {
         var th = $("<th></th>");
         th.text(data.alias + ":");
         var td = $("<td colspan='3'></td>");
-        var name = data.id ? data.id + "&" + biz.show.data.taskId : "";
-        td.html("<span class='fslTextBoxR' name='" + name + "'></span>");
+        if (!$.isEmptyObject(data.value)) {
+            var file = JSON.parse(data.value);
+            file.forEach(function (entity) {
+                td.append("<span style='margin-right:10px'><a href='/biz/download?id=" + entity.id + "'>" + entity.name + "</a></span>");
+            });
+        }
         biz.show.data.tr.append(th);
         biz.show.data.tr.append(td);
         table.append(biz.show.data.tr);
@@ -130,7 +134,6 @@ biz.show.table = {
         }
         biz.show.table.appendTd();
         var hidden = $("<input type='hidden' name='" + data.name + "' value='true'>");
-        var th = $("<th>");
         var td = $("<td colspan='5' style='padding:0'>");
         var div = $("<h5 style='padding:6px 5px;background:#f7f7f7' >" + data.alias + "：" + data.groupName + "</h5>");
         td.append(hidden, div);
@@ -256,12 +259,12 @@ biz.show.table = {
     /**
      * 附件
      */
-    addFile: function (annexs, table, tr) {
-        if (annexs) {
-            biz.show.data.annexs = annexs;
-        }
-        if (!table)
+    addFile: function (bizFiles, table, tr) {
+
+        biz.show.data.annexs = bizFiles ? bizFiles : [];
+        if (!table) {
             table = biz.show.data.table;
+        }
         if (tr) {
             biz.show.data.tr = tr;
         }
@@ -271,7 +274,7 @@ biz.show.table = {
         var td = $("<td colspan='3'></td>");
         if (!$.isEmptyObject(biz.show.data.annexs)) {
             $.each(biz.show.data.annexs, function (index, entity) {
-                if (entity['fileCatalog'] == null || entity['fileCatalog'] === "" || entity['fileCatalog'] === "uploadFile") {
+                if ($.isEmptyObject(entity['fileCatalog']) || entity['fileCatalog'] === "uploadFile") {
                     td.append("<span style='margin-right:10px;display:block;'><a href='/biz/download?id=" + entity.id + "'>" + entity.name + "</a></span>");
                 }
             });
@@ -282,32 +285,5 @@ biz.show.table = {
         biz.show.data.tr.append(th);
         biz.show.data.tr.append(td);
         table.append(biz.show.data.tr);
-    },
-
-    /**
-     * 必填附件
-     * @param data
-     */
-    addReqFiles: function (data) {
-
-        $.ajax({
-            url: '/biz/getBizFile',
-            type: 'post',
-            data: {
-                bizId: bizId,
-                taskId: data.taskId,
-                name: data.variable.name
-            },
-            success: function (result) {
-                if (result) {
-                    $.each(result, function (index, entity) {
-                        var span = $("<span style='margin-right:10px;display:block;'><a href='/biz/download?id=" + entity.id + "'>" + entity.name + "</a></span>");
-                        $("span[name='" + data.variable.id + "&" + data.taskId + "']").append(span);
-                    });
-                } else {
-                    $("span[name='" + data.variable.id + "&" + data.taskId + "']").html('无');
-                }
-            }
-        });
     }
 };

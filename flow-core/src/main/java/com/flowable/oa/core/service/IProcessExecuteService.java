@@ -36,16 +36,6 @@ public interface IProcessExecuteService {
      */
     Map<String, String> loadStartButtons(String tempId);
 
-    /**
-     * 保存参数，如果是草稿，那么流程实例ID、任务ID皆留空，还不保存到流程参数；<br />
-     * 如果是创单，流程实例ID非空，任务ID留空；<br />
-     * 正常流转，流程实例ID、任务ID都非空。
-     *
-     * @param processValList
-     * @param params
-     * @param now
-     */
-    void saveOrUpdateVars(BizInfo bizInfo, String taskId, List<ProcessVariable> processValList, Map<String, Object> params, Date now);
 
     /**
      * 保存工单草稿
@@ -63,16 +53,6 @@ public interface IProcessExecuteService {
      * @param bizInfo
      */
     void updateBizTaskInfo(BizInfo bizInfo, BizInfoConf bizInfoConf);
-
-    /**
-     * 更新工单信息
-     *
-     * @param params
-     * @param fileMap
-     * @return
-     * @
-     */
-    BizInfo updateBiz(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap);
 
     /**
      * 处理工单，新增跟审批

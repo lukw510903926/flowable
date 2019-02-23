@@ -578,7 +578,7 @@ public class ReflectionUtils {
 
 	public static Object getter(Class<?> cls, Object obj, String fieldName) {
 		
-		if (fieldName.indexOf(".") != -1) {
+		if (fieldName.contains(".")) {
 			String fname1 = fieldName.substring(0, fieldName.indexOf("."));
 			String fname2 = fieldName.substring(fieldName.indexOf(".") + 1);
 			try {

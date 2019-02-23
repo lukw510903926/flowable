@@ -151,23 +151,6 @@ public class ProcessExecuteController {
     }
 
     /**
-     * 重新提交
-     *
-     * @param params
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "bizInfo/updateBiz")
-    public ResponseEntity<String> updateBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        WebUtil.getLoginUser(request);
-        processExecuteService.updateBiz(params, request.getMultiFileMap());
-        return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), headers, HttpStatus.OK);
-    }
-
-    /**
      * 工单处理，自动处理工单的各种状态的提交
      *
      * @param params

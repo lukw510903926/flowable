@@ -7,11 +7,9 @@ import com.flowable.oa.core.service.IBizInfoService;
 import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.IProcessExecuteService;
 import com.flowable.oa.core.service.IProcessVariableService;
-import com.flowable.oa.core.util.Constants;
-import com.flowable.oa.core.util.DataGrid;
-import com.flowable.oa.core.util.RestResult;
-import com.flowable.oa.core.util.WebUtil;
+import com.flowable.oa.core.util.*;
 import com.flowable.oa.core.vo.BaseVo;
+import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -79,9 +77,9 @@ public class ProcessExecuteController {
      */
     @ResponseBody
     @RequestMapping(value = "/queryWorkOrder")
-    public DataGrid<BizInfo> queryWorkOrder(@RequestParam Map<String, Object> params, PageInfo<BaseVo> page) {
+    public DataGrid<BizInfo> queryWorkOrder(@RequestBody BizInfoVo bizInfoVo) {
 
-        PageInfo<BizInfo> helper = bizInfoService.findBizInfo(params, page);
+        PageInfo<BizInfo> helper = bizInfoService.findBizInfo(bizInfoVo, PageUtil.getPage(bizInfoVo));
         DataGrid<BizInfo> grid = new DataGrid<>();
         grid.setRows(helper.getList());
         grid.setTotal(helper.getTotal());
@@ -136,23 +134,6 @@ public class ProcessExecuteController {
             msg = "/biz/list/myWork";
         }
         return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success(msg)), header, HttpStatus.OK);
-    }
-
-    /**
-     * 重新提交
-     *
-     * @param params
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "bizInfo/updateBiz")
-    public ResponseEntity<String> updateBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        WebUtil.getLoginUser(request);
-        processExecuteService.updateBiz(params, request.getMultiFileMap());
-        return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), headers, HttpStatus.OK);
     }
 
     /**
