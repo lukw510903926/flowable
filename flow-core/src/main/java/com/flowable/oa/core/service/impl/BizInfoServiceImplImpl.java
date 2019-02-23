@@ -13,6 +13,7 @@ import com.flowable.oa.core.service.IBizInfoService;
 import com.flowable.oa.core.service.IVariableInstanceService;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.Constants;
+import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import com.flowable.oa.core.vo.BaseVo;
@@ -159,7 +160,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
 
         logger.info("工单查询 bizInfoVo : " + bizInfoVo);
         Map<String, SystemUser> userCache = new HashMap<>();
-        PageHelper.startPage(bizInfoVo);
+        PageUtil.startPage(page);
         BizInfo bizInfo = new BizInfo();
         BeanUtils.copyProperties(bizInfoVo, bizInfo);
         List<BizInfo> list = this.select(bizInfo);

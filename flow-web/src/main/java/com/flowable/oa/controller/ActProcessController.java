@@ -94,10 +94,10 @@ public class ActProcessController {
     public DataGrid<Map<String, Object>> processTaskList(@RequestParam Map<String, Object> params) {
 
         DataGrid<Map<String, Object>> grid = new DataGrid<>();
-            String processId = (String) params.get("processId");
-            List<Map<String, Object>> result = actProcessService.getAllTaskByProcessKey(processId);
-            grid.setRows(result);
-            grid.setTotal((long) result.size());
+        String processId = (String) params.get("processId");
+        List<Map<String, Object>> result = actProcessService.getAllTaskByProcessKey(processId);
+        grid.setRows(result);
+        grid.setTotal((long) result.size());
         return grid;
     }
 
@@ -109,9 +109,9 @@ public class ActProcessController {
     public DataGrid<ProcessInstance> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey) {
 
         DataGrid<ProcessInstance> grid = new DataGrid<>();
-            PageInfo<ProcessInstance> helper = actProcessService.runningList(page, procInsId, procDefKey);
-            grid.setRows(helper.getList());
-            grid.setTotal(helper.getTotal());
+        PageInfo<ProcessInstance> helper = actProcessService.runningList(page, procInsId, procDefKey);
+        grid.setRows(helper.getList());
+        grid.setTotal(helper.getTotal());
         return grid;
     }
 
@@ -127,8 +127,8 @@ public class ActProcessController {
 
         InputStream resourceAsStream = actProcessService.resourceRead(processDefinitionId, type);
         if (resourceAsStream != null) {
-            response.setHeader("Content-Disposition","attachment;filename=" + type);
-            IOUtils.copyLarge(resourceAsStream,response.getOutputStream());
+            response.setHeader("Content-Disposition", "attachment;filename=" + type);
+            IOUtils.copyLarge(resourceAsStream, response.getOutputStream());
         } else {
             response.setHeader("Content-Disposition",
                     "attachment;filename=" + new String("文件不存在".getBytes("gb2312"), StandardCharsets.ISO_8859_1));

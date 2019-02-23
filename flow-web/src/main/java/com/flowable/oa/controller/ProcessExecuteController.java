@@ -79,9 +79,9 @@ public class ProcessExecuteController {
      */
     @ResponseBody
     @RequestMapping(value = "/queryWorkOrder")
-    public DataGrid<BizInfo> queryWorkOrder(@RequestParam Map<String, Object> params, PageInfo<BaseVo> page) {
+    public DataGrid<BizInfo> queryWorkOrder(BizInfoVo bizInfoVo, PageInfo<BaseVo> page) {
 
-        PageInfo<BizInfo> helper = bizInfoService.findBizInfo(params, page);
+        PageInfo<BizInfo> helper = bizInfoService.findBizInfo(bizInfoVo , page);
         DataGrid<BizInfo> grid = new DataGrid<>();
         grid.setRows(helper.getList());
         grid.setTotal(helper.getTotal());

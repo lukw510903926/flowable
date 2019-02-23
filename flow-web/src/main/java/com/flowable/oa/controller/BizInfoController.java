@@ -161,11 +161,4 @@ public class BizInfoController {
 
         return this.bizFileService.findBizFile(bizFile);
     }
-
-    @ResponseBody
-    @RequestMapping(value = "biz/workInfo/{bizId}")
-    public Map<String, Object> getDraftBiz(@PathVariable("bizId") String bizId, HttpServletRequest request) {
-        WebUtil.getLoginUser(request);
-        return processExecuteService.queryWorkOrder(bizId);
-    }
 }
