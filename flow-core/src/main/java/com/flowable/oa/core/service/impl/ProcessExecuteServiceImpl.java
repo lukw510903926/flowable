@@ -230,8 +230,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         updateBizTaskInfo(bizInfo, bizInfoConf);
     }
 
-    private Map<String, Object> setVariables(BizInfo bizInfo, Map<String, Object> params,
-                                             List<ProcessVariable> processValList) {
+    private Map<String, Object> setVariables(BizInfo bizInfo, Map<String, Object> params,List<ProcessVariable> processValList) {
 
         String buttonId = MapUtils.getString(params, "base.buttonId");
         Map<String, Object> variables = new HashMap<>();
