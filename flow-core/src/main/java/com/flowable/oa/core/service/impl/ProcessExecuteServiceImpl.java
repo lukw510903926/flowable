@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.core.entity.*;
 import com.flowable.oa.core.entity.auth.SystemRole;
@@ -151,31 +150,29 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         bizInfoService.saveOrUpdate(bizInfo);
         bizInfoConf.setBizId(bizInfo.getId());
         this.bizInfoConfService.saveOrUpdate(bizInfoConf);
-        if (startProc) {
-            startProc(bizInfo, bizInfoConf, params, now);
-        } else {
-            List<ProcessVariable> processValList = loadProcessVariables(bizInfo, Constants.TASK_START);
-            saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
-        }
         TaskEntityImpl task = new TaskEntityImpl(); // 开始节点没有任务对象
         task.setId(Constants.TASK_START);
         task.setName((String) params.get("base.handleName"));
-        saveFile(multiValueMap, now, bizInfo, task);
+        Map<String, List<BizFile>> fileMap = saveFile(multiValueMap, now, bizInfo, task);
+        if (MapUtils.isNotEmpty(fileMap)) {
+            fileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
+        }
+        List<ProcessVariable> processValList = loadProcessVariables(bizInfo, Constants.TASK_START);
+        if (startProc) {
+            startProc(bizInfo, bizInfoConf, params, now, task, processValList);
+        } else {
+            saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
+        }
         return bizInfo;
     }
 
-    private BizInfo startProc(BizInfo bizInfo, BizInfoConf bizInfoConf, Map<String, Object> params, Date now) {
+    private BizInfo startProc(BizInfo bizInfo, BizInfoConf bizInfoConf, Map<String, Object> params, Date now, Task task, List<ProcessVariable> processValList) {
 
         String procDefId = bizInfo.getProcessDefinitionId();
-        List<ProcessVariable> processValList = loadProcessVariables(bizInfo, Constants.TASK_START);
         Map<String, Object> variables = setVariables(bizInfo, params, processValList);
         ProcessInstance instance = processDefinitionService.newProcessInstance(procDefId, variables);
         bizInfo.setProcessInstanceId(instance.getId());
         this.processDefinitionService.autoClaim(instance.getId());// TODO任务创建时的自动签收
-
-        TaskEntityImpl task = new TaskEntityImpl(); // 开始节点没有任务对象
-        task.setId(Constants.TASK_START);
-        task.setName((String) params.get("base.handleName"));
         writeBizLog(bizInfo, task, now, params);
         updateBizTaskInfo(bizInfo, bizInfoConf);
         bizInfoService.saveOrUpdate(bizInfo);
@@ -209,28 +206,24 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         List<ProcessVariable> processValList = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
         Task task = processDefinitionService.getTaskBean(bizInfoConf.getTaskId());
         String buttonId = (String) params.get("base.buttonId");
+        Map<String, List<BizFile>> bizFileMap = saveFile(fileMap, now, bizInfo, task);
+        if (MapUtils.isNotEmpty(bizFileMap)) {
+            bizFileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
+        }
         if (Constants.SIGN.equalsIgnoreCase(buttonId)) {
             sign(bizInfo, bizInfoConf);
         } else {
-            completeTask(params, now, bizInfo, bizInfoConf, processValList);
+            Map<String, Object> variables = this.setVariables(bizInfo, params, processValList);
+            processDefinitionService.completeTask(bizInfo, bizInfoConf.getTaskId(), variables);
+            saveOrUpdateVars(bizInfo, bizInfoConf.getTaskId(), processValList, params, now);
+            updateBizTaskInfo(bizInfo, bizInfoConf);
         }
         bizInfoService.saveOrUpdate(bizInfo);
-        saveFile(fileMap, now, bizInfo, task);
         writeBizLog(bizInfo, task, now, params);
         return bizInfo;
     }
 
-
-    private void completeTask(Map<String, Object> params, Date now, BizInfo bizInfo, BizInfoConf bizInfoConf,
-                              List<ProcessVariable> processValList) {
-
-        Map<String, Object> variables = this.setVariables(bizInfo, params, processValList);
-        processDefinitionService.completeTask(bizInfo, bizInfoConf.getTaskId(), WebUtil.getLoginUser(), variables);
-        saveOrUpdateVars(bizInfo, bizInfoConf.getTaskId(), processValList, params, now);
-        updateBizTaskInfo(bizInfo, bizInfoConf);
-    }
-
-    private Map<String, Object> setVariables(BizInfo bizInfo, Map<String, Object> params,List<ProcessVariable> processValList) {
+    private Map<String, Object> setVariables(BizInfo bizInfo, Map<String, Object> params, List<ProcessVariable> processValList) {
 
         String buttonId = MapUtils.getString(params, "base.buttonId");
         Map<String, Object> variables = new HashMap<>();
@@ -265,8 +258,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 IVariableInstanceService.VariableLoadType.UPDATABLE);
         for (ProcessVariable processVariable : processValList) {
             String proName = processVariable.getName().trim();
-            String component = processVariable.getViewComponent();
-            String value = "REQUIREDFILE".equalsIgnoreCase(component) ? "file" : (String) params.get(proName);
+            String value = MapUtils.getString(params, proName);
             if (StringUtils.isEmpty(value)) {
                 continue;
             }
@@ -539,15 +531,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
         List<ProcessVariableInstance> variableInstances = this.instanceService.loadInstances(bizInfo);
         if (CollectionUtils.isNotEmpty(variableInstances) && CollectionUtils.isNotEmpty(bizLogVos)) {
-            variableInstances.forEach(instance -> {
-                if ("REQUIREDFILE".equals(instance.getViewComponent())) {
-                    BizFile bizFile = new BizFile();
-                    bizFile.setTaskId(instance.getTaskId());
-                    bizFile.setBizId(instance.getBizId());
-                    bizFile.setFileCatalog(instance.getVariableName());
-                    instance.setValue(Optional.ofNullable(this.bizFileService.findBizFile(bizFile)).map(JSONObject::toJSONString).orElse(null));
-                }
-            });
             Map<String, List<ProcessVariableInstance>> taskInstanceMap = variableInstances.stream().collect(Collectors.groupingBy(ProcessVariableInstance::getTaskId));
             bizLogVos.forEach(log -> log.setVariableInstances(taskInstanceMap.get(log.getTaskID())));
         }

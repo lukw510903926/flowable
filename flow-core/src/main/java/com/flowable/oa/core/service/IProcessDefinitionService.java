@@ -72,7 +72,7 @@ public interface IProcessDefinitionService {
      * @param variables 流程变量
      * @return @
      */
-    boolean completeTask(BizInfo bean, String taskID, LoginUser user, Map<String, Object> variables);
+    boolean completeTask(BizInfo bean, String taskID, Map<String, Object> variables);
 
     /**
      * 签收任务

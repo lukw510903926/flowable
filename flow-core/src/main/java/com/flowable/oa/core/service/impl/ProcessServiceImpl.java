@@ -273,7 +273,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      */
     @Override
     @Transactional
-    public boolean completeTask(BizInfo bizInfo, String taskID, LoginUser loginUser, Map<String, Object> variables) {
+    public boolean completeTask(BizInfo bizInfo, String taskID,Map<String, Object> variables) {
 
         try {
             String processInstanceId = bizInfo.getProcessInstanceId();
