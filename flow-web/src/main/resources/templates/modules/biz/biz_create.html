@@ -3,6 +3,11 @@
 <div th:fragment="content">
     <head>
         <title>发起工单</title>
+        <style>
+            select {
+                height: 28px !important;
+            }
+        </style>
     </head>
     <body>
     <div class="container-fluid">
@@ -33,6 +38,11 @@
         var bizId = [[${bizId}]];
         var createUser = [[${createUser}]];
         var id = '';
+
+        $(document).ready(function () {
+                $(".js-example-basic-single").select2();
+            }
+        )
     </script>
     </body>
 </div>

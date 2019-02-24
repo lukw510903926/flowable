@@ -332,7 +332,6 @@ biz.edit.form = {
         th.append(data.alias + ":");
         select.attr("name", data.name);
         select.addClass("js-example-basic-single");
-        select.attr('data-width', '60%');
         if (data.viewComponent === "TREATMENT") {
             select.attr("onchange", "biz.edit.form.variableGroup({list:biz.edit.data.list,ele:'[name=" + data.name + "]'});$('.js-example-basic-single').select2();");
             if ($.isEmptyObject(data.viewParams)) {

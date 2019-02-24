@@ -1,7 +1,7 @@
 $.namespace('biz.variable.edit');
 
 $(function () {
-   biz.variable.edit.init();
+    biz.variable.edit.init();
 });
 biz.variable.edit = {
 
@@ -124,8 +124,8 @@ biz.variable.edit = {
 
         var combobox = $('#ud_viewComponent').val();
         var $udViewParams = $('#ud_viewParams');
+        var $viewParams = $('[for="ud_viewParams"]');
         if (combobox === 'DICTCOMBOBOX') {
-            var $viewParams = $('[for="ud_viewParams"]');
             $viewParams.parent().show();
             $viewParams.text('数据字典：');
             $.ajax({
@@ -136,11 +136,14 @@ biz.variable.edit = {
                 success: function (result) {
                     $udViewParams.empty();
                     for (var i = 0; i < result.rows.length; i++) {
-                        var option = $('<option>');
-                        option.val(result.rows[i].id);
-                        option.text(result.rows[i].name);
-                        $udViewParams.append(option);
+
                     }
+                    result.rows.forEach(function(entity){
+                        var option = $('<option>');
+                        option.val(entity.id);
+                        option.text(entity.name);
+                        $udViewParams.append(option);
+                    });
                 }
             });
             $udViewParams.selectpicker('render');
@@ -148,16 +151,9 @@ biz.variable.edit = {
         } else if (combobox === 'REQUIREDFILE') {
             $('#helpBlock').html('文件名包含文件扩展名,如 xxx.doc,无需模版下载可不配置');
             $('#ud_componentArgsLabel').html('模版名称: &nbsp');
-        } else if (combobox === "BUTTON") {
-            var viewDiv =$udViewParams.parent();
-            $('#ud_viewParams').remove();
-            var viewParams = $('[for="ud_viewParams"]').parent();
-            viewParams.show();
-            var input = $('<input type="text" class="form-control" name="viewParams" id="ud_viewParams"/>');
-            viewDiv.append(input);
-            $udViewParams.html('按钮名称: &nbsp');
+            $viewParams.parent().hide();
         } else {
-            $udViewParams.parent().hide();
+            $viewParams.parent().hide();
         }
     },
 
