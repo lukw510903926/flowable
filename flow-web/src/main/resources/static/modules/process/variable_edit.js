@@ -16,12 +16,12 @@ biz.variable.edit = {
         $("#cancleBtn").click(function () {
             window.open(biz.variable.edit.preUrl, "_self");
         });
+        var $udViewComponent = $('.selectpicker');
+        $udViewComponent.selectpicker('render');
+        $udViewComponent.selectpicker('refresh');
     },
 
     loadVariableList: function () {
-        var $udViewComponent = $('#ud_viewComponent');
-        $udViewComponent.selectpicker('render');
-        $udViewComponent.selectpicker('refresh');
         biz.variable.edit.preUrl = "/process/variable?processDefinitionId=" + processId + "&version=" + version + "&taskId=" + taskId;
         if (taskId) {
             $("#htitle").html("添加/编辑流程任务参数");
@@ -123,8 +123,9 @@ biz.variable.edit = {
     getViewParams: function () {
 
         var combobox = $('#ud_viewComponent').val();
+        var $udViewParams = $('#ud_viewParams');
         if (combobox === 'DICTCOMBOBOX') {
-            let $viewParams = $('[for="ud_viewParams"]');
+            var $viewParams = $('[for="ud_viewParams"]');
             $viewParams.parent().show();
             $viewParams.text('数据字典：');
             $.ajax({
@@ -133,28 +134,30 @@ biz.variable.edit = {
                 url: path + "/dictType/list",
                 dataType: 'json',
                 success: function (result) {
-                    $viewParams.empty();
+                    $udViewParams.empty();
                     for (var i = 0; i < result.rows.length; i++) {
                         var option = $('<option>');
                         option.val(result.rows[i].id);
                         option.text(result.rows[i].name);
-                        $viewParams.append(option);
+                        $udViewParams.append(option);
                     }
                 }
             });
+            $udViewParams.selectpicker('render');
+            $udViewParams.selectpicker('refresh');
         } else if (combobox === 'REQUIREDFILE') {
             $('#helpBlock').html('文件名包含文件扩展名,如 xxx.doc,无需模版下载可不配置');
             $('#ud_componentArgsLabel').html('模版名称: &nbsp');
         } else if (combobox === "BUTTON") {
-            var viewDiv = $('#ud_viewParams').parent();
+            var viewDiv =$udViewParams.parent();
             $('#ud_viewParams').remove();
             var viewParams = $('[for="ud_viewParams"]').parent();
             viewParams.show();
             var input = $('<input type="text" class="form-control" name="viewParams" id="ud_viewParams"/>');
             viewDiv.append(input);
-            $('[for="ud_viewParams"]').html('按钮名称: &nbsp');
+            $udViewParams.html('按钮名称: &nbsp');
         } else {
-            $('[for="ud_viewParams"]').parent().hide();
+            $udViewParams.parent().hide();
         }
     },
 

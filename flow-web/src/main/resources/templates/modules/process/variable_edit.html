@@ -24,13 +24,13 @@
                         <div class="row">
                             <div class="col-xs-6 form-group">
                                 <label for="ud_name" class="col-xs-4 control-label">属性名称：</label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <input type="text" class="form-control" id="ud_name" placeholder="属性名称"/>
                                 </div>
                             </div>
                             <div class="col-xs-6 form-group">
                                 <label for="ud_alias" class="col-xs-4 control-label">属性别名：</label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <input type="text" class="form-control" id="ud_alias" placeholder="属性别名"/>
                                 </div>
                             </div>
@@ -38,15 +38,15 @@
                         <div class="row">
                             <div class="col-xs-6 form-group">
                                 <label for="ud_nameOrder" class="col-xs-4 control-label">属性排序：</label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <input type="number" class="form-control" id="ud_nameOrder" placeholder="属性排序"/>
                                 </div>
                             </div>
                             <div class="col-xs-6 form-group">
                                 <label for="ud_viewComponent" class="col-xs-4 control-label">视图组件类型：</label>
-                                <div class="col-xs-8">
-                                    <select class="form-control selectpicker" data-live-search="true"
-                                            name="ud_viewComponent" id="ud_viewComponent" onchange="getViewParams()">
+                                <div class="col-xs-7">
+                                    <select class="form-control  selectpicker" data-live-search="true"
+                                            name="ud_viewComponent" id="ud_viewComponent" onchange="biz.variable.edit.getViewParams()">
                                         <option value="TEXT">文本</option>
                                         <option value="TEXTAREA">大文本</option>
                                         <option value="NUMBER">数字</option>
@@ -70,13 +70,13 @@
                         <div class="row">
                             <div class="col-xs-6 form-group">
                                 <label for="ud_groupName" class="col-xs-4 control-label">属性分组：</label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <input type="text" class="form-control" id="ud_groupName" placeholder="属性分组"/>
                                 </div>
                             </div>
                             <div class="col-xs-6 form-group">
                                 <label for="ud_groupOrder" class="col-xs-4 control-label">属性分组排序：</label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <input type="number" class="form-control" id="ud_groupOrder" placeholder="属性分组排序"/>
                                 </div>
                             </div>
@@ -84,13 +84,13 @@
                         <div class="row">
                             <div class="col-xs-6 form-group">
                                 <label for="ud_componentArgs" id='ud_componentArgsLabel' class="col-xs-4 control-label">视图参数：</label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <input type="text" class="form-control" id="ud_componentArgs" placeholder="视图参数"/>
                                 </div>
                             </div>
                             <div class="col-xs-6 form-group">
                                 <label class="col-xs-4 control-label"></label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <label class="checkbox-inline">
                                         <input type="checkbox" name="ud_required" id="ud_required"/>必填
                                     </label>
@@ -104,14 +104,14 @@
                         <div class="row">
                             <div class="col-xs-6 form-group">
                                 <label for="ud_variableGroup" class="col-xs-4 control-label">参数显示分组：</label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <input type="text" class="form-control" id="ud_variableGroup" placeholder="参数显示分组"/>
                                 </div>
                             </div>
                             <div class="col-xs-6 form-group" style="display: none">
                                 <label for="ud_viewParams" class="col-xs-4 control-label"></label>
-                                <div class="col-xs-8">
-                                    <select class="form-control js-example-basic-single" name="viewParams"id="ud_viewParams">
+                                <div class="col-xs-7">
+                                    <select class="form-control  selectpicker" data-live-search="true" name="viewParams"id="ud_viewParams">
                                     </select>
                                 </div>
                             </div>
@@ -119,13 +119,13 @@
                         <div class="row">
                             <div class="col-xs-6 form-group">
                                 <label for="ud_refVariable" class="col-xs-4 control-label">联动父节点：</label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <select class="form-control" name="ud_refVariable" id="ud_refVariable"> </select>
                                 </div>
                             </div>
                             <div class="col-xs-6 form-group">
                                 <label for="ud_refParam" class="col-xs-4 control-label">对应联动属性：</label>
-                                <div class="col-xs-8">
+                                <div class="col-xs-7">
                                     <select class="form-control" name="ud_refParam" id="ud_refParam"></select>
                                 </div>
                             </div>
