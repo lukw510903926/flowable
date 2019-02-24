@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.core.entity.*;
 import com.flowable.oa.core.entity.auth.SystemRole;
@@ -68,13 +69,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
         BizLog logBean = logService.selectByKey(logId);
         Map<String, Object> results = new HashMap<>();
-        if (logBean == null) {
-            return results;
-        }
-        List<ProcessVariableInstance> values = instanceService.loadValueByLog(logBean);
-        if (CollectionUtils.isNotEmpty(values)) {
-            values.forEach(instance -> results.put(instance.getVariableName(), instance.getValue()));
-        }
+        List<ProcessVariableInstance> values = Optional.ofNullable(logBean).map(entity -> instanceService.loadValueByLog(entity)).orElse(new ArrayList<>());
+        values.forEach(instance -> results.put(instance.getVariableName(), instance.getValue()));
         return results;
     }
 
@@ -154,9 +150,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         task.setId(Constants.TASK_START);
         task.setName((String) params.get("base.handleName"));
         Map<String, List<BizFile>> fileMap = saveFile(multiValueMap, now, bizInfo, task);
-        if (MapUtils.isNotEmpty(fileMap)) {
-            fileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
-        }
+        //毕传附件的值处理
+        fileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
         List<ProcessVariable> processValList = loadProcessVariables(bizInfo, Constants.TASK_START);
         if (startProc) {
             startProc(bizInfo, bizInfoConf, params, now, task, processValList);
@@ -207,9 +202,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         Task task = processDefinitionService.getTaskBean(bizInfoConf.getTaskId());
         String buttonId = (String) params.get("base.buttonId");
         Map<String, List<BizFile>> bizFileMap = saveFile(fileMap, now, bizInfo, task);
-        if (MapUtils.isNotEmpty(bizFileMap)) {
-            bizFileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
-        }
+        bizFileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
         if (Constants.SIGN.equalsIgnoreCase(buttonId)) {
             sign(bizInfo, bizInfoConf);
         } else {
