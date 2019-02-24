@@ -319,8 +319,7 @@ biz.edit.form.combobox = {
     data: {},
     loadComboBox: function (select, params) {//一般下拉框
         if (params) {
-            var paramlist = params.split(",");
-            biz.edit.form.combobox.addOption(select, paramlist);
+            biz.edit.form.combobox.addOption(select, params.split(","));
         }
     },
     loadDictComboBox: function (select, params) {//数据字典下拉框
