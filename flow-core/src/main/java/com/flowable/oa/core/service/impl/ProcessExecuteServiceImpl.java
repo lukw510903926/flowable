@@ -119,13 +119,11 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
         String source = MapUtils.getString(params, "$source", "人工发起");
         String procDefId = MapUtils.getString(params, "base.tempID");
-        String dt1 = MapUtils.getString(params, "base.limitTime");
         String tempBizId = MapUtils.getString(params, "tempBizId");
-        Date limitTime = DateUtils.parseDate(dt1);
         Date now = new Date();
         BizInfo bizInfo;
         BizInfoConf bizInfoConf;
-        String createUser = WebUtil.getLoginUser().getUsername();
+        String username = WebUtil.getLoginUsername();
         if (StringUtils.isNotBlank(tempBizId)) {
             bizInfo = bizInfoService.selectByKey(tempBizId);
             bizInfoConf = this.bizInfoConfService.getMyWork(tempBizId);
@@ -133,11 +131,10 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             bizInfo = new BizInfo();
             bizInfo.setWorkNum(WorkOrderUtil.builWorkNumber(procDefId));
             bizInfoConf = new BizInfoConf();
-            bizInfoConf.setTaskAssignee(createUser);
+            bizInfoConf.setTaskAssignee(username);
         }
-        bizInfo.setCreateUser(createUser);
+        bizInfo.setCreateUser(username);
         bizInfo.setSource(source);
-        bizInfo.setLimitTime(limitTime);
         bizInfo.setProcessDefinitionId(procDefId);
         bizInfo.setBizType(getProcessDefinitionName(procDefId));
         bizInfo.setStatus(Constants.BIZ_TEMP);
@@ -487,8 +484,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      */
     private List<BizLogVo> loadBizLog(BizInfo bizInfo) {
 
-        List<BizLog> bizLogs = logService.loadBizLogs(bizInfo.getId());
         List<BizLogVo> bizLogVos = new ArrayList<>();
+        List<BizLog> bizLogs = logService.loadBizLogs(bizInfo.getId());
         if (CollectionUtils.isNotEmpty(bizLogs)) {
             bizLogs.forEach(bizLog -> {
                 BizLogVo bizLogVo = new BizLogVo();
