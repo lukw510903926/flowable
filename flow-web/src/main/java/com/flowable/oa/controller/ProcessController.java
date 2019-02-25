@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +26,7 @@ public class ProcessController {
      *
      * @return
      */
-    @RequestMapping(value = "model")
+    @RequestMapping("model")
     public String modelView() {
         return "modules/process/model_list";
     }
@@ -34,7 +36,7 @@ public class ProcessController {
      *
      * @return
      */
-    @RequestMapping(value = "model/create")
+    @RequestMapping("model/create")
     public String createModelView() {
         return "modules/process/model_create";
     }
@@ -44,7 +46,7 @@ public class ProcessController {
      *
      * @return
      */
-    @RequestMapping(value = "process")
+    @GetMapping("process")
     public String processView() {
         return "modules/process/process_list";
     }
@@ -54,7 +56,7 @@ public class ProcessController {
      *
      * @return
      */
-    @RequestMapping(value = "process/deploy")
+    @GetMapping("process/deploy")
     public String deployProcessView() {
         return "modules/process/process_deploy";
     }
@@ -64,7 +66,7 @@ public class ProcessController {
      *
      * @return
      */
-    @RequestMapping(value = "process/deploy")
+    @PostMapping("process/deploy")
     public String deployProcess(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
         MultipartFile file = request.getFile("file");
         String fileName = file.getOriginalFilename();
@@ -85,13 +87,13 @@ public class ProcessController {
      *
      * @return
      */
-    @RequestMapping(value = "process/variable")
+    @RequestMapping("process/variable")
     public String setProcessVariableView(@RequestParam Map<String, Object> params, Model model) {
         model.addAllAttributes(params);
         return "modules/process/variable_list";
     }
 
-    @RequestMapping(value = "process/variable/edit")
+    @RequestMapping("process/variable/edit")
     public String setProcessVariableEdit(@RequestParam Map<String, Object> params, Model model) {
         model.addAllAttributes(params);
         return "modules/process/variable_edit";
@@ -102,7 +104,7 @@ public class ProcessController {
      *
      * @return
      */
-    @RequestMapping(value = "process/task/list")
+    @RequestMapping("process/task/list")
     public String setTaskView(@RequestParam Map<String, Object> params, Model model) {
         model.addAllAttributes(params);
         return "modules/process/task_list";
