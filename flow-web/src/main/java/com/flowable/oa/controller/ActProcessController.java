@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -185,29 +184,9 @@ public class ActProcessController {
     @RequestMapping(value = "convert")
     public RestResult<Object> convertToModel(@RequestParam String processDefinitionId) {
 
-        try {
-            org.flowable.engine.repository.Model modelData = actProcessService.convertToModel(processDefinitionId);
-            String message = "转换模型成功，模型ID=" + modelData.getId();
-            return RestResult.success(message);
-        } catch (Exception e) {
-            logger.error("模型转换失败 : {}", e);
-            return RestResult.fail(null, "模型转换失败");
-        }
-    }
-
-    /**
-     * 导出图片文件到硬盘
-     */
-    @ResponseBody
-    @RequestMapping(value = "export/diagrams")
-    public List<String> exportDiagrams(String exportDir) {
-
-        try {
-            return actProcessService.exportDiagrams(exportDir);
-        } catch (IOException e) {
-            logger.error("图片导出失败");
-        }
-        return null;
+        org.flowable.engine.repository.Model modelData = actProcessService.convertToModel(processDefinitionId);
+        String message = "转换模型成功，模型ID=" + modelData.getId();
+        return RestResult.success(message);
     }
 
     /**

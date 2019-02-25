@@ -1,7 +1,6 @@
 package com.flowable.oa.core.service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import com.github.pagehelper.PageInfo;
 import org.flowable.engine.repository.Model;
 
@@ -17,9 +16,8 @@ public interface IProcessModelService {
 
 	/**
 	 * 创建模型
-	 * @throws UnsupportedEncodingException 
 	 */
-	Model create(String name, String key, String description, String category) throws UnsupportedEncodingException;
+	Model create(String name, String key, String description, String category) ;
 
 	/**
 	 * 根据Model部署流程

@@ -2,28 +2,29 @@ package com.flowable.oa.controller;
 
 import com.flowable.oa.core.service.IProcessModelService;
 import com.flowable.oa.core.util.RestResult;
-import org.flowable.engine.repository.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 
+
 /**
+ * <p>
  * 流程模型相关
- *
- * @author : lukewei
- * @project : tykj-oa
- * @createTime : 2018年1月31日 : 下午4:20:45
- * @description :
- */
+ * </p>
+ * @author yangqi
+ * @since 2019/2/25 15:31
+ * @email yangqi@ywwl.com
+ **/
 @Controller
-@RequestMapping(value = "/act/model")
+@RequestMapping("/act/model")
 public class ActModelController {
 
     @Autowired
@@ -35,16 +36,11 @@ public class ActModelController {
     /**
      * 创建模型
      */
-    @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String create(String name, String key, String description, String category,
-                         org.springframework.ui.Model model) {
-        try {
-            Model modelData = processModelService.create(name, key, description, category);
-            model.addAttribute("message", "success");
-            model.addAttribute("modelId", modelData.getId());
-        } catch (Exception e) {
-            logger.error("创建模型失败：", e);
-        }
+    @PostMapping("create")
+    public String create(String name, String key, String description, String category, Model model) {
+
+        model.addAttribute("message", "success");
+        model.addAttribute("modelId", processModelService.create(name, key, description, category).getId());
         return "modules/process/act/actModelCreate";
     }
 
@@ -52,7 +48,7 @@ public class ActModelController {
      * 根据Model部署流程
      */
     @ResponseBody
-    @RequestMapping(value = "deploy")
+    @RequestMapping("deploy")
     public RestResult<Object> deploy(String id) {
 
         String deploy = processModelService.deploy(id);
@@ -62,7 +58,7 @@ public class ActModelController {
     /**
      * 导出model的xml文件
      */
-    @RequestMapping(value = "export")
+    @RequestMapping("export")
     public void export(String id, HttpServletResponse response) {
         processModelService.export(id, response);
     }
@@ -70,7 +66,7 @@ public class ActModelController {
     /**
      * 更新Model分类
      */
-    @RequestMapping(value = "updateCategory")
+    @RequestMapping("updateCategory")
     public String updateCategory(String id, String category, RedirectAttributes redirectAttributes) {
         processModelService.updateCategory(id, category);
         redirectAttributes.addFlashAttribute("message", "设置成功，模块ID=" + id);
@@ -84,7 +80,7 @@ public class ActModelController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "delete")
+    @RequestMapping("delete")
     public RestResult<Object> delete(String id) {
         logger.info("删除Model---delete");
         processModelService.delete(id);

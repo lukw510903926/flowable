@@ -3,7 +3,6 @@ package com.flowable.oa.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.core.entity.BizFile;
 import com.flowable.oa.core.service.IBizFileService;
-import com.flowable.oa.core.service.IProcessExecuteService;
 import com.flowable.oa.core.service.act.ActProcessService;
 import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.LoginUser;
@@ -41,9 +40,6 @@ public class BizInfoController {
 
     @Autowired
     private ActProcessService actProcessService;
-
-    @Autowired
-    private IProcessExecuteService processExecuteService;
 
     @Autowired
     private IBizFileService bizFileService;
@@ -153,12 +149,5 @@ public class BizInfoController {
         } catch (Exception e) {
             logger.error(" 下载失败 : {}", e);
         }
-    }
-
-    @ResponseBody
-    @RequestMapping("/biz/getBizFile")
-    public List<BizFile> getBizFile(@RequestBody BizFile bizFile) {
-
-        return this.bizFileService.findBizFile(bizFile);
     }
 }

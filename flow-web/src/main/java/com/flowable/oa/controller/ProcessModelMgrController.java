@@ -53,20 +53,16 @@ public class ProcessModelMgrController {
     public DataGrid<ProcessVariable> processValList(@RequestParam Map<String, Object> params, PageInfo<ProcessVariable> page) {
 
         DataGrid<ProcessVariable> grid = new DataGrid<>();
-        try {
-            String processId = MapUtils.getString(params, "processId");
-            Integer version = MapUtils.getInteger(params, "version", 1);
-            String taskId = MapUtils.getString(params, "taskId");
-            ProcessVariable variable = new ProcessVariable();
-            variable.setProcessDefinitionId(processId);
-            variable.setTaskId(taskId);
-            variable.setVersion(version);
-            PageInfo<ProcessVariable> processValBeans = this.processValService.findProcessVariables(variable, page);
-            grid.setRows(processValBeans.getList());
-            grid.setTotal(processValBeans.getTotal());
-        } catch (Exception e) {
-            logger.error("操作失败 : {}", e);
-        }
+        String processId = MapUtils.getString(params, "processId");
+        Integer version = MapUtils.getInteger(params, "version", 1);
+        String taskId = MapUtils.getString(params, "taskId");
+        ProcessVariable variable = new ProcessVariable();
+        variable.setProcessDefinitionId(processId);
+        variable.setTaskId(taskId);
+        variable.setVersion(version);
+        PageInfo<ProcessVariable> processValBeans = this.processValService.findProcessVariables(variable, page);
+        grid.setRows(processValBeans.getList());
+        grid.setTotal(processValBeans.getTotal());
         return grid;
     }
 
@@ -83,18 +79,13 @@ public class ProcessModelMgrController {
         logger.info("根据全局流程变量ID得到变量详情---getProcessValById");
         String processId = (String) params.get("processId");
         String taskId = (String) params.get("taskId");
-        try {
-            ProcessVariable processValAbs;
-            if (StringUtils.isBlank(taskId)) {
-                processValAbs = processValService.selectByKey(processId);
-            } else {
-                processValAbs = processValService.selectByKey(taskId);
-            }
-            return RestResult.success(processValAbs);
-        } catch (Exception e) {
-            logger.error("操作失败 : {}", e);
-            return RestResult.fail(null, "操作失败");
+        ProcessVariable processValAbs;
+        if (StringUtils.isBlank(taskId)) {
+            processValAbs = processValService.selectByKey(processId);
+        } else {
+            processValAbs = processValService.selectByKey(taskId);
         }
+        return RestResult.success(processValAbs);
     }
 
     /**
@@ -106,8 +97,6 @@ public class ProcessModelMgrController {
     @ResponseBody
     @RequestMapping(value = "deleteProcessValById")
     public RestResult<Object> deleteProcessValById(@RequestParam Map<String, Object> params) {
-
-        logger.info("根据全局流程变量IDs删除变量详情---deleteProcessValById");
 
         String ids = (String) params.get("valIds");
         String[] valIds = StringUtils.isNotBlank(ids) ? ids.split(",") : new String[]{};
@@ -173,29 +162,25 @@ public class ProcessModelMgrController {
     public List<Map<String, Object>> processLabel(@RequestParam Map<String, Object> params) {
 
         List<Map<String, Object>> list = new ArrayList<>();
-        try {
-            String processId = (String) params.get("processId");
-            String version = (String) params.get("version");
-            String taskId = (String) params.get("taskId");
-            Set<String> groups = new HashSet<>();
-            ProcessVariable processVariable = new ProcessVariable();
-            processVariable.setVersion(Integer.parseInt(version));
-            processVariable.setProcessDefinitionId(processId);
-            processVariable.setTaskId(taskId);
-            List<ProcessVariable> processValBeans = processValService.findProcessVariables(processVariable);
-            if (CollectionUtils.isNotEmpty(processValBeans)) {
-                processValBeans.stream().map(entity -> StringUtils.isBlank(entity.getGroupName()) ? "" : entity.getGroupName()).forEach(process -> groups.add(process.trim()));
-            }
-            groups.forEach(group -> {
-                List<ProcessVariable> processes = new ArrayList<>();
-                processValBeans.stream().filter(process -> group.equals(process.getGroupName().trim())).forEach(processes::add);
-                Map<String, Object> data = new HashMap<>();
-                data.put(group, processes);
-                list.add(data);
-            });
-        } catch (Exception e) {
-            logger.error("操作失败 : {}", e);
+        String processId = (String) params.get("processId");
+        String version = (String) params.get("version");
+        String taskId = (String) params.get("taskId");
+        Set<String> groups = new HashSet<>();
+        ProcessVariable processVariable = new ProcessVariable();
+        processVariable.setVersion(Integer.parseInt(version));
+        processVariable.setProcessDefinitionId(processId);
+        processVariable.setTaskId(taskId);
+        List<ProcessVariable> processValBeans = processValService.findProcessVariables(processVariable);
+        if (CollectionUtils.isNotEmpty(processValBeans)) {
+            processValBeans.stream().map(entity -> StringUtils.isBlank(entity.getGroupName()) ? "" : entity.getGroupName()).forEach(process -> groups.add(process.trim()));
         }
+        groups.forEach(group -> {
+            List<ProcessVariable> processes = new ArrayList<>();
+            processValBeans.stream().filter(process -> group.equals(process.getGroupName().trim())).forEach(processes::add);
+            Map<String, Object> data = new HashMap<>();
+            data.put(group, processes);
+            list.add(data);
+        });
         return list;
     }
 

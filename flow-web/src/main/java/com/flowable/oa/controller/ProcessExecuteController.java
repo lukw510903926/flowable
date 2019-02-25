@@ -14,11 +14,10 @@ import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,6 +41,7 @@ import java.util.Map;
  * @email 13507615840@163.com
  * @since 19-2-15 下午11:10
  **/
+@Slf4j
 @Controller
 @RequestMapping("/workflow")
 public class ProcessExecuteController {
@@ -57,14 +57,6 @@ public class ProcessExecuteController {
 
     @Autowired
     private IProcessVariableService processVariableService;
-
-    private Logger logger = LoggerFactory.getLogger("processExecuteController");
-
-    @ResponseBody
-    @RequestMapping(value = "/loadWorkLogInput")
-    public Map<String, Object> loadWorkLogInput(String logId) {
-        return processExecuteService.loadBizLogInput(logId);
-    }
 
     /**
      * target取值如下<br>
@@ -196,7 +188,7 @@ public class ProcessExecuteController {
                 IOUtils.copy(inputStream, response.getOutputStream());
             }
         } catch (Exception e) {
-            logger.error("文件下载失败 : {}", e);
+            log.error("文件下载失败 : {}", e);
         }
     }
 }
