@@ -20,7 +20,7 @@ import java.io.IOException;
 @WebFilter(urlPatterns = "/*", displayName = "loginFilter")
 public class LoginFilter implements Filter {
 
-    private String[] ignoreUrl = new String[]{"js", "css", "font-awesome", "images", "modules", "/login/login"};
+    private String[] ignoreUrl = new String[]{".js", ".css", "font-awesome", "images", "modules", "/login/login"};
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
