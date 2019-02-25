@@ -18,7 +18,7 @@ public class HasPermissionDialect extends AbstractProcessorDialect {
 
 	public static final String NAME = "Standard";
 
-	public static final int PROCESSOR_PRECEDENCE = 1000;
+	private static final int PROCESSOR_PRECEDENCE = 1000;
 
 	public HasPermissionDialect() {
 		super(NAME, PREFIX, PROCESSOR_PRECEDENCE);
