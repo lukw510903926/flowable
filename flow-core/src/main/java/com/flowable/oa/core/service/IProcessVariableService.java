@@ -47,5 +47,5 @@ public interface IProcessVariableService extends IBaseService<ProcessVariable> {
 	 * @param newPdf
 	 * @throws Exception
 	 */
-	void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf) throws Exception;
+	void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf);
 }
