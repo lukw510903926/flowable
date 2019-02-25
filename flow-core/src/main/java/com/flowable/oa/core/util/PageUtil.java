@@ -17,8 +17,8 @@ public class PageUtil {
     public static PageInfo<BaseVo> getPage(BaseVo baseVo) {
 
         PageInfo<BaseVo> pageInfo = new PageInfo<>();
-        pageInfo.setPageNum(baseVo.getPageNum());
-        pageInfo.setPageSize(baseVo.getPageSize());
+        pageInfo.setPageNum(baseVo.getPageNum() == null ? 1 : baseVo.getPageNum());
+        pageInfo.setPageSize(baseVo.getPageSize() == null ? Integer.MAX_VALUE : baseVo.getPageSize());
         return pageInfo;
 
     }

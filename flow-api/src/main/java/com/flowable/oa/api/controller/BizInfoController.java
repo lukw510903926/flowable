@@ -79,7 +79,7 @@ public class BizInfoController {
     }
 
     @PostMapping("/list")
-    public RestResult<PageInfo<BizInfo>> list(BizInfoVo bizInfoVo) {
+    public RestResult<PageInfo<BizInfo>> list(@RequestBody BizInfoVo bizInfoVo) {
 
         return RestResult.success(this.bizInfoService.findBizInfo(bizInfoVo, PageUtil.getPage(bizInfoVo)));
     }
