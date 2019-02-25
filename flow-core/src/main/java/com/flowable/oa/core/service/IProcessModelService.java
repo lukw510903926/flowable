@@ -1,6 +1,5 @@
 package com.flowable.oa.core.service;
 
-import java.io.IOException;
 import com.github.pagehelper.PageInfo;
 import org.flowable.engine.repository.Model;
 
@@ -26,7 +25,6 @@ public interface IProcessModelService {
 
 	/**
 	 * 导出model的xml文件
-	 * @throws IOException 
 	 */
 	void export(String id, HttpServletResponse response);
 
