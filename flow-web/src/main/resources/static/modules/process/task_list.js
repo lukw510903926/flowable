@@ -6,20 +6,8 @@ biz.processVariable = {
     loadTable: function () {
         $("#process-task-table").bootstrapTable({
             method: 'get',
-            queryParams: function queryParams(params) {
-                params.processId = processId;
-                return params;
-            },
-            sidePagination: 'server',
-            url: path + "/act/process/processTaskList",
-            pagination: false,
-            pageSize: 20,
-            pageList: [10, 25, 50],
+            url: "/act/process/taskList/" + processId,
             columns: [{
-//			field : "state",
-//			checkbox : true,
-//			align : "center"
-//		}, {
                 field: "id",
                 title: "任务ID",
                 align: "left"

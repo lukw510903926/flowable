@@ -146,9 +146,8 @@ public interface IProcessDefinitionService {
      * 部署流程之后,根据上一版本的流程对象,拷贝上次的参数配置到最新的流程中
      *
      * @param processDefinition
-     * @throws Exception
      */
-    boolean copyVariables(ProcessDefinition processDefinition) throws Exception;
+    boolean copyVariables(ProcessDefinition processDefinition);
 
 
     boolean autoClaim(String processInstanceID);

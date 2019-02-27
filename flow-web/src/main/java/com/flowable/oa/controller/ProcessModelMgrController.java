@@ -49,7 +49,7 @@ public class ProcessModelMgrController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "processValList")
+    @RequestMapping("processValList")
     public DataGrid<ProcessVariable> processValList(@RequestParam Map<String, Object> params, PageInfo<ProcessVariable> page) {
 
         DataGrid<ProcessVariable> grid = new DataGrid<>();
@@ -73,7 +73,7 @@ public class ProcessModelMgrController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "getProcessValById")
+    @RequestMapping("getProcessValById")
     public RestResult<Object> getProcessValById(@RequestParam Map<String, Object> params) {
 
         logger.info("根据全局流程变量ID得到变量详情---getProcessValById");
@@ -95,7 +95,7 @@ public class ProcessModelMgrController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "deleteProcessValById")
+    @RequestMapping("deleteProcessValById")
     public RestResult<Object> deleteProcessValById(@RequestParam Map<String, Object> params) {
 
         String ids = (String) params.get("valIds");
@@ -110,17 +110,15 @@ public class ProcessModelMgrController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "saveOrUpdateProcessVal")
+    @RequestMapping("saveOrUpdateProcessVal")
     public RestResult<Object> saveOrUpdateProcessVal(@RequestParam Map<String, Object> reqParams) {
 
         logger.info("保存或者更新流程全局变量---saveOrUpdateProcessVal");
-        boolean isUpdate = true;
         String id = (String) reqParams.get("id");
         String taskId = (String) reqParams.get("taskId");
         ProcessVariable processValAbs = processValService.selectByKey(id);
         if (processValAbs == null) {
             processValAbs = new ProcessVariable();
-            isUpdate = false;
         }
         processValAbs.setProcessDefinitionId((String) reqParams.get("processId"));
         processValAbs.setVersion(Integer.parseInt((String) reqParams.get("version")));
@@ -143,11 +141,7 @@ public class ProcessModelMgrController {
         processValAbs.setViewParams((String) reqParams.get("viewParams"));
         processValAbs.setIsProcessVariable(Boolean.parseBoolean((String) reqParams.get("isprocVal")));
         processValAbs.setTaskId(taskId);
-        if (isUpdate) {
-            processValService.updateVariable(processValAbs);
-        } else {
-            processValService.addVariable(processValAbs);
-        }
+        processValService.saveOrUpdate(processValAbs);
         return RestResult.success();
     }
 
@@ -158,7 +152,7 @@ public class ProcessModelMgrController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "processLabel")
+    @RequestMapping("processLabel")
     public List<Map<String, Object>> processLabel(@RequestParam Map<String, Object> params) {
 
         List<Map<String, Object>> list = new ArrayList<>();
@@ -170,7 +164,7 @@ public class ProcessModelMgrController {
         processVariable.setVersion(Integer.parseInt(version));
         processVariable.setProcessDefinitionId(processId);
         processVariable.setTaskId(taskId);
-        List<ProcessVariable> processValBeans = processValService.findProcessVariables(processVariable);
+        List<ProcessVariable> processValBeans = processValService.select(processVariable);
         if (CollectionUtils.isNotEmpty(processValBeans)) {
             processValBeans.stream().map(entity -> StringUtils.isBlank(entity.getGroupName()) ? "" : entity.getGroupName()).forEach(process -> groups.add(process.trim()));
         }

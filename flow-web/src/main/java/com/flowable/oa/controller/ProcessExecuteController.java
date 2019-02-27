@@ -97,7 +97,7 @@ public class ProcessExecuteController {
             ProcessVariable variable = new ProcessVariable();
             variable.setProcessDefinitionId(proDefId);
             variable.setTaskId(Constants.TASK_START);
-            List<ProcessVariable> list = this.processVariableService.findProcessVariables(variable);
+            List<ProcessVariable> list = this.processVariableService.select(variable);
             data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
             data.put("processValBean", list);
             data.put("result", true);

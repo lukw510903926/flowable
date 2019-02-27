@@ -30,9 +30,9 @@ public class PageUtil {
         }
     }
 
-    public static void startPage(PageInfo<BaseVo> pageInfo) {
+    public static void startPage(PageInfo<?> pageInfo) {
 
-        if (pageInfo.getPageNum() > 0 && pageInfo.getPageSize() > 0) {
+        if (pageInfo != null && pageInfo.getPageNum() > 0 && pageInfo.getPageSize() > 0) {
             PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         }
     }

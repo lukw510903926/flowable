@@ -125,13 +125,11 @@ public class ProcessModelMgrController {
     public RestResult<Object> saveOrUpdateProcessVal(@RequestParam Map<String, Object> reqParams) {
 
         logger.info("保存或者更新流程全局变量---saveOrUpdateProcessVal");
-        boolean isUpdate = true;
         String id = (String) reqParams.get("id");
         String taskId = (String) reqParams.get("taskId");
         ProcessVariable processValAbs = processValService.selectByKey(id);
         if (processValAbs == null) {
             processValAbs = new ProcessVariable();
-            isUpdate = false;
         }
         processValAbs.setProcessDefinitionId((String) reqParams.get("processId"));
         processValAbs.setVersion(Integer.parseInt((String) reqParams.get("version")));
@@ -154,11 +152,7 @@ public class ProcessModelMgrController {
         processValAbs.setViewParams((String) reqParams.get("viewParams"));
         processValAbs.setIsProcessVariable(Boolean.parseBoolean((String) reqParams.get("isprocVal")));
         processValAbs.setTaskId(taskId);
-        if (isUpdate) {
-            processValService.updateVariable(processValAbs);
-        } else {
-            processValService.addVariable(processValAbs);
-        }
+        processValService.saveOrUpdate(processValAbs);
         return RestResult.success();
     }
 
@@ -182,7 +176,7 @@ public class ProcessModelMgrController {
             processVariable.setVersion(Integer.parseInt(version));
             processVariable.setProcessDefinitionId(processId);
             processVariable.setTaskId(taskId);
-            List<ProcessVariable> processValBeans = processValService.findProcessVariables(processVariable);
+            List<ProcessVariable> processValBeans = processValService.select(processVariable);
             if (CollectionUtils.isNotEmpty(processValBeans)) {
                 processValBeans.stream().map(entity -> StringUtils.isBlank(entity.getGroupName()) ? "" : entity.getGroupName()).forEach(process -> groups.add(process.trim()));
             }

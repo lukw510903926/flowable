@@ -15,8 +15,6 @@ import org.flowable.engine.impl.persistence.entity.DeploymentEntity;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +40,7 @@ import java.util.stream.Collectors;
  * @since 19-2-15 下午11:10
  **/
 @Controller
-@RequestMapping(value = "/act/process")
+@RequestMapping("/act/process")
 public class ActProcessController {
 
     @Autowired
@@ -50,8 +48,6 @@ public class ActProcessController {
 
     @Autowired
     private IProcessDefinitionService processDefinitionService;
-
-    private Logger logger = LoggerFactory.getLogger(ActProcessController.class);
 
     /**
      * 流程定义列表
@@ -61,27 +57,23 @@ public class ActProcessController {
     public DataGrid<Map<String, Object>> processList(@RequestParam Map<String, Object> params) {
 
         DataGrid<Map<String, Object>> grid = new DataGrid<>();
-        try {
-            Integer pageNum = MapUtils.getInteger(params, "page", 1);
-            Integer rows = MapUtils.getInteger(params, "rows", 20);
-            List<Map<String, Object>> result = new ArrayList<>();
-            List<Object[]> tempResult = actProcessService.processList();
-            if (CollectionUtils.isNotEmpty(tempResult)) {
-                List<Object[]> list = tempResult.stream().skip((pageNum - 1) * rows).limit(rows).collect(Collectors.toList());
-                for (Object[] objects : list) {
-                    ProcessDefinitionEntityImpl process = (ProcessDefinitionEntityImpl) objects[0];
-                    DeploymentEntity deployment = (DeploymentEntity) objects[1];
-                    Map<String, Object> item = ReflectionUtils.beanToMap(process);
-                    item.put("deploymentTime", deployment.getDeploymentTime());
-                    result.add(item);
-                }
-                grid.setRows(result);
-                grid.setTotal(tempResult.size());
+        Integer pageNum = MapUtils.getInteger(params, "page", 1);
+        Integer rows = MapUtils.getInteger(params, "rows", 20);
+        List<Map<String, Object>> result = new ArrayList<>();
+        List<Object[]> tempResult = actProcessService.processList();
+        if (CollectionUtils.isNotEmpty(tempResult)) {
+            List<Object[]> list = tempResult.stream().skip((pageNum - 1) * rows).limit(rows).collect(Collectors.toList());
+            for (Object[] objects : list) {
+                ProcessDefinitionEntityImpl process = (ProcessDefinitionEntityImpl) objects[0];
+                DeploymentEntity deployment = (DeploymentEntity) objects[1];
+                Map<String, Object> item = ReflectionUtils.beanToMap(process);
+                item.put("deploymentTime", deployment.getDeploymentTime());
+                result.add(item);
             }
-
-        } catch (Exception e) {
-            logger.error(" 流程列表获取失败 : {}", e);
+            grid.setRows(result);
+            grid.setTotal(tempResult.size());
         }
+
         return grid;
     }
 
@@ -89,14 +81,11 @@ public class ActProcessController {
      * 流程所有任务列表
      */
     @ResponseBody
-    @RequestMapping(value = "processTaskList")
-    public DataGrid<Map<String, Object>> processTaskList(@RequestParam Map<String, Object> params) {
+    @GetMapping("taskList/{processId}")
+    public DataGrid<Map<String, Object>> processTaskList(@PathVariable("processId") String processId) {
 
         DataGrid<Map<String, Object>> grid = new DataGrid<>();
-        String processId = (String) params.get("processId");
-        List<Map<String, Object>> result = actProcessService.getAllTaskByProcessKey(processId);
-        grid.setRows(result);
-        grid.setTotal((long) result.size());
+        grid.setRows(actProcessService.getAllTaskByProcessKey(processId));
         return grid;
     }
 
@@ -104,7 +93,7 @@ public class ActProcessController {
      * 运行中的实例列表
      */
     @ResponseBody
-    @RequestMapping(value = "running")
+    @RequestMapping("running")
     public DataGrid<ProcessInstance> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey) {
 
         DataGrid<ProcessInstance> grid = new DataGrid<>();
@@ -121,7 +110,7 @@ public class ActProcessController {
      * @param response
      * @throws Exception
      */
-    @RequestMapping(value = "resource/read")
+    @RequestMapping("resource/read")
     public void resourceRead(String processDefinitionId, String type, HttpServletResponse response) throws Exception {
 
         InputStream resourceAsStream = actProcessService.resourceRead(processDefinitionId, type);
@@ -141,8 +130,8 @@ public class ActProcessController {
      *
      * @return
      */
-    @RequestMapping(value = "/deploy", method = RequestMethod.POST)
-    public String deploy(MultipartHttpServletRequest request, Model model) throws Exception {
+    @PostMapping("/deploy")
+    public String deploy(MultipartHttpServletRequest request, Model model) {
 
         MultipartFile file = request.getFile("file");
         String fileName = file.getOriginalFilename();
@@ -165,54 +154,14 @@ public class ActProcessController {
     }
 
     /**
-     * 挂起、激活流程实例
-     */
-    @ResponseBody
-    @RequestMapping(value = "update/{state}")
-    public RestResult<Object> updateState(@PathVariable("state") String state, @RequestParam String processDefinitionId) {
-        actProcessService.updateState(state, processDefinitionId);
-        return RestResult.success();
-    }
-
-    /**
-     * 将部署的流程转换为模型
-     *
-     * @param processDefinitionId
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "convert")
-    public RestResult<Object> convertToModel(@RequestParam String processDefinitionId) {
-
-        org.flowable.engine.repository.Model modelData = actProcessService.convertToModel(processDefinitionId);
-        String message = "转换模型成功，模型ID=" + modelData.getId();
-        return RestResult.success(message);
-    }
-
-    /**
      * 删除部署的流程，级联删除流程实例
      *
      * @param deploymentId 流程部署ID
      */
     @ResponseBody
-    @RequestMapping(value = "delete")
+    @RequestMapping("delete")
     public RestResult<Object> delete(String deploymentId) {
         actProcessService.deleteDeployment(deploymentId);
         return RestResult.success();
     }
-
-    /**
-     * 删除流程实例
-     *
-     * @param procInsId 流程实例ID
-     * @param reason    删除原因
-     */
-    @ResponseBody
-    @RequestMapping(value = "deleteProcIns")
-    public RestResult<Object> deleteProcIns(String procInsId, String reason) {
-
-        actProcessService.deleteProcIns(procInsId, reason);
-        return RestResult.success();
-    }
-
 }

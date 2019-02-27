@@ -13,22 +13,6 @@ import org.flowable.engine.repository.ProcessDefinition;
 public interface IProcessVariableService extends IBaseService<ProcessVariable> {
 
 	/**
-	 * 添加
-	 * 
-	 * @param beans
-	 * @
-	 */
-	void addVariable(ProcessVariable... beans);
-
-	/**
-	 * 修改
-	 * 
-	 * @param beans
-	 * @
-	 */
-	void updateVariable(ProcessVariable... beans);
-
-	/**
 	 * 删除
 	 * 
 	 * @param list
@@ -38,14 +22,11 @@ public interface IProcessVariableService extends IBaseService<ProcessVariable> {
 
 	PageInfo<ProcessVariable> findProcessVariables(ProcessVariable variable, PageInfo<ProcessVariable> page);
 
-	List<ProcessVariable> findProcessVariables(ProcessVariable variable);
-
 	/**
 	 * 参数复制
 	 * 
 	 * @param oldPdf
 	 * @param newPdf
-	 * @throws Exception
 	 */
 	void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf);
 }

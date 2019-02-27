@@ -89,7 +89,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         ProcessVariable variable = new ProcessVariable();
         variable.setProcessDefinitionId(bean.getProcessDefinitionId());
         variable.setTaskId(taskDefKey);
-        return this.processVariableService.findProcessVariables(variable);
+        return this.processVariableService.select(variable);
     }
 
     /**
