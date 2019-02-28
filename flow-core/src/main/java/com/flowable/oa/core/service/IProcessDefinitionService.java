@@ -121,14 +121,6 @@ public interface IProcessDefinitionService {
     String getWorkAccessTask(String taskID, String username);
 
     /**
-     * 根据工单对象获取到当前工单所运行的模板版本
-     *
-     * @param processDefinitionId
-     * @return
-     */
-    int getWorkOrderVersion(String processDefinitionId);
-
-    /**
      * @param id 流程定义ID
      * @return
      */
@@ -147,7 +139,7 @@ public interface IProcessDefinitionService {
      *
      * @param processDefinition
      */
-    boolean copyVariables(ProcessDefinition processDefinition);
+    void copyVariables(ProcessDefinition processDefinition);
 
 
     boolean autoClaim(String processInstanceID);
@@ -169,4 +161,5 @@ public interface IProcessDefinitionService {
 
     ProcessInstance getProcessInstance(String processInstanceID);
 
+    String getProcessPath(String processInstanceId);
 }
