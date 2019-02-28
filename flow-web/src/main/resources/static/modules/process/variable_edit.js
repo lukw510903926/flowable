@@ -100,20 +100,20 @@ biz.variable.edit = {
         }
         var data = {
             id: updateId,
-            processId: processId,
+            processDefinitionId: processId,
             version: version,
             taskId: taskId,
             name: $.trim($('#ud_name').val()),
             alias: $.trim($('#ud_alias').val()),
-            nameOrder: $.trim($('#ud_nameOrder').val()),
-            required: $('input[name="ud_required"]:checked').val() === "on",
+            order: $.trim($('#ud_nameOrder').val()),
+            isRequired: $('input[name="ud_required"]:checked').val() === "on",
             groupName: $.trim($('#ud_groupName').val()),
             groupOrder: $.trim($("#ud_groupOrder").val()),
             variableGroup: $.trim($('#ud_variableGroup').val()),
             viewComponent: $('#ud_viewComponent option:selected').val(),
             viewDatas: $.trim($("#ud_componentArgs").val()),
             viewParams: $.trim($("#ud_viewParams").val()),
-            isprocVal: $('input[name="ud_processVariable"]:checked').val() === "on",
+            isProcessVariable: $('input[name="ud_processVariable"]:checked').val() === "on",
             refVariable: $.trim($("#ud_refVariable").val()),
             refParam: $.trim($("#ud_refParam").val())
         };
@@ -135,9 +135,6 @@ biz.variable.edit = {
                 dataType: 'json',
                 success: function (result) {
                     $udViewParams.empty();
-                    for (var i = 0; i < result.rows.length; i++) {
-
-                    }
                     result.rows.forEach(function(entity){
                         var option = $('<option>');
                         option.val(entity.id);
@@ -161,7 +158,7 @@ biz.variable.edit = {
     saveAjax: function (params) {
         $.ajax({
             type: 'POST',
-            url: "/processModelMgr/saveOrUpdateProcessVal",
+            url: "/processModelMgr/saveOrUpdate",
             data: params,
             dataType: 'json',
             success: function (data) {

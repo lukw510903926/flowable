@@ -108,37 +108,9 @@ public class ProcessVariableController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("saveOrUpdateProcessVal")
-    public RestResult<Object> saveOrUpdateProcessVal(@RequestParam Map<String, Object> reqParams) {
+    @RequestMapping("saveOrUpdate")
+    public RestResult<Object> saveOrUpdateProcessVal(ProcessVariable processValAbs) {
 
-        logger.info("保存或者更新流程全局变量---saveOrUpdateProcessVal");
-        String id = (String) reqParams.get("id");
-        String taskId = (String) reqParams.get("taskId");
-        ProcessVariable processValAbs = processValService.selectByKey(id);
-        if (processValAbs == null) {
-            processValAbs = new ProcessVariable();
-        }
-        processValAbs.setProcessDefinitionId((String) reqParams.get("processId"));
-        processValAbs.setVersion(Integer.parseInt((String) reqParams.get("version")));
-        processValAbs.setName((String) reqParams.get("name"));
-        processValAbs.setAlias((String) reqParams.get("alias"));
-        processValAbs.setRefVariable((String) reqParams.get("refVariable"));
-        processValAbs.setRefParam((String) reqParams.get("refParam"));
-        Integer temp2 = MapUtils.getInteger(reqParams, "nameOrder");
-        processValAbs.setOrder(temp2);
-        processValAbs.setIsRequired(Boolean.parseBoolean((String) reqParams.get("required")));
-        processValAbs.setGroupName((String) reqParams.get("groupName"));
-        temp2 = MapUtils.getInteger(reqParams, "groupOrder");
-        processValAbs.setGroupOrder(temp2);
-
-        // 页面组件特殊处理
-        String viewComponent = (String) reqParams.get("viewComponent");
-        String viewComponentVal = (String) reqParams.get("viewDatas");
-        processValAbs.setViewComponent(viewComponent);
-        processValAbs.setViewDatas(viewComponentVal);
-        processValAbs.setViewParams((String) reqParams.get("viewParams"));
-        processValAbs.setIsProcessVariable(Boolean.parseBoolean((String) reqParams.get("isprocVal")));
-        processValAbs.setTaskId(taskId);
         processValService.saveOrUpdate(processValAbs);
         return RestResult.success();
     }
