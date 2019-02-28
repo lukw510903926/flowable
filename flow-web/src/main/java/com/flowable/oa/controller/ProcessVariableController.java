@@ -1,20 +1,16 @@
 package com.flowable.oa.controller;
 
 import com.flowable.oa.core.entity.ProcessVariable;
-import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.IProcessVariableService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.engine.repository.ProcessDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,9 +31,6 @@ public class ProcessVariableController {
 
     @Autowired
     private IProcessVariableService processValService;
-
-    @Autowired
-    private IProcessDefinitionService processDefinitionService;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -113,46 +106,5 @@ public class ProcessVariableController {
 
         processValService.saveOrUpdate(processValAbs);
         return RestResult.success();
-    }
-
-    /**
-     * 得到流程全局变量编辑分组标签
-     *
-     * @param params
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("processLabel")
-    public List<Map<String, Object>> processLabel(@RequestParam Map<String, Object> params) {
-
-        List<Map<String, Object>> list = new ArrayList<>();
-        String processId = (String) params.get("processId");
-        String version = (String) params.get("version");
-        String taskId = (String) params.get("taskId");
-        Set<String> groups = new HashSet<>();
-        ProcessVariable processVariable = new ProcessVariable();
-        processVariable.setVersion(Integer.parseInt(version));
-        processVariable.setProcessDefinitionId(processId);
-        processVariable.setTaskId(taskId);
-        List<ProcessVariable> processValBeans = processValService.select(processVariable);
-        if (CollectionUtils.isNotEmpty(processValBeans)) {
-            processValBeans.stream().map(entity -> StringUtils.isBlank(entity.getGroupName()) ? "" : entity.getGroupName()).forEach(process -> groups.add(process.trim()));
-        }
-        groups.forEach(group -> {
-            List<ProcessVariable> processes = new ArrayList<>();
-            processValBeans.stream().filter(process -> group.equals(process.getGroupName().trim())).forEach(processes::add);
-            Map<String, Object> data = new HashMap<>();
-            data.put(group, processes);
-            list.add(data);
-        });
-        return list;
-    }
-
-    @ResponseBody
-    @RequestMapping("/getProcessId/{key}")
-    public String getProcessId(@PathVariable("key") String key) {
-
-        ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
-        return processDefinition == null ? null : processDefinition.getId();
     }
 }

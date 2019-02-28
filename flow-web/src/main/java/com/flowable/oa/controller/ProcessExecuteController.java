@@ -16,7 +16,6 @@ import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,9 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,30 +161,5 @@ public class ProcessExecuteController {
 
         bizInfoService.deleteByIds(ids);
         return RestResult.success();
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/download")
-    public void downloadFile(String action, String id, HttpServletResponse response) {
-
-        Object[] result = processExecuteService.downloadFile(action, id);
-        if (result[1] == null) {
-            return;
-        }
-        InputStream inputStream = (InputStream) result[1];
-        String fileType = (String) result[0];
-        String fileName = (String) result[3];
-        try {
-            if ("IMAGE".equalsIgnoreCase(fileType)) {
-                response.setContentType("image/PNG;charset=GB2312");
-            } else {
-                fileName = new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
-                response.setContentType("application/x-download");
-                response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-                IOUtils.copy(inputStream, response.getOutputStream());
-            }
-        } catch (Exception e) {
-            log.error("文件下载失败 : {}", e);
-        }
     }
 }
