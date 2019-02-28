@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -60,23 +61,14 @@ public class ProcessVariableController {
     /**
      * 根据全局流程变量ID得到变量详情
      *
-     * @param params
      * @return
      */
     @ResponseBody
-    @RequestMapping("getProcessValById")
-    public RestResult<Object> getProcessValById(@RequestParam Map<String, Object> params) {
+    @RequestMapping("getProcessValById/{variableId}")
+    public RestResult<Object> getProcessValById(@PathVariable("variableId")String variableId) {
 
         logger.info("根据全局流程变量ID得到变量详情---getProcessValById");
-        String processId = (String) params.get("processId");
-        String taskId = (String) params.get("taskId");
-        ProcessVariable processValAbs;
-        if (StringUtils.isBlank(taskId)) {
-            processValAbs = processValService.selectByKey(processId);
-        } else {
-            processValAbs = processValService.selectByKey(taskId);
-        }
-        return RestResult.success(processValAbs);
+        return RestResult.success(processValService.selectByKey(variableId));
     }
 
     /**

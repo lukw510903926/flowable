@@ -45,7 +45,10 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     @Override
     public T selectByKey(String key) {
 
-        return mapper.selectByPrimaryKey(key);
+        if (StringUtils.isNotBlank(key)) {
+            return mapper.selectByPrimaryKey(key);
+        }
+        return null;
     }
 
     @Override
@@ -63,8 +66,11 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 
     @Override
     @Transactional
-    public int deleteById(String key) {
-        return mapper.deleteByPrimaryKey(key);
+    public void deleteById(String key) {
+
+        if (StringUtils.isNotBlank(key)) {
+            mapper.deleteByPrimaryKey(key);
+        }
     }
 
     @Override
@@ -122,22 +128,29 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     @Override
     public List<T> findByModel(T t, boolean isLike) {
 
-        Example example = this.getExample(t, isLike);
+        if (!isLike) {
+            return select(t);
+        }
+        Example example = this.getExample(t);
         return this.selectByExample(example);
     }
 
     @Override
     public PageInfo<T> findByModel(PageInfo<T> page, T t, boolean isLike) {
 
-        Example example = this.getExample(t, isLike);
         if (page != null) {
             PageHelper.startPage(page.getPageNum(), page.getPageSize());
-            example.orderBy("id").desc();
+
         }
+        if (!isLike) {
+            return new PageInfo<>(this.select(t));
+        }
+        Example example = this.getExample(t);
+        example.orderBy("id").desc();
         return new PageInfo<>(this.selectByExample(example));
     }
 
-    private Example getExample(T t, boolean isLike) {
+    private Example getExample(T t) {
 
         Example example = new Example(entityClass);
         Example.Criteria criteria = example.createCriteria();
@@ -146,7 +159,7 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
             Class<?> type = field.getType();
             Object value = ReflectionUtils.getter(t, property);
             if (value != null) {
-                if (type == String.class && isLike) {
+                if (type == String.class) {
                     criteria.andLike(property, "%" + value + "%");
                 } else {
                     criteria.andEqualTo(property, value);

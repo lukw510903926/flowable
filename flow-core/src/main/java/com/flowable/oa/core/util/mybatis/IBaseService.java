@@ -36,7 +36,7 @@ public interface IBaseService<T> {
      * @param key
      * @return
      */
-    int deleteById(String key);
+    void deleteById(String key);
 
     /**
      * 根据对象删除 delete table_name where column = value .....

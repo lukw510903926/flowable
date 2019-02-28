@@ -10,7 +10,6 @@ import com.flowable.oa.core.service.IProcessVariableService;
 import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
-import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
@@ -66,7 +65,7 @@ public class ProcessExecuteController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/queryWorkOrder")
+    @RequestMapping("/queryWorkOrder")
     public DataGrid<BizInfo> queryWorkOrder(BizInfoVo bizInfoVo, PageInfo<BaseVo> page) {
 
         PageInfo<BizInfo> helper = bizInfoService.findBizInfo(bizInfoVo , page);
@@ -82,20 +81,18 @@ public class ProcessExecuteController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/create/{key}", method = RequestMethod.GET)
+    @RequestMapping("/create/{key}")
     public Map<String, Object> create(@PathVariable("key") String key) {
 
         Map<String, Object> data = new HashMap<>();
         ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
         if (processDefinition != null) {
-            String proDefId = processDefinition.getId();
-            data.put("baseTempId", proDefId);
+            data.put("baseTempId", processDefinition.getId());
+            data.put("SYS_BUTTON", processExecuteService.loadStartButtons(processDefinition.getId()));
             ProcessVariable variable = new ProcessVariable();
-            variable.setProcessDefinitionId(proDefId);
+            variable.setProcessDefinitionId(processDefinition.getId());
             variable.setTaskId(Constants.TASK_START);
-            List<ProcessVariable> list = this.processVariableService.select(variable);
-            data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
-            data.put("processValBean", list);
+            data.put("processValBean", this.processVariableService.select(variable));
             data.put("result", true);
         } else {
             data.put("result", false);
@@ -110,7 +107,7 @@ public class ProcessExecuteController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/display/{id}")
+    @RequestMapping("/display/{id}")
     public Map<String, Object> display(@PathVariable("id") String id) {
 
         return processExecuteService.queryWorkOrder(id);
@@ -123,10 +120,9 @@ public class ProcessExecuteController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "bizInfo/create")
+    @RequestMapping("bizInfo/create")
     public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
-        WebUtil.getLoginUser(request);
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.TEXT_PLAIN);
         Boolean startProc = MapUtils.getBoolean(params, "startProc");
@@ -145,18 +141,17 @@ public class ProcessExecuteController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/submit")
+    @RequestMapping("/submit")
     public ResponseEntity<String> submit(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        WebUtil.getLoginUser(request);
         processExecuteService.submit(params, request.getMultiFileMap());
         return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), headers, HttpStatus.OK);
     }
 
     @ResponseBody
-    @RequestMapping(value = "/bizInfo/delete")
+    @RequestMapping("/bizInfo/delete")
     public RestResult<Object> deleteBizInfo(@RequestParam List<String> ids) {
 
         bizInfoService.deleteByIds(ids);

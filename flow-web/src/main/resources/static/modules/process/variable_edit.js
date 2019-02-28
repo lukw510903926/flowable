@@ -54,11 +54,8 @@ biz.variable.edit = {
     getById: function () {
 
         $.ajax({
-            type: 'POST',
-            url: "/processModelMgr/getProcessValById",
-            data: {
-                processId: updateId
-            },
+            type: 'get',
+            url: "/processModelMgr/getProcessValById/" + updateId,
             dataType: 'json',
             success: function (result) {
                 if (result.success) {
