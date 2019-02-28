@@ -6,9 +6,9 @@ import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.ReflectionUtils;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.impl.persistence.entity.DeploymentEntity;
@@ -21,11 +21,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +36,7 @@ import java.util.stream.Collectors;
  * @email 13507615840@163.com
  * @since 19-2-15 下午11:10
  **/
+@Slf4j
 @Controller
 @RequestMapping("/act/process")
 public class ActProcessController {
@@ -114,15 +112,10 @@ public class ActProcessController {
     public void resourceRead(String processDefinitionId, String type, HttpServletResponse response) throws Exception {
 
         InputStream resourceAsStream = actProcessService.resourceRead(processDefinitionId, type);
-        if (resourceAsStream != null) {
-            response.setHeader("Content-Disposition", "attachment;filename=" + type);
-            IOUtils.copyLarge(resourceAsStream, response.getOutputStream());
-        } else {
-            response.setHeader("Content-Disposition",
-                    "attachment;filename=" + new String("文件不存在".getBytes("gb2312"), StandardCharsets.ISO_8859_1));
-            File file = File.createTempFile("FLOW_" + type, type);
-            FileUtils.copyFile(file, response.getOutputStream());
+        if (type.equals("xml")) {
+            response.setContentType("text/plain;charset=utf-8");
         }
+        IOUtils.copy(resourceAsStream, response.getOutputStream());
     }
 
     /**

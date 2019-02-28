@@ -20,7 +20,7 @@ biz.processVariable = {
                 title: "操作",
                 align: "center",
                 formatter: function (value, row) {
-                    return "<a class='item-link' href='/process/variable?processDefinitionId=" + processId + "&version=" + version + "&taskId=" + row.id + "'>设置任务参数</a>";
+                    return "<a class='item-link' href='/process/variable?processDefinitionId=" + processId  + "&taskId=" + row.id + "'>设置任务参数</a>";
                 }
             }
             ]

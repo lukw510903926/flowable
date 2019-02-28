@@ -32,14 +32,14 @@ $(function () {
             title: "流程XML",
             align: "center",
             formatter: function (index, row) {
-                return "<a target='_blank' onclick='openProcessResource(\"" + row.id + "\",\"xml\")'>查看XML</a>";
+                return "<a target='_blank' style='cursor: pointer'  onclick='openProcessResource(\"" + row.id + "\",\"xml\")'>查看XML</a>";
             }
         }, {
             field: "diagramResourceName",
             title: "流程图片",
             align: "center",
             formatter: function processImageFormatter(index, row) {
-                return "<a target='_blank' onclick='openProcessResource(\"" + row.id + "\",\"image\")'>查看流程图</a>";
+                return "<a target='_blank' style='cursor: pointer' onclick='openProcessResource(\"" + row.id + "\",\"image\")'>查看流程图</a>";
             }
         }, {
             field: "deploymentTime",
@@ -63,8 +63,8 @@ function detailFormatter(index, row) {
     content += '	</div>';
     content += '	<div class="btn-group" role="group" aria-label="...">';
     content += '		<button type="button" class="btn btn-y" onclick="convertToModel(\'' + row.id + '\');">转换为模型</button>';
-    content += '		<button type="button" class="btn btn-y" onclick="window.open(\'/process/variable?processDefinitionId=' + row.id + '&version=' + row.version + '&taskId=START\', \'_self\');">设置流程参数</button>';
-    content += '		<button type="button" class="btn btn-y" onclick="window.open(\'/process/task/list?processDefinitionId=' + row.id + '&version=' + row.version + '\', \'_self\');">查看流程任务</button>';
+    content += '		<button type="button" class="btn btn-y" onclick="window.open(\'/process/variable?processDefinitionId=' + row.id + '&taskId=START\', \'_self\');">设置流程参数</button>';
+    content += '		<button type="button" class="btn btn-y" onclick="window.open(\'/process/task/list?processDefinitionId=' + row.id + '\', \'_self\');">查看流程任务</button>';
     content += '	</div>';
     content += '	<div class="btn-group" role="group" aria-label="...">';
     content += '		<button type="button" class="btn btn-y" onclick="window.open(\'/biz/create/' + row.key + '\');">创建工单</button>';
@@ -128,7 +128,7 @@ function deleteDeployment(deploymentId) {
         cancelButton: "取消",
         confirm: function () {
             $.ajax({
-                url:"/act/process/delete",
+                url: "/act/process/delete",
                 data: {
                     deploymentId: deploymentId
                 },

@@ -26,7 +26,7 @@ public class ProcessController {
      *
      * @return
      */
-    @RequestMapping("model")
+    @RequestMapping("model/list")
     public String modelView() {
         return "modules/process/model_list";
     }
@@ -46,7 +46,7 @@ public class ProcessController {
      *
      * @return
      */
-    @GetMapping("process")
+    @GetMapping("process/list")
     public String processView() {
         return "modules/process/process_list";
     }

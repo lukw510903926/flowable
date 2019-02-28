@@ -31,7 +31,7 @@ import java.util.*;
  **/
 @Controller
 @RequestMapping("/processModelMgr")
-public class ProcessModelMgrController {
+public class ProcessVariableController {
 
     @Autowired
     private IProcessVariableService processValService;
@@ -54,12 +54,10 @@ public class ProcessModelMgrController {
 
         DataGrid<ProcessVariable> grid = new DataGrid<>();
         String processId = MapUtils.getString(params, "processId");
-        Integer version = MapUtils.getInteger(params, "version", 1);
         String taskId = MapUtils.getString(params, "taskId");
         ProcessVariable variable = new ProcessVariable();
         variable.setProcessDefinitionId(processId);
         variable.setTaskId(taskId);
-        variable.setVersion(version);
         PageInfo<ProcessVariable> processValBeans = this.processValService.findProcessVariables(variable, page);
         grid.setRows(processValBeans.getList());
         grid.setTotal(processValBeans.getTotal());

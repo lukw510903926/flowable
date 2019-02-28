@@ -66,10 +66,10 @@
                     result = _this._text();
                     break;
                 case  'email':
-                    result = _this.email();
+                    result = _this._email();
                     break;
                 case 'number':
-                    result = _this.checkNum();
+                    result = _this._checkNum();
                     break;
                 default:
                     result = _this._text();
@@ -111,7 +111,7 @@
          * 邮件
          * @returns {*|boolean}
          */
-        email: function () {
+        _email: function () {
 
             let _this = $(this);
             let _result = true;
@@ -130,7 +130,7 @@
          * 数字
          * @returns {boolean}
          */
-        checkNum: function () {
+        _checkNum: function () {
             return !/^((([1-9]+\d*)?|\d?)(\.\d*)?)?$/.test($(this).value);
         },
 
