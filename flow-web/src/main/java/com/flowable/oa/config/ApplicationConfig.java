@@ -16,9 +16,6 @@ public class ApplicationConfig implements WebMvcConfigurer{
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-
-//		LoginInterceptor loginInterceptor = new LoginInterceptor();
-//		registry.addInterceptor(loginInterceptor).addPathPatterns("/**");
 	}
 
 }
