@@ -28,6 +28,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
         LoginUser loginUser = new LoginUser();
         loginUser.setUsername("admin");
+        loginUser.setMobile("13507615840");
+        loginUser.setEmail("2622319737@qq.com");
         Set<String> roles = new HashSet<>();
         roles.add("超级管理员");
         loginUser.setRoles(roles);

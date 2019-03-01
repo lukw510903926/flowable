@@ -73,9 +73,9 @@ public class BizInfoController {
         return status;
     }
 
-    @RequestMapping(value = "workInfo/{bizId}")
-    public Map<String, Object> getDraftBiz(@PathVariable("bizId") String bizId) {
-        return processExecuteService.queryWorkOrder(bizId);
+    @RequestMapping("detail/{bizId}")
+    public RestResult<Map<String, Object>> getDraftBiz(@PathVariable("bizId") String bizId) {
+        return RestResult.success(processExecuteService.queryWorkOrder(bizId));
     }
 
     @PostMapping("/list")
