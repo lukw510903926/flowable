@@ -153,12 +153,10 @@ public class ProcessModelServiceImpl implements IProcessModelService {
             BpmnModel bpmnModel = jsonConverter.convertToBpmnModel(editorNode);
             BpmnXMLConverter xmlConverter = new BpmnXMLConverter();
             byte[] bpmnBytes = xmlConverter.convertToXML(bpmnModel);
-
             ByteArrayInputStream in = new ByteArrayInputStream(bpmnBytes);
-            IOUtils.copy(in, response.getOutputStream());
             String filename = bpmnModel.getMainProcess().getId() + ".bpmn20.xml";
             response.setHeader("Content-Disposition", "attachment; filename=" + filename);
-            response.flushBuffer();
+            IOUtils.copy(in, response.getOutputStream());
         } catch (Exception e) {
             logger.error(" 导出model的xml文件失败 :", e);
             throw new ServiceException("导出model的xml文件失败，模型ID=" + id);
