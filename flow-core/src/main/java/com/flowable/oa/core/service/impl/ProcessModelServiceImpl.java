@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.flowable.oa.core.service.IProcessModelService;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -27,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -124,12 +124,11 @@ public class ProcessModelServiceImpl implements IProcessModelService {
             //设置流程分类
             List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery()
                     .deploymentId(deployment.getId()).list();
-            for (ProcessDefinition processDefinition : list) {
-                repositoryService.setProcessDefinitionCategory(processDefinition.getId(), modelData.getCategory());
-                processDefinitionId = processDefinition.getId();
-            }
-            if (CollectionUtils.isEmpty(list)) {
-                processDefinitionId = "";
+            if (CollectionUtils.isNotEmpty(list)) {
+                for (ProcessDefinition processDefinition : list) {
+                    repositoryService.setProcessDefinitionCategory(processDefinition.getId(), modelData.getCategory());
+                    processDefinitionId = processDefinition.getId();
+                }
             }
         } catch (Exception e) {
             logger.error("设计模型图不正确，检查模型正确性 :{}", e);
