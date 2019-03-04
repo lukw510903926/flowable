@@ -28,8 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.pagehelper.PageHelper;
-
 @Service
 public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements IBizInfoService {
 
@@ -42,10 +40,10 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     private IVariableInstanceService variableInstanceService;
 
     @Autowired
-    private ISystemUserService roleService;
+    private IBizFileService bizFileService;
 
     @Autowired
-    private IBizFileService bizFileService;
+    private ISystemUserService userService;
 
     @Override
     public List<BizInfo> getBizByParentId(String parentId) {
@@ -159,31 +157,18 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     public PageInfo<BizInfo> findBizInfo(BizInfoVo bizInfoVo, PageInfo<BaseVo> page) {
 
         logger.info("工单查询 bizInfoVo : " + bizInfoVo);
-        Map<String, SystemUser> userCache = new HashMap<>();
         PageUtil.startPage(page);
         BizInfo bizInfo = new BizInfo();
         BeanUtils.copyProperties(bizInfoVo, bizInfo);
         List<BizInfo> list = this.select(bizInfo);
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(entity -> {
-                entity.setCreateUser(this.getUserNameCn(entity.getCreateUser(), userCache));
-                entity.setTaskAssignee(this.getUserNameCn(entity.getTaskAssignee(), userCache));
+                entity.setCreateUser(Optional.ofNullable(this.userService.getUserByUsername(entity.getCreateUser())).map(SystemUser::getName).orElse(entity.getCreateUser()));
+                if (StringUtils.isNotBlank(entity.getTaskAssignee())) {
+                    entity.setTaskAssignee(Optional.ofNullable(this.userService.getUserByUsername(entity.getTaskAssignee())).map(SystemUser::getName).orElse(entity.getTaskAssignee()));
+                }
             });
         }
-        userCache.clear();
         return new PageInfo<>(list);
-    }
-
-    private String getUserNameCn(String username, Map<String, SystemUser> userCache) {
-
-        SystemUser loginUser = userCache.get(username);
-        if (loginUser == null) {
-            loginUser = this.roleService.getUserByUsername(username);
-        }
-        if (loginUser != null) {
-            userCache.put(username, loginUser);
-            return loginUser.getName();
-        }
-        return username;
     }
 }

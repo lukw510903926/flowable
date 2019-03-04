@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.cache.annotation.EnableCaching;
 import tk.mybatis.spring.annotation.MapperScan;
 
 /**
@@ -15,6 +16,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @createTime : 2018年1月31日 : 下午5:27:16
  * @description :
  */
+@EnableCaching
 @SpringBootApplication
 @MapperScan(basePackages = "com.flowable.oa.core.dao")
 @ServletComponentScan("com.flowable.oa")
