@@ -15,6 +15,7 @@ import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -55,6 +56,7 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
     }
 
     @Override
+    @Cacheable(key = "#username", cacheNames = "user")
     public SystemUser getUserByUsername(String username) {
 
         if (StringUtils.isNotBlank(username)) {
@@ -66,6 +68,7 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
     }
 
     @Override
+    @Cacheable(key = "#systemRole.username", cacheNames = "role_users")
     public List<SystemUser> findUserByRole(SystemRole systemRole) {
 
         List<SystemRole> roles = this.systemRoleService.select(systemRole);
