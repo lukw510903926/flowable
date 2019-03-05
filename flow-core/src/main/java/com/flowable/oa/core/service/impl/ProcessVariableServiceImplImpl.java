@@ -50,7 +50,6 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
     public void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf) {
 
         if (oldPdf != null && newPdf != null) {
-            int version_ = newPdf.getVersion();
             Map<String, String> refMap = new HashMap<>();
             // 拷贝全局配置
             ProcessVariable example = new ProcessVariable();
@@ -61,7 +60,6 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
                 for (ProcessVariable valBean : processValBeans) {
                     ProcessVariable processVar = valBean.clone();
                     processVar.setProcessDefinitionId(newPdf.getId());
-                    processVar.setVersion(version_);
                     save(processVar);
                     refMap.put(valBean.getId(), processVar.getId());
                     if (StringUtils.isNotBlank(processVar.getRefVariable())) {

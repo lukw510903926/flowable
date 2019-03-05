@@ -15,6 +15,7 @@ import com.flowable.oa.core.service.*;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.*;
 import com.flowable.oa.core.util.exception.ServiceException;
+import com.flowable.oa.core.vo.BizFileVo;
 import com.flowable.oa.core.vo.BizLogVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -146,7 +147,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         TaskEntityImpl task = new TaskEntityImpl(); // 开始节点没有任务对象
         task.setId(Constants.TASK_START);
         task.setName((String) params.get("base.handleName"));
-        Map<String, List<BizFile>> fileMap = saveFile(multiValueMap, now, bizInfo, task);
+        Map<String, List<BizFileVo>> fileMap = saveFile(multiValueMap, now, bizInfo, task);
         //毕传附件的值处理
         fileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
         List<ProcessVariable> processValList = loadProcessVariables(bizInfo, Constants.TASK_START);
@@ -198,7 +199,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         List<ProcessVariable> processValList = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
         Task task = processDefinitionService.getTaskBean(bizInfoConf.getTaskId());
         String buttonId = (String) params.get("base.buttonId");
-        Map<String, List<BizFile>> bizFileMap = saveFile(fileMap, now, bizInfo, task);
+        Map<String, List<BizFileVo>> bizFileMap = saveFile(fileMap, now, bizInfo, task);
         bizFileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
         if (Constants.SIGN.equalsIgnoreCase(buttonId)) {
             sign(bizInfo, bizInfoConf);
@@ -332,14 +333,14 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * @param bizInfo
      * @param task
      */
-    private Map<String, List<BizFile>> saveFile(MultiValueMap<String, MultipartFile> fileMap, Date now, BizInfo bizInfo, Task task) {
+    private Map<String, List<BizFileVo>> saveFile(MultiValueMap<String, MultipartFile> fileMap, Date now, BizInfo bizInfo, Task task) {
 
-        Map<String, List<BizFile>> bizFileMap = new HashMap<>();
+        Map<String, List<BizFileVo>> bizFileMap = new HashMap<>();
         if (MapUtils.isNotEmpty(fileMap)) {
             for (String fileCatalog : fileMap.keySet()) {
                 List<MultipartFile> files = fileMap.get(fileCatalog);
                 if (CollectionUtils.isNotEmpty(files)) {
-                    List<BizFile> list = new ArrayList<>();
+                    List<BizFileVo> list = new ArrayList<>();
                     files.forEach(file -> {
                         BizFile bizFile = UploadFileUtil.saveFile(file, bizFileRootPath);
                         if (bizFile != null) {
@@ -350,7 +351,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                             bizFile.setTaskName(Optional.ofNullable(task).map(Task::getName).orElse(null));
                             bizFile.setBizId(bizInfo.getId());
                             bizFileService.addBizFile(bizFile);
-                            list.add(bizFile);
+                            BizFileVo fileVo = new BizFileVo();
+                            BeanUtils.copyProperties(bizFile,fileVo);
+                            list.add(fileVo);
                         }
                     });
                     bizFileMap.put(fileCatalog, list);

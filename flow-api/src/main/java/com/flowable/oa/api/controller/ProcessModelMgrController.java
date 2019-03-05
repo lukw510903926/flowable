@@ -55,12 +55,10 @@ public class ProcessModelMgrController {
         DataGrid<ProcessVariable> grid = new DataGrid<>();
         try {
             String processId = MapUtils.getString(params, "processId");
-            Integer version = MapUtils.getInteger(params, "version", 1);
             String taskId = MapUtils.getString(params, "taskId");
             ProcessVariable variable = new ProcessVariable();
             variable.setProcessDefinitionId(processId);
             variable.setTaskId(taskId);
-            variable.setVersion(version);
             PageInfo<ProcessVariable> processValBeans = this.processValService.findProcessVariables(variable, page);
             grid.setRows(processValBeans.getList());
             grid.setTotal(processValBeans.getTotal());
@@ -132,7 +130,6 @@ public class ProcessModelMgrController {
             processValAbs = new ProcessVariable();
         }
         processValAbs.setProcessDefinitionId((String) reqParams.get("processId"));
-        processValAbs.setVersion(Integer.parseInt((String) reqParams.get("version")));
         processValAbs.setName((String) reqParams.get("name"));
         processValAbs.setAlias((String) reqParams.get("alias"));
         processValAbs.setRefVariable((String) reqParams.get("refVariable"));
@@ -169,11 +166,9 @@ public class ProcessModelMgrController {
         List<Map<String, Object>> list = new ArrayList<>();
         try {
             String processId = (String) params.get("processId");
-            String version = (String) params.get("version");
             String taskId = (String) params.get("taskId");
             Set<String> groups = new HashSet<>();
             ProcessVariable processVariable = new ProcessVariable();
-            processVariable.setVersion(Integer.parseInt(version));
             processVariable.setProcessDefinitionId(processId);
             processVariable.setTaskId(taskId);
             List<ProcessVariable> processValBeans = processValService.select(processVariable);

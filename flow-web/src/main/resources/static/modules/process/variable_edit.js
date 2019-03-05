@@ -22,7 +22,7 @@ biz.variable.edit = {
     },
 
     loadVariableList: function () {
-        biz.variable.edit.preUrl = "/process/variable?processDefinitionId=" + processId + "&version=" + version + "&taskId=" + taskId;
+        biz.variable.edit.preUrl = "/process/variable?processDefinitionId=" + processId +  "&taskId=" + taskId;
         if (taskId) {
             $("#htitle").html("添加/编辑流程任务参数");
         }
@@ -96,7 +96,6 @@ biz.variable.edit = {
             }
         }
         var data = {
-            id: updateId,
             processDefinitionId: processId,
             version: version,
             taskId: taskId,
@@ -114,6 +113,9 @@ biz.variable.edit = {
             refVariable: $.trim($("#ud_refVariable").val()),
             refParam: $.trim($("#ud_refParam").val())
         };
+        if(!$.isEmptyObject(updateId)){
+            data['id']= updateId;
+        }
         biz.variable.edit.saveAjax(data);
     },
 

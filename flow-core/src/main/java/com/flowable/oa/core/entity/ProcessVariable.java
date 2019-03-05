@@ -38,19 +38,19 @@ public class ProcessVariable implements Serializable, Cloneable {
     /**
      * 流程模板ID
      */
-    @Column(name = "PROCESS_DEFINITION_ID", length = 64, nullable = false)
+    @Column(name = "PROCESS_DEFINITION_ID", length = 64)
     private String processDefinitionId;
 
     /**
      * 属性中文名
      */
-    @Column(nullable = false, length = 256, name = "NAME")
+    @Column(length = 256, name = "NAME")
     private String name;
 
     /**
      * 属性别名
      */
-    @Column(nullable = false, length = 256, name = "ALIAS")
+    @Column(length = 256, name = "ALIAS")
     private String alias;
 
     /**
@@ -63,7 +63,7 @@ public class ProcessVariable implements Serializable, Cloneable {
     /**
      * 是否必填
      */
-    @Column(nullable = false, name = "IS_REQUIRED")
+    @Column(name = "IS_REQUIRED")
     private Boolean isRequired;
 
     /**
@@ -107,12 +107,6 @@ public class ProcessVariable implements Serializable, Cloneable {
      */
     @Column(length = 256, name = "VIEW_PARAMS")
     private String viewParams;
-
-    /**
-     * 所属版本
-     */
-    @Column(nullable = false, name = "VERSION")
-    private Integer version;
 
     /**
      * 联动属性

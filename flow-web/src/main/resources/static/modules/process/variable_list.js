@@ -89,8 +89,7 @@ biz.variable.list = {
     },
 
     openVarEditPage: function (varId) {
-        window.open(path + "/process/variable/edit?processDefinitionId="
-            + processId + "&version=" + version + "&taskId=" + taskId + "&vId="
+        window.open(path + "/process/variable/edit?processDefinitionId=" + processId + "&taskId=" + taskId + "&vId="
             + varId, "_self");
     },
 
