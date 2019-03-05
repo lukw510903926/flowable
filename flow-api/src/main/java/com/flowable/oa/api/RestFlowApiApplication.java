@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import tk.mybatis.spring.annotation.MapperScan;
 
 /**
@@ -14,6 +15,7 @@ import tk.mybatis.spring.annotation.MapperScan;
  * @email 13507615840@163.com
  * @since 2019/2/22 22:00
  **/
+@EnableCaching
 @SpringBootApplication(scanBasePackages = "com.flowable.oa")
 @MapperScan(basePackages = "com.flowable.oa.core.dao")
 public class RestFlowApiApplication {
