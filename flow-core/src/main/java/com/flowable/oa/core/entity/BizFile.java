@@ -1,165 +1,74 @@
 package com.flowable.oa.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 附件表
+ *
+ * @author : lukewei
  * @project : tykj-oa
  * @createTime : 2018年1月31日 : 下午2:31:19
- * @author : lukewei
  * @description :
  */
+@Data
 @Entity
 @Table(name = "T_BIZ_FILE")
 public class BizFile implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, nullable = false, length = 64, name = "ID")
-	private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, length = 64, name = "ID")
+    private String id;
 
-	@Column(name = "BIZ_ID")
-	private String bizId;
-	
-	@Column(length = 512, name = "TASK_NAME")
-	private String taskName;
-	
-	@Column(length=64,name = "TASK_ID")
-	private String taskId;
+    @Column(name = "BIZ_ID")
+    private String bizId;
 
-	@Column(nullable = false, length = 256, name = "NAME")
-	private String name;
+    @Column(length = 512, name = "TASK_NAME")
+    private String taskName;
 
-	@Column(nullable = false, length = 256, name = "CREATE_USER")
-	private String createUser;
+    @Column(length = 64, name = "TASK_ID")
+    private String taskId;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATE_TIME")
-	private Date createDate;
+    @Column(length = 256, name = "NAME")
+    private String name;
 
-	@Column(nullable = false, length = 512, name = "PATH")
-	private String path;
+    @Column(length = 256, name = "CREATE_USER")
+    private String createUser;
 
-	/**
-	 * 附件类型，FILE,IMAGE (标记为文件或图标)
-	 */
-	@Column(nullable = false, length = 64, name = "FILETYPE")
-	private String fileType;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATE_TIME")
+    private Date createDate;
 
-	/**
-	 * 附件分类
-	 */
-	@Column(nullable = false, length = 64, name = "FILECATALOG")
-	private String fileCatalog;
-	
-	@Column(length = 512, name = "DESCRIPTION")
-	private String description;
+    @Column(length = 512, name = "PATH")
+    private String path;
 
-	public BizFile() {
-	}
+    /**
+     * 附件类型，FILE,IMAGE (标记为文件或图标)
+     */
+    @Column(length = 64, name = "FILETYPE")
+    private String fileType;
 
-	public String getId() {
-		return id;
-	}
+    /**
+     * 附件分类
+     */
+    @Column(length = 64, name = "FILECATALOG")
+    private String fileCatalog;
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getBizId() {
-		return bizId;
-	}
-
-	public void setBizId(String bizId) {
-		this.bizId = bizId;
-	}
-
-	public String getTaskName() {
-		return taskName;
-	}
-
-	public void setTaskName(String taskName) {
-		this.taskName = taskName;
-	}
-	
-	public String getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getCreateUser() {
-		return createUser;
-	}
-
-	public void setCreateUser(String createUser) {
-		this.createUser = createUser;
-	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getFileType() {
-		return fileType;
-	}
-
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public BizFile clone() {
-		BizFile bizFile = null;
-		try {
-			bizFile = (BizFile) super.clone();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return bizFile;
-	}
-
-	public String getFileCatalog() {
-		return fileCatalog;
-	}
-
-	public void setFileCatalog(String fileCatalog) {
-		this.fileCatalog = fileCatalog;
-	}
-
+    public BizFile clone() {
+        BizFile bizFile = null;
+        try {
+            bizFile = (BizFile) super.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bizFile;
+    }
 }

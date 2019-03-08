@@ -1,6 +1,8 @@
 package com.flowable.oa.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -13,6 +15,7 @@ import java.util.Date;
  * com.eastcom.esflow.bean
  * @email lukw@eastcom-sw.com
  */
+@Data
 @Entity
 @Table(name="T_BIZ_COUNTER_USER")
 public class BizCounterUser implements Serializable{
@@ -43,60 +46,4 @@ public class BizCounterUser implements Serializable{
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createTime = new Date();
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDeptmentName() {
-		return deptmentName;
-	}
-
-	public void setDeptmentName(String deptmentName) {
-		this.deptmentName = deptmentName;
-	}
-
-	public String getBizId() {
-		return bizId;
-	}
-
-	public void setBizId(String bizId) {
-		this.bizId = bizId;
-	}
-
-	public String getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
 }

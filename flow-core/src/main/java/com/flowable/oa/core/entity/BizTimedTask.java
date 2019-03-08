@@ -1,5 +1,7 @@
 package com.flowable.oa.core.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -17,6 +19,7 @@ import javax.persistence.Table;
  * @author : lukewei
  * @description :
  */
+@Data
 @Entity
 @Table(name="T_TIMED_TASK")
 public class BizTimedTask implements Serializable{
@@ -40,7 +43,7 @@ public class BizTimedTask implements Serializable{
 	@Column(name="BUTTON_ID", length = 32)
 	private String buttonId;
 	
-	@Column(nullable = true, length = 64, name = "TASK_ID")
+	@Column(length = 64, name = "TASK_ID")
 	private String taskId;
 	
 	@Column(name="CREATE_TIME")
@@ -49,67 +52,4 @@ public class BizTimedTask implements Serializable{
 	@Column(name="END_TIME")
 	private String endTime ;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public String getBizId() {
-		return bizId;
-	}
-
-	public void setBizId(String bizId) {
-		this.bizId = bizId;
-	}
-
-	public String getTaskName() {
-		return taskName;
-	}
-
-	public void setTaskName(String taskName) {
-		this.taskName = taskName;
-	}
-
-	public String getTaskDefKey() {
-		return taskDefKey;
-	}
-
-	public void setTaskDefKey(String taskDefKey) {
-		this.taskDefKey = taskDefKey;
-	}
-	
-	public String getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-
-	public String getButtonId() {
-		return buttonId;
-	}
-
-	public void setButtonId(String buttonId) {
-		this.buttonId = buttonId;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getEndTime() {
-		return endTime;
-	}
-
-	public void setEndTime(String endTime) {
-		this.endTime = endTime;
-	}
 }

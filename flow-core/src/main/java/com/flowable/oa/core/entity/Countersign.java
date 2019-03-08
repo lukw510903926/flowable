@@ -22,29 +22,32 @@ public class Countersign implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, nullable = false, length = 64, name = "ID")
+	@Column(unique = true, length = 64, name = "ID")
 	private String id;
 	
-	@Column(name="TASK_ID", length = 32, nullable = false)
+	@Column(name="TASK_ID", length = 32)
 	private String taskId;
 
-	@Column(name="BIZ_ID", length = 32, nullable = false)
+	@Column(name="BIZ_ID", length = 32)
 	private String bizId;
 	
-	@Column(name="PROCESSINSTANCE_ID", length = 10, nullable = false)
+	@Column(name="PROCESSINSTANCE_ID", length = 10)
 	private String processInstanceId;
 	
-	@Column(name="PROCESSDEFINITION_ID", length = 128, nullable = false)
+	@Column(name="PROCESSDEFINITION_ID", length = 128)
 	private String processDefinitionId;
 	
-	@Column(name="TASK_ASSIGNEE", length = 32, nullable = false)
+	@Column(name="TASK_ASSIGNEE", length = 32)
 	private String taskAssignee;
 	
-	@Column(name="RESULT_TYPE", length = 10, nullable = false)
+	@Column(name="RESULT_TYPE", length = 10)
 	private Integer resultType;
-	
-	@Column(name="IS_COMPLETE", length = 10, nullable = false)
-	private Integer isComplete = 0;//当前会签是否结束 0 没有,1 结束
+
+	/**
+	 * 当前会签是否结束 0 没有,1 结束
+	 */
+	@Column(name="IS_COMPLETE", length = 10)
+	private Integer isComplete = 0;
 	
 	@Column(name = "CREATE_TIME")
 	private Date createTime ;

@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 /**
  * 流程全局实例（存储具体填写的值）
@@ -22,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * @createTime : 2018年1月31日 : 下午2:34:09
  * @description :
  */
+@Data
 @Entity
 @Table(name = "T_BIZ_PROCESS_INSTANCE")
 public class ProcessVariableInstance implements Serializable, Cloneable {
@@ -33,7 +35,7 @@ public class ProcessVariableInstance implements Serializable, Cloneable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false, length = 64, name = "ID")
+    @Column(unique = true, length = 64, name = "ID")
     private String id;
 
     /**
@@ -53,13 +55,13 @@ public class ProcessVariableInstance implements Serializable, Cloneable {
     /**
      * 流程id
      */
-    @Column(name = "BIZ_ID", nullable = false, length = 64)
+    @Column(name = "BIZ_ID", length = 64)
     private String bizId;
 
     /**
      * 任务ID
      */
-    @Column(name = "TASK_ID", nullable = false, length = 32)
+    @Column(name = "TASK_ID", length = 32)
     private String taskId;
 
     /**
@@ -77,108 +79,20 @@ public class ProcessVariableInstance implements Serializable, Cloneable {
     /**
      * 参数名称
      */
-    @Column(name = "VARIABLE_NAME", nullable = false, length = 32)
+    @Column(name = "VARIABLE_NAME", length = 32)
     private String variableName;
 
-    @Column(name = "HANDLE_USER", nullable = false, length = 64)
+    @Column(name = "HANDLE_USER", length = 64)
     private String handleUser;
 
     /**
      * 参数别名
      */
-    @Column(name = "VARIABLE_ALIAS", nullable = false, length = 32)
+    @Column(name = "VARIABLE_ALIAS", length = 32)
     private String variableAlias;
 
     @Column(name = "VIEW_COMPONENT")
     private String viewComponent;
-
-    public String getId() {
-        return id;
-    }
-
-    public String getVariableId() {
-        return variableId;
-    }
-
-    public void setVariableId(String variableId) {
-        this.variableId = variableId;
-    }
-
-    public String getProcessInstanceId() {
-        return processInstanceId;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setProcessInstanceId(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getBizId() {
-        return bizId;
-    }
-
-    public void setBizId(String bizId) {
-        this.bizId = bizId;
-    }
-
-    public String getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
-
-    public String getVariableName() {
-        return variableName;
-    }
-
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-    public String getVariableAlias() {
-        return variableAlias;
-    }
-
-    public void setVariableAlias(String variableAlias) {
-        this.variableAlias = variableAlias;
-    }
-
-    public String getViewComponent() {
-        return viewComponent;
-    }
-
-    public void setViewComponent(String viewComponent) {
-        this.viewComponent = viewComponent;
-    }
-
-    public String getHandleUser() {
-        return handleUser;
-    }
-
-    public void setHandleUser(String handleUser) {
-        this.handleUser = handleUser;
-    }
 
     public ProcessVariableInstance clone() {
         ProcessVariableInstance instance = null;

@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 /**
  * 
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  * @author : lukewei
  * @description :
  */
+@Data
 @Entity
 @Table(name="T_BIZ_INFO_DELAY_TIME")
 public class ActBizInfoDelayTime implements Serializable{
@@ -52,61 +54,4 @@ public class ActBizInfoDelayTime implements Serializable{
 	
 	@Column(length = 32, name = "TASK_NAME")
 	private String taskName;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-
-	public String getBizId() {
-		return bizId;
-	}
-
-	public void setBizId(String bizId) {
-		this.bizId = bizId;
-	}
-
-	public Integer getApplyStatus() {
-		return applyStatus;
-	}
-
-	public void setApplyStatus(Integer applyStatus) {
-		this.applyStatus = applyStatus;
-	}
-
-	public Date getDelayTime() {
-		return delayTime;
-	}
-
-	public void setDelayTime(Date delayTime) {
-		this.delayTime = delayTime;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getTaskName() {
-		return taskName;
-	}
-
-	public void setTaskName(String taskName) {
-		this.taskName = taskName;
-	}
-	
 }

@@ -1,5 +1,7 @@
 package com.flowable.oa.core.entity.dict;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -12,6 +14,7 @@ import java.util.Date;
 * @email 13507615840@163.com
 * @date 2017年12月5日 下午9:21:58
  */
+@Data
 @Entity
 @Table(name = "T_DICT_TYPE")
 public class DictType implements Serializable{
@@ -52,52 +55,4 @@ public class DictType implements Serializable{
 	 */
 	@Column(name = "MODIFIER")
 	private String modifier;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getCreator() {
-		return creator;
-	}
-
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
-
-	public Date getModified() {
-		return modified;
-	}
-
-	public void setModified(Date modified) {
-		this.modified = modified;
-	}
-
-	public String getModifier() {
-		return modifier;
-	}
-
-	public void setModifier(String modifier) {
-		this.modifier = modifier;
-	}
 }

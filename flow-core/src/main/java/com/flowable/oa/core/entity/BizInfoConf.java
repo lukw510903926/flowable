@@ -15,118 +15,60 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 /**
+ * @author : lukewei
  * @project : tykj-oa
  * @createTime : 2018年1月31日 : 下午2:31:53
- * @author : lukewei
  * @description :
  */
+@Data
 @Entity
 @Table(name = "T_BIZ_INFO_CONF")
 public class BizInfoConf implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, nullable = false, length = 64, name = "ID")
-	private String id;
-	
-	@Column(name = "BIZ_ID")
-	private String bizId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, length = 64, name = "ID")
+    private String id;
 
-	@Column(nullable = true, length = 64, name = "TASK_ID")
-	private String taskId;
+    @Column(name = "BIZ_ID")
+    private String bizId;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATE_TIME")
-	private Date createTime = new Date();
+    @Column(length = 64, name = "TASK_ID")
+    private String taskId;
 
-	/**
-	 * 当前任务处理人
-	 */
-	@Column(nullable = true, length = 256, name = "TASK_ASSIGNEE")
-	private String taskAssignee;
-	
-	/**
-	 * 角色
-	 */
-	@Transient
-	private Set<String> roles;
-	
-	@Transient
-	private String loginUser;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATE_TIME")
+    private Date createTime = new Date();
 
-	public BizInfoConf() {
-		super();
-	}
-	
-	public String getId() {
-		return id;
-	}
+    /**
+     * 当前任务处理人
+     */
+    @Column(length = 256, name = "TASK_ASSIGNEE")
+    private String taskAssignee;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    /**
+     * 角色
+     */
+    @Transient
+    private Set<String> roles;
 
-	public String getTaskId() {
-		return taskId;
-	}
+    @Transient
+    private String loginUser;
 
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
+    public BizInfoConf clone() {
 
-	public String getTaskAssignee() {
-		return taskAssignee;
-	}
-
-	public void setTaskAssignee(String taskAssignee) {
-		this.taskAssignee = taskAssignee;
-	}
-
-	public String getBizId() {
-		return bizId;
-	}
-
-	public void setBizId(String bizId) {
-		this.bizId = bizId;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	
-	public Set<String> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<String> roles) {
-		this.roles = roles;
-	}
-	
-	public String getLoginUser() {
-		return loginUser;
-	}
-
-	public void setLoginUser(String loginUser) {
-		this.loginUser = loginUser;
-	}
-
-	public BizInfoConf clone() {
-
-		BizInfoConf bizInfoConf = null;
-		try {
-			bizInfoConf = (BizInfoConf) super.clone();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return bizInfoConf;
-	}
+        BizInfoConf bizInfoConf = null;
+        try {
+            bizInfoConf = (BizInfoConf) super.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bizInfoConf;
+    }
 }

@@ -14,10 +14,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "T_SYS_ROLE")
 public class SystemRole implements Serializable {
@@ -26,7 +26,7 @@ public class SystemRole implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, nullable = false, length = 64, name = "ID")
+	@Column(unique = true, length = 64, name = "ID")
 	private String id;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -42,54 +42,4 @@ public class SystemRole implements Serializable {
 
 	@Transient
 	private Set<SystemUser> users = new HashSet<>();
-
-	public SystemRole() {
-	}
-
-	public SystemRole(String nameEn, String nameCn) {
-		this.nameEn = nameEn;
-		this.nameCn = nameCn;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public String getNameEn() {
-		return nameEn;
-	}
-
-	public void setNameEn(String nameEn) {
-		this.nameEn = nameEn;
-	}
-
-	public String getNameCn() {
-		return nameCn;
-	}
-
-	public void setNameCn(String nameCn) {
-		this.nameCn = nameCn;
-	}
-
-	@JsonManagedReference
-	public Set<SystemUser> getUsers() {
-		return users;
-	}
-
-	public void setUsers(Set<SystemUser> users) {
-		this.users = users;
-	}
-
 }
