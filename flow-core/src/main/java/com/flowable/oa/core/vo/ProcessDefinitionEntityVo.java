@@ -16,13 +16,25 @@ import java.util.Date;
 public class ProcessDefinitionEntityVo implements Serializable {
 
     private static final long serialVersionUID = -3155734440294240387L;
-    
+
+    /**
+     * 流程ID
+     */
+    private String id;
+
+    /**
+     * 流程名称
+     */
     private String name;
 
-    private String description;
-
+    /**
+     * 流程标识
+     */
     private String key;
 
+    /**
+     * 流程版本
+     */
     private int version;
 
     private String category;
@@ -31,5 +43,8 @@ public class ProcessDefinitionEntityVo implements Serializable {
 
     private String resourceName;
 
+    /**
+     * 部署时间
+     */
     private Date deploymentTime;
 }
