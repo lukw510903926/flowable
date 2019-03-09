@@ -370,7 +370,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             if (handleUser.startsWith(Constants.BIZ_GROUP)) {
                 String group = handleUser.replace(Constants.BIZ_GROUP, "");
                 if (StringUtils.isNotBlank(group)) {
-                    List<SystemUser> systemUsers = sysUserService.findUserByRole(new SystemRole(null, group));
+                    SystemRole systemRole = new SystemRole();
+                    systemRole.setNameCn(group);
+                    List<SystemUser> systemUsers = sysUserService.findUserByRole(systemRole);
                     if (CollectionUtils.isNotEmpty(systemUsers)) {
                         systemUsers.stream().map(SystemUser::getUsername).filter(StringUtils::isNotBlank).forEach(list::add);
                     }

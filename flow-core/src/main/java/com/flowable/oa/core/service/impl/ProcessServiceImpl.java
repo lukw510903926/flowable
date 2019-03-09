@@ -302,7 +302,9 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                 continue;
             }
             // TODO 只处理了一个角色的情况 未处理有候选角色的情况
-            String username = this.systemUserService.findOnlyUser(new SystemRole(null, groups.get(0)));
+            SystemRole systemRole = new SystemRole();
+            systemRole.setNameCn(groups.get(0));
+            String username = this.systemUserService.findOnlyUser(systemRole);
             if (StringUtils.isNotEmpty(username)) {
                 taskService.claim(task.getId(), username);
             }
