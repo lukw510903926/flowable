@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.BizInfoConf;
+import com.flowable.oa.core.entity.BizLog;
 import com.flowable.oa.core.entity.ProcessVariable;
 import org.flowable.task.api.Task;
 import org.springframework.util.MultiValueMap;
@@ -72,7 +73,7 @@ public interface IProcessExecuteService {
      * @param now
      * @param params
      */
-    void writeBizLog(BizInfo bizInfo, Task task, Date now, Map<String, Object> params);
+    BizLog writeBizLog(BizInfo bizInfo, Task task, Date now, Map<String, Object> params);
 
     /**
      * 加载工单任务参数

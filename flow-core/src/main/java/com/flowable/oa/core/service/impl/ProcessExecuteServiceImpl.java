@@ -146,16 +146,15 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         this.bizInfoConfService.saveOrUpdate(bizInfoConf);
         TaskEntityImpl task = new TaskEntityImpl(); // 开始节点没有任务对象
         task.setId(Constants.TASK_START);
-        task.setName((String) params.get("base.handleName"));
+        task.setName(MapUtils.getString(params,"base.handleName"));
         Map<String, List<BizFileVo>> fileMap = saveFile(multiValueMap, now, bizInfo, task);
-        //毕传附件的值处理
+        //附件的值处理
         fileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
         List<ProcessVariable> processValList = loadProcessVariables(bizInfo, Constants.TASK_START);
         if (startProc) {
             startProc(bizInfo, bizInfoConf, params, now, task, processValList);
-        } else {
-            saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
         }
+        saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
         return bizInfo;
     }
 
@@ -169,8 +168,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         writeBizLog(bizInfo, task, now, params);
         updateBizTaskInfo(bizInfo, bizInfoConf);
         bizInfoService.saveOrUpdate(bizInfo);
-        // 保存流程字段
-        saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
         return bizInfo;
     }
 
@@ -186,7 +183,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     public BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
         logger.info("params :" + params);
-        String bizId = (String) params.get("base.bizId");
+        String bizId = MapUtils.getString(params, "base.bizId");
         BizInfo bizInfo = bizInfoService.selectByKey(bizId);
         if (null == bizInfo) {
             throw new ServiceException("工单不存在");
@@ -198,7 +195,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         Date now = new Date();
         List<ProcessVariable> processValList = loadProcessVariables(bizInfo, bizInfo.getTaskDefKey());
         Task task = processDefinitionService.getTaskBean(bizInfoConf.getTaskId());
-        String buttonId = (String) params.get("base.buttonId");
+        String buttonId = MapUtils.getString(params, "base.buttonId");
         Map<String, List<BizFileVo>> bizFileMap = saveFile(fileMap, now, bizInfo, task);
         bizFileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
         if (Constants.SIGN.equalsIgnoreCase(buttonId)) {
@@ -241,12 +238,10 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * @param params
      * @param now
      */
-    private void saveOrUpdateVars(BizInfo bizInfo, String taskId, List<ProcessVariable> processValList,
-                                  Map<String, Object> params, Date now) {
+    private void saveOrUpdateVars(BizInfo bizInfo, String taskId, List<ProcessVariable> processValList, Map<String, Object> params, Date now) {
 
         String procInstId = bizInfo.getProcessInstanceId();
-        Map<String, ProcessVariableInstance> currentVars = instanceService.getVarMap(bizInfo, taskId,
-                IVariableInstanceService.VariableLoadType.UPDATABLE);
+        Map<String, ProcessVariableInstance> currentVars = instanceService.getVarMap(bizInfo, taskId, IVariableInstanceService.VariableLoadType.UPDATABLE);
         for (ProcessVariable processVariable : processValList) {
             String proName = processVariable.getName().trim();
             String value = MapUtils.getString(params, proName);
@@ -346,13 +341,13 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                         if (bizFile != null) {
                             bizFile.setCreateDate(now);
                             bizFile.setFileCatalog(fileCatalog);
-                            bizFile.setCreateUser(WebUtil.getLoginUser().getUsername());
-                            bizFile.setTaskId(Optional.ofNullable(task).map(Task::getId).orElse(null));
-                            bizFile.setTaskName(Optional.ofNullable(task).map(Task::getName).orElse(null));
+                            bizFile.setCreateUser(WebUtil.getLoginUsername());
+                            bizFile.setTaskId(task.getId());
+                            bizFile.setTaskName(task.getName());
                             bizFile.setBizId(bizInfo.getId());
                             bizFileService.addBizFile(bizFile);
                             BizFileVo fileVo = new BizFileVo();
-                            BeanUtils.copyProperties(bizFile,fileVo);
+                            BeanUtils.copyProperties(bizFile, fileVo);
                             list.add(fileVo);
                         }
                     });
@@ -386,20 +381,21 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     }
 
     @Override
-    public void writeBizLog(BizInfo bizInfo, Task task, Date now, Map<String, Object> params) {
+    public BizLog writeBizLog(BizInfo bizInfo, Task task, Date now, Map<String, Object> params) {
 
         BizLog logBean = new BizLog();
         logBean.setCreateTime(now);
         logBean.setTaskID(task.getId());
         logBean.setTaskName(task.getName());
         logBean.setBizId(bizInfo.getId());
-        logBean.setHandleDescription((String) params.get("base.handleMessage"));
-        logBean.setHandleResult((String) params.get("base.handleResult"));
+        logBean.setHandleDescription(MapUtils.getString(params, "base.handleMessage"));
+        logBean.setHandleResult(MapUtils.getString(params, "base.handleResult"));
         LoginUser loginUser = WebUtil.getLoginUser();
         logBean.setHandleUser(loginUser.getUsername());
         logBean.setHandleUserName(loginUser.getName());
-        logBean.setHandleName((String) params.get("base.handleName"));
+        logBean.setHandleName(MapUtils.getString(params, "base.handleName"));
         logService.addBizLog(logBean);
+        return logBean;
     }
 
     /**
