@@ -8,7 +8,6 @@ import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.IProcessExecuteService;
 import com.flowable.oa.core.service.IProcessVariableService;
 import com.flowable.oa.core.util.*;
-import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.MapUtils;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -181,7 +181,7 @@ public class ProcessExecuteController {
                 response.setHeader("Content-disposition", "attachment; filename=" + fileName);
                 IOUtils.copy(inputStream, response.getOutputStream());
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("文件下载失败 : {}", e);
         }
     }

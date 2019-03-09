@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.flowable.oa.core.entity.BizInfo;
-import com.flowable.oa.core.entity.BizInfoConf;
 import com.flowable.oa.core.entity.BizLog;
 import com.flowable.oa.core.entity.ProcessVariable;
 import org.flowable.task.api.Task;
@@ -53,7 +52,7 @@ public interface IProcessExecuteService {
      *
      * @param bizInfo
      */
-    void updateBizTaskInfo(BizInfo bizInfo, BizInfoConf bizInfoConf);
+    void updateBizTaskInfo(BizInfo bizInfo);
 
     /**
      * 处理工单，新增跟审批

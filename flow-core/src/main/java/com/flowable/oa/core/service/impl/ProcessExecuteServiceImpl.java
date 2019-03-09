@@ -158,7 +158,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             // TODO任务创建时的自动签收
             this.processDefinitionService.autoClaim(instance.getId());
             writeBizLog(bizInfo, task, now, params);
-            updateBizTaskInfo(bizInfo, bizInfoConf);
+            updateBizTaskInfo(bizInfo);
             bizInfoService.saveOrUpdate(bizInfo);
         }
         saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
@@ -198,7 +198,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             Map<String, Object> variables = this.setVariables(bizInfo, params, processValList);
             processDefinitionService.completeTask(bizInfo, bizInfoConf.getTaskId(), variables);
             saveOrUpdateVars(bizInfo, bizInfoConf.getTaskId(), processValList, params, now);
-            updateBizTaskInfo(bizInfo, bizInfoConf);
+            updateBizTaskInfo(bizInfo);
         }
         bizInfoService.saveOrUpdate(bizInfo);
         writeBizLog(bizInfo, task, now, params);
@@ -267,50 +267,37 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     }
 
     @Override
-    public void updateBizTaskInfo(BizInfo bizInfo, BizInfoConf bizInfoConf) {
+    public void updateBizTaskInfo(BizInfo bizInfo) {
 
         String bizId = bizInfo.getId();
         List<Task> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
+        this.bizInfoConfService.deleteByBizId(bizId);
         // 如果nextTaskInfo返回null，标示流程已结束
         if (CollectionUtils.isEmpty(taskList)) {
-            this.bizInfoConfService.deleteByBizId(bizId);
             bizInfo.setStatus(Constants.BIZ_END);
             bizInfo.setTaskDefKey(Constants.BIZ_END);
         } else {
-            Task taskInfo = taskList.get(0);
-            bizInfoConf.setTaskId(taskInfo.getId());
-            StringBuilder taskIds = new StringBuilder(taskInfo.getId() + ",");
-            StringBuilder taskAssignee = new StringBuilder();
-            if (StringUtils.isNotBlank(taskInfo.getAssignee())) {
-                taskAssignee.append(taskInfo.getAssignee()).append(",");
-                bizInfoConf.setTaskAssignee(taskInfo.getAssignee());
-            } else {
-                bizInfoConf.setTaskAssignee(null);
-            }
-            bizInfoConf.setBizId(bizId);
-            this.bizInfoConfService.saveOrUpdate(bizInfoConf);
-            if (taskList.size() > 1) {
-                taskList.forEach(entity -> {
-                    BizInfoConf bizConf = new BizInfoConf();
-                    bizConf.setTaskId(entity.getId());
-                    bizConf.setTaskAssignee(entity.getAssignee());
-                    bizConf.setBizId(bizId);
-                    this.bizInfoConfService.saveOrUpdate(bizConf);
-                    taskIds.append(entity.getId()).append(",");
-                    if (StringUtils.isNotBlank(entity.getAssignee())) {
-                        taskAssignee.append(entity.getAssignee()).append(",");
-                    }
-                    bizInfoConf.setBizId(bizId);
-                    this.bizInfoConfService.saveOrUpdate(bizConf);
-                });
-            }
-            bizInfo.setTaskId(taskIds.substring(0, taskIds.lastIndexOf(",")));
-            String assignee = taskAssignee.toString();
-            assignee = StringUtils.isBlank(assignee) ? null : assignee.substring(0, assignee.lastIndexOf(","));
-            bizInfo.setStatus(taskInfo.getName());
-            bizInfo.setTaskName(taskInfo.getName());
-            bizInfo.setTaskDefKey(taskInfo.getTaskDefinitionKey());
-            bizInfo.setTaskAssignee(assignee);
+            List<String> taskIds = new ArrayList<>();
+            List<String> taskAssignee = new ArrayList<>();
+            taskList.forEach(task -> {
+                BizInfoConf bizInfoConf = new BizInfoConf();
+                bizInfoConf.setBizId(bizId);
+                bizInfoConf.setCreateTime(new Date());
+                taskIds.add(task.getId());
+                if(StringUtils.isNotBlank(task.getAssignee())){
+                    taskAssignee.add(task.getAssignee());
+                }
+                bizInfoConf.setTaskId(task.getId());
+                bizInfoConf.setTaskAssignee(task.getAssignee());
+                bizInfoConf.setBizId(bizId);
+                this.bizInfoConfService.saveOrUpdate(bizInfoConf);
+            });
+            Task task = taskList.get(0);
+            bizInfo.setTaskId(StringUtils.join(taskIds.toArray(),","));
+            bizInfo.setStatus(task.getName());
+            bizInfo.setTaskName(task.getName());
+            bizInfo.setTaskDefKey(task.getTaskDefinitionKey());
+            bizInfo.setTaskAssignee(StringUtils.join(taskAssignee.toArray(),","));
         }
     }
 
