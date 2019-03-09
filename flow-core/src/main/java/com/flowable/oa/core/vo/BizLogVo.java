@@ -1,7 +1,6 @@
 package com.flowable.oa.core.vo;
 
 import com.flowable.oa.core.entity.BizFile;
-import com.flowable.oa.core.entity.BizLog;
 import com.flowable.oa.core.entity.ProcessVariableInstance;
 import lombok.Data;
 import lombok.ToString;
@@ -23,6 +22,8 @@ import java.util.List;
 @ToString
 @Accessors(chain = true)
 public class BizLogVo implements Serializable {
+
+    private static final long serialVersionUID = 8643477626916901496L;
 
     private String id;
 
@@ -47,8 +48,6 @@ public class BizLogVo implements Serializable {
     private String handleResult;
 
     private String handleName;
-
-    private BizLog bizLog;
 
     private List<ProcessVariableInstance> variableInstances;
 
