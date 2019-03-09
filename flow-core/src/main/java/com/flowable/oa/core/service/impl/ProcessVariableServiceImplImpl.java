@@ -47,6 +47,7 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
     }
 
     @Override
+    @Transactional
     public void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf) {
 
         if (oldPdf != null && newPdf != null) {

@@ -492,14 +492,14 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                 return taskList;
             }
             for (Task task : tasks) {
-                StringBuilder groups = new StringBuilder();
+                List<String> groups = new ArrayList<>();
                 Task taskCopy = new TaskEntityImpl();
                 ReflectionUtils.copyBean(task, taskCopy);
                 if (StringUtils.isEmpty(task.getAssignee())) {
                     List<String> list = getTaskCandidateGroup(task);
-                    list.stream().filter(StringUtils::isNotBlank).forEach(group -> groups.append(group).append(","));
+                    list.stream().filter(StringUtils::isNotBlank).forEach(groups::add);
                     if (StringUtils.isNotBlank(groups.toString())) {
-                        taskCopy.setAssignee(Constants.BIZ_GROUP + groups.deleteCharAt(groups.lastIndexOf(",")));
+                        taskCopy.setAssignee(Constants.BIZ_GROUP + StringUtils.join(groups.toArray(),","));
                     }
                 }
                 taskList.add(taskCopy);
