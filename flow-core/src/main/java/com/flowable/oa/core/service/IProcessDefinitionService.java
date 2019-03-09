@@ -87,12 +87,11 @@ public interface IProcessDefinitionService {
      * 转派任务
      *
      * @param taskID
-     * @param loginUser
      * @param toAssignment   需要转派的人或组
      * @param assignmentType 标记为人或组取值为：group|user
      * @return @
      */
-    boolean assignmentTask(String taskID, LoginUser loginUser, String toAssignment, String assignmentType);
+    boolean assignmentTask(String taskID, String toAssignment, String assignmentType);
 
     /**
      * 获取下一步正在处理的任务信息,如果返回null标示流程已结束

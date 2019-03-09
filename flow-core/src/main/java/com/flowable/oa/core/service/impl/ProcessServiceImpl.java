@@ -421,19 +421,18 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      * 转派任务
      *
      * @param taskID
-     * @param loginUser
      * @param toAssignment
      * @param assignmentType
      * @return @
      */
     @Override
-    public boolean assignmentTask(String taskID, LoginUser loginUser, String toAssignment, String assignmentType) {
+    public boolean assignmentTask(String taskID,String toAssignment, String assignmentType) {
 
         if (!("group".equalsIgnoreCase(assignmentType) || "user".equalsIgnoreCase(assignmentType))) {
             throw new ServiceException("参数错误");
         }
         Task task = getTaskBean(taskID);
-        if (!loginUser.getUsername().equals(task.getAssignee())) {
+        if (!WebUtil.getLoginUsername().equals(task.getAssignee())) {
             throw new ServiceException("没有权限处理该任务");
         }
         return assignmentTask(task, toAssignment);
