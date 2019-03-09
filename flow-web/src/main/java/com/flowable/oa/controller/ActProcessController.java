@@ -3,16 +3,14 @@ package com.flowable.oa.controller;
 import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.act.ActProcessService;
 import com.flowable.oa.core.util.DataGrid;
-import com.flowable.oa.core.util.ReflectionUtils;
 import com.flowable.oa.core.util.RestResult;
+import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.engine.impl.persistence.entity.DeploymentEntity;
-import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +19,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,26 +50,17 @@ public class ActProcessController {
      */
     @ResponseBody
     @RequestMapping("list")
-    public DataGrid<Map<String, Object>> processList(@RequestParam Map<String, Object> params) {
+    public DataGrid<ProcessDefinitionEntityVo> processList(@RequestParam Map<String, Object> params) {
 
-        DataGrid<Map<String, Object>> grid = new DataGrid<>();
+        DataGrid<ProcessDefinitionEntityVo> grid = new DataGrid<>();
         Integer pageNum = MapUtils.getInteger(params, "page", 1);
         Integer rows = MapUtils.getInteger(params, "rows", 20);
-        List<Map<String, Object>> result = new ArrayList<>();
-        List<Object[]> tempResult = actProcessService.processList();
+        List<ProcessDefinitionEntityVo> tempResult = actProcessService.processList();
         if (CollectionUtils.isNotEmpty(tempResult)) {
-            List<Object[]> list = tempResult.stream().skip((pageNum - 1) * rows).limit(rows).collect(Collectors.toList());
-            for (Object[] objects : list) {
-                ProcessDefinitionEntityImpl process = (ProcessDefinitionEntityImpl) objects[0];
-                DeploymentEntity deployment = (DeploymentEntity) objects[1];
-                Map<String, Object> item = ReflectionUtils.beanToMap(process);
-                item.put("deploymentTime", deployment.getDeploymentTime());
-                result.add(item);
-            }
-            grid.setRows(result);
+            List<ProcessDefinitionEntityVo> list = tempResult.stream().skip((pageNum - 1) * rows).limit(rows).collect(Collectors.toList());
+            grid.setRows(list);
             grid.setTotal(tempResult.size());
         }
-
         return grid;
     }
 

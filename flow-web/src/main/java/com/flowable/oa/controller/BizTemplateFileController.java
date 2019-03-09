@@ -4,11 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.core.entity.BizTemplateFile;
 import com.flowable.oa.core.service.BizTemplateFileService;
 import com.flowable.oa.core.service.act.ActProcessService;
-import com.flowable.oa.core.util.ReflectionUtils;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.util.WebUtil;
+import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,14 +58,8 @@ public class BizTemplateFileController {
     @RequestMapping("/index")
     public String index(Model model) {
 
-        List<Object[]> list = actProcessService.processList();
-        if (CollectionUtils.isNotEmpty(list)) {
-            List<Map<String, Object>> result = new ArrayList<>();
-            for (Object[] objects : list) {
-                result.add(ReflectionUtils.beanToMap(objects[0]));
-                model.addAttribute("processList", result);
-            }
-        }
+        List<ProcessDefinitionEntityVo> tempResult = actProcessService.processList();
+        model.addAttribute("processList", tempResult);
         return "modules/template/bizTemplateFileList";
     }
 

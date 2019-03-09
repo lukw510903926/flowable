@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import com.flowable.oa.core.util.exception.ServiceException;
+import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -27,6 +28,7 @@ import org.flowable.editor.constants.ModelDataJsonConstants;
 import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
+import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.Model;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -35,6 +37,7 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.runtime.ProcessInstanceQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,14 +96,18 @@ public class ActProcessService {
     /**
      * 流程定义列表
      */
-    public List<Object[]> processList() {
+    public List<ProcessDefinitionEntityVo> processList() {
 
         List<ProcessDefinition> processDefinitionList = this.findProcessDefinition(null);
-        List<Object[]> result = new ArrayList<>();
+        List<ProcessDefinitionEntityVo> result = new ArrayList<>();
         for (ProcessDefinition processDefinition : processDefinitionList) {
-            String deploymentId = processDefinition.getDeploymentId();
+            ProcessDefinitionEntityImpl definitionEntity = (ProcessDefinitionEntityImpl)processDefinition;
+            String deploymentId = definitionEntity.getDeploymentId();
+            ProcessDefinitionEntityVo definitionEntityVo = new ProcessDefinitionEntityVo();
             Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
-            result.add(new Object[]{processDefinition, deployment});
+            BeanUtils.copyProperties(definitionEntity,definitionEntityVo);
+            definitionEntityVo.setDeploymentTime(deployment.getDeploymentTime());
+            result.add(definitionEntityVo);
         }
         return result;
     }
