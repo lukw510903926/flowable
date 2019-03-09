@@ -146,28 +146,22 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         this.bizInfoConfService.saveOrUpdate(bizInfoConf);
         TaskEntityImpl task = new TaskEntityImpl(); // 开始节点没有任务对象
         task.setId(Constants.TASK_START);
-        task.setName(MapUtils.getString(params,"base.handleName"));
+        task.setName(MapUtils.getString(params, "base.handleName"));
         Map<String, List<BizFileVo>> fileMap = saveFile(multiValueMap, now, bizInfo, task);
         //附件的值处理
         fileMap.forEach((key, value) -> params.put(key, JSONObject.toJSONString(value)));
         List<ProcessVariable> processValList = loadProcessVariables(bizInfo, Constants.TASK_START);
         if (startProc) {
-            startProc(bizInfo, bizInfoConf, params, now, task, processValList);
+            Map<String, Object> variables = setVariables(bizInfo, params, processValList);
+            ProcessInstance instance = processDefinitionService.newProcessInstance(procDefId, variables);
+            bizInfo.setProcessInstanceId(instance.getId());
+            // TODO任务创建时的自动签收
+            this.processDefinitionService.autoClaim(instance.getId());
+            writeBizLog(bizInfo, task, now, params);
+            updateBizTaskInfo(bizInfo, bizInfoConf);
+            bizInfoService.saveOrUpdate(bizInfo);
         }
         saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
-        return bizInfo;
-    }
-
-    private BizInfo startProc(BizInfo bizInfo, BizInfoConf bizInfoConf, Map<String, Object> params, Date now, Task task, List<ProcessVariable> processValList) {
-
-        String procDefId = bizInfo.getProcessDefinitionId();
-        Map<String, Object> variables = setVariables(bizInfo, params, processValList);
-        ProcessInstance instance = processDefinitionService.newProcessInstance(procDefId, variables);
-        bizInfo.setProcessInstanceId(instance.getId());
-        this.processDefinitionService.autoClaim(instance.getId());// TODO任务创建时的自动签收
-        writeBizLog(bizInfo, task, now, params);
-        updateBizTaskInfo(bizInfo, bizInfoConf);
-        bizInfoService.saveOrUpdate(bizInfo);
         return bizInfo;
     }
 
