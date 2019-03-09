@@ -14,13 +14,13 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 import org.flowable.task.service.impl.persistence.entity.TaskEntityManager;
 
 /**
- * 节点跳转指令
- * 
- * @project : esflow-core
- * @createTime : 2017年12月22日 : 下午2:10:09
- * @author : lukewei
- * @description :
- */
+ * <p>节点跳转指令
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/9 18:45
+ **/
 public class CommonJumpTaskCmd implements Command<Void> {
 
 	/**
