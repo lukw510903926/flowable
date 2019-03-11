@@ -123,7 +123,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         String tempBizId = MapUtils.getString(params, "tempBizId");
         Date now = new Date();
         BizInfo bizInfo;
-        BizInfoConf bizInfoConf;
+        BizInfoConf bizInfoConf = null;
         String username = WebUtil.getLoginUsername();
         if (StringUtils.isNotBlank(tempBizId)) {
             bizInfo = bizInfoService.selectByKey(tempBizId);
@@ -131,6 +131,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         } else {
             bizInfo = new BizInfo();
             bizInfo.setWorkNum(WorkOrderUtil.builWorkNumber(procDefId));
+        }
+        if (bizInfoConf == null) {
             bizInfoConf = new BizInfoConf();
             bizInfoConf.setTaskAssignee(username);
         }
@@ -284,7 +286,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 bizInfoConf.setBizId(bizId);
                 bizInfoConf.setCreateTime(new Date());
                 taskIds.add(task.getId());
-                if(StringUtils.isNotBlank(task.getAssignee())){
+                if (StringUtils.isNotBlank(task.getAssignee())) {
                     taskAssignee.add(task.getAssignee());
                 }
                 bizInfoConf.setTaskId(task.getId());
@@ -293,11 +295,11 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 this.bizInfoConfService.saveOrUpdate(bizInfoConf);
             });
             Task task = taskList.get(0);
-            bizInfo.setTaskId(StringUtils.join(taskIds.toArray(),","));
+            bizInfo.setTaskId(StringUtils.join(taskIds.toArray(), ","));
             bizInfo.setStatus(task.getName());
             bizInfo.setTaskName(task.getName());
             bizInfo.setTaskDefKey(task.getTaskDefinitionKey());
-            bizInfo.setTaskAssignee(StringUtils.join(taskAssignee.toArray(),","));
+            bizInfo.setTaskAssignee(StringUtils.join(taskAssignee.toArray(), ","));
         }
     }
 
