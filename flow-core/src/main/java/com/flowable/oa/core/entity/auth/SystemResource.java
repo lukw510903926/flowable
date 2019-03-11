@@ -35,7 +35,7 @@ public class SystemResource implements Serializable {
     /**
      * 资源名称
      */
-    @Column(name = "NAME", length = 64)
+    @Column(name = "NAME")
     private String name;
 
     /**

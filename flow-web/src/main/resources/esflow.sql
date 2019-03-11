@@ -1228,84 +1228,6 @@ CREATE TABLE `act_ru_variable` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Records of act_ru_variable
--- ----------------------------
-INSERT INTO `act_ru_variable` VALUES ('15001', '1', 'string', 'SYS_CURRENT_PID', '7501', '7501', null, null, null, null, null, null, null, '7501', null);
-INSERT INTO `act_ru_variable` VALUES ('15002', '1', 'string', 'SYS_CURRENT_WORKID', '7501', '7501', null, null, null, null, null, null, null, '16', null);
-INSERT INTO `act_ru_variable` VALUES ('15003', '1', 'string', 'SYS_CURRENT_WORKNUMBER', '7501', '7501', null, null, null, null, null, null, null, 'OTHER190219-38955', null);
-INSERT INTO `act_ru_variable` VALUES ('15004', '3', 'string', 'SYS_CURRENT_TASKID', '7501', '7501', null, null, null, null, null, null, null, '17503', null);
-INSERT INTO `act_ru_variable` VALUES ('22502', '1', 'string', 'SYS_BIZ_CREATEUSER', '22501', '22501', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('22503', '1', 'null', 'SYS_FORMTYPE', '22501', '22501', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('22504', '1', 'string', 'SYS_BIZ_ID', '22501', '22501', null, null, null, null, null, null, null, '18', null);
-INSERT INTO `act_ru_variable` VALUES ('22505', '1', 'string', 'handleUser', '22501', '22501', null, null, null, null, null, null, null, '', null);
-INSERT INTO `act_ru_variable` VALUES ('22507', '1', 'serializable', '_members', '22501', '22501', null, null, null, null, '22506', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('22509', '1', 'string', 'SYS_BUTTON_VALUE', '22501', '22501', null, null, null, null, null, null, null, 'submit', null);
-INSERT INTO `act_ru_variable` VALUES ('22515', '1', 'string', 'SYS_BIZ_CREATEUSER', '22514', '22514', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('22516', '1', 'null', 'SYS_FORMTYPE', '22514', '22514', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('22517', '1', 'string', 'SYS_BIZ_ID', '22514', '22514', null, null, null, null, null, null, null, '19', null);
-INSERT INTO `act_ru_variable` VALUES ('22518', '1', 'string', 'handleUser', '22514', '22514', null, null, null, null, null, null, null, '', null);
-INSERT INTO `act_ru_variable` VALUES ('22520', '1', 'serializable', '_members', '22514', '22514', null, null, null, null, '22519', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('22522', '1', 'string', 'SYS_BUTTON_VALUE', '22514', '22514', null, null, null, null, null, null, null, 'submit', null);
-INSERT INTO `act_ru_variable` VALUES ('22531', '1', 'string', 'SYS_BIZ_CREATEUSER', '22530', '22530', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('22532', '1', 'null', 'SYS_FORMTYPE', '22530', '22530', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('22533', '1', 'string', 'SYS_BIZ_ID', '22530', '22530', null, null, null, null, null, null, null, '20', null);
-INSERT INTO `act_ru_variable` VALUES ('22534', '1', 'string', 'handleUser', '22530', '22530', null, null, null, null, null, null, null, '', null);
-INSERT INTO `act_ru_variable` VALUES ('22536', '1', 'serializable', '_members', '22530', '22530', null, null, null, null, '22535', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('22538', '1', 'string', 'SYS_BUTTON_VALUE', '22530', '22530', null, null, null, null, null, null, null, 'submit', null);
-INSERT INTO `act_ru_variable` VALUES ('22544', '1', 'string', 'SYS_BIZ_CREATEUSER', '22543', '22543', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('22545', '1', 'null', 'SYS_FORMTYPE', '22543', '22543', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('22546', '1', 'string', 'SYS_BIZ_ID', '22543', '22543', null, null, null, null, null, null, null, '21', null);
-INSERT INTO `act_ru_variable` VALUES ('22547', '1', 'string', 'handleUser', '22543', '22543', null, null, null, null, null, null, null, '', null);
-INSERT INTO `act_ru_variable` VALUES ('22549', '1', 'serializable', '_members', '22543', '22543', null, null, null, null, '22548', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('22551', '1', 'string', 'SYS_BUTTON_VALUE', '22543', '22543', null, null, null, null, null, null, null, 'submit', null);
-INSERT INTO `act_ru_variable` VALUES ('5002', '1', 'string', 'SYS_BIZ_CREATEUSER', '5001', '5001', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('5003', '1', 'null', 'SYS_FORMTYPE', '5001', '5001', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5004', '1', 'string', 'SYS_BIZ_ID', '5001', '5001', null, null, null, null, null, null, null, '10', null);
-INSERT INTO `act_ru_variable` VALUES ('5005', '1', 'string', 'handleUser', '5001', '5001', null, null, null, null, null, null, null, '东单详情', null);
-INSERT INTO `act_ru_variable` VALUES ('5007', '1', 'serializable', '_members', '5001', '5001', null, null, null, null, '5006', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5009', '1', 'string', 'SYS_BUTTON_VALUE', '5001', '5001', null, null, null, null, null, null, null, 'submit', null);
-INSERT INTO `act_ru_variable` VALUES ('5015', '1', 'string', 'SYS_BIZ_CREATEUSER', '5014', '5014', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('5016', '1', 'null', 'SYS_FORMTYPE', '5014', '5014', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5017', '1', 'string', 'SYS_BIZ_ID', '5014', '5014', null, null, null, null, null, null, null, '11', null);
-INSERT INTO `act_ru_variable` VALUES ('5018', '1', 'string', 'handleUser', '5014', '5014', null, null, null, null, null, null, null, '', null);
-INSERT INTO `act_ru_variable` VALUES ('5020', '1', 'serializable', '_members', '5014', '5014', null, null, null, null, '5019', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5022', '1', 'string', 'SYS_BUTTON_VALUE', '5014', '5014', null, null, null, null, null, null, null, 'submit', null);
-INSERT INTO `act_ru_variable` VALUES ('5028', '1', 'string', 'SYS_BIZ_CREATEUSER', '5027', '5027', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('5029', '1', 'null', 'SYS_FORMTYPE', '5027', '5027', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5030', '1', 'string', 'SYS_BIZ_ID', '5027', '5027', null, null, null, null, null, null, null, '12', null);
-INSERT INTO `act_ru_variable` VALUES ('5031', '1', 'string', 'handleUser', '5027', '5027', null, null, null, null, null, null, null, '', null);
-INSERT INTO `act_ru_variable` VALUES ('5033', '1', 'serializable', '_members', '5027', '5027', null, null, null, null, '5032', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5035', '1', 'string', 'SYS_BUTTON_VALUE', '5027', '5027', null, null, null, null, null, null, null, 'submit', null);
-INSERT INTO `act_ru_variable` VALUES ('5041', '1', 'string', 'SYS_BIZ_CREATEUSER', '5040', '5040', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('5042', '1', 'null', 'SYS_FORMTYPE', '5040', '5040', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5043', '1', 'string', 'SYS_BIZ_ID', '5040', '5040', null, null, null, null, null, null, null, '13', null);
-INSERT INTO `act_ru_variable` VALUES ('5044', '1', 'string', 'handleUser', '5040', '5040', null, null, null, null, null, null, null, '', null);
-INSERT INTO `act_ru_variable` VALUES ('5046', '1', 'serializable', '_members', '5040', '5040', null, null, null, null, '5045', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5048', '1', 'string', 'SYS_BUTTON_VALUE', '5040', '5040', null, null, null, null, null, null, null, 'submit', null);
-INSERT INTO `act_ru_variable` VALUES ('5054', '1', 'string', 'SYS_BIZ_CREATEUSER', '5053', '5053', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('5055', '1', 'null', 'SYS_FORMTYPE', '5053', '5053', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5056', '1', 'string', 'SYS_BIZ_ID', '5053', '5053', null, null, null, null, null, null, null, '14', null);
-INSERT INTO `act_ru_variable` VALUES ('5057', '1', 'string', 'handleUser', '5053', '5053', null, null, null, null, null, null, null, '', null);
-INSERT INTO `act_ru_variable` VALUES ('5059', '1', 'serializable', '_members', '5053', '5053', null, null, null, null, '5058', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5061', '2', 'string', 'SYS_BUTTON_VALUE', '5053', '5053', null, null, null, null, null, null, null, 'serviceRecovery', null);
-INSERT INTO `act_ru_variable` VALUES ('5069', '1', 'string', 'SYS_CURRENT_PID', '5053', '5053', null, null, null, null, null, null, null, '5053', null);
-INSERT INTO `act_ru_variable` VALUES ('5070', '1', 'string', 'SYS_CURRENT_WORKID', '5053', '5053', null, null, null, null, null, null, null, '14', null);
-INSERT INTO `act_ru_variable` VALUES ('5071', '1', 'string', 'SYS_CURRENT_WORKNUMBER', '5053', '5053', null, null, null, null, null, null, null, 'OTHER190218-89862', null);
-INSERT INTO `act_ru_variable` VALUES ('5072', '1', 'string', 'SYS_CURRENT_TASKID', '5053', '5053', null, null, null, null, null, null, null, '5065', null);
-INSERT INTO `act_ru_variable` VALUES ('5080', '1', 'string', 'SYS_BIZ_CREATEUSER', '5079', '5079', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('5081', '1', 'null', 'SYS_FORMTYPE', '5079', '5079', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5082', '1', 'string', 'SYS_BIZ_ID', '5079', '5079', null, null, null, null, null, null, null, '15', null);
-INSERT INTO `act_ru_variable` VALUES ('5083', '1', 'string', 'handleUser', '5079', '5079', null, null, null, null, null, null, null, '14', null);
-INSERT INTO `act_ru_variable` VALUES ('5085', '1', 'serializable', '_members', '5079', '5079', null, null, null, null, '5084', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('5087', '1', 'string', 'SYS_BUTTON_VALUE', '5079', '5079', null, null, null, null, null, null, null, 'submit', null);
-INSERT INTO `act_ru_variable` VALUES ('7502', '1', 'string', 'SYS_BIZ_CREATEUSER', '7501', '7501', null, null, null, null, null, null, null, 'admin', null);
-INSERT INTO `act_ru_variable` VALUES ('7503', '1', 'null', 'SYS_FORMTYPE', '7501', '7501', null, null, null, null, null, null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('7504', '1', 'string', 'SYS_BIZ_ID', '7501', '7501', null, null, null, null, null, null, null, '16', null);
-INSERT INTO `act_ru_variable` VALUES ('7505', '1', 'string', 'handleUser', '7501', '7501', null, null, null, null, null, null, null, '', null);
-INSERT INTO `act_ru_variable` VALUES ('7507', '1', 'serializable', '_members', '7501', '7501', null, null, null, null, '7506', null, null, null, null);
-INSERT INTO `act_ru_variable` VALUES ('7509', '2', 'string', 'SYS_BUTTON_VALUE', '7501', '7501', null, null, null, null, null, null, null, 'serviceRecovery', null);
-
--- ----------------------------
 -- Table structure for t_biz_counter_user
 -- ----------------------------
 DROP TABLE IF EXISTS `t_biz_counter_user`;
@@ -1340,17 +1262,10 @@ CREATE TABLE `t_biz_file` (
   `TASK_ID` varchar(64) DEFAULT NULL,
   `TASK_INSTANCE_ID` varchar(64) DEFAULT NULL,
   `TASK_NAME` longtext,
-  `BIZ_ID` varchar(64) DEFAULT NULL,
+  `BIZ_ID` int(10) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK34bt5oe9xt1ovakwe0nymup5m` (`BIZ_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of t_biz_file
--- ----------------------------
-INSERT INTO `t_biz_file` VALUES ('1', '2019-02-21 10:27:29', 'admin', null, 'uploadFile', 'FILE', 'wx_kh_user.sql', '201902\\21\\9e6deeb91b2b42bb89808581fe17aa25.sql', '7513', null, '服务台处理', '16');
-INSERT INTO `t_biz_file` VALUES ('2', '2019-02-21 10:33:42', 'admin', null, 'uploadFile', 'FILE', 'wx_kh_user.sql', '201902\\21\\7440ecf2879b41f483785203b89646cf.sql', '15007', null, '服务台处理', '16');
-INSERT INTO `t_biz_file` VALUES ('3', '2019-02-21 10:33:42', 'admin', null, 'uploadFile', 'FILE', 'dubbo集群容错.txt', '201902\\21\\fb26ed13f3ba486daef33b8ac98e03d1.txt', '15007', null, '服务台处理', '16');
 
 -- ----------------------------
 -- Table structure for t_biz_info
@@ -1378,27 +1293,6 @@ CREATE TABLE `t_biz_info` (
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of t_biz_info
--- ----------------------------
-INSERT INTO `t_biz_info` VALUES ('4', 'OTHER180201-89197', '事件管理', '2018-02-01 14:41:53', 'admin', null, '9', null, 'eventManagement:2:172504', '182501', '人工发起', '服务台关闭', 'GROUP:事件管理-服务台', 'serviceClose', '207522', '服务台关闭', '顶顶顶顶');
-INSERT INTO `t_biz_info` VALUES ('5', 'OTHER180201-67313', '事件管理', '2018-02-01 15:32:57', 'admin', null, '9', null, 'eventManagement:2:172504', '185001', '人工发起', '服务台处理', null, 'serviceHandle', '185013', '服务台处理', 'dT_BIZ_INFO_CONF');
-INSERT INTO `t_biz_info` VALUES ('6', 'OTHER180201-84005', '事件管理', '2018-02-01 15:47:17', 'admin', null, '9', null, 'eventManagement:2:172504', '187501', '人工发起', '服务台处理', null, 'serviceHandle', '187513', '服务台处理', '顶顶顶顶');
-INSERT INTO `t_biz_info` VALUES ('7', 'OTHER180201-27754', '事件管理', '2018-02-01 15:51:40', 'admin', null, '9', null, 'eventManagement:2:172504', '187516', '人工发起', '服务台处理', null, 'serviceHandle', '187528', '服务台处理', 'dddddddd');
-INSERT INTO `t_biz_info` VALUES ('8', 'OTHER180201-29151', '事件管理', '2018-02-01 15:54:18', 'admin', null, null, null, 'eventManagement:2:172504', '187531', '人工发起', '服务台处理', null, 'serviceHandle', '187543', '服务台处理', 'dddddddddddd');
-INSERT INTO `t_biz_info` VALUES ('9', 'OTHER180201-41784', '事件管理', '2018-02-01 15:56:51', 'admin', null, null, null, 'eventManagement:2:172504', '187546', '人工发起', '服务台处理', 'admin', 'serviceHandle', '187597', '服务台处理', '666666666666');
-INSERT INTO `t_biz_info` VALUES ('10', 'OTHER190218-62173', '事件管理', '2019-02-18 03:21:56', 'admin', null, null, null, 'eventManagement:3:2508', '5001', '人工发起', '服务台处理', null, 'serviceHandle', '5013', '服务台处理', '东单详情');
-INSERT INTO `t_biz_info` VALUES ('11', 'OTHER190218-63204', '事件管理', '2019-02-18 03:24:28', 'admin', null, null, null, 'eventManagement:3:2508', '5014', '人工发起', '服务台处理', null, 'serviceHandle', '5026', '服务台处理', '东单详情');
-INSERT INTO `t_biz_info` VALUES ('12', 'OTHER190218-41256', '事件管理', '2019-02-18 03:24:52', 'admin', null, null, null, 'eventManagement:3:2508', '5027', '人工发起', '服务台处理', null, 'serviceHandle', '5039', '服务台处理', '东单详情');
-INSERT INTO `t_biz_info` VALUES ('13', 'OTHER190218-68339', '事件管理', '2019-02-18 03:25:36', 'admin', null, null, null, 'eventManagement:3:2508', '5040', '人工发起', '服务台处理', null, 'serviceHandle', '5052', '服务台处理', '东单详情');
-INSERT INTO `t_biz_info` VALUES ('14', 'OTHER190218-89862', '事件管理', '2019-02-18 03:26:08', 'admin', null, null, null, 'eventManagement:3:2508', '5053', '人工发起', '服务台处理', 'admin', 'serviceHandle', '5075', '服务台处理', '东单详情');
-INSERT INTO `t_biz_info` VALUES ('15', 'OTHER190218-59995', '事件管理', '2019-02-18 03:32:48', 'admin', null, null, null, 'eventManagement:3:2508', '5079', '人工发起', '服务台处理', null, 'serviceHandle', '5091', '服务台处理', '14');
-INSERT INTO `t_biz_info` VALUES ('16', 'OTHER190219-38955', '事件管理', '2019-02-19 04:57:01', 'admin', null, null, null, 'eventManagement:3:2508', '7501', '人工发起', '服务台处理', 'admin', 'serviceHandle', '20003', '服务台处理', 'groupButtons');
-INSERT INTO `t_biz_info` VALUES ('18', 'OTHER190222-67036', '事件管理', '2019-02-22 08:37:41', 'admin', null, null, null, 'eventManagement:3:2508', '22501', '人工发起', '服务台处理', null, 'serviceHandle', '22513', '服务台处理', 'biz.file.path');
-INSERT INTO `t_biz_info` VALUES ('19', 'OTHER190222-35107', '事件管理', '2019-02-22 08:51:51', 'admin', null, null, null, 'eventManagement:3:2508', '22514', '人工发起', '服务台处理', 'admin', 'serviceHandle', '22526', '服务台处理', 'admin');
-INSERT INTO `t_biz_info` VALUES ('20', 'OTHER190222-29306', '事件管理', '2019-02-22 08:53:49', 'admin', null, null, null, 'eventManagement:3:2508', '22530', '人工发起', '服务台处理', null, 'serviceHandle', '22542', '服务台处理', 'OTHER190222-35107');
-INSERT INTO `t_biz_info` VALUES ('21', 'OTHER190222-71043', '事件管理', '2019-02-22 09:13:16', 'admin', null, null, null, 'eventManagement:3:2508', '22543', '人工发起', '服务台处理', null, 'serviceHandle', '22555', '服务台处理', 'OTHER ');
-
--- ----------------------------
 -- Table structure for t_biz_info_conf
 -- ----------------------------
 DROP TABLE IF EXISTS `t_biz_info_conf`;
@@ -1407,32 +1301,11 @@ CREATE TABLE `t_biz_info_conf` (
   `CREATE_TIME` datetime DEFAULT NULL,
   `TASK_ASSIGNEE` longtext,
   `TASK_ID` varchar(64) DEFAULT NULL,
-  `BIZ_ID` varchar(64) DEFAULT NULL,
+  `BIZ_ID` int(10) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK4sit8xk90bn7gi75v5ag5aaoe` (`BIZ_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records of t_biz_info_conf
--- ----------------------------
-INSERT INTO `t_biz_info_conf` VALUES ('1', '2018-02-01 14:41:53', 'GROUP:事件管理-服务台', '207522', '4');
-INSERT INTO `t_biz_info_conf` VALUES ('2', '2018-02-01 15:33:04', null, '185013', null);
-INSERT INTO `t_biz_info_conf` VALUES ('3', '2018-02-01 15:47:17', null, '187513', '6');
-INSERT INTO `t_biz_info_conf` VALUES ('4', '2018-02-01 15:51:40', 'admin', '187528', '7');
-INSERT INTO `t_biz_info_conf` VALUES ('5', '2018-02-01 15:54:18', null, '187543', '8');
-INSERT INTO `t_biz_info_conf` VALUES ('6', '2018-02-01 15:56:53', 'admin', '187597', '9');
-INSERT INTO `t_biz_info_conf` VALUES ('7', '2019-02-18 03:21:56', null, '5013', '10');
-INSERT INTO `t_biz_info_conf` VALUES ('8', '2019-02-18 03:24:28', null, '5026', '11');
-INSERT INTO `t_biz_info_conf` VALUES ('9', '2019-02-18 03:24:52', null, '5039', '12');
-INSERT INTO `t_biz_info_conf` VALUES ('10', '2019-02-18 03:25:36', null, '5052', '13');
-INSERT INTO `t_biz_info_conf` VALUES ('11', '2019-02-18 03:26:08', 'admin', '5075', '14');
-INSERT INTO `t_biz_info_conf` VALUES ('12', '2019-02-18 03:32:48', null, '5091', '15');
-INSERT INTO `t_biz_info_conf` VALUES ('13', '2019-02-19 04:57:02', 'admin', '20003', '16');
-INSERT INTO `t_biz_info_conf` VALUES ('14', '2019-02-22 05:36:04', 'admin', null, '17');
-INSERT INTO `t_biz_info_conf` VALUES ('16', '2019-02-22 08:37:41', null, '22513', '18');
-INSERT INTO `t_biz_info_conf` VALUES ('17', '2019-02-22 08:45:46', 'admin', '22526', '19');
-INSERT INTO `t_biz_info_conf` VALUES ('18', '2019-02-22 08:52:20', null, '22542', '20');
-INSERT INTO `t_biz_info_conf` VALUES ('19', '2019-02-22 08:54:15', null, '22555', '21');
 
 -- ----------------------------
 -- Table structure for t_biz_info_delay_time
@@ -1441,7 +1314,7 @@ DROP TABLE IF EXISTS `t_biz_info_delay_time`;
 CREATE TABLE `t_biz_info_delay_time` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `APPLY_STATUS` int(11) DEFAULT NULL,
-  `BIZ_ID` varchar(64) DEFAULT NULL,
+  `BIZ_ID` int(10) DEFAULT NULL,
   `CREATE_TIME` datetime DEFAULT NULL,
   `DELAY_TIME` datetime DEFAULT NULL,
   `TASK_ID` varchar(64) DEFAULT NULL,
@@ -1469,46 +1342,10 @@ CREATE TABLE `t_biz_log` (
   `TASK_NAME` longtext,
   `USER_DEPT` varchar(64) DEFAULT NULL,
   `USER_PHONE` varchar(64) DEFAULT NULL,
-  `BIZ_ID` varchar(64) DEFAULT NULL,
+  `BIZ_ID`int(10) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `FKbsvvskjwl92mbq0o22sxin9xi` (`BIZ_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of t_biz_log
--- ----------------------------
-INSERT INTO `t_biz_log` VALUES ('1', '2018-02-01 14:41:53', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '4');
-INSERT INTO `t_biz_log` VALUES ('2', '2018-02-01 15:32:57', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '5');
-INSERT INTO `t_biz_log` VALUES ('3', '2018-02-01 15:47:17', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '6');
-INSERT INTO `t_biz_log` VALUES ('4', '2018-02-01 15:51:40', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '7');
-INSERT INTO `t_biz_log` VALUES ('5', '2018-02-01 15:54:18', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '8');
-INSERT INTO `t_biz_log` VALUES ('6', '2018-02-01 15:56:51', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '9');
-INSERT INTO `t_biz_log` VALUES ('7', '2018-02-01 16:01:16', '', '服务台处理', '签收', '超级管理员', 'admin', '187558', '服务台处理', null, null, '9');
-INSERT INTO `t_biz_log` VALUES ('8', '2018-02-01 16:01:42', null, '服务台处理', '解决', '超级管理员', 'admin', '187558', '服务台处理', null, null, '9');
-INSERT INTO `t_biz_log` VALUES ('9', '2018-02-01 16:02:55', null, '用户反馈', '退回', '超级管理员', 'admin', '187572', '用户反馈', null, null, '9');
-INSERT INTO `t_biz_log` VALUES ('10', '2018-02-01 16:18:05', null, '服务台处理', '阶段回复', '超级管理员', 'admin', '187587', '服务台处理', null, null, '9');
-INSERT INTO `t_biz_log` VALUES ('11', '2019-02-08 11:08:48', '11111', '服务台处理', '签收', '超级管理员', 'admin', '182513', '服务台处理', null, null, '4');
-INSERT INTO `t_biz_log` VALUES ('12', '2019-02-08 11:30:28', null, '服务台处理', '阶段回复', '超级管理员', 'admin', '182513', '服务台处理', null, null, '4');
-INSERT INTO `t_biz_log` VALUES ('13', '2019-02-08 11:30:38', null, '服务台处理', '解决', '超级管理员', 'admin', '207507', '服务台处理', null, null, '4');
-INSERT INTO `t_biz_log` VALUES ('14', '2019-02-08 11:30:43', null, '用户反馈', '确认', '超级管理员', 'admin', '207517', '用户反馈', null, null, '4');
-INSERT INTO `t_biz_log` VALUES ('15', '2019-02-18 03:21:56', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '10');
-INSERT INTO `t_biz_log` VALUES ('16', '2019-02-18 03:24:28', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '11');
-INSERT INTO `t_biz_log` VALUES ('17', '2019-02-18 03:24:52', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '12');
-INSERT INTO `t_biz_log` VALUES ('18', '2019-02-18 03:25:36', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '13');
-INSERT INTO `t_biz_log` VALUES ('19', '2019-02-18 03:26:08', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '14');
-INSERT INTO `t_biz_log` VALUES ('20', '2019-02-18 03:26:20', 'ddd', '服务台处理', '签收', '超级管理员', 'admin', '5065', '服务台处理', null, null, '14');
-INSERT INTO `t_biz_log` VALUES ('21', '2019-02-18 03:26:52', null, '服务台处理', '阶段回复', '超级管理员', 'admin', '5065', '服务台处理', null, null, '14');
-INSERT INTO `t_biz_log` VALUES ('22', '2019-02-18 03:32:48', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '15');
-INSERT INTO `t_biz_log` VALUES ('23', '2019-02-19 04:57:01', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '16');
-INSERT INTO `t_biz_log` VALUES ('24', '2019-02-19 04:57:05', 'groupButtons', '服务台处理', '签收', '超级管理员', 'admin', '7513', '服务台处理', null, null, '16');
-INSERT INTO `t_biz_log` VALUES ('25', '2019-02-21 10:27:29', null, '服务台处理', '阶段回复', '超级管理员', 'admin', '7513', '服务台处理', null, null, '16');
-INSERT INTO `t_biz_log` VALUES ('26', '2019-02-21 10:33:42', null, '服务台处理', '阶段回复', '超级管理员', 'admin', '15007', '服务台处理', null, null, '16');
-INSERT INTO `t_biz_log` VALUES ('27', '2019-02-22 05:35:53', null, '服务台处理', '阶段回复', '超级管理员', 'admin', '17503', '服务台处理', null, null, '16');
-INSERT INTO `t_biz_log` VALUES ('28', '2019-02-22 08:37:41', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '18');
-INSERT INTO `t_biz_log` VALUES ('29', '2019-02-22 08:51:51', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '19');
-INSERT INTO `t_biz_log` VALUES ('30', '2019-02-22 08:52:00', '', '服务台处理', '签收', '超级管理员', 'admin', '22526', '服务台处理', null, null, '19');
-INSERT INTO `t_biz_log` VALUES ('31', '2019-02-22 08:53:49', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '20');
-INSERT INTO `t_biz_log` VALUES ('32', '2019-02-22 09:13:16', null, '发起工单', '提交', '超级管理员', 'admin', 'START', '发起工单', null, null, '21');
 
 -- ----------------------------
 -- Table structure for t_biz_process_instance
@@ -1516,7 +1353,7 @@ INSERT INTO `t_biz_log` VALUES ('32', '2019-02-22 09:13:16', null, '发起工单
 DROP TABLE IF EXISTS `t_biz_process_instance`;
 CREATE TABLE `t_biz_process_instance` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
-  `BIZ_ID` varchar(64) NOT NULL,
+  `BIZ_ID`int(10) NOT NULL,
   `CREATE_TIME` datetime DEFAULT NULL,
   `PROCESS_INSTANCE_ID` varchar(64) DEFAULT NULL,
   `VALUE` longtext NOT NULL,
@@ -1529,50 +1366,6 @@ CREATE TABLE `t_biz_process_instance` (
   PRIMARY KEY (`ID`),
   KEY `FKm1ungk6wgwapfog91iscp9sod` (`PROCESS_VARIABLE_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of t_biz_process_instance
--- ----------------------------
-INSERT INTO `t_biz_process_instance` VALUES ('1', '4', '2018-02-01 14:41:53', '182501', '顶顶顶顶', '6', 'START', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('2', '4', '2018-02-01 14:41:53', '182501', '女', '8', 'START', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '下拉', 'ddd', 'DICTCOMBOBOX');
-INSERT INTO `t_biz_process_instance` VALUES ('3', '5', '2018-02-01 15:32:57', '185001', 'T_BIZ_INFO_CONF', '6', 'START', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('4', '5', '2018-02-01 15:32:57', '185001', '男', '8', 'START', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '下拉', 'ddd', 'DICTCOMBOBOX');
-INSERT INTO `t_biz_process_instance` VALUES ('5', '6', '2018-02-01 15:47:17', '187501', '顶顶顶顶', '6', 'START', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('6', '7', '2018-02-01 15:51:40', '187516', 'ddddddddddddd', '6', 'START', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('7', '8', '2018-02-01 15:54:18', '187531', 'ddddddddddddddddddddddd', '6', 'START', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('8', '9', '2018-02-01 15:56:51', '187546', '6666666666666', '6', 'START', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('9', '9', '2018-02-01 16:01:42', '187546', '解决', '2', '187558', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '处理方式', 'handleType', 'TREATMENT');
-INSERT INTO `t_biz_process_instance` VALUES ('10', '9', '2018-02-01 16:01:42', '187546', '11', '4', '187558', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '工时', 'workTime', 'NUMBER');
-INSERT INTO `t_biz_process_instance` VALUES ('11', '9', '2018-02-01 16:01:42', '187546', '解决', '7', '187558', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '处理方式', 'handleType', 'TREATMENT');
-INSERT INTO `t_biz_process_instance` VALUES ('12', '9', '2018-02-01 16:01:42', '187546', '11', '11', '187558', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '工时', 'workTime', 'NUMBER');
-INSERT INTO `t_biz_process_instance` VALUES ('13', '9', '2018-02-01 16:18:05', '187546', '阶段回复', '7', '187587', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '处理方式', 'handleType', 'TREATMENT');
-INSERT INTO `t_biz_process_instance` VALUES ('14', '9', '2018-02-01 16:18:05', '187546', '11', '11', '187587', '{\"roles\":[\"超级管理员\"],\"urls\":[],\"username\":\"admin\"}', '工时', 'workTime', 'NUMBER');
-INSERT INTO `t_biz_process_instance` VALUES ('15', '4', '2019-02-08 11:30:28', '182501', '阶段回复', '7', '182513', 'admin', '处理方式', 'handleType', 'TREATMENT');
-INSERT INTO `t_biz_process_instance` VALUES ('16', '4', '2019-02-08 11:30:28', '182501', '111', '11', '182513', 'admin', '工时', 'workTime', 'NUMBER');
-INSERT INTO `t_biz_process_instance` VALUES ('17', '4', '2019-02-08 11:30:38', '182501', '解决', '7', '207507', 'admin', '处理方式', 'handleType', 'TREATMENT');
-INSERT INTO `t_biz_process_instance` VALUES ('18', '4', '2019-02-08 11:30:38', '182501', '11', '11', '207507', 'admin', '工时', 'workTime', 'NUMBER');
-INSERT INTO `t_biz_process_instance` VALUES ('19', '10', '2019-02-18 03:21:56', '5001', '东单详情', '6', 'START', 'admin', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('20', '10', '2019-02-18 03:21:56', '5001', '东单详情', '12', 'START', 'admin', '处理人', 'handleUser', 'TEXT');
-INSERT INTO `t_biz_process_instance` VALUES ('21', '14', '2019-02-18 03:26:52', '5053', '阶段回复', '7', '5065', 'admin', '处理方式', 'handleType', 'TREATMENT');
-INSERT INTO `t_biz_process_instance` VALUES ('22', '14', '2019-02-18 03:26:52', '5053', '356', '11', '5065', 'admin', '工时', 'workTime', 'NUMBER');
-INSERT INTO `t_biz_process_instance` VALUES ('23', '15', '2019-02-18 03:32:48', '5079', '14', '6', 'START', 'admin', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('24', '15', '2019-02-18 03:32:48', '5079', '女', '8', 'START', 'admin', '下拉', 'ddd', 'DICTCOMBOBOX');
-INSERT INTO `t_biz_process_instance` VALUES ('25', '15', '2019-02-18 03:32:48', '5079', '14', '12', 'START', 'admin', '处理人', 'handleUser', 'TEXT');
-INSERT INTO `t_biz_process_instance` VALUES ('26', '15', '2019-02-18 03:32:48', '5079', '14', '23', 'START', 'admin', '事件级别', 'level', 'TEXT');
-INSERT INTO `t_biz_process_instance` VALUES ('27', '16', '2019-02-19 04:57:01', '7501', 'groupButtons', '6', 'START', 'admin', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('34', '16', '2019-02-21 10:27:29', '7501', '阶段回复', '7', '7513', 'admin', '处理方式', 'handleType', 'TREATMENT');
-INSERT INTO `t_biz_process_instance` VALUES ('35', '16', '2019-02-21 10:27:29', '7501', '0', '11', '7513', 'admin', '工时', 'workTime', 'NUMBER');
-INSERT INTO `t_biz_process_instance` VALUES ('36', '16', '2019-02-21 10:33:42', '7501', '阶段回复', '7', '15007', 'admin', '处理方式', 'handleType', 'TREATMENT');
-INSERT INTO `t_biz_process_instance` VALUES ('37', '16', '2019-02-21 10:33:42', '7501', '0', '11', '15007', 'admin', '工时', 'workTime', 'NUMBER');
-INSERT INTO `t_biz_process_instance` VALUES ('38', '16', '2019-02-22 05:35:53', '7501', '阶段回复', '7', '17503', 'admin', '处理方式', 'handleType', 'TREATMENT');
-INSERT INTO `t_biz_process_instance` VALUES ('39', '16', '2019-02-22 05:35:53', '7501', '0', '11', '17503', 'admin', '工时', 'workTime', 'NUMBER');
-INSERT INTO `t_biz_process_instance` VALUES ('40', '18', '2019-02-22 08:31:37', null, 'biz.file.path', '6', 'START', 'admin', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('41', '19', '2019-02-22 08:45:46', null, 'admin', '6', 'START', 'admin', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('42', '19', '2019-02-22 08:45:46', null, '未知', '8', 'START', 'admin', '下拉', 'ddd', 'DICTCOMBOBOX');
-INSERT INTO `t_biz_process_instance` VALUES ('43', '19', '2019-02-22 08:45:46', null, 'admin', '12', 'START', 'admin', '处理人', 'handleUser', 'TEXT');
-INSERT INTO `t_biz_process_instance` VALUES ('44', '19', '2019-02-22 08:45:46', null, 'admin', '23', 'START', 'admin', '事件级别', 'level', 'TEXT');
-INSERT INTO `t_biz_process_instance` VALUES ('45', '20', '2019-02-22 08:53:49', null, 'OTHER190222-35107', '6', 'START', 'admin', '处理意见', 'handleMessage', 'TEXTAREA');
-INSERT INTO `t_biz_process_instance` VALUES ('46', '21', '2019-02-22 09:13:16', null, 'OTHER -----------ddd', '6', 'START', 'admin', '处理意见', 'handleMessage', 'TEXTAREA');
 
 -- ----------------------------
 -- Table structure for t_biz_process_variable
@@ -1626,13 +1419,6 @@ CREATE TABLE `t_biz_template_file` (
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of t_biz_template_file
--- ----------------------------
-INSERT INTO `t_biz_template_file` VALUES ('3', '2019-02-15 05:53:10', '1', 'wx_kh_user.sql', '事件管理', '超级管理员');
-INSERT INTO `t_biz_template_file` VALUES ('4', '2019-02-15 05:58:47', '1', '设备成本模板.xlsx', '事件管理', '超级管理员');
-INSERT INTO `t_biz_template_file` VALUES ('5', '2019-02-18 02:28:20', '1', 'wx_kh_user.sql', '请选择', '超级管理员');
-
--- ----------------------------
 -- Table structure for t_counter_sign
 -- ----------------------------
 DROP TABLE IF EXISTS `t_counter_sign`;
@@ -1645,7 +1431,7 @@ CREATE TABLE `t_counter_sign` (
   `RESULT_TYPE` int(11) NOT NULL,
   `TASK_ASSIGNEE` varchar(32) NOT NULL,
   `TASK_ID` varchar(32) NOT NULL,
-  `BIZ_ID` varchar(32) NOT NULL,
+  `BIZ_ID` int(10) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1659,11 +1445,11 @@ CREATE TABLE `t_counter_sign` (
 DROP TABLE IF EXISTS `t_counter_user`;
 CREATE TABLE `t_counter_user` (
   `ID` int(10) NOT NULL,
-  `BIZID` varchar(32) DEFAULT NULL,
+  `BIZ_ID` int(10) DEFAULT NULL,
   `CREATE_TIME` datetime DEFAULT NULL,
   `DEPTMENT_NAME` varchar(32) DEFAULT NULL,
   `NAME` varchar(32) DEFAULT NULL,
-  `TASKID` varchar(32) DEFAULT NULL,
+  `TASK_ID` varchar(32) DEFAULT NULL,
   `USER_NAME` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -1679,7 +1465,7 @@ DROP TABLE IF EXISTS `t_delay_time`;
 CREATE TABLE `t_delay_time` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
   `APPLY_STATUS` int(11) DEFAULT NULL,
-  `BIZ_ID` varchar(64) DEFAULT NULL,
+  `BIZ_ID` int(10) DEFAULT NULL,
   `CREATE_TIME` datetime DEFAULT NULL,
   `DELAY_TIME` datetime DEFAULT NULL,
   `TASK_ID` varchar(64) DEFAULT NULL,
@@ -1722,7 +1508,7 @@ CREATE TABLE `t_dict_value` (
   `CODE` varchar(255) DEFAULT NULL,
   `CREATE_TIME` datetime DEFAULT NULL,
   `CREATOR` varchar(255) DEFAULT NULL,
-  `DICT_TYPE_ID` varchar(255) DEFAULT NULL,
+  `DICT_TYPE_ID`int(10) DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
   `MODIFIER` varchar(255) DEFAULT NULL,
   `NAME` varchar(255) DEFAULT NULL,
@@ -1763,7 +1549,7 @@ CREATE TABLE `t_sys_user` (
   `LAST_LOGIN_TIME` datetime DEFAULT NULL,
   `NAME` varchar(64) DEFAULT NULL,
   `PASSWORD` varchar(64) DEFAULT NULL,
-  `status` int(11) DEFAULT NULL,
+  `status` int(2) DEFAULT NULL,
   `USERNAME` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
@@ -1778,8 +1564,8 @@ INSERT INTO `t_sys_user` VALUES ('1', '2017-12-02 10:36:50', null, null, '超级
 -- ----------------------------
 DROP TABLE IF EXISTS `t_sys_user_role`;
 CREATE TABLE `t_sys_user_role` (
-  `role_id` int(64) NOT NULL,
-  `user_id` int(64) NOT NULL,
+  `role_id` int(10) NOT NULL,
+  `user_id` int(10) NOT NULL,
   `ID` int(10) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

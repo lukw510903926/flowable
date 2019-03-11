@@ -24,41 +24,41 @@ import lombok.Data;
 @Table(name = "T_SYS_USER")
 public class SystemUser implements Serializable {
 
-	private static final long serialVersionUID = -7377982631848439265L;
+    private static final long serialVersionUID = -7377982631848439265L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, length = 64, name = "ID")
-	private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, name = "ID")
+    private Integer id;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATE_TIME")
-	private Date createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATE_TIME")
+    private Date createTime;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "LAST_LOGIN_TIME")
-	private Date lastLoginTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LAST_LOGIN_TIME")
+    private Date lastLoginTime;
 
-	@Column(name = "USERNAME", length = 64)
-	private String username;
+    @Column(name = "USERNAME")
+    private String username;
 
-	@Column(name = "NAME", length = 64)
-	private String name;
+    @Column(name = "NAME")
+    private String name;
 
-	@Column(name = "PASSWORD", length = 64)
-	private String password;
+    @Column(name = "PASSWORD")
+    private String password;
 
-	@Column(name = "EMAIL", length = 64)
-	private String email;
+    @Column(name = "EMAIL")
+    private String email;
 
-	@Transient
-	private Set<SystemRole> roles = new HashSet<>();
+    @Transient
+    private Set<SystemRole> roles = new HashSet<>();
 
-	/**
-	 * 1 有效 0 无效
-	 */
-	@Column(name = "status", length = 5)
-	private Integer status = 1;
+    /**
+     * 1 有效 0 无效
+     */
+    @Column(name = "status", length = 5)
+    private Integer status = 1;
 }

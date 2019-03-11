@@ -23,7 +23,7 @@ public class DictType implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, nullable = false, length = 64, name = "ID")
+	@Column(unique = true,  name = "ID")
 	private Integer id;
 	
 	/**

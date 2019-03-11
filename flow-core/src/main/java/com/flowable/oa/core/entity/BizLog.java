@@ -18,7 +18,7 @@ public class BizLog implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, nullable = false, length = 64, name = "ID")
+	@Column(unique = true,  name = "ID")
 	private Integer id;
 
 	@Column(name = "BIZ_ID")

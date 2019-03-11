@@ -35,7 +35,7 @@ public class ProcessVariableInstance implements Serializable, Cloneable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, length = 64, name = "ID")
+    @Column(unique = true,  name = "ID")
     private Integer id;
 
     /**

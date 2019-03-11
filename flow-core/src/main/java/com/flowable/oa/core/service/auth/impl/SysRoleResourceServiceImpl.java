@@ -3,6 +3,7 @@ package com.flowable.oa.core.service.auth.impl;
 import com.flowable.oa.core.entity.auth.SysRoleResource;
 import com.flowable.oa.core.service.auth.ISysRoleResourceService;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +25,8 @@ public class SysRoleResourceServiceImpl extends BaseServiceImpl<SysRoleResource>
         SysRoleResource entity = new SysRoleResource();
         entity.setRoleId(roleResource.getRoleId());
         this.deleteByModel(entity);
-        if (StringUtils.isNotBlank(roleResource.getResourceId())) {
-            Arrays.stream(roleResource.getResourceId().split("\\,")).forEach(resourceId -> {
+        if (CollectionUtils.isNotEmpty(roleResource.getResourceIds())) {
+            roleResource.getResourceIds().forEach(resourceId -> {
                 SysRoleResource sysRoleResource = new SysRoleResource();
                 sysRoleResource.setRoleId(roleResource.getRoleId());
                 sysRoleResource.setResourceId(resourceId);

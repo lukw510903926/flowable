@@ -25,5 +25,5 @@ public interface ISystemResourceService extends IBaseService<SystemResource> {
      * @param roleId
      * @return
      */
-    List<SystemResource> findResourceByRoleId(String roleId);
+    List<SystemResource> findResourceByRoleId(Integer roleId);
 }

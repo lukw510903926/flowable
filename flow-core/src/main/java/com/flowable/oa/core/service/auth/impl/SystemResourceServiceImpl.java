@@ -88,13 +88,13 @@ public class SystemResourceServiceImpl extends BaseServiceImpl<SystemResource> i
     }
 
     @Override
-    public List<SystemResource> findResourceByRoleId(String roleId) {
+    public List<SystemResource> findResourceByRoleId(Integer roleId) {
 
         SysRoleResource roleResource = new SysRoleResource();
         roleResource.setRoleId(roleId);
         List<SysRoleResource> roleResources = this.roleResourceService.select(roleResource);
         if (CollectionUtils.isNotEmpty(roleResources)) {
-            List<String> resourceIds = new ArrayList<>();
+            List<Integer> resourceIds = new ArrayList<>();
             roleResources.forEach(entity -> resourceIds.add(entity.getResourceId()));
             Example example = new Example(SystemResource.class);
             Example.Criteria criteria = example.createCriteria();

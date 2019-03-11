@@ -30,14 +30,14 @@ public class ActBizInfoDelayTime implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, nullable = false, length = 64, name = "ID")
+	@Column(name = "ID")
 	private Integer id;
 	
 	@Column(length = 64, name = "TASK_ID")
 	private String taskId;
 	
-	@Column(length = 64, name = "BIZ_ID")
-	private String bizId;
+	@Column(name = "BIZ_ID")
+	private Integer bizId;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	@Temporal(TemporalType.TIMESTAMP)

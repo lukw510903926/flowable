@@ -27,7 +27,7 @@ public class SysRoleResourceController {
     @PostMapping("/save")
     public RestResult<Object> save(SysRoleResource sysRoleResource){
 
-        if(StringUtils.isBlank(sysRoleResource.getRoleId())){
+        if(null != sysRoleResource.getRoleId()){
             return RestResult.parameter(sysRoleResource,"roleId 不可为空");
         }
         this.roleResourceService.saveOrUpdate(sysRoleResource);

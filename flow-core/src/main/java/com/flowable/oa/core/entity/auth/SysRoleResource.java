@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -28,8 +29,13 @@ public class SysRoleResource implements Serializable {
     private Integer id;
 
     @Column(name = "ROLE_ID")
-    private String roleId;
+    private Integer roleId;
 
     @Column(name = "RESOURCE_ID")
-    private String resourceId;
+    private Integer resourceId;
+
+    @Transient
+    private List<Integer> resourceIds;
+
+
 }
