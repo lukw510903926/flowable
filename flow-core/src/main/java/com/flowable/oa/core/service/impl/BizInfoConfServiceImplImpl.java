@@ -1,8 +1,6 @@
 package com.flowable.oa.core.service.impl;
 
 import java.util.List;
-
-import com.flowable.oa.core.dao.BizInfoConfMapper;
 import com.flowable.oa.core.entity.BizInfoConf;
 import com.flowable.oa.core.service.BizInfoConfService;
 import com.flowable.oa.core.util.Constants;
@@ -11,7 +9,6 @@ import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -25,9 +22,6 @@ import tk.mybatis.mapper.entity.Example;
  */
 @Service
 public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> implements BizInfoConfService {
-
-    @Autowired
-    private BizInfoConfMapper bizInfoConfMapper;
 
     @Override
     @Transactional
