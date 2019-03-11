@@ -25,7 +25,7 @@ public interface IProcessExecuteService {
      * @return
      * @
      */
-    Map<String, Object> loadBizLogInput(String logId);
+    Map<String, Object> loadBizLogInput(Integer logId);
 
     /**
      * 获取某个流程的开始按钮
@@ -89,7 +89,7 @@ public interface IProcessExecuteService {
      * @return
      * @
      */
-    Map<String, Object> queryWorkOrder(String id);
+    Map<String, Object> queryWorkOrder(Integer id);
 
     /**
      * 下载或查看文件
@@ -99,7 +99,7 @@ public interface IProcessExecuteService {
      * @return [文件类型, InputStream]
      * @
      */
-    Object[] downloadFile(String action, String id);
+    Object[] downloadFile(String action, Integer id);
 
     /**
      * 根据流程定义ID获取流程名

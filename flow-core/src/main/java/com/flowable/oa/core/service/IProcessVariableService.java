@@ -18,7 +18,7 @@ public interface IProcessVariableService extends IBaseService<ProcessVariable> {
 	 * @param list
 	 * @
 	 */
-	void deleteVariable(List<String> list);
+	void deleteVariable(List<Integer> list);
 
 	PageInfo<ProcessVariable> findProcessVariables(ProcessVariable variable, PageInfo<ProcessVariable> page);
 

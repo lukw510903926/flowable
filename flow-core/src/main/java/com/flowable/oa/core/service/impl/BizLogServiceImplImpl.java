@@ -20,7 +20,7 @@ public class BizLogServiceImplImpl extends BaseServiceImpl<BizLog> implements IB
 	}
 
 	@Override
-	public List<BizLog> loadBizLogs(String bizId)  {
+	public List<BizLog> loadBizLogs(Integer bizId)  {
 		
 		BizLog bizlog = new BizLog();
 		bizlog.setBizId(bizId);

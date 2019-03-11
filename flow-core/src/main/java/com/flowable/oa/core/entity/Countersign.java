@@ -23,7 +23,7 @@ public class Countersign implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(unique = true, length = 64, name = "ID")
-	private String id;
+	private Integer id;
 	
 	@Column(name="TASK_ID", length = 32)
 	private String taskId;

@@ -34,7 +34,7 @@ public class BizInfo implements java.io.Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, length = 64, name = "ID")
-    private String id;
+    private Integer id;
 
     /**
      * 工单号
@@ -84,7 +84,7 @@ public class BizInfo implements java.io.Serializable, Cloneable {
     private String source;
 
     @Column(length = 64, name = "PARENT_ID")
-    private String parentId;
+    private Integer parentId;
 
     @Column(length = 256, name = "PARENT_TASKNAME")
     private String parentTaskName;

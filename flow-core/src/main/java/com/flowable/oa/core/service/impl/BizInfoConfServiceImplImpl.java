@@ -1,6 +1,7 @@
 package com.flowable.oa.core.service.impl;
 
 import java.util.List;
+
 import com.flowable.oa.core.entity.BizInfoConf;
 import com.flowable.oa.core.service.BizInfoConfService;
 import com.flowable.oa.core.util.Constants;
@@ -32,7 +33,7 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
         example.setTaskAssignee(bizInfoConf.getTaskAssignee());
         example.setTaskId(bizInfoConf.getTaskId());
         this.deleteByModel(example);
-        if (StringUtils.isNotBlank(bizInfoConf.getId())) {
+        if (bizInfoConf.getId() != null) {
             this.updateAll(bizInfoConf);
         } else {
             this.save(bizInfoConf);
@@ -40,7 +41,7 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
     }
 
     @Override
-    public List<BizInfoConf> findByBizId(String bizId) {
+    public List<BizInfoConf> findByBizId(Integer bizId) {
 
         BizInfoConf example = new BizInfoConf();
         example.setBizId(bizId);
@@ -48,7 +49,7 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
     }
 
     @Override
-    public void deleteByBizId(String bizId) {
+    public void deleteByBizId(Integer bizId) {
 
         BizInfoConf bizInfoConf = new BizInfoConf();
         bizInfoConf.setBizId(bizId);
@@ -56,18 +57,21 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
     }
 
     @Override
-    public BizInfoConf getMyWork(String bizId) {
+    public BizInfoConf getMyWork(Integer bizId) {
 
-        if (StringUtils.isNotBlank(bizId)) {
+        if (bizId != null) {
             LoginUser loginUser = WebUtil.getLoginUser();
             Example example = new Example(BizInfoConf.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("bizId", bizId);
-            criteria.andEqualTo("taskAssignee", WebUtil.getLoginUsername());
-            criteria.orIsNull("taskAssignee");
+
+            Example.Criteria orCriteria = example.createCriteria();
+            orCriteria.orEqualTo("taskAssignee", WebUtil.getLoginUsername());
+            orCriteria.orIsNull("taskAssignee");
             if (CollectionUtils.isNotEmpty(loginUser.getRoles())) {
-                loginUser.getRoles().forEach(role -> criteria.orLike("taskAssignee", Constants.BIZ_GROUP + role));
+                loginUser.getRoles().forEach(role -> orCriteria.orLike("taskAssignee", Constants.BIZ_GROUP + role));
             }
+            example.and(orCriteria);
             List<BizInfoConf> list = this.selectByExample(example);
             return CollectionUtils.isEmpty(list) ? null : list.get(0);
         }

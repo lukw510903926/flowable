@@ -10,6 +10,6 @@ public interface IBizLogService extends IBaseService<BizLog> {
 
 	void addBizLog(BizLog... beans) ;
 
-	List<BizLog> loadBizLogs(String bizId) ;
+	List<BizLog> loadBizLogs(Integer bizId) ;
 
 }

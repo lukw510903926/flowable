@@ -1,9 +1,6 @@
 package com.flowable.oa.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.flowable.oa.core.entity.ProcessVariable;
 import com.flowable.oa.core.entity.ProcessVariableInstance;
@@ -27,10 +24,10 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
 
     @Override
     @Transactional
-    public void deleteVariable(List<String> list) {
+    public void deleteVariable(List<Integer> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
-            list.stream().filter(StringUtils::isNotBlank).forEach(variableId -> {
+            list.stream().filter(Objects::nonNull).forEach(variableId -> {
                 ProcessVariableInstance instance = new ProcessVariableInstance();
                 instance.setVariableId(variableId);
                 this.variableInstanceService.deleteByModel(instance);
@@ -51,7 +48,7 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
     public void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf) {
 
         if (oldPdf != null && newPdf != null) {
-            Map<String, String> refMap = new HashMap<>();
+            Map<Integer, Integer> refMap = new HashMap<>();
             // 拷贝全局配置
             ProcessVariable example = new ProcessVariable();
             example.setProcessDefinitionId(oldPdf.getId());
@@ -63,7 +60,7 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
                     processVar.setProcessDefinitionId(newPdf.getId());
                     save(processVar);
                     refMap.put(valBean.getId(), processVar.getId());
-                    if (StringUtils.isNotBlank(processVar.getRefVariable())) {
+                    if (null != processVar.getRefVariable()) {
                         processRefList.add(processVar);
                     }
                 }

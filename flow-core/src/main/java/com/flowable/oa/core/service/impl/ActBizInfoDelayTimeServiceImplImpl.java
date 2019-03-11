@@ -14,7 +14,7 @@ public class ActBizInfoDelayTimeServiceImplImpl extends BaseServiceImpl<ActBizIn
     @Transactional
     public void saveOrUpdate(ActBizInfoDelayTime actBizInfo) {
 
-        if (StringUtils.isNotBlank(actBizInfo.getId())) {
+        if (null != actBizInfo.getId()) {
             this.updateNotNull(actBizInfo);
         } else {
             this.save(actBizInfo);

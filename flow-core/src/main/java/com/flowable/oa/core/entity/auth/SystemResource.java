@@ -24,7 +24,7 @@ public class SystemResource implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false, length = 64, name = "ID")
-    private String id;
+    private Integer id;
 
     /**
      * 创建时间
@@ -54,7 +54,7 @@ public class SystemResource implements Serializable {
      * 父节点
      */
     @Column(name = "PARENT_ID")
-    private String parentId;
+    private Integer parentId;
 
     @Transient
     private String parentName;

@@ -58,7 +58,7 @@ public class RoleController {
 
 	@ResponseBody
 	@GetMapping("/info/{roleId}")
-	public SystemRole info(@PathVariable("roleId") String roleId) {
+	public SystemRole info(@PathVariable("roleId") Integer roleId) {
 
 		return this.systemRoleService.selectByKey(roleId);
 	}
@@ -73,7 +73,7 @@ public class RoleController {
 
 	@ResponseBody
 	@PostMapping("/delete")
-	public RestResult<Object> delete(@RequestBody List<String> list) {
+	public RestResult<Object> delete(@RequestBody List<Integer> list) {
 
 		this.systemRoleService.deleteByIds(list);
 		return RestResult.success();

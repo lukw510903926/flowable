@@ -19,12 +19,12 @@ public interface BizInfoConfService extends IBaseService<BizInfoConf> {
      * @param bizId
      * @return
      */
-    BizInfoConf getMyWork(String bizId);
+    BizInfoConf getMyWork(Integer bizId);
 
     void saveOrUpdate(BizInfoConf bizInfoConf);
 
-	List<BizInfoConf> findByBizId(String bizId);
+	List<BizInfoConf> findByBizId(Integer bizId);
 
-	void deleteByBizId(String bizId);
+	void deleteByBizId(Integer bizId);
 
 }

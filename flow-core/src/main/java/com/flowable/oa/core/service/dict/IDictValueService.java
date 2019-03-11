@@ -13,5 +13,5 @@ public interface IDictValueService extends IBaseService<DictValue> {
 
     void saveOrUpdate(DictValue dictValue);
 
-    DictValue getById(String valueId);
+    DictValue getById(Integer valueId);
 }

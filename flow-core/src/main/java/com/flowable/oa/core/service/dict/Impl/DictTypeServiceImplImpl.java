@@ -36,7 +36,7 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
         }
         dictType.setModified(new Date());
         dictType.setModifier(WebUtil.getLoginUserId());
-        if (StringUtils.isNotBlank(dictType.getId())) {
+        if (null != dictType.getId()) {
             this.updateNotNull(dictType);
         } else {
             dictType.setCreator(WebUtil.getLoginUserId());
@@ -47,9 +47,9 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
 
     @Override
     @Transactional
-    public void delete(String id) {
+    public void delete(Integer id) {
 
-        if (StringUtils.isNotEmpty(id)) {
+        if (null != id) {
             this.deleteById(id);
             DictValue dictValue = new DictValue();
             dictValue.setDictTypeId(id);
@@ -59,7 +59,7 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
 
     @Override
     @Transactional
-    public void delete(List<String> list) {
+    public void delete(List<Integer> list) {
 
         if(CollectionUtils.isNotEmpty(list)){
             list.forEach(this::delete);

@@ -33,10 +33,10 @@ public class BizInfoConf implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, length = 64, name = "ID")
-    private String id;
+    private Integer id;
 
     @Column(name = "BIZ_ID")
-    private String bizId;
+    private Integer bizId;
 
     @Column(length = 64, name = "TASK_ID")
     private String taskId;

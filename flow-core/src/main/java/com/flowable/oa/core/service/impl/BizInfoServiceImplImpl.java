@@ -46,7 +46,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     private ISystemUserService userService;
 
     @Override
-    public List<BizInfo> getBizByParentId(String parentId) {
+    public List<BizInfo> getBizByParentId(Integer parentId) {
 
         BizInfo bizInfo = new BizInfo();
         bizInfo.setParentId(parentId);
@@ -65,7 +65,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     }
 
     @Override
-    public BizInfo copyBizInfo(String bizId, String processInstanceId, Map<String, Object> variables) {
+    public BizInfo copyBizInfo(Integer bizId, String processInstanceId, Map<String, Object> variables) {
 
         BizInfo oldBiz = this.selectByKey(bizId);
         List<BizInfo> list = this.getBizByParentId(bizId);
@@ -108,7 +108,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         }
     }
 
-    private void copyBizFile(String bizId, BizInfo oldBiz, BizInfo newBiz, String username) {
+    private void copyBizFile(Integer bizId, BizInfo oldBiz, BizInfo newBiz, String username) {
 
         List<BizFile> files = bizFileService.loadBizFilesByBizId(bizId, oldBiz.getTaskId());
         if (CollectionUtils.isNotEmpty(files)) {
@@ -123,7 +123,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         }
     }
 
-    private void copyBizInfoConf(BizInfo newBiz, String bizId) {
+    private void copyBizInfoConf(BizInfo newBiz, Integer bizId) {
 
         BizInfoConf example = new BizInfoConf();
         example.setBizId(bizId);
@@ -141,10 +141,10 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
 
     @Override
     @Transactional
-    public void deleteByIds(List<String> list) {
+    public void deleteByIds(List<Integer> list) {
 
         list.forEach(id -> {
-            if (StringUtils.isNotBlank(id)) {
+            if (id != null) {
                 BizInfo bizInfo = new BizInfo();
                 bizInfo.setId(id);
                 bizInfo.setStatus(Constants.BIZ_DELETE);

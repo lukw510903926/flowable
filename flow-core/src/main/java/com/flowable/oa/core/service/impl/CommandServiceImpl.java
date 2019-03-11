@@ -51,7 +51,7 @@ public class CommandServiceImpl implements CommandService {
 	public BizInfo jumpCommand(Map<String,Object> params) {
 
 		try {
-			String bizId = MapUtils.getString(params,"base.bizId");
+            Integer bizId = MapUtils.getInteger(params,"base.bizId");
 			BizInfo bizInfo = this.bizInfoService.selectByKey(bizId);
 			if (bizInfo == null) {
 				throw new ServiceException("工单不存在!工单id:{}" + bizId);

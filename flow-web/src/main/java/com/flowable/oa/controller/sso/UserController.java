@@ -42,7 +42,7 @@ public class UserController {
 
     @ResponseBody
     @GetMapping("/info/{userId}")
-    public SystemUser info(@PathVariable("userId") String userId) {
+    public SystemUser info(@PathVariable("userId") Integer userId) {
 
         return this.systemUserService.selectByKey(userId);
     }
@@ -57,7 +57,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/delete")
-    public RestResult<Object> delete(@RequestBody List<String> list) {
+    public RestResult<Object> delete(@RequestBody List<Integer> list) {
 
         this.systemUserService.deleteByIds(list);
         return RestResult.success();

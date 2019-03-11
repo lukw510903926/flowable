@@ -1,4 +1,4 @@
-package com.flowable.oa.controller;
+package com.flowable.oa.api.controller;
 
 import com.flowable.oa.core.entity.ProcessVariable;
 import com.flowable.oa.core.service.IProcessVariableService;
@@ -6,7 +6,6 @@ import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>

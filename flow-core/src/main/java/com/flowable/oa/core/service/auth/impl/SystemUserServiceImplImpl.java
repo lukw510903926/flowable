@@ -1,5 +1,6 @@
 package com.flowable.oa.core.service.auth.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,7 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
         if (!this.check(systemUser)) {
             throw new ServiceException("用户账号不可重复");
         }
-        if (StringUtils.isNotBlank(systemUser.getId())) {
+        if (systemUser.getId() != null) {
             this.updateNotNull(systemUser);
         } else {
             systemUser.setCreateTime(new Date());
@@ -43,13 +45,13 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
     }
 
     @Override
-    public void deleteByIds(List<String> list) {
+    public void deleteByIds(List<Integer> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(userId -> {
                 this.deleteById(userId);
                 SysUserRole userRole = new SysUserRole();
-                userRole.setUserId(userId);
+                userRole.setUserId(NumberUtils.toInt(userId + ""));
                 this.userRoleService.deleteByModel(userRole);
             });
         }
@@ -68,11 +70,11 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
     }
 
     @Override
-    @Cacheable(key = "#systemRole.username", cacheNames = "role_users")
+    @Cacheable(key = "#systemRole.nameCn", cacheNames = "role_users")
     public List<SystemUser> findUserByRole(SystemRole systemRole) {
 
         List<SystemRole> roles = this.systemRoleService.select(systemRole);
-        List<String> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(roles)) {
             roles.forEach(role -> list.addAll(this.userRoleService.findUserIdsByRoleId(role.getId())));
         }

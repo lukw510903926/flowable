@@ -2,6 +2,8 @@ package com.flowable.oa.controller;
 
 import com.flowable.oa.core.entity.auth.SystemRole;
 import com.flowable.oa.core.entity.auth.SystemUser;
+import com.flowable.oa.core.service.auth.ISysUserRoleService;
+import com.flowable.oa.core.service.auth.ISystemRoleService;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.LoginUser;
 import com.flowable.oa.core.util.ReflectionUtils;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,6 +35,9 @@ public class LoginController {
 
     @Autowired
     private ISystemUserService sysUserService;
+
+    @Autowired
+    private ISystemRoleService systemRoleService;
 
     @RequestMapping("login")
     public String login(HttpServletRequest request, Model model) {
@@ -54,11 +60,9 @@ public class LoginController {
 
         LoginUser loginUser = new LoginUser();
         ReflectionUtils.copyBean(systemUser, loginUser);
-        Set<SystemRole> set = systemUser.getRoles();
-        if (CollectionUtils.isNotEmpty(set)) {
-            Set<String> roles = new HashSet<>();
-            set.forEach(role -> roles.add(role.getNameCn()));
-            loginUser.setRoles(roles);
+        List<String> userRoles = systemRoleService.findUserRoles(systemUser.getUsername());
+        if (CollectionUtils.isNotEmpty(userRoles)) {
+            loginUser.setRoles(new HashSet<>(userRoles));
         }
         return loginUser;
     }

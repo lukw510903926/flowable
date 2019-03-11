@@ -48,7 +48,7 @@ public class SystemResourceServiceImpl extends BaseServiceImpl<SystemResource> i
     }
 
     @Override
-    public void deleteByIds(List<String> list) {
+    public void deleteByIds(List<Integer> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(resourceId -> {
@@ -68,11 +68,11 @@ public class SystemResourceServiceImpl extends BaseServiceImpl<SystemResource> i
     @Override
     public PageInfo<SystemResource> list(PageInfo<SystemResource> pageInfo, SystemResource resource) {
 
-        Map<String, SystemResource> cache = new HashMap<>();
+        Map<Integer, SystemResource> cache = new HashMap<>();
         PageInfo<SystemResource> result = this.findByModel(pageInfo, resource, false);
         if (CollectionUtils.isNotEmpty(result.getList())) {
             result.getList().forEach(entity -> {
-                Optional.ofNullable(entity.getParentId()).filter(StringUtils::isNotBlank).map(resourceId -> {
+                Optional.ofNullable(entity.getParentId()).map(resourceId -> {
                     SystemResource systemResource = cache.get(resourceId);
                     systemResource = systemResource == null ? this.selectByKey(resourceId) : systemResource;
                     if (systemResource != null) {

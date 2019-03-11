@@ -27,7 +27,7 @@ public class ProcessVariable implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false, length = 64, name = "ID")
-    private String id;
+    private Integer id;
 
     /**
      * 任务Id
@@ -112,7 +112,7 @@ public class ProcessVariable implements Serializable, Cloneable {
      * 联动属性
      */
     @Column(length = 64, name = "REF_VARIABLE")
-    private String refVariable;
+    private Integer refVariable;
 
     /**
      * 联动属性值

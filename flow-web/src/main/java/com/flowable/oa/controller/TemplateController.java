@@ -30,7 +30,6 @@ public class TemplateController {
     public String delete() {
 
         BizTimedTask task = new BizTimedTask();
-        task.setBizId("bizId");
         this.bizTimedTaskService.deleteByModel(task);
         return "template";
     }

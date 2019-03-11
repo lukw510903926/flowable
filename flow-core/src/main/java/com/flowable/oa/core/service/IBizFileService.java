@@ -27,7 +27,7 @@ public interface IBizFileService extends IBaseService<BizFile> {
      * @return
      * @
      */
-    List<BizFile> loadBizFilesByBizId(String bizId, String taskId);
+    List<BizFile> loadBizFilesByBizId(Integer bizId, String taskId);
 
     List<BizFile> findBizFile(BizFile bizFile);
 

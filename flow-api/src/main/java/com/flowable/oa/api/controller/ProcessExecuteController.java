@@ -60,7 +60,7 @@ public class ProcessExecuteController {
 
     @ResponseBody
     @RequestMapping(value = "/loadWorkLogInput")
-    public Map<String, Object> loadWorkLogInput(String logId) {
+    public Map<String, Object> loadWorkLogInput(Integer logId) {
         return processExecuteService.loadBizLogInput(logId);
     }
 
@@ -155,7 +155,7 @@ public class ProcessExecuteController {
 
     @ResponseBody
     @RequestMapping(value = "/bizInfo/delete")
-    public RestResult<Object> deleteBizInfo(@RequestParam List<String> ids) {
+    public RestResult<Object> deleteBizInfo(@RequestParam List<Integer> ids) {
 
         bizInfoService.deleteByIds(ids);
         return RestResult.success();
@@ -163,7 +163,7 @@ public class ProcessExecuteController {
 
     @ResponseBody
     @RequestMapping(value = "/download")
-    public void downloadFile(String action, String id, HttpServletResponse response) {
+    public void downloadFile(String action, Integer id, HttpServletResponse response) {
 
         Object[] result = processExecuteService.downloadFile(action, id);
         if (result[1] == null) {

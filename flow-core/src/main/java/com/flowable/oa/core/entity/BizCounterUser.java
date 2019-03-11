@@ -25,7 +25,7 @@ public class BizCounterUser implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(unique = true, nullable = false, length = 64, name = "ID")
-	private String id;
+	private Integer id;
 	
 	@Column(name="USER_NAME",length=32)
 	private String username;

@@ -39,7 +39,7 @@ public class DictValueController {
 
     @ResponseBody
     @RequestMapping("/value/{valueId}")
-    public DictValue getById(@PathVariable("valueId") String valueId) {
+    public DictValue getById(@PathVariable("valueId") Integer valueId) {
 
         return this.dictValueService.getById(valueId);
     }
@@ -56,7 +56,7 @@ public class DictValueController {
     @RequestMapping("update")
     public RestResult<Object> update(DictValue dictValue) {
 
-        if (StringUtils.isBlank(dictValue.getId())) {
+        if (dictValue.getId() != null) {
             return RestResult.fail(dictValue, "id不可为空");
         }
         this.dictValueService.saveOrUpdate(dictValue);
@@ -65,7 +65,7 @@ public class DictValueController {
 
     @ResponseBody
     @RequestMapping("delete")
-    public RestResult<Object> delete(@RequestBody List<String> list) {
+    public RestResult<Object> delete(@RequestBody List<Integer> list) {
 
         this.dictValueService.deleteByIds(list);
         return RestResult.success();

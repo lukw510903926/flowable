@@ -125,7 +125,7 @@ public class BizInfoController {
 
     @ResponseBody
     @RequestMapping("biz/download")
-    public void download(String id, HttpServletResponse response) {
+    public void download(Integer id, HttpServletResponse response) {
         try {
             BizFile bizFile = bizFileService.selectByKey(id);
             response.setContentType("application/octet-stream;charset=UTF-8");

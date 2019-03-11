@@ -66,7 +66,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     private String bizFileRootPath;
 
     @Override
-    public Map<String, Object> loadBizLogInput(String logId) {
+    public Map<String, Object> loadBizLogInput(Integer logId) {
 
         BizLog logBean = logService.selectByKey(logId);
         Map<String, Object> results = new HashMap<>();
@@ -120,21 +120,15 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
         String source = MapUtils.getString(params, "$source", "人工发起");
         String procDefId = MapUtils.getString(params, "base.tempID");
-        String tempBizId = MapUtils.getString(params, "tempBizId");
+        Integer tempBizId = MapUtils.getInteger(params, "tempBizId");
         Date now = new Date();
         BizInfo bizInfo;
-        BizInfoConf bizInfoConf = null;
         String username = WebUtil.getLoginUsername();
-        if (StringUtils.isNotBlank(tempBizId)) {
+        if (null != tempBizId) {
             bizInfo = bizInfoService.selectByKey(tempBizId);
-            bizInfoConf = this.bizInfoConfService.getMyWork(tempBizId);
         } else {
             bizInfo = new BizInfo();
             bizInfo.setWorkNum(WorkOrderUtil.builWorkNumber(procDefId));
-        }
-        if (bizInfoConf == null) {
-            bizInfoConf = new BizInfoConf();
-            bizInfoConf.setTaskAssignee(username);
         }
         bizInfo.setCreateUser(username);
         bizInfo.setSource(source);
@@ -144,8 +138,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         bizInfo.setCreateTime(now);
         bizInfo.setTitle(MapUtils.getString(params, "base.workTitle"));
         bizInfoService.saveOrUpdate(bizInfo);
-        bizInfoConf.setBizId(bizInfo.getId());
-        this.bizInfoConfService.saveOrUpdate(bizInfoConf);
         TaskEntityImpl task = new TaskEntityImpl(); // 开始节点没有任务对象
         task.setId(Constants.TASK_START);
         task.setName(MapUtils.getString(params, "base.handleName"));
@@ -178,7 +170,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     public BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
         logger.info("params :" + params);
-        String bizId = MapUtils.getString(params, "base.bizId");
+        Integer bizId = MapUtils.getInteger(params, "base.bizId");
         BizInfo bizInfo = bizInfoService.selectByKey(bizId);
         if (null == bizInfo) {
             throw new ServiceException("工单不存在");
@@ -269,7 +261,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     @Override
     public void updateBizTaskInfo(BizInfo bizInfo) {
 
-        String bizId = bizInfo.getId();
+        Integer bizId = bizInfo.getId();
         List<Task> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
         this.bizInfoConfService.deleteByBizId(bizId);
         // 如果nextTaskInfo返回null，标示流程已结束
@@ -415,7 +407,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * @throws ServiceException
      */
     @Override
-    public Map<String, Object> queryWorkOrder(String bizId) {
+    public Map<String, Object> queryWorkOrder(Integer bizId) {
 
         String loginUser = WebUtil.getLoginUser().getUsername();
         Map<String, Object> result = new HashMap<>();
@@ -518,7 +510,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * @throws ServiceException
      */
     @Override
-    public Object[] downloadFile(String action, String id) {
+    public Object[] downloadFile(String action, Integer id) {
 
         Object[] result = new Object[4];
         if ("work".equalsIgnoreCase(action)) {

@@ -48,7 +48,7 @@ public class DictTypeController {
     @RequestMapping("update")
     public RestResult<Object> update(DictType dictType) {
 
-        if (StringUtils.isBlank(dictType.getId())) {
+        if (null != dictType.getId()) {
            return RestResult.fail(null,"id不可为空");
         }
         this.dictTypeService.saveOrUpdate(dictType);
@@ -57,7 +57,7 @@ public class DictTypeController {
 
     @ResponseBody
     @RequestMapping("delete")
-    public RestResult<Object> delete(@RequestBody List<String> list) {
+    public RestResult<Object> delete(@RequestBody List<Integer> list) {
 
         this.dictTypeService.delete(list);
         return RestResult.success();
@@ -65,7 +65,7 @@ public class DictTypeController {
 
     @ResponseBody
     @RequestMapping("get/{typeId}")
-    public DictType getEdit(@PathVariable("typeId") String typeId) {
+    public DictType getEdit(@PathVariable("typeId") Integer typeId) {
         return this.dictTypeService.selectByKey(typeId);
     }
 

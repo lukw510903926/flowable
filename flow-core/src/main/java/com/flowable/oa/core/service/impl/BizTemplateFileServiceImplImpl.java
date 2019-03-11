@@ -1,6 +1,7 @@
 package com.flowable.oa.core.service.impl;
 
 import java.io.File;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -60,17 +62,17 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
         BizTemplateFile templateFile = new BizTemplateFile();
         templateFile.setFileName(params.get("fileName"));
         if (StringUtils.isNotBlank(params.get("bizId"))) {
-            BizInfo bizInfo = this.bizInfoService.selectByKey(params.get("bizId"));
+            BizInfo bizInfo = this.bizInfoService.selectByKey(MapUtils.getInteger(params,"bizId"));
             templateFile.setFlowName(Optional.ofNullable(bizInfo).map(BizInfo::getBizType).orElse(null));
         }
         if (StringUtils.isNotEmpty(params.get("id"))) {
-            templateFile.setId(params.get("id"));
+            templateFile.setId(MapUtils.getInteger(params,"id"));
         }
         return this.selectOne(templateFile);
     }
 
     @Override
-    public List<BizTemplateFile> findFileByIds(List<String> ids) {
+    public List<BizTemplateFile> findFileByIds(List<Integer> ids) {
 
         List<BizTemplateFile> list = new ArrayList<>();
         if (!CollectionUtils.isEmpty(ids)) {
@@ -93,7 +95,7 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
         if (!this.check(dataFile)) {
             throw new ServiceException(" 相同名称模版已存在,请将原模板文件删除后再上传,所属流程+文件名唯一");
         }
-        if (StringUtils.isBlank(dataFile.getId())) {
+        if (dataFile.getId()!=null) {
             dataFile.setCreateUser(WebUtil.getLoginUserId());
             dataFile.setFullName(WebUtil.getLoginUser().getName());
             dataFile.setCreateTime(new Timestamp(System.currentTimeMillis()));
@@ -112,7 +114,7 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
 
     }
 
-    private void saveFile(MultipartFile file, String filePath, String fileName, String dataId) {
+    private void saveFile(MultipartFile file, String filePath, String fileName, Integer dataId) {
 
         String suffix = "";
         if (fileName.lastIndexOf(".") != -1) {
@@ -129,11 +131,11 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
 
     @Override
     @Transactional
-    public void deleteByIds(List<String> list) {
+    public void deleteByIds(List<Integer> list) {
 
         BizTemplateFile templateFile;
-        for (String id : list) {
-            if (StringUtils.isNotBlank(id)) {
+        for (Integer id : list) {
+            if (id!= null) {
                 templateFile = this.selectByKey(id);
                 if (templateFile != null) {
                     String fileName = templateFile.getFileName();

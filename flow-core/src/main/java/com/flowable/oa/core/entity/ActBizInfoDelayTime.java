@@ -31,7 +31,7 @@ public class ActBizInfoDelayTime implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(unique = true, nullable = false, length = 64, name = "ID")
-	private String id;
+	private Integer id;
 	
 	@Column(length = 64, name = "TASK_ID")
 	private String taskId;

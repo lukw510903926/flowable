@@ -30,7 +30,7 @@ public class BizFileServiceImplImpl extends BaseServiceImpl<BizFile> implements 
     }
 
     @Override
-    public List<BizFile> loadBizFilesByBizId(String bizId, String taskId) {
+    public List<BizFile> loadBizFilesByBizId(Integer bizId, String taskId) {
 
         BizFile bizFile = new BizFile();
         bizFile.setBizId(bizId);

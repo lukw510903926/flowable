@@ -104,7 +104,7 @@ public class BizTemplateFileController {
 
     @ResponseBody
     @RequestMapping("/remove")
-    public RestResult<Object> remove(@RequestParam List<String> ids) {
+    public RestResult<Object> remove(@RequestParam List<Integer> ids) {
 
         bizTemplateFileService.deleteByIds(ids);
         return RestResult.success();

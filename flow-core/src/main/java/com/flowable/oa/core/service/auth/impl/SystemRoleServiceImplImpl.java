@@ -10,11 +10,13 @@ import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +37,7 @@ public class SystemRoleServiceImplImpl extends BaseServiceImpl<SystemRole> imple
         if (!this.check(systemRole)) {
             throw new ServiceException("角色中文名称/英文名称不可重复");
         }
-        if (StringUtils.isNotBlank(systemRole.getId())) {
+        if (systemRole.getId() != null) {
             this.updateNotNull(systemRole);
         } else {
             systemRole.setCreateTime(new Date());
@@ -44,13 +46,13 @@ public class SystemRoleServiceImplImpl extends BaseServiceImpl<SystemRole> imple
     }
 
     @Override
-    public void deleteByIds(List<String> list) {
+    public void deleteByIds(List<Integer> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(roleId -> {
                 this.deleteById(roleId);
                 SysUserRole userRole = new SysUserRole();
-                userRole.setRoleId(roleId);
+                userRole.setRoleId(NumberUtils.toInt(roleId + ""));
                 this.userRoleService.deleteByModel(userRole);
             });
         }
@@ -74,7 +76,7 @@ public class SystemRoleServiceImplImpl extends BaseServiceImpl<SystemRole> imple
     public List<SystemRole> findUserRole(SystemUser systemUser) {
 
         SystemUser entity = this.systemUserService.selectOne(systemUser);
-        List<String> roleIds = Optional.ofNullable(entity).map(user -> this.userRoleService.findRoleIdsByUserId(user.getId())).orElse(new ArrayList<>());
+        List<Integer> roleIds = Optional.ofNullable(entity).map(user -> this.userRoleService.findRoleIdsByUserId(user.getId())).orElse(new ArrayList<>());
         if (CollectionUtils.isEmpty(roleIds)) {
             return null;
         }

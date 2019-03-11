@@ -24,7 +24,7 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      * @param variables
      * @return
      */
-    BizInfo copyBizInfo(String bizId, String processInstanceId, Map<String, Object> variables);
+    BizInfo copyBizInfo(Integer bizId, String processInstanceId, Map<String, Object> variables);
 
     /**
      * 分页查询指定用户创建的工单
@@ -33,5 +33,6 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      */
     PageInfo<BizInfo> findBizInfo(BizInfoVo bizInfoVo, PageInfo<BaseVo> page);
 
-    List<BizInfo> getBizByParentId(String parentId);
+    List<BizInfo> getBizByParentId(Integer parentId);
+
 }

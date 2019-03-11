@@ -17,7 +17,7 @@ public interface ISysUserRoleService extends IBaseService<SysUserRole> {
 
     void saveOrUpdate(SysUserRole userRole);
 
-    List<String> findUserIdsByRoleId(String roleId);
+    List<Integer> findUserIdsByRoleId(Integer roleId);
 
-    List<String> findRoleIdsByUserId(String userId);
+    List<Integer> findRoleIdsByUserId(Integer userId);
 }

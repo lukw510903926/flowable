@@ -23,11 +23,14 @@ public class SysUserRole implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, length = 64, name = "ID")
-    private String id;
+    private Integer id;
 
     @Column(name = "USER_ID", length = 32)
-    private String userId;
+    private Integer userId;
 
     @Column(name = "ROLE_ID", length = 32)
-    private String roleId;
+    private Integer roleId;
+
+    @Transient
+    private String roleIds;
 }

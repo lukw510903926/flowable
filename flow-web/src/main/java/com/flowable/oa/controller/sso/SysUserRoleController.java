@@ -54,7 +54,7 @@ public class SysUserRoleController {
      */
     @ResponseBody
     @GetMapping("users/{roleId}")
-    public List<SystemUser> findUserByRoleId(@PathVariable("roleId") String roleId) {
+    public List<SystemUser> findUserByRoleId(@PathVariable("roleId") Integer roleId) {
 
         SystemRole systemRole = new SystemRole();
         systemRole.setId(roleId);
@@ -69,7 +69,7 @@ public class SysUserRoleController {
      */
     @ResponseBody
     @GetMapping("/roles/{userId}")
-    public List<SystemRole> findRoleByUserId(@PathVariable("userId") String userId) {
+    public List<SystemRole> findRoleByUserId(@PathVariable("userId") Integer userId) {
 
         SystemUser systemUser = new SystemUser();
         systemUser.setId(userId);

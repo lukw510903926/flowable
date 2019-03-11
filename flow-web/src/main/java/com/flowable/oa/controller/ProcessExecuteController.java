@@ -108,7 +108,7 @@ public class ProcessExecuteController {
      */
     @ResponseBody
     @RequestMapping("/display/{id}")
-    public Map<String, Object> display(@PathVariable("id") String id) {
+    public Map<String, Object> display(@PathVariable("id") Integer id) {
 
         return processExecuteService.queryWorkOrder(id);
     }
@@ -152,7 +152,7 @@ public class ProcessExecuteController {
 
     @ResponseBody
     @RequestMapping("/bizInfo/delete")
-    public RestResult<Object> deleteBizInfo(@RequestParam List<String> ids) {
+    public RestResult<Object> deleteBizInfo(@RequestParam List<Integer> ids) {
 
         bizInfoService.deleteByIds(ids);
         return RestResult.success();

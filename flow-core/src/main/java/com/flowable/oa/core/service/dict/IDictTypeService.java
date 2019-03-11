@@ -14,7 +14,7 @@ public interface IDictTypeService extends IBaseService<DictType> {
 
     void saveOrUpdate(DictType dictType);
 
-    void delete(String id);
+    void delete(Integer id);
 
-    void delete(List<String> list) ;
+    void delete(List<Integer> list) ;
 }

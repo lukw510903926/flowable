@@ -36,7 +36,7 @@ public class ProcessVariableInstance implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, length = 64, name = "ID")
-    private String id;
+    private Integer id;
 
     /**
      * 增加填写时间
@@ -50,13 +50,13 @@ public class ProcessVariableInstance implements Serializable, Cloneable {
      * 参数
      */
     @Column(name = "PROCESS_VARIABLE_ID")
-    private String variableId;
+    private Integer variableId;
 
     /**
      * 流程id
      */
     @Column(name = "BIZ_ID", length = 64)
-    private String bizId;
+    private Integer bizId;
 
     /**
      * 任务ID

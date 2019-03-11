@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -44,7 +45,7 @@ public class SystemResourceController {
 
     @ResponseBody
     @PostMapping("/delete")
-    public RestResult<Object> delete(@RequestBody List<String> list) {
+    public RestResult<Object> delete(@RequestBody List<Integer> list) {
 
         this.resourceService.deleteByIds(list);
         return RestResult.success();
@@ -70,11 +71,11 @@ public class SystemResourceController {
 
     @ResponseBody
     @GetMapping("info/{resourceId}")
-    public SystemResource info(@PathVariable("resourceId") String resourceId) {
+    public SystemResource info(@PathVariable("resourceId") Integer resourceId) {
 
         SystemResource resource = this.resourceService.selectByKey(resourceId);
         Optional.ofNullable(resource).map(SystemResource::getParentId)
-                .filter(StringUtils::isNotBlank)
+                .filter(Objects::nonNull)
                 .map(this.resourceService::selectByKey)
                 .map(entity -> {
                     resource.setParentName(entity.getName());

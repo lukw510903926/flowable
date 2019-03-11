@@ -247,7 +247,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                 .orderByHistoricTaskInstanceEndTime().desc().list();
         StringBuilder builder = new StringBuilder();
         if (CollectionUtils.isNotEmpty(list)) {
-            list.stream().filter(entity->entity.getEndTime() != null).forEach(hti -> builder.append(hti.getTaskDefinitionKey()).append(":").append(hti.getName()).append(","));
+            list.stream().filter(entity -> entity.getEndTime() != null).forEach(hti -> builder.append(hti.getTaskDefinitionKey()).append(":").append(hti.getName()).append(","));
         }
         return builder.toString();
     }
@@ -426,7 +426,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      * @return @
      */
     @Override
-    public boolean assignmentTask(String taskID,String toAssignment, String assignmentType) {
+    public boolean assignmentTask(String taskID, String toAssignment, String assignmentType) {
 
         if (!("group".equalsIgnoreCase(assignmentType) || "user".equalsIgnoreCase(assignmentType))) {
             throw new ServiceException("参数错误");
@@ -487,21 +487,18 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         ProcessInstance processInstance = this.getProcessInstance(processInstanceId);
         if (processInstance != null) {// 已经结束
             List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
-            if (CollectionUtils.isEmpty(tasks)) {
-                return taskList;
-            }
-            for (Task task : tasks) {
-                List<String> groups = new ArrayList<>();
-                Task taskCopy = new TaskEntityImpl();
-                ReflectionUtils.copyBean(task, taskCopy);
-                if (StringUtils.isEmpty(task.getAssignee())) {
-                    List<String> list = getTaskCandidateGroup(task);
-                    list.stream().filter(StringUtils::isNotBlank).forEach(groups::add);
-                    if (StringUtils.isNotBlank(groups.toString())) {
-                        taskCopy.setAssignee(Constants.BIZ_GROUP + StringUtils.join(groups.toArray(),","));
+            if (CollectionUtils.isNotEmpty(tasks)) {
+                for (Task task : tasks) {
+                    Task taskCopy = new TaskEntityImpl();
+                    ReflectionUtils.copyBean(task, taskCopy);
+                    if (StringUtils.isEmpty(task.getAssignee())) {
+                        List<String> list = getTaskCandidateGroup(task);
+                        if (CollectionUtils.isNotEmpty(list)) {
+                            taskCopy.setAssignee(Constants.BIZ_GROUP + StringUtils.join(list.toArray(), ","));
+                        }
                     }
+                    taskList.add(taskCopy);
                 }
-                taskList.add(taskCopy);
             }
         }
         return taskList;

@@ -18,8 +18,6 @@ public interface ISystemResourceService extends IBaseService<SystemResource> {
 
     void saveOrUpdate(SystemResource resource);
 
-    void deleteByIds(List<String> list);
-
     PageInfo<SystemResource> list(PageInfo<SystemResource> pageInfo, SystemResource resource);
 
     /**

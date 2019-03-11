@@ -43,9 +43,9 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
-    public T selectByKey(String key) {
+    public T selectByKey(Integer key) {
 
-        if (StringUtils.isNotBlank(key)) {
+        if (key != null) {
             return mapper.selectByPrimaryKey(key);
         }
         return null;
@@ -66,9 +66,9 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 
     @Override
     @Transactional
-    public void deleteById(String key) {
+    public void deleteById(Integer key) {
 
-        if (StringUtils.isNotBlank(key)) {
+        if (key != null) {
             mapper.deleteByPrimaryKey(key);
         }
     }
@@ -81,10 +81,10 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 
     @Override
     @Transactional
-    public void deleteByIds(List<String> list) {
+    public void deleteByIds(List<Integer> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
-            for (String key : list) {
+            for (Integer key : list) {
                 this.mapper.deleteByPrimaryKey(key);
             }
         }
@@ -170,7 +170,7 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
-    public boolean check(Serializable uid, List<T> list) {
+    public boolean check(Integer uid, List<T> list) {
 
         if (CollectionUtils.isEmpty(list)) {
             return true;
@@ -181,6 +181,6 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
         }
         T t = list.get(0);
         String oid = ReflectionUtils.getter(t, "id") + "";
-        return oid.equals(uid);
+        return oid.equals(uid + "");
     }
 }

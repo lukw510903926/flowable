@@ -29,10 +29,10 @@ public class BizTimedTask implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", unique = true, nullable = false, length = 64)
-	private String id;
+	private Integer id;
 	
 	@Column(name="BIZ_ID",length = 64)
-	private String bizId;
+	private Integer bizId;
 	
 	@Column(name="TASK_NAME",length = 64)
 	private String taskName;

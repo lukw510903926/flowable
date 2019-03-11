@@ -34,7 +34,7 @@ public class DictValueServiceImplImpl extends BaseServiceImpl<DictValue> impleme
         }
         dictValue.setModified(new Date());
         dictValue.setModifier(WebUtil.getLoginUser().getUsername());
-        if (StringUtils.isNotBlank(dictValue.getId())) {
+        if (dictValue.getId() != null) {
             this.updateNotNull(dictValue);
         } else {
             dictValue.setCreator(WebUtil.getLoginUser().getUsername());
@@ -44,11 +44,11 @@ public class DictValueServiceImplImpl extends BaseServiceImpl<DictValue> impleme
     }
 
     @Override
-    public DictValue getById(String valueId) {
+    public DictValue getById(Integer valueId) {
 
         Optional<DictValue> dictValue = Optional.ofNullable(this.selectByKey(valueId));
         dictValue.map(value -> {
-            if (StringUtils.isNotBlank(value.getDictTypeId())) {
+            if (null != value.getDictTypeId()) {
                 DictType dictType = this.dictTypeService.selectByKey(value.getDictTypeId());
                 value.setDictType(dictType);
             }

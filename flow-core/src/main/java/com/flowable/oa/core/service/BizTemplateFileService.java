@@ -12,9 +12,9 @@ public interface BizTemplateFileService extends IBaseService<BizTemplateFile> {
 
 	PageInfo<BizTemplateFile> findTemplateFlies(PageInfo<BizTemplateFile> page, BizTemplateFile file, boolean isLike);
 
-    void deleteByIds(List<String> list);
+    void deleteByIds(List<Integer> list);
 
-    List<BizTemplateFile> findFileByIds(List<String> ids);
+    List<BizTemplateFile> findFileByIds(List<Integer> ids);
 
     void saveOrUpdate(BizTemplateFile dataFile, MultipartFile file);
 
