@@ -3,8 +3,6 @@ package com.flowable.oa.core.dao;
 import com.flowable.oa.core.entity.BizInfoConf;
 import com.flowable.oa.core.util.mybatis.MyMapper;
 
-import java.util.List;
-
 
 /**
  * 
@@ -14,12 +12,4 @@ import java.util.List;
  * @description :
  */
 public interface BizInfoConfMapper extends MyMapper<BizInfoConf> {
-
-	/**
-	 * 当前工单我的待办
-	 *
-	 * @param bizInfoConf
-	 * @return
-	 */
-	List<BizInfoConf> getMyWork(BizInfoConf bizInfoConf);
 }

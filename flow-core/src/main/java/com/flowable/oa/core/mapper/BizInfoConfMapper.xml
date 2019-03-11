@@ -9,25 +9,4 @@
 		<result column="TASK_ASSIGNEE" property="taskAssignee" />
 		<result column="BIZ_ID" property="bizId" />
 	</resultMap>
-
-	<!-- 通过规格查询活动 -->
-	<select id="getMyWork" parameterType="com.flowable.oa.core.entity.BizInfoConf"
-		resultMap="BaseResultMap">
-		SELECT
-		ID,
-		CREATE_TIME,
-		TASK_ASSIGNEE,
-		TASK_ID,
-		BIZ_ID FROM T_BIZ_INFO_CONF where BIZ_ID = #{bizId}
-		<if test="loginUser != null">
-			and (TASK_ASSIGNEE = #{loginUser} or TASK_ASSIGNEE is null
-			<if test="roles != null">
-				<foreach collection="roles" item="role"	separator=" ">
-					or TASK_ASSIGNEE = CONCAT('GROUP:', #{role})
-				</foreach>
-			</if>
-			)
-		</if>
-	</select>
-
 </mapper>
