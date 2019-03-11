@@ -161,7 +161,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             this.processDefinitionService.autoClaim(instance.getId());
             writeBizLog(bizInfo, task, now, params);
             updateBizTaskInfo(bizInfo);
-            bizInfoService.saveOrUpdate(bizInfo);
         }
         saveOrUpdateVars(bizInfo, Constants.TASK_START, processValList, params, now);
         return bizInfo;
@@ -202,7 +201,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             saveOrUpdateVars(bizInfo, bizInfoConf.getTaskId(), processValList, params, now);
             updateBizTaskInfo(bizInfo);
         }
-        bizInfoService.saveOrUpdate(bizInfo);
         writeBizLog(bizInfo, task, now, params);
         return bizInfo;
     }
@@ -300,6 +298,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             bizInfo.setTaskName(task.getName());
             bizInfo.setTaskDefKey(task.getTaskDefinitionKey());
             bizInfo.setTaskAssignee(StringUtils.join(taskAssignee.toArray(), ","));
+            this.bizInfoService.saveOrUpdate(bizInfo);
         }
     }
 

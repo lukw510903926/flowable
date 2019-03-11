@@ -67,8 +67,6 @@ public class CommandServiceImpl implements CommandService {
 			managementService.executeCommand(cmd);
 			processExecuteService.updateBizTaskInfo(bizInfo);
 			processExecuteService.writeBizLog(bizInfo, task, new Date(), params);
-			this.bizInfoService.saveOrUpdate(bizInfo);
-			this.bizInfoConfService.saveOrUpdate(conf);
 			return bizInfo;
 		} catch (Exception e) {
 			logger.error(" 流程跳转失败 : {}", e);
