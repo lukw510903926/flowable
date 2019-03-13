@@ -54,17 +54,6 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     }
 
     @Override
-    @Transactional
-    public void saveOrUpdate(BizInfo bizInfo) {
-
-        if (bizInfo.getId() != null) {
-            this.updateNotNull(bizInfo);
-        } else {
-            this.save(bizInfo);
-        }
-    }
-
-    @Override
     public BizInfo copyBizInfo(Integer bizId, String processInstanceId, Map<String, Object> variables) {
 
         BizInfo oldBiz = this.selectByKey(bizId);
