@@ -4,8 +4,6 @@ import com.flowable.oa.core.entity.BizFile;
 import com.flowable.oa.core.service.IBizFileService;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import org.springframework.stereotype.Service;
-import java.util.List;
-
 /**
  * 
  * @project : tykj-oa
@@ -15,14 +13,5 @@ import java.util.List;
  */
 @Service
 public class BizFileServiceImplImpl extends BaseServiceImpl<BizFile> implements IBizFileService {
-
-    @Override
-    public List<BizFile> loadBizFilesByBizId(Integer bizId, String taskId) {
-
-        BizFile bizFile = new BizFile();
-        bizFile.setBizId(bizId);
-        bizFile.setTaskId(taskId);
-        return this.findByModel(bizFile, false);
-    }
 
 }
