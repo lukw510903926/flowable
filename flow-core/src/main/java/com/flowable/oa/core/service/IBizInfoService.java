@@ -14,8 +14,6 @@ import com.github.pagehelper.PageInfo;
  */
 public interface IBizInfoService extends IBaseService<BizInfo> {
 
-    void saveOrUpdate(BizInfo bizInfo);
-
     /**
      * 复制工单
      *

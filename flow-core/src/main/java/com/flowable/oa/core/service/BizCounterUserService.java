@@ -5,24 +5,17 @@ import java.util.Map;
 
 import com.flowable.oa.core.entity.BizCounterUser;
 import com.flowable.oa.core.util.mybatis.IBaseService;
-import com.github.pagehelper.PageInfo;
 
 /**
- * 2016年8月23日
+ * <p>
  *
- * @author lukw
- * 下午8:13:52
- * com.eastcom.esflow.service
- * @email lukw@eastcom-sw.com
- */
-
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/13 11:15
+ **/
 public interface BizCounterUserService extends IBaseService<BizCounterUser> {
 
-	PageInfo<BizCounterUser> findBizCounterUser(PageInfo<BizCounterUser> page, BizCounterUser user);
-
     void saveUser(List<Map<String, String>> list, String bizId, String taskId);
-
-    void updateUser(List<Map<String, String>> list, String bizId, String taskId);
-
 }
 

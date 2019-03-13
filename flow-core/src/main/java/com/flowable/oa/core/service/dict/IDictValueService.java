@@ -11,7 +11,5 @@ import com.flowable.oa.core.util.mybatis.IBaseService;
  **/
 public interface IDictValueService extends IBaseService<DictValue> {
 
-    void saveOrUpdate(DictValue dictValue);
-
     DictValue getById(Integer valueId);
 }

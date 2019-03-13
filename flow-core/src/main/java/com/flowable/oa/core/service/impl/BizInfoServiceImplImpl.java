@@ -70,12 +70,11 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         newBiz.setCreateTime(new Date());
         newBiz.setParentTaskName(oldBiz.getTaskName());
         newBiz.setStatus(Constants.BIZ_NEW);
-        String username = WebUtil.getLoginUsername();
-        newBiz.setCreateUser(username);
+        newBiz.setCreateUser(WebUtil.getLoginUsername());
         this.saveOrUpdate(newBiz);
         this.copyProcessVarInstance(processInstanceId, oldBiz, newBiz);
         this.copyBizInfoConf(newBiz, oldBiz.getId());
-        this.copyBizFile(bizId, oldBiz, newBiz, username);
+        this.copyBizFile(oldBiz, newBiz);
         return newBiz;
     }
 
@@ -97,17 +96,20 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         }
     }
 
-    private void copyBizFile(Integer bizId, BizInfo oldBiz, BizInfo newBiz, String username) {
+    private void copyBizFile(BizInfo oldBiz, BizInfo newBiz) {
 
-        List<BizFile> files = bizFileService.loadBizFilesByBizId(bizId, oldBiz.getTaskId());
+        BizFile entity = new BizFile();
+        entity.setBizId(oldBiz.getId());
+        entity.setTaskId(oldBiz.getTaskId());
+        List<BizFile> files = bizFileService.select(entity);
         if (CollectionUtils.isNotEmpty(files)) {
             files.forEach(oldFile -> {
                 BizFile bizFile = oldFile.clone();
                 bizFile.setId(null);
                 bizFile.setBizId(newBiz.getId());
                 bizFile.setCreateDate(new Date());
-                bizFile.setCreateUser(username);
-                bizFileService.addBizFile(bizFile);
+                bizFile.setCreateUser(WebUtil.getLoginUsername());
+                bizFileService.save(bizFile);
             });
         }
     }

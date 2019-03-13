@@ -3,14 +3,15 @@ package com.flowable.oa.core.service;
 import com.flowable.oa.core.entity.BizInfoConf;
 import com.flowable.oa.core.util.mybatis.IBaseService;
 
-import java.util.List;
-
 
 /**
- * @author 2622
- * @time 2016年5月30日
- * @email lukw@eastcom-sw.com
- */
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/13 11:07
+ **/
 public interface BizInfoConfService extends IBaseService<BizInfoConf> {
 
     /**
@@ -21,10 +22,5 @@ public interface BizInfoConfService extends IBaseService<BizInfoConf> {
      */
     BizInfoConf getMyWork(Integer bizId);
 
-    void saveOrUpdate(BizInfoConf bizInfoConf);
-
-	List<BizInfoConf> findByBizId(Integer bizId);
-
 	void deleteByBizId(Integer bizId);
-
 }

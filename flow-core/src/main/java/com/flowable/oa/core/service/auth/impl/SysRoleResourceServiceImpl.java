@@ -4,10 +4,7 @@ import com.flowable.oa.core.entity.auth.SysRoleResource;
 import com.flowable.oa.core.service.auth.ISysRoleResourceService;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 
 /**
  * <p>

@@ -1,6 +1,5 @@
 package com.flowable.oa.core.service;
 
-import java.util.List;
 import java.util.Map;
 
 import com.flowable.oa.core.entity.BizTemplateFile;
@@ -11,10 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface BizTemplateFileService extends IBaseService<BizTemplateFile> {
 
 	PageInfo<BizTemplateFile> findTemplateFlies(PageInfo<BizTemplateFile> page, BizTemplateFile file, boolean isLike);
-
-    void deleteByIds(List<Integer> list);
-
-    List<BizTemplateFile> findFileByIds(List<Integer> ids);
 
     void saveOrUpdate(BizTemplateFile dataFile, MultipartFile file);
 

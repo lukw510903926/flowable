@@ -1,9 +1,7 @@
 package com.flowable.oa.core.service.impl;
 
 import java.io.File;
-import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,16 +23,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.PageHelper;
 
 /**
- * @author 2622
- * @time 2016年8月5日
- * @email lukw@eastcom-sw.com
- */
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/13 11:10
+ **/
 @Service
 public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateFile> implements BizTemplateFileService {
 
@@ -69,21 +69,6 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
             templateFile.setId(MapUtils.getInteger(params,"id"));
         }
         return this.selectOne(templateFile);
-    }
-
-    @Override
-    public List<BizTemplateFile> findFileByIds(List<Integer> ids) {
-
-        List<BizTemplateFile> list = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(ids)) {
-            ids.forEach(id -> {
-                BizTemplateFile file = this.selectByKey(id);
-                if (file != null) {
-                    list.add(file);
-                }
-            });
-        }
-        return list;
     }
 
     @Override

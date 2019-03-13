@@ -41,14 +41,6 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
     }
 
     @Override
-    public List<BizInfoConf> findByBizId(Integer bizId) {
-
-        BizInfoConf example = new BizInfoConf();
-        example.setBizId(bizId);
-        return this.select(example);
-    }
-
-    @Override
     public void deleteByBizId(Integer bizId) {
 
         BizInfoConf bizInfoConf = new BizInfoConf();

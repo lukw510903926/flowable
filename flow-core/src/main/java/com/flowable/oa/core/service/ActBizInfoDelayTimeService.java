@@ -6,5 +6,4 @@ import com.flowable.oa.core.util.mybatis.IBaseService;
 
 public interface ActBizInfoDelayTimeService extends IBaseService<ActBizInfoDelayTime> {
 
-    void saveOrUpdate(ActBizInfoDelayTime actBizInfo);
 }

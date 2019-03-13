@@ -12,8 +12,6 @@ import java.util.List;
  **/
 public interface IDictTypeService extends IBaseService<DictType> {
 
-    void saveOrUpdate(DictType dictType);
-
     void delete(Integer id);
 
     void delete(List<Integer> list) ;

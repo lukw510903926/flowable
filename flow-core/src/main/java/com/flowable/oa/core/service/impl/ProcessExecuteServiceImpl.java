@@ -319,7 +319,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                             bizFile.setTaskId(task.getId());
                             bizFile.setTaskName(task.getName());
                             bizFile.setBizId(bizInfo.getId());
-                            bizFileService.addBizFile(bizFile);
+                            bizFileService.save(bizFile);
                             BizFileVo fileVo = new BizFileVo();
                             BeanUtils.copyProperties(bizFile, fileVo);
                             list.add(fileVo);
@@ -368,7 +368,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         logBean.setHandleUser(loginUser.getUsername());
         logBean.setHandleUserName(loginUser.getName());
         logBean.setHandleName(MapUtils.getString(params, "base.handleName"));
-        logService.addBizLog(logBean);
+        logService.save(logBean);
         return logBean;
     }
 
@@ -460,7 +460,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     private List<BizLogVo> loadBizLog(BizInfo bizInfo) {
 
         List<BizLogVo> bizLogVos = new ArrayList<>();
-        List<BizLog> bizLogs = logService.loadBizLogs(bizInfo.getId());
+        BizLog entity = new BizLog();
+        entity.setBizId(bizInfo.getId());
+        List<BizLog> bizLogs = logService.select(entity);
         if (CollectionUtils.isNotEmpty(bizLogs)) {
             bizLogs.forEach(bizLog -> {
                 BizLogVo bizLogVo = new BizLogVo();
@@ -479,7 +481,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      */
     private void loadBizFile(BizInfo bizInfo, List<BizLogVo> bizLogVos) {
 
-        List<BizFile> bizFiles = this.bizFileService.loadBizFilesByBizId(bizInfo.getId(), null);
+        BizFile bizFile = new BizFile();
+        bizFile.setBizId(bizInfo.getId());
+        List<BizFile> bizFiles = this.bizFileService.select(bizFile);
         if (CollectionUtils.isNotEmpty(bizFiles) && CollectionUtils.isNotEmpty(bizLogVos)) {
             Map<String, List<BizFile>> taskFileMap = bizFiles.stream().collect(Collectors.groupingBy(BizFile::getTaskId));
             bizLogVos.forEach(entity -> entity.setBizFiles(taskFileMap.get(entity.getTaskID())));
@@ -494,7 +498,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      */
     private void loadVariableInstance(BizInfo bizInfo, List<BizLogVo> bizLogVos) {
 
-        List<ProcessVariableInstance> variableInstances = this.instanceService.loadInstances(bizInfo);
+        ProcessVariableInstance variableInstance = new ProcessVariableInstance();
+        variableInstance.setBizId(bizInfo.getId());
+        List<ProcessVariableInstance> variableInstances = this.instanceService.select(variableInstance);
         if (CollectionUtils.isNotEmpty(variableInstances) && CollectionUtils.isNotEmpty(bizLogVos)) {
             Map<String, List<ProcessVariableInstance>> taskInstanceMap = variableInstances.stream().collect(Collectors.groupingBy(ProcessVariableInstance::getTaskId));
             bizLogVos.forEach(log -> log.setVariableInstances(taskInstanceMap.get(log.getTaskID())));

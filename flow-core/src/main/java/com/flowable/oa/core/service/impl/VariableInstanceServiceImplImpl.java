@@ -15,33 +15,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVariableInstance> implements IVariableInstanceService {
 
-    /**
-     * 加载某个工单所填写的所有数据
-     *
-     * @param bean
-     * @return
-     * @
-     */
-    @Override
-    public List<ProcessVariableInstance> loadInstances(BizInfo bean) {
-
-    	ProcessVariableInstance instance = new ProcessVariableInstance();
-    	instance.setBizId(bean.getId());
-        return this.select(instance);
-    }
-
     @Override
     public Map<String, ProcessVariableInstance> getVarMap(BizInfo bizInfo, String taskId, VariableLoadType type) {
 
         Map<String, ProcessVariableInstance> map = new HashMap<>();
-        BizLog logBean = new BizLog();
-        logBean.setBizId(bizInfo.getId());
         List<ProcessVariableInstance> tList = null;
         switch (type) {
             case ALL:
-                tList = loadInstances(bizInfo);
+                ProcessVariableInstance variableInstance = new ProcessVariableInstance();
+                variableInstance.setBizId(bizInfo.getId());
+                tList = this.select(variableInstance);
                 break;
             case UPDATABLE:
+                BizLog logBean = new BizLog();
+                logBean.setBizId(bizInfo.getId());
                 logBean.setTaskID(taskId);
                 tList = this.loadValueByLog(logBean);
                 break;

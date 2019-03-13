@@ -14,15 +14,6 @@ import java.util.Map;
  */
 public interface IVariableInstanceService extends IBaseService<ProcessVariableInstance> {
 
-	/**
-	 * 加载某个工单所填写的所有数据
-	 * 
-	 * @param bean
-	 * @return
-	 * @
-	 */
-	List<ProcessVariableInstance> loadInstances(BizInfo bean) ;
-
 	Map<String, ProcessVariableInstance> getVarMap(BizInfo bizInfo, String taskId, VariableLoadType type);
 
 	/**
