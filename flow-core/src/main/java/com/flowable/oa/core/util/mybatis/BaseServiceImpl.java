@@ -82,9 +82,7 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     public void deleteByIds(List<Integer> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
-            for (Integer key : list) {
-                this.mapper.deleteByPrimaryKey(key);
-            }
+            list.forEach(this::deleteById);
         }
     }
 
@@ -138,7 +136,6 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 
         if (page != null) {
             PageHelper.startPage(page.getPageNum(), page.getPageSize());
-
         }
         if (!isLike) {
             return new PageInfo<>(this.select(t));
