@@ -10,8 +10,13 @@ import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
 
 /**
- * 工单信息业务<br>
- */
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/13 18:17
+ **/
 public interface IBizInfoService extends IBaseService<BizInfo> {
 
     /**

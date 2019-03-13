@@ -11,9 +11,15 @@ import org.flowable.task.api.Task;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
+
 /**
+ * <p>
  * 流程处理业务
- */
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/13 18:17
+ **/
 public interface IProcessExecuteService {
 
     String systemFormType = "_SYS_FORM_TYPE";

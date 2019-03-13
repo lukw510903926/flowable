@@ -455,7 +455,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         List<String> groups = this.getTaskCandidateGroup(task);
         groups.stream().filter(StringUtils::isNotBlank).forEach(group -> taskService.deleteCandidateGroup(task.getId(), group));
-        taskService.addCandidateUser(task.getId(), WebUtil.getLoginUser().getUsername());
+        taskService.addCandidateUser(task.getId(), WebUtil.getLoginUsername());
     }
 
     private boolean assignmentTask(Task task, String toAssignment) {
@@ -623,9 +623,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             ProcessDiagramGenerator processDiagramGenerator = engineConfiguration.getProcessDiagramGenerator();
             return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),
                     historyActivityFlow.getHighFlows());
-
 //            return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),true);
-
         } catch (Exception e) {
             logger.error(" 显示流程实例图片失败 : {}", e);
             throw new ServiceException("显示流程实例图片失败!");

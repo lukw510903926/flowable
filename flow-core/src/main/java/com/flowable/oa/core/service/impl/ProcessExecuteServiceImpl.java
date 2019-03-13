@@ -362,12 +362,12 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         logBean.setTaskID(task.getId());
         logBean.setTaskName(task.getName());
         logBean.setBizId(bizInfo.getId());
-        logBean.setHandleDescription(MapUtils.getString(params, "base.handleMessage"));
-        logBean.setHandleResult(MapUtils.getString(params, "base.handleResult"));
         LoginUser loginUser = WebUtil.getLoginUser();
         logBean.setHandleUser(loginUser.getUsername());
         logBean.setHandleUserName(loginUser.getName());
         logBean.setHandleName(MapUtils.getString(params, "base.handleName"));
+        logBean.setHandleResult(MapUtils.getString(params, "base.handleResult"));
+        logBean.setHandleDescription(MapUtils.getString(params, "base.handleMessage"));
         logService.save(logBean);
         return logBean;
     }
@@ -377,7 +377,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      *
      * @param tempId
      * @return
-     * @throws ServiceException
      */
     @Override
     public Map<String, String> loadStartButtons(String tempId) {
@@ -404,7 +403,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      *
      * @param bizId
      * @return
-     * @throws ServiceException
      */
     @Override
     public Map<String, Object> queryWorkOrder(Integer bizId) {

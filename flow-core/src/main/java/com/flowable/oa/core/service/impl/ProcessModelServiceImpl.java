@@ -69,29 +69,28 @@ public class ProcessModelServiceImpl implements IProcessModelService {
     @Transactional
     public Model create(String name, String key, String description, String category) {
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            ObjectNode editorNode = objectMapper.createObjectNode();
-            editorNode.put("id", "canvas");
-            editorNode.put("resourceId", "canvas");
-            ObjectNode stencilSetNode = objectMapper.createObjectNode();
-            stencilSetNode.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");
-            editorNode.put("stencilset", stencilSetNode);
-            Model modelData = repositoryService.newModel();
-            description = StringUtils.defaultString(description);
-            modelData.setKey(StringUtils.defaultString(key));
-            modelData.setName(name);
-            modelData.setCategory(category);
-            Integer version = Integer.parseInt(String.valueOf(repositoryService.createModelQuery().modelKey(modelData.getKey()).count() + 1));
-            modelData.setVersion(version);
-            ObjectNode modelObjectNode = objectMapper.createObjectNode();
-            modelObjectNode.put(ModelDataJsonConstants.MODEL_NAME, name);
-            modelObjectNode.put(ModelDataJsonConstants.MODEL_REVISION, modelData.getVersion());
-            modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, description);
-            modelData.setMetaInfo(modelObjectNode.toString());
-            repositoryService.saveModel(modelData);
-            repositoryService.addModelEditorSource(modelData.getId(), editorNode.toString().getBytes(StandardCharsets.UTF_8));
-            return modelData;
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode editorNode = objectMapper.createObjectNode();
+        editorNode.put("id", "canvas");
+        editorNode.put("resourceId", "canvas");
+        ObjectNode stencilSetNode = objectMapper.createObjectNode();
+        stencilSetNode.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");
+        editorNode.put("stencilset", stencilSetNode);
+        Model modelData = repositoryService.newModel();
+        description = StringUtils.defaultString(description);
+        modelData.setKey(StringUtils.defaultString(key));
+        modelData.setName(name);
+        modelData.setCategory(category);
+        Integer version = Integer.parseInt(String.valueOf(repositoryService.createModelQuery().modelKey(modelData.getKey()).count() + 1));
+        modelData.setVersion(version);
+        ObjectNode modelObjectNode = objectMapper.createObjectNode();
+        modelObjectNode.put(ModelDataJsonConstants.MODEL_NAME, name);
+        modelObjectNode.put(ModelDataJsonConstants.MODEL_REVISION, modelData.getVersion());
+        modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, description);
+        modelData.setMetaInfo(modelObjectNode.toString());
+        repositoryService.saveModel(modelData);
+        repositoryService.addModelEditorSource(modelData.getId(), editorNode.toString().getBytes(StandardCharsets.UTF_8));
+        return modelData;
     }
 
     /**
@@ -139,7 +138,6 @@ public class ProcessModelServiceImpl implements IProcessModelService {
 
     /**
      * 导出model的xml文件
-     *
      */
     @Override
     public void export(String id, HttpServletResponse response) {
