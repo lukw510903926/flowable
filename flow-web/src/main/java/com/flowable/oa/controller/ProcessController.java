@@ -70,12 +70,10 @@ public class ProcessController {
     public String deployProcess(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
         MultipartFile file = request.getFile("file");
         String fileName = file.getOriginalFilename();
-        String exportDir = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-                + request.getContextPath() + "/deployments/";
         if (StringUtils.isBlank(fileName)) {
             redirectAttributes.addFlashAttribute("message", "请选择要部署的流程文件");
         } else {
-            String message = actProcessService.deploy(exportDir, null, file);
+            String message = actProcessService.deploy( null, file);
             redirectAttributes.addFlashAttribute("message", message);
             model.addAttribute("message", "success");
         }

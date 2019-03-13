@@ -117,8 +117,6 @@ public class ActProcessController {
 
         MultipartFile file = request.getFile("file");
         String fileName = file.getOriginalFilename();
-        String exportDir = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-                + request.getContextPath() + "/deployments/";
         boolean result = false;
         String message;
         if (StringUtils.isBlank(fileName)) {
@@ -126,7 +124,7 @@ public class ActProcessController {
         } else {
             String key = fileName.substring(0, fileName.indexOf("."));
             ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
-            message = actProcessService.deploy(exportDir, null, file);
+            message = actProcessService.deploy(null, file);
             processDefinitionService.copyVariables(processDefinition);
             result = true;
         }

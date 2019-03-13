@@ -210,7 +210,7 @@ public class ActProcessService {
      * @return
      */
     @Transactional
-    public String deploy(String exportDir, String category, MultipartFile file) {
+    public String deploy(String category, MultipartFile file) {
 
         StringBuilder builder = new StringBuilder();
         String fileName = file.getOriginalFilename();
