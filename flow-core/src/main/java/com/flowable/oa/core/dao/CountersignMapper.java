@@ -5,12 +5,13 @@ import com.flowable.oa.core.entity.Countersign;
 import com.flowable.oa.core.util.mybatis.MyMapper;
 
 /**
+ * <p>
  * 会签任务
- * 
- * @project : tykj-oa
- * @createTime : 2018年1月31日 : 下午2:32:58
- * @author : lukewei
- * @description :
- */
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/18 17:15
+ **/
 public interface CountersignMapper extends MyMapper<Countersign> {
 }

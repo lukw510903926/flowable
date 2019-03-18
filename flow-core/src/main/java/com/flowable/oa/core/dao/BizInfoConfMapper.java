@@ -5,11 +5,12 @@ import com.flowable.oa.core.util.mybatis.MyMapper;
 
 
 /**
- * 
- * @project : tykj-oa
- * @createTime : 2018年1月31日 : 下午4:34:11
- * @author : lukewei
- * @description :
- */
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/18 17:16
+ **/
 public interface BizInfoConfMapper extends MyMapper<BizInfoConf> {
 }

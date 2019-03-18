@@ -202,8 +202,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         // 设置流程参数
         for (ProcessVariable variable : processValList) {
             if (variable.getIsProcessVariable() != null && variable.getIsProcessVariable()) {
-                Object value = WorkOrderUtil.convObject((String) params.get(variable.getName()), variable.getViewComponent());
-                variables.put(variable.getName(), value);
+                variables.put(variable.getName(), params.get(variable.getName()));
             }
         }
         variables.put("SYS_FORMTYPE", params.get(IProcessExecuteService.systemFormType));

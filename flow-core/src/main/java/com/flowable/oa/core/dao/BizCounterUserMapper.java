@@ -5,11 +5,13 @@ import com.flowable.oa.core.entity.BizCounterUser;
 import com.flowable.oa.core.util.mybatis.MyMapper;
 
 /**
+ * <p>
  * 会签人员列表
- * 2016年8月23日
- * @author lukw 
- * 下午8:00:49
- * com.eastcom.esflow.bean
- * @email lukw@eastcom-sw.com
- */
-public interface BizCounterUserMapper extends MyMapper<BizCounterUser> {}
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/18 17:16
+ **/
+public interface BizCounterUserMapper extends MyMapper<BizCounterUser> {
+}

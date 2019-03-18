@@ -5,12 +5,12 @@ import com.flowable.oa.core.entity.BizFile;
 import com.flowable.oa.core.util.mybatis.MyMapper;
 
 /**
- * 附件表
- * 
- * @project : tykj-oa
- * @createTime : 2018年1月31日 : 下午2:31:19
- * @author : lukewei
- * @description :
- */
+ * <p>
+ * 工单附件表
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/18 17:16
+ **/
 public interface BizFileMapper extends MyMapper<BizFile> {
 }

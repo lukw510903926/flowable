@@ -5,11 +5,11 @@ import com.flowable.oa.core.entity.ProcessVariableInstance;
 import com.flowable.oa.core.util.mybatis.MyMapper;
 
 /**
- * 流程全局实例（存储具体填写的值）
- * 
- * @project : tykj-oa
- * @createTime : 2018年1月31日 : 下午2:34:09
- * @author : lukewei
- * @description :
- */
+ * <p>
+ *  流程参数值
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/18 17:14
+ **/
 public interface ProcessVariableInstanceMapper extends MyMapper<ProcessVariableInstance> {}
