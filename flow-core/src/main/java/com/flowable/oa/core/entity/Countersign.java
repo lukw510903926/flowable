@@ -25,28 +25,28 @@ public class Countersign implements Serializable{
 	@Column(unique = true, length = 64, name = "ID")
 	private Integer id;
 	
-	@Column(name="TASK_ID", length = 32)
+	@Column(name="TASK_ID")
 	private String taskId;
 
-	@Column(name="BIZ_ID", length = 32)
+	@Column(name="BIZ_ID")
 	private String bizId;
 	
-	@Column(name="PROCESSINSTANCE_ID", length = 10)
+	@Column(name="PROCESSINSTANCE_ID")
 	private String processInstanceId;
 	
-	@Column(name="PROCESSDEFINITION_ID", length = 128)
+	@Column(name="PROCESSDEFINITION_ID")
 	private String processDefinitionId;
 	
-	@Column(name="TASK_ASSIGNEE", length = 32)
+	@Column(name="TASK_ASSIGNEE")
 	private String taskAssignee;
 	
-	@Column(name="RESULT_TYPE", length = 10)
+	@Column(name="RESULT_TYPE")
 	private Integer resultType;
 
 	/**
 	 * 当前会签是否结束 0 没有,1 结束
 	 */
-	@Column(name="IS_COMPLETE", length = 10)
+	@Column(name="IS_COMPLETE")
 	private Integer isComplete = 0;
 	
 	@Column(name = "CREATE_TIME")
