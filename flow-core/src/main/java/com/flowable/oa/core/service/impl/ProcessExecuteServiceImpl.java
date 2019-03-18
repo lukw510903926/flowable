@@ -105,11 +105,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         if (StringUtils.isEmpty(taskId)) {
             throw new ServiceException("请确认是否有权先签收任务!");
         }
-        String username = WebUtil.getLoginUser().getUsername();
+        String username = WebUtil.getLoginUsername();
         processDefinitionService.claimTask(taskId, username);
         bizInfoConf.setTaskAssignee(username);
-        bizInfoService.saveOrUpdate(bizInfo);
-        bizInfo.setTaskAssignee(username);
         this.bizInfoConfService.saveOrUpdate(bizInfoConf);
         return bizInfo;
     }
@@ -128,7 +126,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             bizInfo = bizInfoService.selectByKey(tempBizId);
         } else {
             bizInfo = new BizInfo();
-            bizInfo.setWorkNum(WorkOrderUtil.builWorkNumber(procDefId));
+            bizInfo.setWorkNum(WorkOrderUtil.buildWorkNumber(procDefId));
         }
         bizInfo.setCreateUser(username);
         bizInfo.setSource(source);

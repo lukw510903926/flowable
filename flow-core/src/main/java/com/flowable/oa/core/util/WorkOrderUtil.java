@@ -23,7 +23,7 @@ public class WorkOrderUtil {
 			return null;
 		}
 		if (PageComponent.NUMBER.toString().equalsIgnoreCase(type)) {
-			if (value.indexOf(".") == -1) {
+			if (!value.contains(".")) {
 				return Integer.parseInt(value);
 			} else {
 				return Double.parseDouble(value);
@@ -60,7 +60,7 @@ public class WorkOrderUtil {
 
 		private String name;
 
-		private PageComponent(String name) {
+		PageComponent(String name) {
 			this.name = name;
 		}
 		
@@ -75,12 +75,12 @@ public class WorkOrderUtil {
 	 * 
 	 * @return
 	 */
-	public static String builWorkNumber(String workType) {
-		String workNumber = null;
+	public static String buildWorkNumber(String workType) {
+		String workNumber ;
 		if ("circuitDispatch".equals(workType)) {
-			workNumber = "DLDD";
+			workNumber = "DLDD-";
 		} else {
-			workNumber = "OTHER";
+			workNumber = "OTHER-";
 		}
 		workNumber = workNumber + DateUtils.formatDate(new Date(), "yyMMdd");
 		workNumber = workNumber + "-" + Math.round(Math.random() * 89999 + 10000);

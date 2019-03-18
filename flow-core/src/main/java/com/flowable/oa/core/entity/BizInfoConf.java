@@ -18,11 +18,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
- * @author : lukewei
- * @project : tykj-oa
- * @createTime : 2018年1月31日 : 下午2:31:53
- * @description :
- */
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/18 17:05
+ **/
 @Data
 @Entity
 @Table(name = "T_BIZ_INFO_CONF")
@@ -44,7 +46,7 @@ public class BizInfoConf implements Serializable, Cloneable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATE_TIME")
-    private Date createTime = new Date();
+    private Date createTime;
 
     /**
      * 当前任务处理人
