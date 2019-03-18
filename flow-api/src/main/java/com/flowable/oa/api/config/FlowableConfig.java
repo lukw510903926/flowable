@@ -1,11 +1,10 @@
 package com.flowable.oa.api.config;
 
 import com.flowable.oa.core.util.exception.ServiceException;
+import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.*;
 import org.flowable.spring.ProcessEngineFactoryBean;
 import org.flowable.spring.SpringProcessEngineConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,17 +15,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * <p>
  * 流程引擎配置
  *
- * @author : lukewei
- * @project : tykj-oa
- * @createTime : 2018年2月1日 : 下午12:39:48
- * @description :
- */
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/18 15:54
+ **/
+@Slf4j
 @Configuration
 public class FlowableConfig {
-
-    private Logger logger = LoggerFactory.getLogger(FlowableConfig.class);
 
     @Autowired
     private DataSource dataSource;
@@ -62,7 +61,7 @@ public class FlowableConfig {
         try {
             return processEngineFactory().getObject();
         } catch (Exception e) {
-            logger.error("流程引擎配置错误 : {}", e);
+            log.error("流程引擎配置错误 : {}", e);
             System.exit(-1);
             throw new ServiceException("流程引擎配置错误 : {}", e);
         }
@@ -96,5 +95,4 @@ public class FlowableConfig {
 
         return processEngine.getManagementService();
     }
-
 }
