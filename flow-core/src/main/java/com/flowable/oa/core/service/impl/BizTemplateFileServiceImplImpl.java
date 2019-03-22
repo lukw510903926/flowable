@@ -13,7 +13,6 @@ import com.flowable.oa.core.service.IBizInfoService;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
-import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,8 +23,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.github.pagehelper.PageHelper;
 
 /**
  * <p>
@@ -44,16 +41,7 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
     private IBizInfoService bizInfoService;
 
     @Value("${biz.file.path}")
-    private String filePath = "/home/file";
-
-    @Override
-    public PageInfo<BizTemplateFile> findTemplateFlies(PageInfo<BizTemplateFile> page, BizTemplateFile file, boolean isLike) {
-
-        if (page != null) {
-            PageHelper.startPage(page.getPageNum(), page.getPageSize());
-        }
-        return new PageInfo<>(this.findByModel(file, isLike));
-    }
+    private String filePath;
 
     @Override
     public BizTemplateFile getBizTemplateFile(Map<String, String> params) {
@@ -94,7 +82,7 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
         BizTemplateFile file = new BizTemplateFile();
         file.setFileName(dataFile.getFileName());
         file.setFlowName(dataFile.getFlowName());
-        List<BizTemplateFile> list = this.findTemplateFlies(null, file, false).getList();
+        List<BizTemplateFile> list = this.select(file);
         return this.check(dataFile.getId(), list);
 
     }
@@ -113,29 +101,4 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
             throw new ServiceException("模板保存失败!");
         }
     }
-
-    @Override
-    @Transactional
-    public void deleteByIds(List<Integer> list) {
-
-        BizTemplateFile templateFile;
-        for (Integer id : list) {
-            if (id!= null) {
-                templateFile = this.selectByKey(id);
-                if (templateFile != null) {
-                    String fileName = templateFile.getFileName();
-                    this.deleteById(templateFile.getId());
-                    String suffix = "";
-                    if (fileName.lastIndexOf(".") != -1) {
-                        suffix = fileName.substring(fileName.lastIndexOf("."));
-                    }
-                    File file = new File(filePath + File.separator + id + suffix);
-                    if (file.exists()) {
-                        file.delete();
-                    }
-                }
-            }
-        }
-    }
-
 }

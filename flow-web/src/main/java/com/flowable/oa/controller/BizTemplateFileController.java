@@ -67,7 +67,7 @@ public class BizTemplateFileController {
     @RequestMapping("/list")
     public Map<String, Object> list(PageInfo<BizTemplateFile> page, BizTemplateFile file) {
 
-        PageInfo<BizTemplateFile> helper = bizTemplateFileService.findTemplateFlies(page, file, true);
+        PageInfo<BizTemplateFile> helper = bizTemplateFileService.findByModel(page, file, true);
         Map<String, Object> data = new HashMap<>();
         data.put("total", helper.getTotal());
         data.put("rows", helper.getList());

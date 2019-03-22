@@ -9,8 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface BizTemplateFileService extends IBaseService<BizTemplateFile> {
 
-	PageInfo<BizTemplateFile> findTemplateFlies(PageInfo<BizTemplateFile> page, BizTemplateFile file, boolean isLike);
-
     void saveOrUpdate(BizTemplateFile dataFile, MultipartFile file);
 
     BizTemplateFile getBizTemplateFile(Map<String, String> params);
