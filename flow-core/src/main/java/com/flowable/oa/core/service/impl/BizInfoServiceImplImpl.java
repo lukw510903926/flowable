@@ -68,7 +68,6 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         newBiz.setProcessInstanceId(processInstanceId);
         newBiz.setParentId(bizId);
         newBiz.setCreateTime(new Date());
-        newBiz.setParentTaskName(oldBiz.getTaskName());
         newBiz.setStatus(Constants.BIZ_NEW);
         newBiz.setCreateUser(WebUtil.getLoginUsername());
         this.saveOrUpdate(newBiz);

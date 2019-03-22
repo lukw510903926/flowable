@@ -11,11 +11,13 @@ import org.springframework.cache.annotation.EnableCaching;
 import tk.mybatis.spring.annotation.MapperScan;
 
 /**
- * @author : lukewei
- * @project : tykj-oa
- * @createTime : 2018年1月31日 : 下午5:27:16
- * @description :
- */
+ * <p>
+ *
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/22 17:53
+ **/
 @EnableCaching
 @SpringBootApplication
 @MapperScan(basePackages = "com.flowable.oa.core.dao")

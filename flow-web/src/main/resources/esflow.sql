@@ -1274,21 +1274,19 @@ DROP TABLE IF EXISTS `t_biz_info`;
 CREATE TABLE `t_biz_info` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `WORK_NUM` varchar(64) DEFAULT NULL,
-  `BIZ_TYPE` longtext NOT NULL,
+  `BIZ_TYPE` varchar(128) NOT NULL,
   `CREATE_TIME` datetime DEFAULT NULL,
-  `CREATE_USER` longtext NOT NULL,
+  `CREATE_USER` varchar(128) NOT NULL,
   `LIMIT_TIME` datetime DEFAULT NULL,
   `PARENT_ID` varchar(64) DEFAULT NULL,
-  `PARENT_TASKNAME` longtext,
+  `PARENT_TASKNAME` varchar(128),
   `PROCESS_DEFINITION_ID` varchar(64) NOT NULL,
   `PROCESS_INSTANCE_ID` varchar(64) DEFAULT NULL,
   `SOURCE` varchar(128) NOT NULL,
   `BIZ_STATUS` varchar(32) NOT NULL,
-  `TASK_ASSIGNEE` longtext,
   `TASK_DEF_KEY` varchar(64) DEFAULT NULL,
-  `TASK_ID` longtext,
-  `TASK_NAME` longtext,
-  `TITLE` longtext,
+  `TASK_NAME` varchar(128),
+  `TITLE` varchar(128),
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 
@@ -1299,7 +1297,7 @@ DROP TABLE IF EXISTS `t_biz_info_conf`;
 CREATE TABLE `t_biz_info_conf` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `CREATE_TIME` datetime DEFAULT NULL,
-  `TASK_ASSIGNEE` longtext,
+  `TASK_ASSIGNEE` varchar(128),
   `TASK_ID` varchar(64) DEFAULT NULL,
   `BIZ_ID` int(10) DEFAULT NULL,
   PRIMARY KEY (`ID`),

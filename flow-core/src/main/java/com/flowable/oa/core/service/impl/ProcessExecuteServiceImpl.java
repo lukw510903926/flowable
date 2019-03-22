@@ -266,27 +266,19 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             bizInfo.setStatus(Constants.BIZ_END);
             bizInfo.setTaskDefKey(Constants.BIZ_END);
         } else {
-            List<String> taskIds = new ArrayList<>();
-            List<String> taskAssignee = new ArrayList<>();
             taskList.forEach(task -> {
                 BizInfoConf bizInfoConf = new BizInfoConf();
                 bizInfoConf.setBizId(bizId);
                 bizInfoConf.setCreateTime(new Date());
-                taskIds.add(task.getId());
-                if (StringUtils.isNotBlank(task.getAssignee())) {
-                    taskAssignee.add(task.getAssignee());
-                }
                 bizInfoConf.setTaskId(task.getId());
                 bizInfoConf.setTaskAssignee(task.getAssignee());
                 bizInfoConf.setBizId(bizId);
                 this.bizInfoConfService.saveOrUpdate(bizInfoConf);
             });
             Task task = taskList.get(0);
-            bizInfo.setTaskId(StringUtils.join(taskIds.toArray(), ","));
             bizInfo.setStatus(task.getName());
             bizInfo.setTaskName(task.getName());
             bizInfo.setTaskDefKey(task.getTaskDefinitionKey());
-            bizInfo.setTaskAssignee(StringUtils.join(taskAssignee.toArray(), ","));
             this.bizInfoService.saveOrUpdate(bizInfo);
         }
     }

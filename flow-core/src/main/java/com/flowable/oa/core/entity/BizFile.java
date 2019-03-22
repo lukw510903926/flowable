@@ -42,8 +42,6 @@ public class BizFile implements Serializable, Cloneable {
     @Column(length = 256, name = "CREATE_USER")
     private String createUser;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATE_TIME")
     private Date createDate;
 

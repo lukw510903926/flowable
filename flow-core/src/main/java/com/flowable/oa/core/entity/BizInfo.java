@@ -1,41 +1,34 @@
 package com.flowable.oa.core.entity;
 
+import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import tk.mybatis.mapper.annotation.Order;
 
 /**
+ * <p>
  * 工单对象
  *
- * @author : lukewei
- * @project : tykj-oa
- * @createTime : 2018年1月31日 : 下午2:31:34
- * @description :
- */
+ * @author yangqi
+ * @Description </p>
+ * @email 13507615840@163.com
+ * @since 2019/3/22 18:17
+ **/
 @Data
 @Accessors(chain = true)
 @Entity
 @Table(name = "T_BIZ_INFO")
-public class BizInfo implements java.io.Serializable, Cloneable {
+public class BizInfo implements Serializable, Cloneable {
 
     private static final long serialVersionUID = -9003521142344551524L;
 
     @Id
     @Order("desc")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true,  name = "ID")
+    @Column(unique = true, name = "ID")
     private Integer id;
 
     /**
@@ -56,9 +49,6 @@ public class BizInfo implements java.io.Serializable, Cloneable {
     @Column(length = 64, name = "PROCESS_INSTANCE_ID")
     private String processInstanceId;
 
-    @Column(length = 256, name = "TASK_ID")
-    private String taskId;
-
     @Column(length = 64, name = "TASK_DEF_KEY")
     private String taskDefKey;
 
@@ -68,13 +58,15 @@ public class BizInfo implements java.io.Serializable, Cloneable {
     /**
      * 当前任务处理人
      */
-    @Column(length = 256, name = "TASK_ASSIGNEE")
+    @Transient
     private String taskAssignee;
+
+    @Transient
+    private String taskId;
 
     @Column(length = 256, name = "CREATE_USER")
     private String createUser;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATE_TIME")
     private Date createTime;
@@ -87,9 +79,6 @@ public class BizInfo implements java.io.Serializable, Cloneable {
 
     @Column(length = 64, name = "PARENT_ID")
     private Integer parentId;
-
-    @Column(length = 256, name = "PARENT_TASKNAME")
-    private String parentTaskName;
 
     public BizInfo clone() {
         BizInfo bizInfo = null;
