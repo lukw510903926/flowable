@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import tk.mybatis.mapper.annotation.Order;
 
 /**
  * 工单对象
@@ -32,6 +33,7 @@ public class BizInfo implements java.io.Serializable, Cloneable {
     private static final long serialVersionUID = -9003521142344551524L;
 
     @Id
+    @Order("desc")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true,  name = "ID")
     private Integer id;
