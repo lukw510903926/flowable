@@ -1,8 +1,6 @@
 package com.flowable.oa.controller;
 
-import com.flowable.oa.core.entity.auth.SystemRole;
 import com.flowable.oa.core.entity.auth.SystemUser;
-import com.flowable.oa.core.service.auth.ISysUserRoleService;
 import com.flowable.oa.core.service.auth.ISystemRoleService;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.LoginUser;
@@ -19,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * <p>
