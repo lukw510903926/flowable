@@ -133,13 +133,11 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     @Transactional
     public void deleteByIds(List<Integer> list) {
 
-        list.forEach(id -> {
-            if (id != null) {
-                BizInfo bizInfo = new BizInfo();
-                bizInfo.setId(id);
-                bizInfo.setStatus(Constants.BIZ_DELETE);
-                this.updateNotNull(bizInfo);
-            }
+        list.stream().filter(Objects::nonNull).forEach(id -> {
+            BizInfo bizInfo = new BizInfo();
+            bizInfo.setId(id);
+            bizInfo.setStatus(Constants.BIZ_DELETE);
+            this.updateNotNull(bizInfo);
         });
     }
 
