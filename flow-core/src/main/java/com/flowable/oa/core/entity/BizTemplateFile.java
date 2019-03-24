@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * 附件模板文件
@@ -30,7 +30,7 @@ public class BizTemplateFile implements Serializable{
 	private String fileName;
 	
 	@Column(name = "CREATE_TIME", nullable = false, length = 19)
-	private Timestamp createTime;
+	private Date createTime;
 	
 	@Column(name = "FLOW_NAME", nullable = false, length = 32)
 	private String flowName;
@@ -40,4 +40,7 @@ public class BizTemplateFile implements Serializable{
 	 */
 	@Column(name = "FULL_NAME")
 	private String fullName;
+
+	@Column(name = "FILE_PATH")
+	private String filePath;
 }

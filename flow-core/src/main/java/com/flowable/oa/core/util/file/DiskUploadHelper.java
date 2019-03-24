@@ -33,7 +33,7 @@ public class DiskUploadHelper implements UploadHelper {
             return name + suffix;
         } catch (Exception e) {
             log.error("文件保存失败 :{}", e);
-            throw new ServiceException("问保存失败!");
+            throw new ServiceException("文件保存失败!");
         }
     }
 
