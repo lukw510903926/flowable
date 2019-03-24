@@ -82,13 +82,8 @@ public class BizTemplateFileController {
             response.setContentType("application/octet-stream;charset=UTF-8");
             BizTemplateFile templateFile = bizTemplateFileService.getBizTemplateFile(params);
             if (templateFile != null) {
-                String fileName = templateFile.getFileName();
-                String suffix = "";
-                if (fileName.lastIndexOf(".") != -1) {
-                    suffix = fileName.substring(fileName.lastIndexOf("."));
-                }
                 response.setHeader("Content-Disposition", "attachment;");
-                File inputFile = new File(bizFileRootPath + File.separator + templateFile.getId() + suffix);
+                File inputFile = new File(templateFile.getFilePath());
                 if (inputFile.exists() && inputFile.isFile()) {
                     FileUtils.copyFile(inputFile, outputStream);
                 } else {
