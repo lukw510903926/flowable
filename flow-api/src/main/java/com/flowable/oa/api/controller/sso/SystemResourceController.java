@@ -64,7 +64,7 @@ public class SystemResourceController {
 
     @ResponseBody
     @GetMapping("/role/{roleId}")
-    public List<SystemResource> findResourceByRoleId(@PathVariable("roleId") String roleId) {
+    public List<SystemResource> findResourceByRoleId(@PathVariable("roleId") Integer roleId) {
 
         return this.resourceService.findResourceByRoleId(roleId);
     }

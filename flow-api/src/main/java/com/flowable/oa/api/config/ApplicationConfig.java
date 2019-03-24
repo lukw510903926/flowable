@@ -1,5 +1,8 @@
 package com.flowable.oa.api.config;
 
+import com.flowable.oa.core.util.file.DiskUploadHelper;
+import com.flowable.oa.core.util.file.UploadHelper;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -35,5 +38,11 @@ public class ApplicationConfig implements WebMvcConfigurer {
                 .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true).maxAge(3600);
+    }
+
+    @Bean
+    public UploadHelper uploadHelper() {
+
+        return new DiskUploadHelper();
     }
 }
