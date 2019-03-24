@@ -3,6 +3,8 @@ package com.flowable.oa.core.service;
 import com.flowable.oa.core.entity.BizInfoConf;
 import com.flowable.oa.core.util.mybatis.IBaseService;
 
+import java.util.List;
+
 
 /**
  * <p>
@@ -23,4 +25,10 @@ public interface BizInfoConfService extends IBaseService<BizInfoConf> {
     BizInfoConf getMyWork(Integer bizId);
 
 	void deleteByBizId(Integer bizId);
+
+    /**
+     * 获取我的所有待办
+     * @return
+     */
+    List<BizInfoConf> findMyTask();
 }

@@ -68,4 +68,18 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
         }
         return null;
     }
+
+    @Override
+    public List<BizInfoConf> findMyTask() {
+
+        LoginUser loginUser = WebUtil.getLoginUser();
+        Example example = new Example(BizInfoConf.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.orEqualTo("taskAssignee", WebUtil.getLoginUsername());
+        criteria.orIsNull("taskAssignee");
+        if (CollectionUtils.isNotEmpty(loginUser.getRoles())) {
+            loginUser.getRoles().forEach(role -> criteria.orEqualTo("taskAssignee", Constants.BIZ_GROUP + role));
+        }
+        return this.selectByExample(example);
+    }
 }

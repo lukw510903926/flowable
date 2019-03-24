@@ -63,6 +63,7 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
         if (StringUtils.isNotBlank(username)) {
             SystemUser systemUser = new SystemUser();
             systemUser.setUsername(username);
+            systemUser.setStatus(1);
             return this.selectOne(systemUser);
         }
         return null;

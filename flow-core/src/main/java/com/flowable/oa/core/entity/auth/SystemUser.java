@@ -11,12 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Data
@@ -31,13 +26,9 @@ public class SystemUser implements Serializable {
     @Column(unique = true, name = "ID")
     private Integer id;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATE_TIME")
     private Date createTime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "LAST_LOGIN_TIME")
     private Date lastLoginTime;
 
@@ -59,6 +50,6 @@ public class SystemUser implements Serializable {
     /**
      * 1 有效 0 无效
      */
-    @Column(name = "status", length = 5)
-    private Integer status = 1;
+    @Column(name = "status")
+    private Integer status;
 }
