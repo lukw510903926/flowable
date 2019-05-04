@@ -167,7 +167,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     @Transactional
     public BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
-        logger.info("params :" + params);
+        logger.info("params : {}" , params);
         Integer bizId = MapUtils.getInteger(params, "base.bizId");
         BizInfo bizInfo = bizInfoService.selectByKey(bizId);
         if (null == bizInfo) {

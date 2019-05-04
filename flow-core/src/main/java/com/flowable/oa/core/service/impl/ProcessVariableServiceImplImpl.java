@@ -10,7 +10,6 @@ import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -314,7 +314,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
     private boolean executeCommand(String processInstanceId, Activity activity, Map<String, Object> variables) {
 
-        String transfer_value = (String) variables.get("SYS_transfer_value");
+        String transferValue = (String) variables.get("SYS_transfer_value");
         String buttonValue = (String) variables.get("SYS_BUTTON_VALUE");
 
         if (StringUtils.isNotEmpty(buttonValue)) { // 获取当前任务的流出，并判断是否为当前活动任务
@@ -349,7 +349,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                         taskService.unclaim(nextTask.getId());
                         taskService.claim(nextTask.getId(), WebUtil.getLoginUser().getUsername());
                     } else if (documentation.startsWith("command:transfer")) {
-                        assignmentTask(nextTask, transfer_value);
+                        assignmentTask(nextTask, transferValue);
                     }
                 }
             }
@@ -392,11 +392,11 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     private boolean claimRole(Task task, String username) {
 
         List<String> list = this.getTaskCandidateGroup(task);
-        logger.info("group :" + list);
+        logger.info("group : {}" , list);
         boolean flag = false;
         if (CollectionUtils.isNotEmpty(list)) {
             List<String> roles = systemRoleService.findUserRoles(username);
-            logger.info("user roles :" + roles);
+            logger.info("user roles : {}" , roles);
             for (String group : list) {
                 if (roles.contains(group)) {
                     flag = true;

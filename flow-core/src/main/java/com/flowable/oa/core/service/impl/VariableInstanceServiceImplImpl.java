@@ -32,6 +32,8 @@ public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVari
                 logBean.setTaskID(taskId);
                 tList = this.loadValueByLog(logBean);
                 break;
+            default:
+                break;
         }
         if (CollectionUtils.isNotEmpty(tList)) {
             tList.forEach(var -> map.put(var.getVariableName(), var));
@@ -41,10 +43,10 @@ public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVari
 
     @Override
     public List<ProcessVariableInstance> loadValueByLog(BizLog logBean) {
-    	
-    	ProcessVariableInstance instance = new ProcessVariableInstance();
-    	instance.setBizId(logBean.getBizId());
-    	instance.setTaskId(logBean.getTaskID());
-    	return this.select(instance);
+
+        ProcessVariableInstance instance = new ProcessVariableInstance();
+        instance.setBizId(logBean.getBizId());
+        instance.setTaskId(logBean.getTaskID());
+        return this.select(instance);
     }
 }

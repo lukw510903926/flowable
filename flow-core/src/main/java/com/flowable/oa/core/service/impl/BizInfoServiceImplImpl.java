@@ -144,7 +144,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     @Override
     public PageInfo<BizInfo> findBizInfo(BizInfoVo bizInfoVo, PageInfo<BaseVo> page) {
 
-        logger.info("工单查询 bizInfoVo : " + bizInfoVo);
+        logger.info("工单查询 bizInfoVo : {}" , bizInfoVo);
         PageUtil.startPage(page);
         BizInfo bizInfo = new BizInfo();
         BeanUtils.copyProperties(bizInfoVo, bizInfo);
