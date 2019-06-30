@@ -24,15 +24,15 @@ public class DiskUploadHelper implements UploadHelper {
 
         try {
             String suffix = "";
-            if (fileName.lastIndexOf(".") != -1) {
-                suffix = fileName.substring(fileName.lastIndexOf("."));
+            if (fileName.lastIndexOf('.') != -1) {
+                suffix = fileName.substring(fileName.lastIndexOf('.'));
             }
             String name = filePath + File.separator + getFilePath() + IdUtil.uuid();
             File newFile = File.createTempFile(name, suffix);
             FileUtils.copyInputStreamToFile(inputStream, newFile);
             return name + suffix;
         } catch (Exception e) {
-            log.error("文件保存失败 :{}", e);
+            log.error("文件保存失败 :", e);
             throw new ServiceException("文件保存失败!");
         }
     }
@@ -44,7 +44,7 @@ public class DiskUploadHelper implements UploadHelper {
             File file = new File(filePath);
             return FileUtils.openInputStream(file);
         } catch (IOException e) {
-            log.error("文件下载失败 : {}", e);
+            log.error("文件下载失败 : ", e);
             throw new ServiceException("文件下载失败!");
         }
     }

@@ -26,20 +26,33 @@ public interface UploadHelper {
     String upload(InputStream inputStream, String filePath, String fileName);
 
     /**
+     * 文件下载
+     *
      * @param filePath
-     * @return 文件流
+     * @return
      */
     InputStream download(String filePath);
 
+    /**
+     * 获取文件名称
+     *
+     * @param fileName
+     * @return
+     */
     default String getFileName(String fileName) {
 
         String suffix = "";
-        if (fileName.lastIndexOf(".") != -1) {
-            suffix = fileName.substring(fileName.lastIndexOf("."));
+        if (fileName.lastIndexOf('.') != -1) {
+            suffix = fileName.substring(fileName.lastIndexOf('.'));
         }
         return IdUtil.uuid() + suffix;
     }
 
+    /**
+     * 文件上传路径
+     *
+     * @return
+     */
     default String getFilePath() {
 
         Date date = new Date();
