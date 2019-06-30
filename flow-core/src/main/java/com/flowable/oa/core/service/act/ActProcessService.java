@@ -209,7 +209,7 @@ public class ActProcessService {
      * @param file
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String deploy(String category, MultipartFile file) {
 
         StringBuilder builder = new StringBuilder();
@@ -224,7 +224,8 @@ public class ActProcessService {
                 deployment = repositoryService.createDeployment().addInputStream(fileName, fileInputStream).deploy();
             } else if (StringUtils.isNotBlank(fileName) && fileName.contains("bpmn20.xml")) {
                 deployment = repositoryService.createDeployment().addInputStream(fileName, fileInputStream).deploy();
-            } else if ("bpmn".equals(extension)) { // bpmn扩展名特殊处理，转换为bpmn20.xml
+            } else if ("bpmn".equals(extension)) {
+                // bpmn扩展名特殊处理，转换为bpmn20.xml
                 String baseName = FilenameUtils.getBaseName(fileName);
                 deployment = repositoryService.createDeployment().addInputStream(baseName + ".bpmn20.xml", fileInputStream).deploy();
             } else {
@@ -247,17 +248,9 @@ public class ActProcessService {
     }
 
     /**
-     * 设置流程分类
-     */
-    @Transactional
-    public void updateCategory(String procDefId, String category) {
-        repositoryService.setProcessDefinitionCategory(procDefId, category);
-    }
-
-    /**
      * 挂起、激活流程实例
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String updateState(String state, String processDefinitionId) {
 
         ProcessDefinition processDefinition = repositoryService.getProcessDefinition(processDefinitionId);
@@ -282,7 +275,7 @@ public class ActProcessService {
      *
      * @param procDefId
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Model convertToModel(String procDefId) {
 
         try {
@@ -321,7 +314,7 @@ public class ActProcessService {
      *
      * @param deploymentId 流程部署ID
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDeployment(String deploymentId) {
         repositoryService.deleteDeployment(deploymentId, true);
     }
@@ -332,7 +325,7 @@ public class ActProcessService {
      * @param procInsId    流程实例ID
      * @param deleteReason 删除原因，可为空
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteProcIns(String procInsId, String deleteReason) {
         runtimeService.deleteProcessInstance(procInsId, deleteReason);
     }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
+
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +64,7 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(Integer key) {
 
         if (key != null) {
@@ -72,13 +73,13 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int deleteByModel(T t) {
         return mapper.delete(t);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteByIds(List<Integer> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
@@ -87,13 +88,13 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(T entity) {
         return mapper.insert(entity);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(T entity) {
 
         String key = Optional.ofNullable(ReflectionUtils.getter(entity, "id")).map(Object::toString).orElse(null);
@@ -105,13 +106,13 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int updateAll(T entity) {
         return mapper.updateByPrimaryKey(entity);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int updateNotNull(T entity) {
         return mapper.updateByPrimaryKeySelective(entity);
     }
