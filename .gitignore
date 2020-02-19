@@ -1,2 +1,5 @@
 /**/*.iml
 .idea
+/flow-web/target
+/flow-core/target/classes
+/logs/
