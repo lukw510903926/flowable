@@ -1,10 +1,11 @@
 package com.flowable.oa.core.util.flowable;
 
+import lombok.Data;
 import org.flowable.bpmn.model.FlowElement;
 import org.flowable.bpmn.model.Process;
+import org.flowable.common.engine.impl.interceptor.Command;
+import org.flowable.common.engine.impl.interceptor.CommandContext;
 import org.flowable.engine.FlowableEngineAgenda;
-import org.flowable.engine.common.impl.interceptor.Command;
-import org.flowable.engine.common.impl.interceptor.CommandContext;
 import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.ExecutionEntityManager;
 import org.flowable.engine.impl.util.CommandContextUtil;
@@ -21,41 +22,41 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntityManager;
  * @email 13507615840@163.com
  * @since 2019/3/9 18:45
  **/
+@Data
 public class CommonJumpTaskCmd implements Command<Void> {
 
-	/**
-	 * 任务id
-	 */
-	private String taskId;
+    @Override
+    public Void execute(CommandContext commandContext) {
 
-	/**
-	 * 目标节点Id
-	 */
-	private String targetNodeKey;
+        ExecutionEntityManager executionEntityManager = CommandContextUtil.getExecutionEntityManager();
+        TaskEntityManager taskEntityManager = org.flowable.task.service.impl.util.CommandContextUtil
+                .getTaskEntityManager();
+        TaskEntity taskEntity = taskEntityManager.findById(taskId);
+        ExecutionEntity executionEntity = executionEntityManager.findById(taskEntity.getExecutionId());
+        IdentityLinkService identityLinkService = CommandContextUtil.getIdentityLinkService();
+        identityLinkService.deleteIdentityLinksByTaskId(taskId);
+        Process process = ProcessDefinitionUtil.getProcess(executionEntity.getProcessDefinitionId());
+        FlowElement targetFlowElement = process.getFlowElement(targetNodeKey);
+        executionEntity.setCurrentFlowElement(targetFlowElement);
+        FlowableEngineAgenda agenda = CommandContextUtil.getAgenda();
+        agenda.planContinueProcessInCompensation(executionEntity);
+        taskEntityManager.delete(taskEntity, true);
+        return null;
+    }
 
-	public CommonJumpTaskCmd(String taskId, String targetNodeKey) {
+    /**
+     * 任务id
+     */
+    private String taskId;
 
-		this.taskId = taskId;
-		this.targetNodeKey = targetNodeKey;
-	}
+    /**
+     * 目标节点Id
+     */
+    private String targetNodeKey;
 
-	@Override
-	public Void execute(CommandContext commandContext) {
+    public CommonJumpTaskCmd(String taskId, String targetNodeKey) {
 
-		ExecutionEntityManager executionEntityManager = CommandContextUtil.getExecutionEntityManager();
-		TaskEntityManager taskEntityManager = org.flowable.task.service.impl.util.CommandContextUtil
-				.getTaskEntityManager();
-		
-		TaskEntity taskEntity = taskEntityManager.findById(taskId);
-		ExecutionEntity executionEntity = executionEntityManager.findById(taskEntity.getExecutionId());
-		IdentityLinkService identityLinkService = CommandContextUtil.getIdentityLinkService();
-		identityLinkService.deleteIdentityLinksByTaskId(taskId);
-		Process process = ProcessDefinitionUtil.getProcess(executionEntity.getProcessDefinitionId());
-		FlowElement targetFlowElement = process.getFlowElement(targetNodeKey);
-		executionEntity.setCurrentFlowElement(targetFlowElement);
-		FlowableEngineAgenda agenda = CommandContextUtil.getAgenda();
-		agenda.planContinueProcessInCompensation(executionEntity);
-		taskEntityManager.delete(taskEntity, true);
-		return null;
-	}
+        this.taskId = taskId;
+        this.targetNodeKey = targetNodeKey;
+    }
 }

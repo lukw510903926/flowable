@@ -1,8 +1,5 @@
 package com.flowable.oa.core.service.impl;
 
-import java.io.InputStream;
-import java.util.*;
-
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.auth.SystemRole;
 import com.flowable.oa.core.service.IProcessDefinitionService;
@@ -15,6 +12,13 @@ import com.flowable.oa.core.util.ReflectionUtils;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.flowable.HistoryActivityFlow;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.Activity;
@@ -210,6 +214,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         return list;
     }
 
+    @Override
     @Transactional
     public ProcessInstance newProcessInstance(String id, Map<String, Object> variables) {
 
@@ -392,11 +397,11 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     private boolean claimRole(Task task, String username) {
 
         List<String> list = this.getTaskCandidateGroup(task);
-        logger.info("group : {}" , list);
+        logger.info("group : {}", list);
         boolean flag = false;
         if (CollectionUtils.isNotEmpty(list)) {
             List<String> roles = systemRoleService.findUserRoles(username);
-            logger.info("user roles : {}" , roles);
+            logger.info("user roles : {}", roles);
             for (String group : list) {
                 if (roles.contains(group)) {
                     flag = true;
@@ -621,8 +626,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         HistoryActivityFlow historyActivityFlow = this.getHighLightedElement(processDefinition, historicActivityInstances);
         try {
             ProcessDiagramGenerator processDiagramGenerator = engineConfiguration.getProcessDiagramGenerator();
-            return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),
-                    historyActivityFlow.getHighFlows());
+            return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getHighFlows(), true);
 //            return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),true);
         } catch (Exception e) {
             logger.error(" 显示流程实例图片失败 : {}", e);
