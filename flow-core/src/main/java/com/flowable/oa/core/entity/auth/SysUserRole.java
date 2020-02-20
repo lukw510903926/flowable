@@ -1,9 +1,14 @@
 package com.flowable.oa.core.entity.auth;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import lombok.Data;
 
 /**
  * Descrption : 用户角色关联
@@ -14,7 +19,7 @@ import java.io.Serializable;
  **/
 @Data
 @Entity
-@Table(name = "T_SYS_USER_ROLE")
+@Table(name = "t_sys_user_role")
 public class SysUserRole implements Serializable {
 
 
@@ -22,13 +27,13 @@ public class SysUserRole implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, name = "ID")
+    @Column(unique = true, name = "id")
     private Integer id;
 
-    @Column(name = "USER_ID" )
+    @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "ROLE_ID" )
+    @Column(name = "role_id")
     private Integer roleId;
 
     @Transient

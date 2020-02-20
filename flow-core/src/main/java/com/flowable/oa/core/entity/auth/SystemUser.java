@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,32 +15,32 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "T_SYS_USER")
+@Table(name = "t_sys_user")
 public class SystemUser implements Serializable {
 
     private static final long serialVersionUID = -7377982631848439265L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, name = "ID")
+    @Column(unique = true, name = "id")
     private Integer id;
 
-    @Column(name = "CREATE_TIME")
+    @Column(name = "create_time")
     private Date createTime;
 
-    @Column(name = "LAST_LOGIN_TIME")
+    @Column(name = "last_login_time")
     private Date lastLoginTime;
 
-    @Column(name = "USERNAME")
+    @Column(name = "username")
     private String username;
 
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "PASSWORD")
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "EMAIL")
+    @Column(name = "email")
     private String email;
 
     @Transient

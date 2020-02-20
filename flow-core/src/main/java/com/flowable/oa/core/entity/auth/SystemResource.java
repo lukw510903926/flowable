@@ -1,9 +1,15 @@
 package com.flowable.oa.core.entity.auth;
 
-import lombok.Data;
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import lombok.Data;
 
 /**
  * <p>
@@ -15,7 +21,7 @@ import java.util.Date;
  **/
 @Data
 @Entity
-@Table(name = "T_SYS_RESOURCE")
+@Table(name = "t_sys_resource")
 public class SystemResource implements Serializable {
 
     private static final long serialVersionUID = 3181229870633868707L;
@@ -23,37 +29,37 @@ public class SystemResource implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false, length = 64, name = "ID")
+    @Column(unique = true, nullable = false, length = 64, name = "id")
     private Integer id;
 
     /**
      * 创建时间
      */
-    @Column(name = "CREATE_TIME")
+    @Column(name = "create_time")
     private Date createTime;
 
     /**
      * 资源名称
      */
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
     /**
      * 资源路径
      */
-    @Column(name = "RESOURCE_URL")
+    @Column(name = "resource_url")
     private String resourceUrl;
 
     /**
      * 资源标识
      */
-    @Column(name = "PERMISSION")
+    @Column(name = "permission")
     private String permission;
 
     /**
      * 父节点
      */
-    @Column(name = "PARENT_ID")
+    @Column(name = "parent_id")
     private Integer parentId;
 
     @Transient
@@ -62,6 +68,6 @@ public class SystemResource implements Serializable {
     /**
      * 资源类型 1 模块 2 菜单 3 按钮
      */
-    @Column(name = "TYPE")
+    @Column(name = "type")
     private Integer type;
 }

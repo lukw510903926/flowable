@@ -1,55 +1,54 @@
 package com.flowable.oa.core.entity;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Data;
 
 /**
  * 工单定时任务
+ *
+ * @author : lukewei
  * @project : tykj-oa
  * @createTime : 2018年1月31日 : 下午2:32:45
- * @author : lukewei
  * @description :
  */
 @Data
 @Entity
-@Table(name="T_TIMED_TASK")
-public class BizTimedTask implements Serializable{
+@Table(name = "t_timed_task")
+public class BizTimedTask implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID", unique = true, nullable = false, length = 64)
-	private Integer id;
-	
-	@Column(name="BIZ_ID",length = 64)
-	private Integer bizId;
-	
-	@Column(name="TASK_NAME",length = 64)
-	private String taskName;
-	
-	@Column(name="TASK_DEF_KEY",length = 64)
-	private String taskDefKey;
-	
-	@Column(name="BUTTON_ID", length = 32)
-	private String buttonId;
-	
-	@Column(length = 64, name = "TASK_ID")
-	private String taskId;
-	
-	@Column(name="CREATE_TIME")
-	private Date createTime;
-	
-	@Column(name="END_TIME")
-	private String endTime ;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false, length = 64)
+    private Integer id;
+
+    @Column(name = "biz_id", length = 64)
+    private Integer bizId;
+
+    @Column(name = "task_name", length = 64)
+    private String taskName;
+
+    @Column(name = "task_def_key", length = 64)
+    private String taskDefKey;
+
+    @Column(name = "button_id", length = 32)
+    private String buttonId;
+
+    @Column(length = 64, name = "task_id")
+    private String taskId;
+
+    @Column(name = "create_time")
+    private Date createTime;
+
+    @Column(name = "end_time")
+    private String endTime;
 
 }

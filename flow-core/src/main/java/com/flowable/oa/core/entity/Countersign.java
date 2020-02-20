@@ -1,55 +1,60 @@
 package com.flowable.oa.core.entity;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.Data;
 
 /**
  * 会签任务
+ *
+ * @author : lukewei
  * @project : tykj-oa
  * @createTime : 2018年1月31日 : 下午2:32:58
- * @author : lukewei
  * @description :
  */
 @Data
 @Entity
-@Table(name="T_COUNTER_SIGN")
-public class Countersign implements Serializable{
+@Table(name = "t_counter_sign")
+public class Countersign implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true, length = 64, name = "ID")
-	private Integer id;
-	
-	@Column(name="TASK_ID")
-	private String taskId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, length = 64, name = "id")
+    private Integer id;
 
-	@Column(name="BIZ_ID")
-	private String bizId;
-	
-	@Column(name="PROCESSINSTANCE_ID")
-	private String processInstanceId;
-	
-	@Column(name="PROCESSDEFINITION_ID")
-	private String processDefinitionId;
-	
-	@Column(name="TASK_ASSIGNEE")
-	private String taskAssignee;
-	
-	@Column(name="RESULT_TYPE")
-	private Integer resultType;
+    @Column(name = "task_id")
+    private String taskId;
 
-	/**
-	 * 当前会签是否结束 0 没有,1 结束
-	 */
-	@Column(name="IS_COMPLETE")
-	private Integer isComplete = 0;
-	
-	@Column(name = "CREATE_TIME")
-	private Date createTime ;
+    @Column(name = "biz_id")
+    private String bizId;
+
+    @Column(name = "processinstance_id")
+    private String processInstanceId;
+
+    @Column(name = "processdefinition_id")
+    private String processDefinitionId;
+
+    @Column(name = "task_assignee")
+    private String taskAssignee;
+
+    @Column(name = "result_type")
+    private Integer resultType;
+
+    /**
+     * 当前会签是否结束 0 没有,1 结束
+     */
+    @Column(name = "is_complete")
+    private Integer isComplete = 0;
+
+    @Column(name = "create_time")
+    private Date createTime;
 
 }

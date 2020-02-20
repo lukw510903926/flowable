@@ -1,9 +1,9 @@
 package com.flowable.oa.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,8 +13,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -27,31 +25,31 @@ import lombok.Data;
  **/
 @Data
 @Entity
-@Table(name = "T_BIZ_INFO_CONF")
+@Table(name = "t_biz_info_conf")
 public class BizInfoConf implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, name = "ID")
+    @Column(unique = true, name = "id")
     private Integer id;
 
-    @Column(name = "BIZ_ID")
+    @Column(name = "biz_id")
     private Integer bizId;
 
-    @Column(length = 64, name = "TASK_ID")
+    @Column(length = 64, name = "task_id")
     private String taskId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "CREATE_TIME")
+    @Column(name = "create_time")
     private Date createTime;
 
     /**
      * 当前任务处理人
      */
-    @Column(length = 256, name = "TASK_ASSIGNEE")
+    @Column(length = 256, name = "task_assignee")
     private String taskAssignee;
 
     /**
@@ -63,6 +61,7 @@ public class BizInfoConf implements Serializable, Cloneable {
     @Transient
     private String loginUser;
 
+    @Override
     public BizInfoConf clone() {
 
         BizInfoConf bizInfoConf = null;

@@ -1,58 +1,61 @@
 package com.flowable.oa.core.entity.dict;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.Data;
 
 /**
- * 
-* @ClassName: DictType 
-* @Description: 数据枚举字典
-* @author lukew
-* @email 13507615840@163.com
-* @date 2017年12月5日 下午9:21:58
+ * @author lukew
+ * @ClassName: DictType
+ * @Description: 数据枚举字典
+ * @email 13507615840@163.com
+ * @date 2017年12月5日 下午9:21:58
  */
 @Data
 @Entity
-@Table(name = "T_DICT_TYPE")
-public class DictType implements Serializable{
+@Table(name = "t_dict_type")
+public class DictType implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(unique = true,  name = "ID")
-	private Integer id;
-	
-	/**
-	 * 字典名称
-	 */
-	@Column(name = "NAME")
-	private String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, name = "id")
+    private Integer id;
 
-	/**
-	 * 创建时间
-	 */
-	@Column(name = "CREATE_TIME")
-	private Date createTime;
+    /**
+     * 字典名称
+     */
+    @Column(name = "name")
+    private String name;
 
-	/**
-	 * 创建人
-	 */
-	@Column(name = "CREATOR")
-	private String creator;
+    /**
+     * 创建时间
+     */
+    @Column(name = "create_time")
+    private Date createTime;
 
-	/**
-	 * 修改时间
-	 */
-	@Column(name = "modified")
-	private Date modified;
+    /**
+     * 创建人
+     */
+    @Column(name = "creator")
+    private String creator;
 
-	/**
-	 * 修改人
-	 */
-	@Column(name = "MODIFIER")
-	private String modifier;
+    /**
+     * 修改时间
+     */
+    @Column(name = "modified")
+    private Date modified;
+
+    /**
+     * 修改人
+     */
+    @Column(name = "modifier")
+    private String modifier;
 }

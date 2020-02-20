@@ -1,11 +1,15 @@
 package com.flowable.oa.core.entity.dict;
 
-import lombok.Data;
-
-import javax.persistence.*;
-
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import lombok.Data;
 
 /**
  * @author lukew
@@ -16,20 +20,20 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table(name = "T_DICT_VALUE")
+@Table(name = "t_dict_value")
 public class DictValue implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, name = "ID")
+    @Column(unique = true, name = "id")
     private Integer id;
 
     /**
      * 字典分类id
      */
-    @Column(name = "DICT_TYPE_ID")
+    @Column(name = "dict_type_id")
     private Integer dictTypeId;
 
     /**
@@ -41,13 +45,13 @@ public class DictValue implements Serializable {
     /**
      * 创建时间
      */
-    @Column(name = "CREATE_TIME")
+    @Column(name = "create_time")
     private Date createTime;
 
     /**
      * 创建人
      */
-    @Column(name = "CREATOR")
+    @Column(name = "creator")
     private String creator;
 
     /**
@@ -59,18 +63,18 @@ public class DictValue implements Serializable {
     /**
      * 修改人
      */
-    @Column(name = "MODIFIER")
+    @Column(name = "modifier")
     private String modifier;
 
     /**
      * 名称
      */
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
     /**
      * 编码
      */
-    @Column(name = "CODE")
+    @Column(name = "code")
     private String code;
 }

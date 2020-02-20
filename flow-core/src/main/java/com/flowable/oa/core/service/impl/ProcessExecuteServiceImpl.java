@@ -1,22 +1,43 @@
 package com.flowable.oa.core.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.flowable.oa.core.entity.BizFile;
+import com.flowable.oa.core.entity.BizInfo;
+import com.flowable.oa.core.entity.BizInfoConf;
+import com.flowable.oa.core.entity.BizLog;
+import com.flowable.oa.core.entity.ProcessVariable;
+import com.flowable.oa.core.entity.ProcessVariableInstance;
+import com.flowable.oa.core.entity.auth.SystemRole;
+import com.flowable.oa.core.entity.auth.SystemUser;
+import com.flowable.oa.core.service.BizInfoConfService;
+import com.flowable.oa.core.service.IBizFileService;
+import com.flowable.oa.core.service.IBizInfoService;
+import com.flowable.oa.core.service.IBizLogService;
+import com.flowable.oa.core.service.IProcessDefinitionService;
+import com.flowable.oa.core.service.IProcessExecuteService;
+import com.flowable.oa.core.service.IProcessVariableService;
+import com.flowable.oa.core.service.IVariableInstanceService;
+import com.flowable.oa.core.service.auth.ISystemUserService;
+import com.flowable.oa.core.util.Constants;
+import com.flowable.oa.core.util.LoginUser;
+import com.flowable.oa.core.util.UploadFileUtil;
+import com.flowable.oa.core.util.WebUtil;
+import com.flowable.oa.core.util.WorkOrderUtil;
+import com.flowable.oa.core.util.exception.ServiceException;
+import com.flowable.oa.core.vo.BizFileVo;
+import com.flowable.oa.core.vo.BizLogVo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.alibaba.fastjson.JSONObject;
-import com.flowable.oa.core.entity.*;
-import com.flowable.oa.core.entity.auth.SystemRole;
-import com.flowable.oa.core.entity.auth.SystemUser;
-import com.flowable.oa.core.service.*;
-import com.flowable.oa.core.service.auth.ISystemUserService;
-import com.flowable.oa.core.util.*;
-import com.flowable.oa.core.util.exception.ServiceException;
-import com.flowable.oa.core.vo.BizFileVo;
-import com.flowable.oa.core.vo.BizLogVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -167,7 +188,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     @Transactional
     public BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
-        logger.info("params : {}" , params);
+        logger.info("params : {}", params);
         Integer bizId = MapUtils.getInteger(params, "base.bizId");
         BizInfo bizInfo = bizInfoService.selectByKey(bizId);
         if (null == bizInfo) {
@@ -348,7 +369,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
         BizLog logBean = new BizLog();
         logBean.setCreateTime(now);
-        logBean.setTaskID(task.getId());
+        logBean.setTaskId(task.getId());
         logBean.setTaskName(task.getName());
         logBean.setBizId(bizInfo.getId());
         LoginUser loginUser = WebUtil.getLoginUser();

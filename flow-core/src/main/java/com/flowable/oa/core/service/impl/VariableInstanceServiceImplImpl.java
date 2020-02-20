@@ -1,14 +1,13 @@
 package com.flowable.oa.core.service.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.BizLog;
 import com.flowable.oa.core.entity.ProcessVariableInstance;
 import com.flowable.oa.core.service.IVariableInstanceService;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,7 @@ public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVari
             case UPDATABLE:
                 BizLog logBean = new BizLog();
                 logBean.setBizId(bizInfo.getId());
-                logBean.setTaskID(taskId);
+                logBean.setTaskId(taskId);
                 tList = this.loadValueByLog(logBean);
                 break;
             default:
@@ -46,7 +45,7 @@ public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVari
 
         ProcessVariableInstance instance = new ProcessVariableInstance();
         instance.setBizId(logBean.getBizId());
-        instance.setTaskId(logBean.getTaskID());
+        instance.setTaskId(logBean.getTaskId());
         return this.select(instance);
     }
 }

@@ -1,14 +1,19 @@
 package com.flowable.oa.core.entity;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.Data;
 
 /**
  * <p>
  * 会签人员列表
+ *
  * @author yangqi
  * @Description </p>
  * @email 13507615840@163.com
@@ -16,31 +21,31 @@ import java.util.Date;
  **/
 @Data
 @Entity
-@Table(name = "T_BIZ_COUNTER_USER")
+@Table(name = "t_biz_counter_user")
 public class BizCounterUser implements Serializable {
 
     private static final long serialVersionUID = 8899924192856670854L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, name = "ID")
+    @Column(unique = true, name = "id")
     private Integer id;
 
-    @Column(name = "USER_NAME", length = 32)
+    @Column(name = "user_name", length = 32)
     private String username;
 
-    @Column(name = "NAME", length = 32)
+    @Column(name = "name", length = 32)
     private String name;
 
-    @Column(name = "DEPARTMENT", length = 32)
+    @Column(name = "department", length = 32)
     private String department;
 
-    @Column(name = "BIZ_ID", length = 32)
+    @Column(name = "biz_id", length = 32)
     private String bizId;
 
-    @Column(name = "TASK_ID", length = 32)
+    @Column(name = "task_id", length = 32)
     private String taskId;
 
-    @Column(name = "CREATE_TIME")
-    private Date createTime ;
+    @Column(name = "create_time")
+    private Date createTime;
 }
