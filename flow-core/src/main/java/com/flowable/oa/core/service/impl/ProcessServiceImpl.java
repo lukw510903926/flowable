@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.Activity;
@@ -46,16 +47,19 @@ import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
 import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description :
+ * @since : 2020/2/20 5:54 下午
+ */
+@Slf4j
 @Service
 public class ProcessServiceImpl implements IProcessDefinitionService {
-
-    private Logger logger = LoggerFactory.getLogger(ProcessServiceImpl.class);
 
     @Autowired
     private TaskService taskService;
@@ -95,7 +99,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         if (CollectionUtils.isNotEmpty(taskList)) {
             StringBuffer temp = new StringBuffer("(HANDLE)listSize:" + taskList.size() + "==>");
             taskList.forEach(t -> temp.append(t.getId()).append("::").append(t.getTaskDefinitionKey()).append(" || "));
-            logger.info("=========" + temp.toString());
+            log.info("=========" + temp.toString());
             task = taskList.get(0);
             curreOp = Constants.HANDLE;
         } else {
@@ -105,7 +109,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                 if (CollectionUtils.isNotEmpty(taskList)) {
                     StringBuffer temp = new StringBuffer("(SIGN)listSize:" + taskList.size() + "==>");
                     taskList.forEach(t -> temp.append(t.getId()).append("::").append(t.getTaskDefinitionKey()).append(" || "));
-                    logger.info("=========" + temp.toString());
+                    log.info("=========" + temp.toString());
                     task = taskList.get(0);
                     curreOp = Constants.SIGN;
                 }
@@ -153,10 +157,10 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      * 获取任务节点 出口线
      */
     @Override
-    public Map<String, String> findOutGoingTransNames(String taskID) {
+    public Map<String, String> findOutGoingTransNames(String taskId) {
 
         Map<String, String> result = new HashMap<>();
-        Activity activity = this.getCurrentActivity(taskID);
+        Activity activity = this.getCurrentActivity(taskId);
         List<SequenceFlow> list = this.getOutgoingFlows(activity);
         if (CollectionUtils.isNotEmpty(list)) {
             list.stream().filter(sequenceFlow -> StringUtils.isNotBlank(sequenceFlow.getName())).forEach(sequence -> result.put(sequence.getId(), sequence.getName()));
@@ -225,13 +229,13 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      * 获取当前任务的前一个任务<br>
      * 如果当前任务的前置任务有多个，可以指定parentTaskDefinitionKey 来确定获取，否则将获取最后进入当前任务的结点作为前置结点
      *
-     * @param taskID 当前任务ID
+     * @param taskId 当前任务ID
      * @return @
      */
     @Override
-    public String getParentTask(String taskID) {
+    public String getParentTask(String taskId) {
 
-        Activity activity = this.getCurrentActivity(taskID);
+        Activity activity = this.getCurrentActivity(taskId);
         Optional<FlowElementsContainer> parent = Optional.ofNullable(activity.getParentContainer());
         return parent.map(container -> {
             List<FlowElement> list = new ArrayList<>(container.getFlowElements());
@@ -282,7 +286,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             executeCommand(processInstanceId, activity, variables);
             autoClaim(processInstanceId);
         } catch (Exception e) {
-            logger.error("任务提交失败 : {}", e);
+            log.error("任务提交失败 : ", e);
             throw new ServiceException("任务提交失败!");
         }
         return true;
@@ -397,11 +401,11 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     private boolean claimRole(Task task, String username) {
 
         List<String> list = this.getTaskCandidateGroup(task);
-        logger.info("group : {}", list);
+        log.info("group : {}", list);
         boolean flag = false;
         if (CollectionUtils.isNotEmpty(list)) {
             List<String> roles = systemRoleService.findUserRoles(username);
-            logger.info("user roles : {}", roles);
+            log.info("user roles : {}", roles);
             for (String group : list) {
                 if (roles.contains(group)) {
                     flag = true;
@@ -475,7 +479,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                 groups.stream().filter(StringUtils::isNotBlank).forEach(group -> taskService.deleteCandidateGroup(task.getId(), group));
                 taskService.unclaim(task.getId());
             } catch (Exception e) {
-                logger.error("任务签收失败 : {}", e);
+                log.error("任务签收失败 : ", e);
                 throw new ServiceException("任务签收失败 !");
             }
         }
@@ -510,27 +514,27 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     }
 
     @Override
-    public Task getTaskBean(String taskID) {
+    public Task getTaskBean(String taskId) {
 
-        if (StringUtils.isEmpty(taskID)) {
+        if (StringUtils.isEmpty(taskId)) {
             throw new ServiceException("taskID 不可为空");
         }
-        return taskService.createTaskQuery().taskId(taskID).singleResult();
+        return taskService.createTaskQuery().taskId(taskId).singleResult();
     }
 
     /**
      * 获取当前用户对工单有权限处理的任务，并返回操作权限 返回HANDLE，表示可以进行处理，SIGN表示可以进行签收，其他无权限<br>
      * 返回格式：任务ID:权限
      *
-     * @param taskID   taskId
+     * @param taskId   taskId
      * @param username 用户
      * @return @
      */
     @Override
-    public String getWorkAccessTask(String taskID, String username) {
+    public String getWorkAccessTask(String taskId, String username) {
 
         String result = null;
-        Task task = getTaskBean(taskID);
+        Task task = getTaskBean(taskId);
         if (task == null) {
             return null;
         }
@@ -629,7 +633,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getHighFlows(), true);
 //            return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),true);
         } catch (Exception e) {
-            logger.error(" 显示流程实例图片失败 : {}", e);
+            log.error(" 显示流程实例图片失败 : ", e);
             throw new ServiceException("显示流程实例图片失败!");
         }
     }

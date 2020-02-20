@@ -1,13 +1,12 @@
 package com.flowable.oa.core.service.impl;
 
-import java.util.List;
-
 import com.flowable.oa.core.entity.BizInfoConf;
 import com.flowable.oa.core.service.BizInfoConfService;
 import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.LoginUser;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
+import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

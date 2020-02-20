@@ -1,14 +1,14 @@
 package com.flowable.oa.core.service.impl;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import com.flowable.oa.core.service.IProcessModelService;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.github.pagehelper.PageInfo;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,13 +23,9 @@ import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.Model;
 import org.flowable.engine.repository.ModelQuery;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * 流程模型相关
@@ -39,13 +35,12 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @createTime : 2018年1月31日 : 下午4:13:32
  * @description :
  */
+@Slf4j
 @Service
 public class ProcessModelServiceImpl implements IProcessModelService {
 
     @Autowired
     private RepositoryService repositoryService;
-
-    private Logger logger = LoggerFactory.getLogger(ProcessModelServiceImpl.class);
 
     /**
      * 流程模型列表
@@ -114,7 +109,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
             if (!StringUtils.endsWith(processName, ".bpmn20.xml")) {
                 processName += ".bpmn20.xml";
             }
-            logger.info("=========" + processName + "============" + modelData.getName());
+            log.info("=========" + processName + "============" + modelData.getName());
             ByteArrayInputStream in = new ByteArrayInputStream(bpmnBytes);
             Deployment deployment = repositoryService.createDeployment().name(modelData.getName())
                     .addInputStream(processName, in).deploy();
@@ -130,7 +125,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
                 }
             }
         } catch (Exception e) {
-            logger.error("设计模型图不正确，检查模型正确性 :{}", e);
+            log.error("设计模型图不正确，检查模型正确性 :", e);
             throw new ServiceException("设计模型图不正确，检查模型正确性，模型ID=" + id, e);
         }
         return processDefinitionId;
@@ -155,7 +150,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
             response.setHeader("Content-Disposition", "attachment; filename=" + filename);
             IOUtils.copy(in, response.getOutputStream());
         } catch (Exception e) {
-            logger.error(" 导出model的xml文件失败 :", e);
+            log.error(" 导出model的xml文件失败 :", e);
             throw new ServiceException("导出model的xml文件失败，模型ID=" + id);
         }
 

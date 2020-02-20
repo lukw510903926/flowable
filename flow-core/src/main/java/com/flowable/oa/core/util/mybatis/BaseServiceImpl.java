@@ -3,16 +3,15 @@ package com.flowable.oa.core.util.mybatis;
 import com.flowable.oa.core.util.ReflectionUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
-
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * 基础类

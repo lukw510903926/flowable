@@ -1,7 +1,5 @@
 package com.flowable.oa.core.service.impl;
 
-import java.util.*;
-
 import com.flowable.oa.core.entity.ProcessVariable;
 import com.flowable.oa.core.entity.ProcessVariableInstance;
 import com.flowable.oa.core.service.IProcessVariableService;
@@ -9,12 +7,23 @@ import com.flowable.oa.core.service.IVariableInstanceService;
 import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import com.github.pagehelper.PageInfo;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description :
+ * @since : 2020/2/20 5:55 下午
+ */
 @Service
 public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVariable> implements IProcessVariableService {
 

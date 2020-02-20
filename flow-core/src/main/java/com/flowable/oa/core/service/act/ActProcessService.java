@@ -1,18 +1,25 @@
 package com.flowable.oa.core.service.act;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.zip.ZipInputStream;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.zip.ZipInputStream;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -41,8 +48,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -101,11 +106,11 @@ public class ActProcessService {
         List<ProcessDefinition> processDefinitionList = this.findProcessDefinition(null);
         List<ProcessDefinitionEntityVo> result = new ArrayList<>();
         for (ProcessDefinition processDefinition : processDefinitionList) {
-            ProcessDefinitionEntityImpl definitionEntity = (ProcessDefinitionEntityImpl)processDefinition;
+            ProcessDefinitionEntityImpl definitionEntity = (ProcessDefinitionEntityImpl) processDefinition;
             String deploymentId = definitionEntity.getDeploymentId();
             ProcessDefinitionEntityVo definitionEntityVo = new ProcessDefinitionEntityVo();
             Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
-            BeanUtils.copyProperties(definitionEntity,definitionEntityVo);
+            BeanUtils.copyProperties(definitionEntity, definitionEntityVo);
             definitionEntityVo.setDeploymentTime(deployment.getDeploymentTime());
             result.add(definitionEntityVo);
         }
@@ -156,7 +161,7 @@ public class ActProcessService {
                 }
             }
         } catch (XMLStreamException e) {
-            log.error("获取流程信息失败 ： {}", e);
+            log.error("获取流程信息失败 ： ", e);
         }
         return result;
     }
@@ -304,7 +309,7 @@ public class ActProcessService {
             repositoryService.addModelEditorSource(modelData.getId(), modelNode.toString().getBytes(StandardCharsets.UTF_8));
             return modelData;
         } catch (XMLStreamException e) {
-            logger.error("将部署的流程转换为模型失败 : {}", e);
+            logger.error("将部署的流程转换为模型失败 : ", e);
             throw new ServiceException("将部署的流程转换为模型失败");
         }
     }

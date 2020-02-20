@@ -38,14 +38,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,10 +53,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description :
+ * @since : 2020/2/20 5:57 下午
+ */
+@Slf4j
 @Service
 public class ProcessExecuteServiceImpl implements IProcessExecuteService {
-
-    private Logger logger = LoggerFactory.getLogger(IProcessExecuteService.class);
 
     @Autowired
     private IProcessVariableService processVariableService;
@@ -188,7 +192,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     @Transactional
     public BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
-        logger.info("params : {}", params);
+        log.info("params : {}", params);
         Integer bizId = MapUtils.getInteger(params, "base.bizId");
         BizInfo bizInfo = bizInfoService.selectByKey(bizId);
         if (null == bizInfo) {
@@ -494,7 +498,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         List<BizFile> bizFiles = this.bizFileService.select(bizFile);
         if (CollectionUtils.isNotEmpty(bizFiles) && CollectionUtils.isNotEmpty(bizLogVos)) {
             Map<String, List<BizFile>> taskFileMap = bizFiles.stream().collect(Collectors.groupingBy(BizFile::getTaskId));
-            bizLogVos.forEach(entity -> entity.setBizFiles(taskFileMap.get(entity.getTaskID())));
+            bizLogVos.forEach(entity -> entity.setBizFiles(taskFileMap.get(entity.getTaskId())));
         }
     }
 
@@ -511,7 +515,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         List<ProcessVariableInstance> variableInstances = this.instanceService.select(variableInstance);
         if (CollectionUtils.isNotEmpty(variableInstances) && CollectionUtils.isNotEmpty(bizLogVos)) {
             Map<String, List<ProcessVariableInstance>> taskInstanceMap = variableInstances.stream().collect(Collectors.groupingBy(ProcessVariableInstance::getTaskId));
-            bizLogVos.forEach(log -> log.setVariableInstances(taskInstanceMap.get(log.getTaskID())));
+            bizLogVos.forEach(log -> log.setVariableInstances(taskInstanceMap.get(log.getTaskId())));
         }
     }
 
@@ -547,7 +551,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             try {
                 is = new FileInputStream(file);
             } catch (FileNotFoundException e) {
-                logger.error("文件未找到 : {}", e);
+                log.error("文件未找到 :", e);
             }
             result[0] = bean.getFileType();
             result[1] = is;

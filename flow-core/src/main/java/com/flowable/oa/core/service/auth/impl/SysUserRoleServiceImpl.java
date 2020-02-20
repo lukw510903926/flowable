@@ -3,13 +3,12 @@ package com.flowable.oa.core.service.auth.impl;
 import com.flowable.oa.core.entity.auth.SysUserRole;
 import com.flowable.oa.core.service.auth.ISysUserRoleService;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 /**
  * <p>

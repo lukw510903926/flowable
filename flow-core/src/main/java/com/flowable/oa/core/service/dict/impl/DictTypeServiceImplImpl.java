@@ -1,7 +1,4 @@
-package com.flowable.oa.core.service.dict.Impl;
-
-import java.util.Date;
-import java.util.List;
+package com.flowable.oa.core.service.dict.impl;
 
 import com.flowable.oa.core.entity.dict.DictType;
 import com.flowable.oa.core.entity.dict.DictValue;
@@ -10,6 +7,8 @@ import com.flowable.oa.core.service.dict.IDictValueService;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
+import java.util.Date;
+import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,7 +59,7 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
     @Transactional
     public void delete(List<Integer> list) {
 
-        if(CollectionUtils.isNotEmpty(list)){
+        if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(this::delete);
         }
     }

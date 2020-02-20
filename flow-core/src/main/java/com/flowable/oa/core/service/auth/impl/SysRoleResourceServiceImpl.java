@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysRoleResourceServiceImpl extends BaseServiceImpl<SysRoleResource> implements ISysRoleResourceService {
 
+    @Override
     public void saveOrUpdate(SysRoleResource roleResource) {
 
         SysRoleResource entity = new SysRoleResource();

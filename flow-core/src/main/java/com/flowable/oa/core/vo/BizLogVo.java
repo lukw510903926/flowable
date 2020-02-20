@@ -2,13 +2,12 @@ package com.flowable.oa.core.vo;
 
 import com.flowable.oa.core.entity.BizFile;
 import com.flowable.oa.core.entity.ProcessVariableInstance;
-import lombok.Data;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import lombok.Data;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -31,7 +30,7 @@ public class BizLogVo implements Serializable {
 
     private String taskName;
 
-    private String taskID;
+    private String taskId;
 
     private Date createTime;
 

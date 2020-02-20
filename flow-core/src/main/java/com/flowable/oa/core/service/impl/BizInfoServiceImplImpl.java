@@ -1,7 +1,5 @@
 package com.flowable.oa.core.service.impl;
 
-import java.util.*;
-
 import com.flowable.oa.core.entity.BizFile;
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.BizInfoConf;
@@ -19,19 +17,29 @@ import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description :
+ * @since : 2020/2/20 5:57 下午
+ */
+@Slf4j
 @Service
 public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements IBizInfoService {
 
-    private Logger logger = LoggerFactory.getLogger(BizInfoServiceImplImpl.class);
 
     @Autowired
     private BizInfoConfService bizInfoConfService;
@@ -144,7 +152,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     @Override
     public PageInfo<BizInfo> findBizInfo(BizInfoVo bizInfoVo, PageInfo<BaseVo> page) {
 
-        logger.info("工单查询 bizInfoVo : {}" , bizInfoVo);
+        log.info("工单查询 bizInfoVo : {}", bizInfoVo);
         PageUtil.startPage(page);
         BizInfo bizInfo = new BizInfo();
         BeanUtils.copyProperties(bizInfoVo, bizInfo);

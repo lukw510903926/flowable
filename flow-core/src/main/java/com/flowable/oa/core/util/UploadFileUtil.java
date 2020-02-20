@@ -1,16 +1,13 @@
 package com.flowable.oa.core.util;
 
-import java.awt.Image;
+import com.flowable.oa.core.entity.BizFile;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
-
 import javax.imageio.ImageIO;
-
-import com.flowable.oa.core.entity.BizFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -18,9 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author 26223
  */
+@Slf4j
 public class UploadFileUtil {
-
-    private static Logger logger = LoggerFactory.getLogger(UploadFileUtil.class);
 
     /**
      * 将上传的文件保存到磁盘，文件目录为yyyyMM/dd/yyyyMMddHHmmssSSS
@@ -28,7 +24,7 @@ public class UploadFileUtil {
      * @param file
      * @return
      */
-    public static BizFile saveFile(MultipartFile file,String bizFileRootPath) {
+    public static BizFile saveFile(MultipartFile file, String bizFileRootPath) {
 
         if (file == null || file.getSize() == 0) {
             return null;
@@ -49,7 +45,7 @@ public class UploadFileUtil {
             bean.setPath(filePath2);
             bean.setName(file.getOriginalFilename());
         } catch (IOException | IllegalStateException e) {
-            logger.error("文件上传失败 : {}", e);
+            log.error("文件上传失败 : ", e);
         }
         try {
             Image image = ImageIO.read(pFile);
@@ -60,7 +56,7 @@ public class UploadFileUtil {
             }
         } catch (IOException ex) {
             bean.setFileType("FILE");
-            logger.error("获取文件类型失败 : {}", ex);
+            log.error("获取文件类型失败 : ", ex);
         }
         return bean;
     }
@@ -71,7 +67,7 @@ public class UploadFileUtil {
      * @param bean
      * @return
      */
-    public static File getUploadFile(BizFile bean,String bizFileRootPath) {
+    public static File getUploadFile(BizFile bean, String bizFileRootPath) {
         return new File(bizFileRootPath + bean.getPath());
     }
 }
