@@ -73,7 +73,7 @@ biz.create = {
                 }, {
                     id: "mobile",
                     alias: "联系方式",
-                    value: createUser['mobile']
+                    value: createUser['mobile'] ? createUser['mobile'] && createUser['mobile'] != 'null' : ''
                 }, {
                     id: "email",
                     alias: "邮箱"
