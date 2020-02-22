@@ -7,30 +7,37 @@ import com.flowable.oa.core.service.IBizInfoService;
 import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.IProcessExecuteService;
 import com.flowable.oa.core.service.IProcessVariableService;
-import com.flowable.oa.core.util.*;
+import com.flowable.oa.core.util.Constants;
+import com.flowable.oa.core.util.DataGrid;
+import com.flowable.oa.core.util.PageUtil;
+import com.flowable.oa.core.util.RestResult;
+import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
-import org.flowable.engine.repository.ProcessDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.IOUtils;
+import org.flowable.engine.repository.ProcessDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
  * <p>
@@ -40,6 +47,7 @@ import java.util.Map;
  * @email 13507615840@163.com
  * @since 19-2-15 下午11:10
  **/
+@Slf4j
 @Controller
 @RequestMapping("/workflow")
 public class ProcessExecuteController {
@@ -55,8 +63,6 @@ public class ProcessExecuteController {
 
     @Autowired
     private IProcessVariableService processVariableService;
-
-    private Logger logger = LoggerFactory.getLogger("processExecuteController");
 
     @ResponseBody
     @RequestMapping(value = "/loadWorkLogInput")
@@ -182,7 +188,7 @@ public class ProcessExecuteController {
                 IOUtils.copy(inputStream, response.getOutputStream());
             }
         } catch (IOException e) {
-            logger.error("文件下载失败 : {}", e);
+            log.error("文件下载失败 : ", e);
         }
     }
 }

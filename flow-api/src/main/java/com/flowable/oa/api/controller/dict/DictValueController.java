@@ -5,15 +5,13 @@ import com.flowable.oa.core.service.dict.IDictValueService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import java.util.List;
 
 /**
  * <p>
@@ -29,13 +27,6 @@ public class DictValueController {
 
     @Autowired
     private IDictValueService dictValueService;
-
-    @RequestMapping("/list/{typeId}")
-    public String dictValues(@PathVariable("typeId") String typeId, Model model) {
-
-        model.addAttribute("typeId", typeId);
-        return "modules/dict/value_list";
-    }
 
     @ResponseBody
     @RequestMapping("/value/{valueId}")

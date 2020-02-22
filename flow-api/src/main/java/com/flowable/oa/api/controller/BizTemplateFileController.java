@@ -6,11 +6,16 @@ import com.flowable.oa.core.service.BizTemplateFileService;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.util.WebUtil;
 import com.github.pagehelper.PageInfo;
+import java.io.File;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,14 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * <p>
  *
@@ -37,23 +34,19 @@ import java.util.Map;
  * @email 13507615840@163.com
  * @since 19-2-15 下午11:10
  **/
+@Slf4j
 @Controller
 @RequestMapping("/bizTemplateFile")
 public class BizTemplateFileController {
 
-    @Value("${biz.file.path}")
-    private String bizFileRootPath;
-
     @Autowired
     private BizTemplateFileService bizTemplateFileService;
-
-    private Logger logger = LoggerFactory.getLogger(BizTemplateFileController.class);
 
     @ResponseBody
     @RequestMapping("/list")
     public Map<String, Object> list(PageInfo<BizTemplateFile> page, BizTemplateFile file) {
 
-        PageInfo<BizTemplateFile> helper = this.bizTemplateFileService.findByModel(page,file,true);
+        PageInfo<BizTemplateFile> helper = this.bizTemplateFileService.findByModel(page, file, true);
         Map<String, Object> data = new HashMap<>();
         data.put("total", helper.getTotal());
         data.put("rows", helper.getList());
@@ -93,7 +86,7 @@ public class BizTemplateFileController {
                 FileUtils.copyFile(File.createTempFile("文件不存在!", ".txt"), outputStream);
             }
         } catch (Exception e) {
-            logger.error("文件不存在 !{}", e);
+            log.error("文件不存在 !", e);
         }
     }
 

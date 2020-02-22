@@ -2,14 +2,12 @@ package com.flowable.oa.api.controller;
 
 import com.flowable.oa.core.service.IProcessModelService;
 import com.flowable.oa.core.util.RestResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 流程模型相关
@@ -19,14 +17,13 @@ import javax.servlet.http.HttpServletResponse;
  * @createTime : 2018年1月31日 : 下午4:20:45
  * @description :
  */
+@Slf4j
 @Controller
 @RequestMapping(value = "/act/model")
 public class ActModelController {
 
     @Autowired
     private IProcessModelService processModelService;
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     /**
@@ -57,7 +54,7 @@ public class ActModelController {
     @ResponseBody
     @RequestMapping(value = "delete")
     public RestResult<Object> delete(String id) {
-        logger.info("删除Model---delete");
+        log.info("删除Model---delete");
         processModelService.delete(id);
         return RestResult.success();
     }

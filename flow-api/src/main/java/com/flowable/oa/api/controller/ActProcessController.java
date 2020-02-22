@@ -6,6 +6,13 @@ import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
@@ -15,18 +22,13 @@ import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -122,24 +124,21 @@ public class ActProcessController {
      * @return
      */
     @PostMapping("/deploy")
-    public String deploy(MultipartHttpServletRequest request, Model model) {
+    public RestResult<Object> deploy(MultipartHttpServletRequest request) {
 
         MultipartFile file = request.getFile("file");
         String fileName = file.getOriginalFilename();
-        boolean result = false;
         String message;
         if (StringUtils.isBlank(fileName)) {
             message = "请选择要部署的流程文件";
+            return RestResult.fail(null, message);
         } else {
             String key = fileName.substring(0, fileName.indexOf("."));
             ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
-            message = actProcessService.deploy( null, file);
+            actProcessService.deploy(null, file);
             processDefinitionService.copyVariables(processDefinition);
-            result = true;
         }
-        model.addAttribute("result", result);
-        model.addAttribute("message", message);
-        return "modules/process/process_deploy";
+        return RestResult.success();
     }
 
     /**

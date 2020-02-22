@@ -5,13 +5,17 @@ import com.flowable.oa.core.service.auth.ISystemResourceService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * <p>
@@ -27,12 +31,6 @@ public class SystemResourceController {
 
     @Autowired
     private ISystemResourceService resourceService;
-
-    @GetMapping("/index")
-    public String index() {
-
-        return "modules/sso/resource";
-    }
 
     @ResponseBody
     @PostMapping("/save")

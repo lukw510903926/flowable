@@ -9,15 +9,22 @@ import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -39,9 +46,6 @@ public class BizInfoController {
 
     @Autowired
     private IBizInfoService bizInfoService;
-
-    @Value("${biz.file.path}")
-    private String bizFileRootPath;
 
     @ResponseBody
     @RequestMapping("/biz/process/status")
