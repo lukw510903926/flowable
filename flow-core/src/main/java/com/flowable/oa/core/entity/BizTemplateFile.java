@@ -25,7 +25,7 @@ public class BizTemplateFile implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true)
-    private Integer id;
+    private Long id;
 
     @Column(name = "create_user", length = 64)
     private String createUser;

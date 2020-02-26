@@ -48,11 +48,11 @@ public class CommandServiceImpl implements CommandService {
     private IProcessDefinitionService processDefinitionService;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public BizInfo jumpCommand(Map<String, Object> params) {
 
         try {
-            Integer bizId = MapUtils.getInteger(params, "base.bizId");
+            Long bizId = MapUtils.getLong(params, "base.bizId");
             BizInfo bizInfo = this.bizInfoService.selectByKey(bizId);
             if (bizInfo == null) {
                 throw new ServiceException("工单不存在!工单id:{}" + bizId);

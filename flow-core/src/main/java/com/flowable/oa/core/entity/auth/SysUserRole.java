@@ -28,13 +28,13 @@ public class SysUserRole implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "role_id")
-    private Integer roleId;
+    private Long roleId;
 
     @Transient
     private String roleIds;

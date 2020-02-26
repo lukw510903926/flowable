@@ -3,6 +3,7 @@ package com.flowable.oa.core.util.mybatis;
 import com.flowable.oa.core.util.ReflectionUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
-    public T selectByKey(Integer key) {
+    public T selectByKey(Serializable key) {
 
         if (key != null) {
             return mapper.selectByPrimaryKey(key);
@@ -64,7 +65,7 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(Integer key) {
+    public void deleteById(Serializable key) {
 
         if (key != null) {
             mapper.deleteByPrimaryKey(key);
@@ -79,7 +80,7 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteByIds(List<Integer> list) {
+    public void deleteByIds(List<Serializable> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(this::deleteById);
@@ -165,7 +166,7 @@ public class BaseServiceImpl<T> implements IBaseService<T> {
     }
 
     @Override
-    public boolean check(Integer uid, List<T> list) {
+    public boolean check(Serializable uid, List<T> list) {
 
         if (CollectionUtils.isEmpty(list)) {
             return true;

@@ -219,7 +219,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ProcessInstance newProcessInstance(String id, Map<String, Object> variables) {
 
         return runtimeService.startProcessInstanceById(id, variables);
@@ -265,22 +265,22 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      * 执行任务
      *
      * @param bizInfo
-     * @param taskID
+     * @param taskId
      * @param variables
      * @return @
      */
     @Override
     @Transactional
-    public boolean completeTask(BizInfo bizInfo, String taskID, Map<String, Object> variables) {
+    public boolean completeTask(BizInfo bizInfo, String taskId, Map<String, Object> variables) {
 
         try {
             String processInstanceId = bizInfo.getProcessInstanceId();
             variables.put("SYS_CURRENT_PID", processInstanceId);
             variables.put("SYS_CURRENT_WORKNUMBER", bizInfo.getWorkNum());
             variables.put("SYS_CURRENT_WORKID", bizInfo.getId());
-            variables.put("SYS_CURRENT_TASKID", taskID);
-            Task task = this.getTaskBean(taskID);
-            Activity activity = this.getCurrentActivity(taskID);
+            variables.put("SYS_CURRENT_TASKID", taskId);
+            Task task = this.getTaskBean(taskId);
+            Activity activity = this.getCurrentActivity(taskId);
             taskService.complete(task.getId(), variables);
             variables.put("SYS_CURRENT_TASKKEY", task.getTaskDefinitionKey());
             executeCommand(processInstanceId, activity, variables);
@@ -295,13 +295,13 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     /**
      * 自动签收//如果当前任务只有一个用户则设定此用户为自动签收
      *
-     * @param processInstanceID
+     * @param processInstanceId
      * @return
      */
     @Override
-    public boolean autoClaim(String processInstanceID) {
+    public boolean autoClaim(String processInstanceId) {
 
-        List<Task> list = taskService.createTaskQuery().processInstanceId(processInstanceID).list();
+        List<Task> list = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
         for (Task task : list) {
             if (StringUtils.isNotEmpty(task.getAssignee())) {
                 continue;
@@ -367,23 +367,23 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     }
 
     @Override
-    public ProcessInstance getProcessInstance(String processInstanceID) {
+    public ProcessInstance getProcessInstance(String processInstanceId) {
 
-        return runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceID).singleResult();
+        return runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
     }
 
     /**
      * 签收任务
      *
-     * @param taskID
+     * @param taskId
      * @param username
      * @return @
      */
     @Override
-    public boolean claimTask(String taskID, String username) {
+    public boolean claimTask(String taskId, String username) {
 
         // 签收进行权限判断
-        Task task = this.getTaskBean(taskID);
+        Task task = this.getTaskBean(taskId);
         if (task == null) {
             throw new ServiceException("无效任务");
         }
@@ -392,8 +392,8 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         }
         boolean flag = claimRole(task, username);
         if (flag) {
-            taskService.unclaim(taskID);
-            taskService.claim(taskID, username);
+            taskService.unclaim(taskId);
+            taskService.claim(taskId, username);
         }
         return true;
     }
@@ -429,18 +429,18 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     /**
      * 转派任务
      *
-     * @param taskID
+     * @param taskId
      * @param toAssignment
      * @param assignmentType
      * @return @
      */
     @Override
-    public boolean assignmentTask(String taskID, String toAssignment, String assignmentType) {
+    public boolean assignmentTask(String taskId, String toAssignment, String assignmentType) {
 
         if (!("group".equalsIgnoreCase(assignmentType) || "user".equalsIgnoreCase(assignmentType))) {
             throw new ServiceException("参数错误");
         }
-        Task task = getTaskBean(taskID);
+        Task task = getTaskBean(taskId);
         if (!WebUtil.getLoginUsername().equals(task.getAssignee())) {
             throw new ServiceException("没有权限处理该任务");
         }

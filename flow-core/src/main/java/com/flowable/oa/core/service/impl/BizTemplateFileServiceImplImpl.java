@@ -55,13 +55,13 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
             templateFile.setFlowName(Optional.ofNullable(bizInfo).map(BizInfo::getBizType).orElse(null));
         }
         if (StringUtils.isNotEmpty(params.get("id"))) {
-            templateFile.setId(MapUtils.getInteger(params, "id"));
+            templateFile.setId(MapUtils.getLong(params, "id"));
         }
         return this.selectOne(templateFile);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(BizTemplateFile dataFile, MultipartFile file) {
 
         String fileName = file.getOriginalFilename();

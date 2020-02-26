@@ -30,16 +30,16 @@ public class SysRoleResource implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false, length = 64, name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "role_id")
-    private Integer roleId;
+    private Long roleId;
 
     @Column(name = "resource_id")
-    private Integer resourceId;
+    private Long resourceId;
 
     @Transient
-    private List<Integer> resourceIds;
+    private List<Long> resourceIds;
 
 
 }

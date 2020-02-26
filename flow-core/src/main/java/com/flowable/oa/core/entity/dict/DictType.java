@@ -27,7 +27,7 @@ public class DictType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, name = "id")
-    private Integer id;
+    private Long id;
 
     /**
      * 字典名称

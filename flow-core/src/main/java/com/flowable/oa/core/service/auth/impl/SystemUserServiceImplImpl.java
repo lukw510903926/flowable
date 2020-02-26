@@ -8,6 +8,7 @@ import com.flowable.oa.core.service.auth.ISystemRoleService;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,13 +44,13 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
     }
 
     @Override
-    public void deleteByIds(List<Integer> list) {
+    public void deleteByIds(List<Serializable> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(userId -> {
                 this.deleteById(userId);
                 SysUserRole userRole = new SysUserRole();
-                userRole.setUserId(NumberUtils.toInt(userId + ""));
+                userRole.setUserId(NumberUtils.toLong(userId + ""));
                 this.userRoleService.deleteByModel(userRole);
             });
         }
@@ -73,7 +74,7 @@ public class SystemUserServiceImplImpl extends BaseServiceImpl<SystemUser> imple
     public List<SystemUser> findUserByRole(SystemRole systemRole) {
 
         List<SystemRole> roles = this.systemRoleService.select(systemRole);
-        List<Integer> list = new ArrayList<>();
+        List<Long> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(roles)) {
             roles.forEach(role -> list.addAll(this.userRoleService.findUserIdsByRoleId(role.getId())));
         }

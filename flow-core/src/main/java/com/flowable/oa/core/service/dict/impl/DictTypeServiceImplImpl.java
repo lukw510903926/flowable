@@ -45,7 +45,7 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
 
     @Override
     @Transactional
-    public void delete(Integer id) {
+    public void delete(Long id) {
 
         if (null != id) {
             this.deleteById(id);
@@ -57,7 +57,7 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
 
     @Override
     @Transactional
-    public void delete(List<Integer> list) {
+    public void delete(List<Long> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(this::delete);

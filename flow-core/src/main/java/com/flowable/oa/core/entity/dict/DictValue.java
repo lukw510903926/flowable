@@ -28,13 +28,13 @@ public class DictValue implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, name = "id")
-    private Integer id;
+    private Long id;
 
     /**
      * 字典分类id
      */
     @Column(name = "dict_type_id")
-    private Integer dictTypeId;
+    private Long dictTypeId;
 
     /**
      * 字典分类名称

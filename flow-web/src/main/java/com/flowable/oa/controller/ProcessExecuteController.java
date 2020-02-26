@@ -13,6 +13,10 @@ import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -22,11 +26,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -68,7 +72,7 @@ public class ProcessExecuteController {
     @RequestMapping("/queryWorkOrder")
     public DataGrid<BizInfo> queryWorkOrder(BizInfoVo bizInfoVo, PageInfo<BaseVo> page) {
 
-        PageInfo<BizInfo> helper = bizInfoService.findBizInfo(bizInfoVo , page);
+        PageInfo<BizInfo> helper = bizInfoService.findBizInfo(bizInfoVo, page);
         DataGrid<BizInfo> grid = new DataGrid<>();
         grid.setRows(helper.getList());
         grid.setTotal(helper.getTotal());
@@ -108,7 +112,7 @@ public class ProcessExecuteController {
      */
     @ResponseBody
     @RequestMapping("/display/{id}")
-    public Map<String, Object> display(@PathVariable("id") Integer id) {
+    public Map<String, Object> display(@PathVariable("id") Long id) {
 
         return processExecuteService.queryWorkOrder(id);
     }
@@ -152,7 +156,7 @@ public class ProcessExecuteController {
 
     @ResponseBody
     @RequestMapping("/bizInfo/delete")
-    public RestResult<Object> deleteBizInfo(@RequestParam List<Integer> ids) {
+    public RestResult<Object> deleteBizInfo(@RequestParam List<Serializable> ids) {
 
         bizInfoService.deleteByIds(ids);
         return RestResult.success();

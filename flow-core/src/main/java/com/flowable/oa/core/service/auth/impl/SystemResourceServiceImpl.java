@@ -52,7 +52,7 @@ public class SystemResourceServiceImpl extends BaseServiceImpl<SystemResource> i
     }
 
     @Override
-    public void deleteByIds(List<Integer> list) {
+    public void deleteBatch(List<Long> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(resourceId -> {
@@ -72,7 +72,7 @@ public class SystemResourceServiceImpl extends BaseServiceImpl<SystemResource> i
     @Override
     public PageInfo<SystemResource> list(PageInfo<SystemResource> pageInfo, SystemResource resource) {
 
-        Map<Integer, SystemResource> cache = new HashMap<>();
+        Map<Long, SystemResource> cache = new HashMap<>();
         PageInfo<SystemResource> result = this.findByModel(pageInfo, resource, false);
         if (CollectionUtils.isNotEmpty(result.getList())) {
             result.getList().forEach(entity -> {
@@ -92,13 +92,13 @@ public class SystemResourceServiceImpl extends BaseServiceImpl<SystemResource> i
     }
 
     @Override
-    public List<SystemResource> findResourceByRoleId(Integer roleId) {
+    public List<SystemResource> findResourceByRoleId(Long roleId) {
 
         SysRoleResource roleResource = new SysRoleResource();
         roleResource.setRoleId(roleId);
         List<SysRoleResource> roleResources = this.roleResourceService.select(roleResource);
         if (CollectionUtils.isNotEmpty(roleResources)) {
-            List<Integer> resourceIds = new ArrayList<>();
+            List<Long> resourceIds = new ArrayList<>();
             roleResources.forEach(entity -> resourceIds.add(entity.getResourceId()));
             Example example = new Example(SystemResource.class);
             Example.Criteria criteria = example.createCriteria();
@@ -113,7 +113,6 @@ public class SystemResourceServiceImpl extends BaseServiceImpl<SystemResource> i
         SystemResource entity = new SystemResource();
         entity.setResourceUrl(resource.getResourceUrl());
         if (this.check(resource.getId(), this.select(entity))) {
-
             entity.setResourceUrl(null);
             entity.setName(resource.getName());
             entity.setParentId(resource.getParentId());

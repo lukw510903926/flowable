@@ -61,7 +61,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
      * 创建模型
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Model create(String name, String key, String description, String category) {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -70,7 +70,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
         editorNode.put("resourceId", "canvas");
         ObjectNode stencilSetNode = objectMapper.createObjectNode();
         stencilSetNode.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");
-        editorNode.put("stencilset", stencilSetNode);
+        editorNode.set("stencilset", stencilSetNode);
         Model modelData = repositoryService.newModel();
         description = StringUtils.defaultString(description);
         modelData.setKey(StringUtils.defaultString(key));
@@ -92,7 +92,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
      * 根据Model部署流程
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String deploy(String id) {
 
         String processDefinitionId = "";
@@ -160,7 +160,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
      * 更新Model分类
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateCategory(String id, String category) {
 
         Model modelData = repositoryService.getModel(id);
@@ -175,7 +175,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(String id) {
         repositoryService.deleteModel(id);
     }

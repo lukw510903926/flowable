@@ -23,7 +23,7 @@ public class SystemUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "create_time")
     private Date createTime;

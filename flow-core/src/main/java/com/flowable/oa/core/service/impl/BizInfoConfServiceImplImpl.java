@@ -23,7 +23,7 @@ import tk.mybatis.mapper.entity.Example;
 public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> implements BizInfoConfService {
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(BizInfoConf bizInfoConf) {
 
         BizInfoConf example = new BizInfoConf();
@@ -39,7 +39,7 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
     }
 
     @Override
-    public void deleteByBizId(Integer bizId) {
+    public void deleteByBizId(Long bizId) {
 
         BizInfoConf bizInfoConf = new BizInfoConf();
         bizInfoConf.setBizId(bizId);
@@ -47,7 +47,7 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
     }
 
     @Override
-    public BizInfoConf getMyWork(Integer bizId) {
+    public BizInfoConf getMyWork(Long bizId) {
 
         if (bizId != null) {
             LoginUser loginUser = WebUtil.getLoginUser();
@@ -66,19 +66,5 @@ public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> imp
             return CollectionUtils.isEmpty(list) ? null : list.get(0);
         }
         return null;
-    }
-
-    @Override
-    public List<BizInfoConf> findMyTask() {
-
-        LoginUser loginUser = WebUtil.getLoginUser();
-        Example example = new Example(BizInfoConf.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.orEqualTo("taskAssignee", WebUtil.getLoginUsername());
-        criteria.orIsNull("taskAssignee");
-        if (CollectionUtils.isNotEmpty(loginUser.getRoles())) {
-            loginUser.getRoles().forEach(role -> criteria.orEqualTo("taskAssignee", Constants.BIZ_GROUP + role));
-        }
-        return this.selectByExample(example);
     }
 }

@@ -5,6 +5,8 @@ import com.flowable.oa.core.service.IProcessVariableService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.*;
 
 /**
  * <p>
@@ -64,7 +64,7 @@ public class ProcessVariableController {
      */
     @ResponseBody
     @RequestMapping("getProcessValById/{variableId}")
-    public RestResult<Object> getProcessValById(@PathVariable("variableId")Integer variableId) {
+    public RestResult<Object> getProcessValById(@PathVariable("variableId") Integer variableId) {
 
         logger.info("根据全局流程变量ID得到变量详情---getProcessValById");
         return RestResult.success(processValService.selectByKey(variableId));
@@ -78,7 +78,7 @@ public class ProcessVariableController {
      */
     @ResponseBody
     @RequestMapping("deleteProcessValById")
-    public RestResult<Object> deleteProcessValById(@RequestParam List<Integer> list) {
+    public RestResult<Object> deleteProcessValById(@RequestParam List<Long> list) {
 
         processValService.deleteVariable(list);
         return RestResult.success();

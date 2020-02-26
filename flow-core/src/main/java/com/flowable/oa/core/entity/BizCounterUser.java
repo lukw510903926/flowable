@@ -29,7 +29,7 @@ public class BizCounterUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "user_name", length = 32)
     private String username;

@@ -5,14 +5,18 @@ import com.flowable.oa.core.service.auth.ISystemResourceService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * <p>
@@ -45,7 +49,7 @@ public class SystemResourceController {
 
     @ResponseBody
     @PostMapping("/delete")
-    public RestResult<Object> delete(@RequestBody List<Integer> list) {
+    public RestResult<Object> delete(@RequestBody List<Serializable> list) {
 
         this.resourceService.deleteByIds(list);
         return RestResult.success();
@@ -64,14 +68,14 @@ public class SystemResourceController {
 
     @ResponseBody
     @GetMapping("/role/{roleId}")
-    public List<SystemResource> findResourceByRoleId(@PathVariable("roleId") Integer roleId) {
+    public List<SystemResource> findResourceByRoleId(@PathVariable("roleId") Long roleId) {
 
         return this.resourceService.findResourceByRoleId(roleId);
     }
 
     @ResponseBody
     @GetMapping("info/{resourceId}")
-    public SystemResource info(@PathVariable("resourceId") Integer resourceId) {
+    public SystemResource info(@PathVariable("resourceId") Long resourceId) {
 
         SystemResource resource = this.resourceService.selectByKey(resourceId);
         Optional.ofNullable(resource).map(SystemResource::getParentId)

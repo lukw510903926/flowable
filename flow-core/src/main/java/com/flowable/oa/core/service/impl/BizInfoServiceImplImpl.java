@@ -17,6 +17,7 @@ import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     private ISystemUserService userService;
 
     @Override
-    public List<BizInfo> getBizByParentId(Integer parentId) {
+    public List<BizInfo> getBizByParentId(Long parentId) {
 
         BizInfo bizInfo = new BizInfo();
         bizInfo.setParentId(parentId);
@@ -62,7 +63,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     }
 
     @Override
-    public BizInfo copyBizInfo(Integer bizId, String processInstanceId, Map<String, Object> variables) {
+    public BizInfo copyBizInfo(Long bizId, String processInstanceId, Map<String, Object> variables) {
 
         BizInfo oldBiz = this.selectByKey(bizId);
         List<BizInfo> list = this.getBizByParentId(bizId);
@@ -121,7 +122,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
         }
     }
 
-    private void copyBizInfoConf(BizInfo newBiz, Integer bizId) {
+    private void copyBizInfoConf(BizInfo newBiz, Long bizId) {
 
         BizInfoConf example = new BizInfoConf();
         example.setBizId(bizId);
@@ -138,12 +139,12 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     }
 
     @Override
-    @Transactional
-    public void deleteByIds(List<Integer> list) {
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteByIds(List<Serializable> list) {
 
         list.stream().filter(Objects::nonNull).forEach(id -> {
             BizInfo bizInfo = new BizInfo();
-            bizInfo.setId(id);
+            bizInfo.setId(Long.valueOf(id.toString()));
             bizInfo.setStatus(Constants.BIZ_DELETE);
             this.updateNotNull(bizInfo);
         });

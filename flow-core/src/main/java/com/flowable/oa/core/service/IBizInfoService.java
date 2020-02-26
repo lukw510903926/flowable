@@ -1,13 +1,12 @@
 package com.flowable.oa.core.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.util.mybatis.IBaseService;
 import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -27,7 +26,7 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      * @param variables
      * @return
      */
-    BizInfo copyBizInfo(Integer bizId, String processInstanceId, Map<String, Object> variables);
+    BizInfo copyBizInfo(Long bizId, String processInstanceId, Map<String, Object> variables);
 
     /**
      * 分页查询指定用户创建的工单
@@ -36,6 +35,6 @@ public interface IBizInfoService extends IBaseService<BizInfo> {
      */
     PageInfo<BizInfo> findBizInfo(BizInfoVo bizInfoVo, PageInfo<BaseVo> page);
 
-    List<BizInfo> getBizByParentId(Integer parentId);
+    List<BizInfo> getBizByParentId(Long parentId);
 
 }

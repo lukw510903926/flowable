@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BizTimedTaskServiceImplImpl extends BaseServiceImpl<BizTimedTask> implements BizTimedTaskService {
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveTimedTask(BizInfo bizInfo, BizInfoConf bizConf) {
 
         BizTimedTask bizTimedTask = this.buildTimeTask(bizInfo, bizConf);
@@ -34,7 +34,7 @@ public class BizTimedTaskServiceImplImpl extends BaseServiceImpl<BizTimedTask> i
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void submitBizTimedTask() {
 
 

@@ -1,8 +1,9 @@
 package com.flowable.oa.core.util.mybatis;
 
 import com.github.pagehelper.PageInfo;
-import tk.mybatis.mapper.entity.Example;
+import java.io.Serializable;
 import java.util.List;
+import tk.mybatis.mapper.entity.Example;
 
 public interface IBaseService<T> {
 
@@ -12,7 +13,7 @@ public interface IBaseService<T> {
      * @param key
      * @return
      */
-    T selectByKey(Integer key);
+    T selectByKey(Serializable key);
 
     T selectOne(T entity);
 
@@ -34,7 +35,7 @@ public interface IBaseService<T> {
      * @param key
      * @return
      */
-    void deleteById(Integer key);
+    void deleteById(Serializable key);
 
     /**
      * 根据对象删除 delete table_name where column = value .....
@@ -73,7 +74,7 @@ public interface IBaseService<T> {
      *
      * @param list
      */
-    void deleteByIds(List<Integer> list);
+    void deleteByIds(List<Serializable> list);
 
     /**
      * 根据条件判断相同对象是否存在
@@ -82,7 +83,7 @@ public interface IBaseService<T> {
      * @param list 条件查询到的数据
      * @return
      */
-    boolean check(Integer uid, List<T> list);
+    boolean check(Serializable uid, List<T> list);
 
     /**
      * 自动构建样例查询

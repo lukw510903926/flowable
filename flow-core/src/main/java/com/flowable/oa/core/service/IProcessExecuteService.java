@@ -1,12 +1,11 @@
 package com.flowable.oa.core.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.BizLog;
 import com.flowable.oa.core.entity.ProcessVariable;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import org.flowable.task.api.Task;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * <p>
  * 流程处理业务
+ *
  * @author yangqi
  * @Description </p>
  * @email 13507615840@163.com
@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 public interface IProcessExecuteService {
 
-    String systemFormType = "_SYS_FORM_TYPE";
+    String SYS_FORM_TYPE = "_SYS_FORM_TYPE";
 
     /**
      * 获取某个日志对应的输入数据
@@ -31,7 +31,7 @@ public interface IProcessExecuteService {
      * @return
      * @
      */
-    Map<String, Object> loadBizLogInput(Integer logId);
+    Map<String, Object> loadBizLogInput(Long logId);
 
     /**
      * 获取某个流程的开始按钮
@@ -47,7 +47,7 @@ public interface IProcessExecuteService {
      * 保存工单草稿
      *
      * @param params
-     * @param startProc  同时启动流程
+     * @param startProc 同时启动流程
      * @return
      * @
      */
@@ -95,7 +95,7 @@ public interface IProcessExecuteService {
      * @return
      * @
      */
-    Map<String, Object> queryWorkOrder(Integer id);
+    Map<String, Object> queryWorkOrder(Long id);
 
     /**
      * 下载或查看文件
@@ -105,10 +105,11 @@ public interface IProcessExecuteService {
      * @return [文件类型, InputStream]
      * @
      */
-    Object[] downloadFile(String action, Integer id);
+    Object[] downloadFile(String action, Long id);
 
     /**
      * 根据流程定义ID获取流程名
+     *
      * @param procDefId
      * @return
      */

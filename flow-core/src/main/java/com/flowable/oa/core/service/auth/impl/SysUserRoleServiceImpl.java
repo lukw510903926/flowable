@@ -32,7 +32,7 @@ public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRole> impleme
             String[] roles = roleIds.split("\\,");
             Arrays.stream(roles).forEach(roleId -> {
                 SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setRoleId(Integer.valueOf(roleId));
+                sysUserRole.setRoleId(Long.valueOf(roleId));
                 sysUserRole.setUserId(userRole.getUserId());
                 this.save(sysUserRole);
             });
@@ -40,12 +40,12 @@ public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRole> impleme
     }
 
     @Override
-    public List<Integer> findUserIdsByRoleId(Integer roleId) {
+    public List<Long> findUserIdsByRoleId(Long roleId) {
 
         SysUserRole userRole = new SysUserRole();
         userRole.setRoleId(roleId);
         List<SysUserRole> roles = this.select(userRole);
-        List<Integer> list = new ArrayList<>();
+        List<Long> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(roles)) {
             roles.forEach(entity -> list.add(entity.getUserId()));
         }
@@ -53,12 +53,12 @@ public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRole> impleme
     }
 
     @Override
-    public List<Integer> findRoleIdsByUserId(Integer userId) {
+    public List<Long> findRoleIdsByUserId(Long userId) {
 
         SysUserRole userRole = new SysUserRole();
         userRole.setUserId(userId);
         List<SysUserRole> roles = this.select(userRole);
-        List<Integer> list = new ArrayList<>();
+        List<Long> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(roles)) {
             roles.forEach(entity -> list.add(entity.getRoleId()));
         }

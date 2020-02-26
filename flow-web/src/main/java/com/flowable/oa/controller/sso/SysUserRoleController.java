@@ -7,10 +7,14 @@ import com.flowable.oa.core.service.auth.ISysUserRoleService;
 import com.flowable.oa.core.service.auth.ISystemRoleService;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.RestResult;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 
 /**
@@ -54,7 +58,7 @@ public class SysUserRoleController {
      */
     @ResponseBody
     @GetMapping("users/{roleId}")
-    public List<SystemUser> findUserByRoleId(@PathVariable("roleId") Integer roleId) {
+    public List<SystemUser> findUserByRoleId(@PathVariable("roleId") Long roleId) {
 
         SystemRole systemRole = new SystemRole();
         systemRole.setId(roleId);
@@ -69,7 +73,7 @@ public class SysUserRoleController {
      */
     @ResponseBody
     @GetMapping("/roles/{userId}")
-    public List<SystemRole> findRoleByUserId(@PathVariable("userId") Integer userId) {
+    public List<SystemRole> findRoleByUserId(@PathVariable("userId") Long userId) {
 
         SystemUser systemUser = new SystemUser();
         systemUser.setId(userId);

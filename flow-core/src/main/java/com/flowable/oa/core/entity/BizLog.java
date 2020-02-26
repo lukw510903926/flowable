@@ -25,10 +25,10 @@ public class BizLog implements java.io.Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "biz_id")
-    private Integer bizId;
+    private Long bizId;
 
     @Column(length = 512, name = "task_name")
     private String taskName;

@@ -2,7 +2,6 @@ package com.flowable.oa.core.service.dict;
 
 import com.flowable.oa.core.entity.dict.DictType;
 import com.flowable.oa.core.util.mybatis.IBaseService;
-
 import java.util.List;
 
 /**
@@ -12,7 +11,7 @@ import java.util.List;
  **/
 public interface IDictTypeService extends IBaseService<DictType> {
 
-    void delete(Integer id);
+    void delete(Long id);
 
-    void delete(List<Integer> list) ;
+    void delete(List<Long> list);
 }

@@ -3,7 +3,6 @@ package com.flowable.oa.core.service.auth;
 import com.flowable.oa.core.entity.auth.SystemResource;
 import com.flowable.oa.core.util.mybatis.IBaseService;
 import com.github.pagehelper.PageInfo;
-
 import java.util.List;
 
 /**
@@ -16,14 +15,18 @@ import java.util.List;
  **/
 public interface ISystemResourceService extends IBaseService<SystemResource> {
 
+    @Override
     void saveOrUpdate(SystemResource resource);
 
     PageInfo<SystemResource> list(PageInfo<SystemResource> pageInfo, SystemResource resource);
 
     /**
      * 获取角色下的资源
+     *
      * @param roleId
      * @return
      */
-    List<SystemResource> findResourceByRoleId(Integer roleId);
+    List<SystemResource> findResourceByRoleId(Long roleId);
+
+    void deleteBatch(List<Long> list);
 }

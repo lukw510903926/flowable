@@ -31,8 +31,8 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
     private IVariableInstanceService variableInstanceService;
 
     @Override
-    @Transactional
-    public void deleteVariable(List<Integer> list) {
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteVariable(List<Long> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
             list.stream().filter(Objects::nonNull).forEach(variableId -> {
@@ -52,11 +52,11 @@ public class ProcessVariableServiceImplImpl extends BaseServiceImpl<ProcessVaria
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void copyVariables(ProcessDefinition oldPdf, ProcessDefinition newPdf) {
 
         if (oldPdf != null && newPdf != null) {
-            Map<Integer, Integer> refMap = new HashMap<>();
+            Map<Long, Long> refMap = new HashMap<>();
             // 拷贝全局配置
             ProcessVariable example = new ProcessVariable();
             example.setProcessDefinitionId(oldPdf.getId());

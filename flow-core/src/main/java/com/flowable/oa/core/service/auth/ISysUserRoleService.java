@@ -2,7 +2,6 @@ package com.flowable.oa.core.service.auth;
 
 import com.flowable.oa.core.entity.auth.SysUserRole;
 import com.flowable.oa.core.util.mybatis.IBaseService;
-
 import java.util.List;
 
 /**
@@ -15,9 +14,10 @@ import java.util.List;
  **/
 public interface ISysUserRoleService extends IBaseService<SysUserRole> {
 
+    @Override
     void saveOrUpdate(SysUserRole userRole);
 
-    List<Integer> findUserIdsByRoleId(Integer roleId);
+    List<Long> findUserIdsByRoleId(Long roleId);
 
-    List<Integer> findRoleIdsByUserId(Integer userId);
+    List<Long> findRoleIdsByUserId(Long userId);
 }

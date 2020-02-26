@@ -36,7 +36,7 @@ public class BizInfo implements Serializable, Cloneable {
     @Order("desc")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, name = "id")
-    private Integer id;
+    private Long id;
 
     /**
      * 工单号
@@ -85,7 +85,7 @@ public class BizInfo implements Serializable, Cloneable {
     private String source;
 
     @Column(length = 64, name = "parent_id")
-    private Integer parentId;
+    private Long parentId;
 
     @Override
     public BizInfo clone() {

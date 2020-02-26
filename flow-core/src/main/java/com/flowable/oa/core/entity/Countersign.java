@@ -28,7 +28,7 @@ public class Countersign implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, length = 64, name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "task_id")
     private String taskId;

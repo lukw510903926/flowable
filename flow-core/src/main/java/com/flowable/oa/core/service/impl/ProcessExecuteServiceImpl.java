@@ -91,7 +91,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     private String bizFileRootPath;
 
     @Override
-    public Map<String, Object> loadBizLogInput(Integer logId) {
+    public Map<String, Object> loadBizLogInput(Long logId) {
 
         BizLog logBean = logService.selectByKey(logId);
         Map<String, Object> results = new HashMap<>();
@@ -138,12 +138,12 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap, boolean startProc) {
 
         String source = MapUtils.getString(params, "$source", "人工发起");
         String procDefId = MapUtils.getString(params, "base.tempID");
-        Integer tempBizId = MapUtils.getInteger(params, "tempBizId");
+        Long tempBizId = MapUtils.getLong(params, "tempBizId");
         Date now = new Date();
         BizInfo bizInfo;
         String username = WebUtil.getLoginUsername();
@@ -189,11 +189,11 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> fileMap) {
 
         log.info("params : {}", params);
-        Integer bizId = MapUtils.getInteger(params, "base.bizId");
+        Long bizId = MapUtils.getLong(params, "base.bizId");
         BizInfo bizInfo = bizInfoService.selectByKey(bizId);
         if (null == bizInfo) {
             throw new ServiceException("工单不存在");
@@ -230,7 +230,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 variables.put(variable.getName(), params.get(variable.getName()));
             }
         }
-        variables.put("SYS_FORMTYPE", params.get(IProcessExecuteService.systemFormType));
+        variables.put("SYS_FORMTYPE", params.get(IProcessExecuteService.SYS_FORM_TYPE));
         variables.put(Constants.SYS_BUTTON_VALUE, buttonId);
         variables.put(Constants.SYS_BIZ_CREATEUSER, bizInfo.getCreateUser());
         variables.put(Constants.SYS_BIZ_ID, bizInfo.getId());
@@ -281,9 +281,10 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateBizTaskInfo(BizInfo bizInfo) {
 
-        Integer bizId = bizInfo.getId();
+        Long bizId = bizInfo.getId();
         List<Task> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
         this.bizInfoConfService.deleteByBizId(bizId);
         // 如果nextTaskInfo返回null，标示流程已结束
@@ -369,6 +370,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public BizLog writeBizLog(BizInfo bizInfo, Task task, Date now, Map<String, Object> params) {
 
         BizLog logBean = new BizLog();
@@ -419,7 +421,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * @return
      */
     @Override
-    public Map<String, Object> queryWorkOrder(Integer bizId) {
+    public Map<String, Object> queryWorkOrder(Long bizId) {
 
         String loginUser = WebUtil.getLoginUser().getUsername();
         Map<String, Object> result = new HashMap<>();
@@ -528,7 +530,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      * @throws ServiceException
      */
     @Override
-    public Object[] downloadFile(String action, Integer id) {
+    public Object[] downloadFile(String action, Long id) {
 
         Object[] result = new Object[4];
         if ("work".equalsIgnoreCase(action)) {

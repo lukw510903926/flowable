@@ -5,14 +5,13 @@ import com.flowable.oa.core.service.dict.IDictTypeService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import java.util.List;
 
 /**
  * <p>
@@ -49,7 +48,7 @@ public class DictTypeController {
     public RestResult<Object> update(DictType dictType) {
 
         if (null != dictType.getId()) {
-           return RestResult.fail(null,"id不可为空");
+            return RestResult.fail(null, "id不可为空");
         }
         this.dictTypeService.saveOrUpdate(dictType);
         return RestResult.success();
@@ -57,7 +56,7 @@ public class DictTypeController {
 
     @ResponseBody
     @RequestMapping("delete")
-    public RestResult<Object> delete(@RequestBody List<Integer> list) {
+    public RestResult<Object> delete(@RequestBody List<Long> list) {
 
         this.dictTypeService.delete(list);
         return RestResult.success();
