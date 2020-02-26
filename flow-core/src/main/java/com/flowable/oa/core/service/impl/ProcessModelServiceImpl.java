@@ -1,6 +1,8 @@
 package com.flowable.oa.core.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flowable.oa.core.service.IProcessModelService;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.github.pagehelper.PageInfo;
@@ -12,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.editor.constants.ModelDataJsonConstants;
@@ -140,7 +140,7 @@ public class ProcessModelServiceImpl implements IProcessModelService {
         try {
             Model modelData = repositoryService.getModel(id);
             BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
-            JsonNode editorNode = new com.fasterxml.jackson.databind.ObjectMapper()
+            JsonNode editorNode = new ObjectMapper()
                     .readTree(repositoryService.getModelEditorSource(modelData.getId()));
             BpmnModel bpmnModel = jsonConverter.convertToBpmnModel(editorNode);
             BpmnXMLConverter xmlConverter = new BpmnXMLConverter();

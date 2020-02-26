@@ -41,7 +41,12 @@
             </dependency>
             <dependency>
                 <groupId>org.flowable</groupId>
-                <artifactId>flowable-spring-boot-starter</artifactId>
+                <artifactId>flowable-engine</artifactId>
+                <version>${flowable-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flowable</groupId>
+                <artifactId>flowable-spring</artifactId>
                 <version>${flowable-version}</version>
             </dependency>
             <dependency>
