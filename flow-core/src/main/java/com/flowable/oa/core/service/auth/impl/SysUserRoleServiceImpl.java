@@ -5,7 +5,10 @@ import com.flowable.oa.core.service.auth.ISysUserRoleService;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -45,11 +48,7 @@ public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRole> impleme
         SysUserRole userRole = new SysUserRole();
         userRole.setRoleId(roleId);
         List<SysUserRole> roles = this.select(userRole);
-        List<Long> list = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(roles)) {
-            roles.forEach(entity -> list.add(entity.getUserId()));
-        }
-        return list;
+        return Optional.ofNullable(roles).orElse(Collections.emptyList()).stream().map(SysUserRole::getUserId).collect(Collectors.toList());
     }
 
     @Override
