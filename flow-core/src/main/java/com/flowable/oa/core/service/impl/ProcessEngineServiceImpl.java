@@ -1,7 +1,8 @@
-package com.flowable.oa.core.service.act;
+package com.flowable.oa.core.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.flowable.oa.core.service.IProcessEngineService;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
@@ -42,8 +43,6 @@ import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.runtime.ProcessInstanceQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,9 +59,7 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 @Slf4j
 @Service
-public class ActProcessService {
-
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+public class ProcessEngineServiceImpl implements IProcessEngineService {
 
     @Autowired
     private RepositoryService repositoryService;
@@ -70,6 +67,7 @@ public class ActProcessService {
     @Autowired
     private RuntimeService runtimeService;
 
+    @Override
     public Set<String> loadProcessStatus(String processId) {
 
         Set<String> set = new HashSet<>();
@@ -83,6 +81,7 @@ public class ActProcessService {
     /**
      * 流程定义列表
      */
+    @Override
     public List<ProcessDefinition> findProcessDefinition(ProcessDefinition processDefinition) {
 
         ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
@@ -101,6 +100,7 @@ public class ActProcessService {
     /**
      * 流程定义列表
      */
+    @Override
     public List<ProcessDefinitionEntityVo> processList() {
 
         List<ProcessDefinition> processDefinitionList = this.findProcessDefinition(null);
@@ -120,6 +120,7 @@ public class ActProcessService {
     /**
      * 流程定义列表
      */
+    @Override
     public PageInfo<ProcessInstance> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey) {
 
         ProcessInstanceQuery processInstanceQuery = runtimeService.createProcessInstanceQuery();
@@ -139,6 +140,7 @@ public class ActProcessService {
      *
      * @return
      */
+    @Override
     public List<Map<String, Object>> getAllTaskByProcessKey(String processId) {
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -193,6 +195,7 @@ public class ActProcessService {
      * @param processDefinitionId 流程定义ID
      * @param resourceType        资源类型(xml|image)
      */
+    @Override
     public InputStream resourceRead(String processDefinitionId, String resourceType) {
 
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
@@ -214,6 +217,7 @@ public class ActProcessService {
      * @param file
      * @return
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public String deploy(String category, MultipartFile file) {
 
@@ -255,6 +259,7 @@ public class ActProcessService {
     /**
      * 挂起、激活流程实例
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public String updateState(String state, String processDefinitionId) {
 
@@ -280,6 +285,7 @@ public class ActProcessService {
      *
      * @param procDefId
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Model convertToModel(String procDefId) {
 
@@ -295,7 +301,7 @@ public class ActProcessService {
             Model modelData = repositoryService.newModel();
             modelData.setKey(processDefinition.getKey());
             modelData.setName(processDefinition.getResourceName());
-            modelData.setCategory(processDefinition.getCategory());// .getDeploymentId());
+            modelData.setCategory(processDefinition.getCategory());
             modelData.setDeploymentId(processDefinition.getDeploymentId());
             modelData.setVersion(Integer.parseInt(String.valueOf(repositoryService.createModelQuery().modelKey(modelData.getKey()).count() + 1)));
 
@@ -309,7 +315,7 @@ public class ActProcessService {
             repositoryService.addModelEditorSource(modelData.getId(), modelNode.toString().getBytes(StandardCharsets.UTF_8));
             return modelData;
         } catch (XMLStreamException e) {
-            logger.error("将部署的流程转换为模型失败 : ", e);
+            log.error("将部署的流程转换为模型失败 : ", e);
             throw new ServiceException("将部署的流程转换为模型失败");
         }
     }
@@ -319,6 +325,7 @@ public class ActProcessService {
      *
      * @param deploymentId 流程部署ID
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteDeployment(String deploymentId) {
         repositoryService.deleteDeployment(deploymentId, true);
@@ -330,6 +337,7 @@ public class ActProcessService {
      * @param procInsId    流程实例ID
      * @param deleteReason 删除原因，可为空
      */
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteProcIns(String procInsId, String deleteReason) {
         runtimeService.deleteProcessInstance(procInsId, deleteReason);

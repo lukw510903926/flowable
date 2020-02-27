@@ -1,11 +1,16 @@
 package com.flowable.oa.controller;
 
 import com.flowable.oa.core.service.IProcessDefinitionService;
-import com.flowable.oa.core.service.act.ActProcessService;
+import com.flowable.oa.core.service.IProcessEngineService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -16,15 +21,14 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -40,7 +44,7 @@ import java.util.stream.Collectors;
 public class ActProcessController {
 
     @Autowired
-    private ActProcessService actProcessService;
+    private IProcessEngineService processEngineService;
 
     @Autowired
     private IProcessDefinitionService processDefinitionService;
@@ -55,7 +59,7 @@ public class ActProcessController {
         DataGrid<ProcessDefinitionEntityVo> grid = new DataGrid<>();
         Integer pageNum = MapUtils.getInteger(params, "page", 1);
         Integer rows = MapUtils.getInteger(params, "rows", 20);
-        List<ProcessDefinitionEntityVo> tempResult = actProcessService.processList();
+        List<ProcessDefinitionEntityVo> tempResult = processEngineService.processList();
         if (CollectionUtils.isNotEmpty(tempResult)) {
             List<ProcessDefinitionEntityVo> list = tempResult.stream().skip((pageNum - 1) * rows).limit(rows).collect(Collectors.toList());
             grid.setRows(list);
@@ -72,7 +76,7 @@ public class ActProcessController {
     public DataGrid<Map<String, Object>> processTaskList(@PathVariable("processId") String processId) {
 
         DataGrid<Map<String, Object>> grid = new DataGrid<>();
-        grid.setRows(actProcessService.getAllTaskByProcessKey(processId));
+        grid.setRows(processEngineService.getAllTaskByProcessKey(processId));
         return grid;
     }
 
@@ -84,7 +88,7 @@ public class ActProcessController {
     public DataGrid<ProcessInstance> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey) {
 
         DataGrid<ProcessInstance> grid = new DataGrid<>();
-        PageInfo<ProcessInstance> helper = actProcessService.runningList(page, procInsId, procDefKey);
+        PageInfo<ProcessInstance> helper = processEngineService.runningList(page, procInsId, procDefKey);
         grid.setRows(helper.getList());
         grid.setTotal(helper.getTotal());
         return grid;
@@ -100,7 +104,7 @@ public class ActProcessController {
     @RequestMapping("resource/read")
     public void resourceRead(String processDefinitionId, String type, HttpServletResponse response) throws Exception {
 
-        InputStream resourceAsStream = actProcessService.resourceRead(processDefinitionId, type);
+        InputStream resourceAsStream = processEngineService.resourceRead(processDefinitionId, type);
         if (type.equals("xml")) {
             response.setContentType("text/plain;charset=utf-8");
         }
@@ -124,7 +128,7 @@ public class ActProcessController {
         } else {
             String key = fileName.substring(0, fileName.indexOf("."));
             ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
-            message = actProcessService.deploy(null, file);
+            message = processEngineService.deploy(null, file);
             processDefinitionService.copyVariables(processDefinition);
             result = true;
         }
@@ -141,7 +145,7 @@ public class ActProcessController {
     @ResponseBody
     @RequestMapping("delete")
     public RestResult<Object> delete(String deploymentId) {
-        actProcessService.deleteDeployment(deploymentId);
+        processEngineService.deleteDeployment(deploymentId);
         return RestResult.success();
     }
 }

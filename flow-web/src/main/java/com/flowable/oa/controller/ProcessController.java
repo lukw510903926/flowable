@@ -1,6 +1,7 @@
 package com.flowable.oa.controller;
 
-import com.flowable.oa.core.service.act.ActProcessService;
+import com.flowable.oa.core.service.IProcessEngineService;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,13 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Map;
-
 @Controller
 public class ProcessController {
 
     @Autowired
-    private ActProcessService actProcessService;
+    private IProcessEngineService processEngineService;
 
     /**
      * 模型管理视图
@@ -73,7 +72,7 @@ public class ProcessController {
         if (StringUtils.isBlank(fileName)) {
             redirectAttributes.addFlashAttribute("message", "请选择要部署的流程文件");
         } else {
-            String message = actProcessService.deploy( null, file);
+            String message = processEngineService.deploy(null, file);
             redirectAttributes.addFlashAttribute("message", message);
             model.addAttribute("message", "success");
         }

@@ -3,7 +3,7 @@ package com.flowable.oa.api.controller;
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.service.IBizInfoService;
 import com.flowable.oa.core.service.IProcessExecuteService;
-import com.flowable.oa.core.service.act.ActProcessService;
+import com.flowable.oa.core.service.act.ProcessDefinitionService;
 import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.RestResult;
@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BizInfoController {
 
     @Autowired
-    private ActProcessService actProcessService;
+    private ProcessDefinitionService actProcessService;
 
     @Autowired
     private IProcessExecuteService processExecuteService;

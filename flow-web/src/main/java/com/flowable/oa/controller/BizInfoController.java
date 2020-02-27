@@ -3,10 +3,19 @@ package com.flowable.oa.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.core.entity.BizFile;
 import com.flowable.oa.core.service.IBizFileService;
-import com.flowable.oa.core.service.act.ActProcessService;
+import com.flowable.oa.core.service.IProcessEngineService;
 import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.LoginUser;
 import com.flowable.oa.core.util.WebUtil;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,13 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * <p>
@@ -34,12 +40,13 @@ import java.util.*;
  * @email 13507615840@163.com
  * @since 19-2-15 下午10:56
  **/
+@Slf4j
 @Controller
 @RequestMapping
 public class BizInfoController {
 
     @Autowired
-    private ActProcessService actProcessService;
+    private IProcessEngineService processEngineService;
 
     @Autowired
     private IBizFileService bizFileService;
@@ -53,7 +60,7 @@ public class BizInfoController {
     @RequestMapping("/biz/process/status")
     public List<String> getProcessStatus(ProcessDefinitionEntityImpl processDefinition) {
 
-        List<ProcessDefinition> processList = actProcessService.findProcessDefinition(null);
+        List<ProcessDefinition> processList = processEngineService.findProcessDefinition(null);
         return this.getProcessStatus(processList, processDefinition);
     }
 
@@ -68,7 +75,7 @@ public class BizInfoController {
         model.addAttribute("action", action);
         List<String> processList = new ArrayList<>();
         List<String> status = new ArrayList<>();
-        List<ProcessDefinition> processDefinitionList = actProcessService.findProcessDefinition(null);
+        List<ProcessDefinition> processDefinitionList = processEngineService.findProcessDefinition(null);
         if (CollectionUtils.isNotEmpty(processDefinitionList)) {
             processDefinitionList.forEach(processDefinition -> processList.add(processDefinition.getName()));
         }
@@ -86,14 +93,14 @@ public class BizInfoController {
         Set<String> sets = new HashSet<>();
         if (StringUtils.isBlank(processDefinition.getName())) {
             if (CollectionUtils.isNotEmpty(list)) {
-                list.forEach(entity -> sets.addAll(actProcessService.loadProcessStatus(entity.getId())));
+                list.forEach(entity -> sets.addAll(processEngineService.loadProcessStatus(entity.getId())));
             }
             status.addAll(sets);
             status.add(Constants.BIZ_END);
         } else {
-            list = actProcessService.findProcessDefinition(processDefinition);
+            list = processEngineService.findProcessDefinition(processDefinition);
             if (CollectionUtils.isNotEmpty(list)) {
-                sets.addAll(this.actProcessService.loadProcessStatus(list.get(0).getId()));
+                sets.addAll(this.processEngineService.loadProcessStatus(list.get(0).getId()));
             }
         }
         status.add(Constants.BIZ_END);
@@ -139,7 +146,7 @@ public class BizInfoController {
                         "attachment;filename=" + new String("文件不存在".getBytes("gb2312"), StandardCharsets.ISO_8859_1));
             }
         } catch (Exception e) {
-            logger.error(" 下载失败 : {}", e);
+            log.error(" 下载失败 : ", e);
         }
     }
 }

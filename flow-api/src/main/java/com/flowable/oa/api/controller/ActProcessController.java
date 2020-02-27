@@ -1,7 +1,7 @@
 package com.flowable.oa.api.controller;
 
 import com.flowable.oa.core.service.IProcessDefinitionService;
-import com.flowable.oa.core.service.act.ActProcessService;
+import com.flowable.oa.core.service.act.ProcessDefinitionService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
@@ -43,7 +43,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public class ActProcessController {
 
     @Autowired
-    private ActProcessService actProcessService;
+    private ProcessDefinitionService actProcessService;
 
     @Autowired
     private IProcessDefinitionService processDefinitionService;

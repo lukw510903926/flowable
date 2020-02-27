@@ -26,7 +26,7 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
     private IDictValueService dictValueService;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(DictType dictType) {
 
         if (!this.check(dictType)) {
@@ -44,7 +44,7 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
 
         if (null != id) {
@@ -56,7 +56,7 @@ public class DictTypeServiceImplImpl extends BaseServiceImpl<DictType> implement
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(List<Long> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
