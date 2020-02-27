@@ -2,8 +2,8 @@ package com.flowable.oa.api.controller;
 
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.service.IBizInfoService;
+import com.flowable.oa.core.service.IProcessEngineService;
 import com.flowable.oa.core.service.IProcessExecuteService;
-import com.flowable.oa.core.service.act.ProcessDefinitionService;
 import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.RestResult;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -39,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BizInfoController {
 
     @Autowired
-    private ProcessDefinitionService actProcessService;
+    private IProcessEngineService processEngineService;
 
     @Autowired
     private IProcessExecuteService processExecuteService;
@@ -47,12 +46,11 @@ public class BizInfoController {
     @Autowired
     private IBizInfoService bizInfoService;
 
-    @ResponseBody
     @RequestMapping("/biz/process/status")
-    public List<String> getProcessStatus(ProcessDefinitionEntityImpl processDefinition) {
+    public RestResult<List<String>> getProcessStatus(ProcessDefinitionEntityImpl processDefinition) {
 
-        List<ProcessDefinition> processList = actProcessService.findProcessDefinition(null);
-        return this.getProcessStatus(processList, processDefinition);
+        List<ProcessDefinition> processList = processEngineService.findProcessDefinition(null);
+        return RestResult.success(this.getProcessStatus(processList, processDefinition));
     }
 
     private List<String> getProcessStatus(List<ProcessDefinition> list, ProcessDefinition processDefinition) {
@@ -63,14 +61,14 @@ public class BizInfoController {
         Set<String> sets = new HashSet<>();
         if (StringUtils.isBlank(processDefinition.getName())) {
             if (CollectionUtils.isNotEmpty(list)) {
-                list.forEach(entity -> sets.addAll(actProcessService.loadProcessStatus(entity.getId())));
+                list.forEach(entity -> sets.addAll(processEngineService.loadProcessStatus(entity.getId())));
             }
             status.addAll(sets);
             status.add(Constants.BIZ_END);
         } else {
-            list = actProcessService.findProcessDefinition(processDefinition);
+            list = processEngineService.findProcessDefinition(processDefinition);
             if (CollectionUtils.isNotEmpty(list)) {
-                sets.addAll(this.actProcessService.loadProcessStatus(list.get(0).getId()));
+                sets.addAll(this.processEngineService.loadProcessStatus(list.get(0).getId()));
             }
         }
         status.add(Constants.BIZ_END);
@@ -78,7 +76,7 @@ public class BizInfoController {
     }
 
     @RequestMapping("detail/{bizId}")
-    public RestResult<Map<String, Object>> getDraftBiz(@PathVariable("bizId") Integer bizId) {
+    public RestResult<Map<String, Object>> getDraftBiz(@PathVariable("bizId") Long bizId) {
         return RestResult.success(processExecuteService.queryWorkOrder(bizId));
     }
 

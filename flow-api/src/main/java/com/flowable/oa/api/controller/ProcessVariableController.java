@@ -10,11 +10,11 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @since 19-2-15 下午11:09
  **/
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/processModelMgr")
 public class ProcessVariableController {
 
@@ -41,7 +41,7 @@ public class ProcessVariableController {
      */
     @ResponseBody
     @RequestMapping("processValList")
-    public DataGrid<ProcessVariable> processValList(@RequestParam Map<String, Object> params, PageInfo<ProcessVariable> page) {
+    public RestResult<DataGrid<ProcessVariable>> processValList(@RequestParam Map<String, Object> params, PageInfo<ProcessVariable> page) {
 
         DataGrid<ProcessVariable> grid = new DataGrid<>();
         String processId = MapUtils.getString(params, "processId");
@@ -52,7 +52,7 @@ public class ProcessVariableController {
         PageInfo<ProcessVariable> processValBeans = this.processValService.findProcessVariables(variable, page);
         grid.setRows(processValBeans.getList());
         grid.setTotal(processValBeans.getTotal());
-        return grid;
+        return RestResult.success(grid);
     }
 
     /**
@@ -76,7 +76,7 @@ public class ProcessVariableController {
      */
     @ResponseBody
     @RequestMapping("deleteProcessValById")
-    public RestResult<Object> deleteProcessValById(@RequestParam List<Integer> list) {
+    public RestResult<Object> deleteProcessValById(@RequestParam List<Long> list) {
 
         processValService.deleteVariable(list);
         return RestResult.success();

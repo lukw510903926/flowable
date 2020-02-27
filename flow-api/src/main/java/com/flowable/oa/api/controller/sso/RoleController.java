@@ -7,6 +7,7 @@ import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
+import java.io.Serializable;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -35,26 +35,18 @@ public class RoleController {
     @Autowired
     private ISystemRoleService systemRoleService;
 
-    @RequestMapping("findUser")
-    public Object findUser() {
-
-        return this.sysUserService.findUserByRole(new SystemRole());
-    }
-
     @RequestMapping("/loadUsersByUserName")
-    public SystemUser loadUsersByUserName(String userName) {
+    public RestResult<SystemUser> loadUsersByUserName(String userName) {
 
-        return this.sysUserService.getUserByUsername(userName);
+        return RestResult.success(this.sysUserService.getUserByUsername(userName));
     }
 
-    @ResponseBody
     @GetMapping("/info/{roleId}")
-    public SystemRole info(@PathVariable("roleId") Integer roleId) {
+    public RestResult<SystemRole> info(@PathVariable("roleId") Integer roleId) {
 
-        return this.systemRoleService.selectByKey(roleId);
+        return RestResult.success(this.systemRoleService.selectByKey(roleId));
     }
 
-    @ResponseBody
     @PostMapping("/save")
     public RestResult<SystemRole> save(SystemRole systemRole) {
 
@@ -62,22 +54,20 @@ public class RoleController {
         return RestResult.success(systemRole);
     }
 
-    @ResponseBody
     @PostMapping("/delete")
-    public RestResult<Object> delete(@RequestBody List<Integer> list) {
+    public RestResult<Object> delete(@RequestBody List<Serializable> list) {
 
         this.systemRoleService.deleteByIds(list);
         return RestResult.success();
     }
 
-    @ResponseBody
     @PostMapping("/list")
-    public DataGrid<SystemRole> list(PageInfo<SystemRole> pageInfo, SystemRole systemRole) {
+    public RestResult<DataGrid<SystemRole>> list(PageInfo<SystemRole> pageInfo, SystemRole systemRole) {
 
         PageInfo<SystemRole> page = this.systemRoleService.findByModel(pageInfo, systemRole, true);
         DataGrid<SystemRole> dataGrid = new DataGrid<>();
         dataGrid.setRows(page.getList());
         dataGrid.setTotal(page.getTotal());
-        return dataGrid;
+        return RestResult.success(dataGrid);
     }
 }

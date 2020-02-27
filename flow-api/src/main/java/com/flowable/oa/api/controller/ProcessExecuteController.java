@@ -14,29 +14,23 @@ import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
@@ -48,7 +42,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  * @since 19-2-15 下午11:10
  **/
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/workflow")
 public class ProcessExecuteController {
 
@@ -64,10 +58,9 @@ public class ProcessExecuteController {
     @Autowired
     private IProcessVariableService processVariableService;
 
-    @ResponseBody
-    @RequestMapping(value = "/loadWorkLogInput")
-    public Map<String, Object> loadWorkLogInput(Integer logId) {
-        return processExecuteService.loadBizLogInput(logId);
+    @RequestMapping("/loadWorkLogInput")
+    public RestResult<Map<String, Object>> loadWorkLogInput(Long logId) {
+        return RestResult.success(processExecuteService.loadBizLogInput(logId));
     }
 
     /**
@@ -81,15 +74,14 @@ public class ProcessExecuteController {
      *
      * @return
      */
-    @ResponseBody
-    @RequestMapping(value = "/queryWorkOrder")
-    public DataGrid<BizInfo> queryWorkOrder(@RequestBody BizInfoVo bizInfoVo) {
+    @RequestMapping("/queryWorkOrder")
+    public RestResult<DataGrid<BizInfo>> queryWorkOrder(@RequestBody BizInfoVo bizInfoVo) {
 
         PageInfo<BizInfo> helper = bizInfoService.findBizInfo(bizInfoVo, PageUtil.getPage(bizInfoVo));
         DataGrid<BizInfo> grid = new DataGrid<>();
         grid.setRows(helper.getList());
         grid.setTotal(helper.getTotal());
-        return grid;
+        return RestResult.success(grid);
     }
 
     /**
@@ -97,9 +89,9 @@ public class ProcessExecuteController {
      *
      * @return
      */
-    @ResponseBody
-    @RequestMapping(value = "/create/{key}", method = RequestMethod.GET)
-    public Map<String, Object> create(@PathVariable("key") String key) {
+
+    @RequestMapping("/create/{key}")
+    public RestResult<Map<String, Object>> create(@PathVariable("key") String key) {
 
         Map<String, Object> data = new HashMap<>();
         ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
@@ -112,12 +104,9 @@ public class ProcessExecuteController {
             List<ProcessVariable> list = this.processVariableService.select(variable);
             data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
             data.put("processValBean", list);
-            data.put("result", true);
-        } else {
-            data.put("result", false);
-            data.put("msg", "流程【" + key + "】未找到!");
+            return RestResult.success(data);
         }
-        return data;
+        return RestResult.fail(data, "流程【" + key + "】未找到!");
     }
 
     /**
@@ -127,7 +116,7 @@ public class ProcessExecuteController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "bizInfo/create")
+    @RequestMapping("bizInfo/create")
     public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
         WebUtil.getLoginUser(request);
@@ -149,7 +138,7 @@ public class ProcessExecuteController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/submit")
+    @RequestMapping("/submit")
     public ResponseEntity<String> submit(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -159,36 +148,11 @@ public class ProcessExecuteController {
         return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), headers, HttpStatus.OK);
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/bizInfo/delete")
-    public RestResult<Object> deleteBizInfo(@RequestParam List<Integer> ids) {
+
+    @RequestMapping("/bizInfo/delete")
+    public RestResult<Object> deleteBizInfo(@RequestParam List<Serializable> ids) {
 
         bizInfoService.deleteByIds(ids);
         return RestResult.success();
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/download")
-    public void downloadFile(String action, Integer id, HttpServletResponse response) {
-
-        Object[] result = processExecuteService.downloadFile(action, id);
-        if (result[1] == null) {
-            return;
-        }
-        InputStream inputStream = (InputStream) result[1];
-        String fileType = (String) result[0];
-        String fileName = (String) result[3];
-        try {
-            if ("IMAGE".equalsIgnoreCase(fileType)) {
-                response.setContentType("image/PNG;charset=GB2312");
-            } else {
-                fileName = new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
-                response.setContentType("application/x-download");
-                response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-                IOUtils.copy(inputStream, response.getOutputStream());
-            }
-        } catch (IOException e) {
-            log.error("文件下载失败 : ", e);
-        }
     }
 }

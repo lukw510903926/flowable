@@ -5,9 +5,9 @@ import com.flowable.oa.core.util.RestResult;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 流程模型相关
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @description :
  */
 @Slf4j
-@Controller
-@RequestMapping(value = "/act/model")
+@RestController
+@RequestMapping("/act/model")
 public class ActModelController {
 
     @Autowired
@@ -29,8 +29,7 @@ public class ActModelController {
     /**
      * 根据Model部署流程
      */
-    @ResponseBody
-    @RequestMapping(value = "deploy")
+    @RequestMapping("deploy")
     public RestResult<Object> deploy(String id) {
 
         String deploy = processModelService.deploy(id);
@@ -40,7 +39,7 @@ public class ActModelController {
     /**
      * 导出model的xml文件
      */
-    @RequestMapping(value = "export")
+    @RequestMapping("export")
     public void export(String id, HttpServletResponse response) {
         processModelService.export(id, response);
     }
@@ -51,8 +50,7 @@ public class ActModelController {
      * @param id
      * @return
      */
-    @ResponseBody
-    @RequestMapping(value = "delete")
+    @PostMapping("delete")
     public RestResult<Object> delete(String id) {
         log.info("删除Model---delete");
         processModelService.delete(id);

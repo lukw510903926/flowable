@@ -18,8 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -54,8 +52,6 @@ public class BizTemplateFileController {
 
     @Autowired
     private IProcessEngineService processEngineService;
-
-    private Logger logger = LoggerFactory.getLogger(BizTemplateFileController.class);
 
     @RequestMapping("/index")
     public String index(Model model) {

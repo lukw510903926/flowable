@@ -5,6 +5,7 @@ import com.flowable.oa.core.service.auth.ISystemResourceService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * <p>
@@ -32,7 +32,6 @@ public class SystemResourceController {
     @Autowired
     private ISystemResourceService resourceService;
 
-    @ResponseBody
     @PostMapping("/save")
     public RestResult<SystemResource> save(SystemResource resource) {
 
@@ -40,15 +39,13 @@ public class SystemResourceController {
         return RestResult.success(resource);
     }
 
-    @ResponseBody
     @PostMapping("/delete")
-    public RestResult<Object> delete(@RequestBody List<Integer> list) {
+    public RestResult<Object> delete(@RequestBody List<Serializable> list) {
 
         this.resourceService.deleteByIds(list);
         return RestResult.success();
     }
 
-    @ResponseBody
     @RequestMapping("/list")
     public DataGrid<SystemResource> list(PageInfo<SystemResource> pageInfo, SystemResource resource) {
 
@@ -59,16 +56,14 @@ public class SystemResourceController {
         return dataGrid;
     }
 
-    @ResponseBody
     @GetMapping("/role/{roleId}")
-    public List<SystemResource> findResourceByRoleId(@PathVariable("roleId") Integer roleId) {
+    public RestResult<List<SystemResource>> findResourceByRoleId(@PathVariable("roleId") Long roleId) {
 
-        return this.resourceService.findResourceByRoleId(roleId);
+        return RestResult.success(this.resourceService.findResourceByRoleId(roleId));
     }
 
-    @ResponseBody
     @GetMapping("info/{resourceId}")
-    public SystemResource info(@PathVariable("resourceId") Integer resourceId) {
+    public RestResult<SystemResource> info(@PathVariable("resourceId") Integer resourceId) {
 
         SystemResource resource = this.resourceService.selectByKey(resourceId);
         Optional.ofNullable(resource).map(SystemResource::getParentId)
@@ -78,6 +73,6 @@ public class SystemResourceController {
                     resource.setParentName(entity.getName());
                     return null;
                 });
-        return resource;
+        return RestResult.success(resource);
     }
 }

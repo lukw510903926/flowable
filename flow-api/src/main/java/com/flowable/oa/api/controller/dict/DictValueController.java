@@ -5,13 +5,13 @@ import com.flowable.oa.core.service.dict.IDictValueService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
+import java.io.Serializable;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -21,21 +21,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @email 13507615840@163.com
  * @since 19-2-15 下午11:11
  **/
-@Controller
+@RestController
 @RequestMapping("dictValue")
 public class DictValueController {
 
     @Autowired
     private IDictValueService dictValueService;
 
-    @ResponseBody
     @RequestMapping("/value/{valueId}")
-    public DictValue getById(@PathVariable("valueId") Integer valueId) {
+    public RestResult<DictValue> getById(@PathVariable("valueId") Integer valueId) {
 
-        return this.dictValueService.getById(valueId);
+        return RestResult.success(this.dictValueService.getById(valueId));
     }
 
-    @ResponseBody
     @RequestMapping("save")
     public RestResult<Object> save(DictValue dictValue) {
 
@@ -43,7 +41,6 @@ public class DictValueController {
         return RestResult.success();
     }
 
-    @ResponseBody
     @RequestMapping("update")
     public RestResult<Object> update(DictValue dictValue) {
 
@@ -54,22 +51,20 @@ public class DictValueController {
         return RestResult.success();
     }
 
-    @ResponseBody
     @RequestMapping("delete")
-    public RestResult<Object> delete(@RequestBody List<Integer> list) {
+    public RestResult<Object> delete(@RequestBody List<Serializable> list) {
 
         this.dictValueService.deleteByIds(list);
         return RestResult.success();
     }
 
-    @ResponseBody
     @RequestMapping("list")
-    public DataGrid<DictValue> findDictValue(PageInfo<DictValue> page, DictValue dictValue) {
+    public RestResult<DataGrid<DictValue>> findDictValue(PageInfo<DictValue> page, DictValue dictValue) {
 
         PageInfo<DictValue> helper = this.dictValueService.findByModel(page, dictValue, false);
         DataGrid<DictValue> grid = new DataGrid<>();
         grid.setRows(helper.getList());
         grid.setTotal(helper.getTotal());
-        return grid;
+        return RestResult.success(grid);
     }
 }
