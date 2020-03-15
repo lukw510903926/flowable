@@ -3,35 +3,19 @@ package com.flowable.oa.core.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flowable.oa.core.service.IProcessEngineService;
+import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
+import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.zip.ZipInputStream;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
-import org.flowable.bpmn.model.BpmnModel;
-import org.flowable.bpmn.model.FlowElement;
 import org.flowable.bpmn.model.Process;
-import org.flowable.bpmn.model.SubProcess;
-import org.flowable.bpmn.model.UserTask;
+import org.flowable.bpmn.model.*;
 import org.flowable.editor.constants.ModelDataJsonConstants;
 import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.engine.RepositoryService;
@@ -48,6 +32,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.zip.ZipInputStream;
 
 /**
  * <p>
@@ -82,7 +75,7 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
      * 流程定义列表
      */
     @Override
-    public List<ProcessDefinition> findProcessDefinition(ProcessDefinition processDefinition) {
+    public PageInfo<ProcessDefinitionEntityVo> processList(ProcessDefinitionEntityVo processDefinition) {
 
         ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
         if (processDefinition != null) {
@@ -93,20 +86,14 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
                 processDefinitionQuery.processDefinitionKey(processDefinition.getKey());
             }
         }
+        PageInfo<BaseVo> page = PageUtil.getPage(processDefinition);
         processDefinitionQuery.latestVersion().orderByProcessDefinitionKey().asc();
-        return processDefinitionQuery.list();
-    }
+        long count = processDefinitionQuery.count();
 
-    /**
-     * 流程定义列表
-     */
-    @Override
-    public List<ProcessDefinitionEntityVo> processList() {
-
-        List<ProcessDefinition> processDefinitionList = this.findProcessDefinition(null);
+        List<ProcessDefinition> processDefinitionList = processDefinitionQuery.listPage(page.getStartRow(), page.getEndRow());
         List<ProcessDefinitionEntityVo> result = new ArrayList<>();
-        for (ProcessDefinition processDefinition : processDefinitionList) {
-            ProcessDefinitionEntityImpl definitionEntity = (ProcessDefinitionEntityImpl) processDefinition;
+        for (ProcessDefinition definition : processDefinitionList) {
+            ProcessDefinitionEntityImpl definitionEntity = (ProcessDefinitionEntityImpl) definition;
             String deploymentId = definitionEntity.getDeploymentId();
             ProcessDefinitionEntityVo definitionEntityVo = new ProcessDefinitionEntityVo();
             Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
@@ -114,7 +101,7 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
             definitionEntityVo.setDeploymentTime(deployment.getDeploymentTime());
             result.add(definitionEntityVo);
         }
-        return result;
+        return PageUtil.getResult(result, count);
     }
 
     /**

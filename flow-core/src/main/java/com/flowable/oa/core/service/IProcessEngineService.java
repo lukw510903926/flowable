@@ -2,14 +2,14 @@ package com.flowable.oa.core.service;
 
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
+import org.flowable.engine.repository.Model;
+import org.flowable.engine.runtime.ProcessInstance;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.flowable.engine.repository.Model;
-import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.engine.runtime.ProcessInstance;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -27,12 +27,7 @@ public interface IProcessEngineService {
     /**
      * 流程定义列表
      */
-    List<ProcessDefinition> findProcessDefinition(ProcessDefinition processDefinition);
-
-    /**
-     * 流程定义列表
-     */
-    List<ProcessDefinitionEntityVo> processList();
+    PageInfo<ProcessDefinitionEntityVo> processList(ProcessDefinitionEntityVo processDefinition);
 
     /**
      * 流程定义列表

@@ -14,10 +14,9 @@ import java.io.Serializable;
  * @since 2019/2/22 22:48
  **/
 @Data
-public class BaseVo implements IPage,Serializable {
+public class BaseVo implements IPage, Serializable {
 
-    private Integer id;
-
+    private static final long serialVersionUID = 8166703752410762351L;
     private Integer pageNum;
 
     private Integer pageSize;

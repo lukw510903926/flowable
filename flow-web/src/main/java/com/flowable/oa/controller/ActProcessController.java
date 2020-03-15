@@ -6,14 +6,7 @@ import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -21,14 +14,13 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * <p>
@@ -54,17 +46,12 @@ public class ActProcessController {
      */
     @ResponseBody
     @RequestMapping("list")
-    public DataGrid<ProcessDefinitionEntityVo> processList(@RequestParam Map<String, Object> params) {
+    public DataGrid<ProcessDefinitionEntityVo> processList(ProcessDefinitionEntityVo processDefinitionEntityVo) {
 
         DataGrid<ProcessDefinitionEntityVo> grid = new DataGrid<>();
-        Integer pageNum = MapUtils.getInteger(params, "page", 1);
-        Integer rows = MapUtils.getInteger(params, "rows", 20);
-        List<ProcessDefinitionEntityVo> tempResult = processEngineService.processList();
-        if (CollectionUtils.isNotEmpty(tempResult)) {
-            List<ProcessDefinitionEntityVo> list = tempResult.stream().skip((pageNum - 1) * rows).limit(rows).collect(Collectors.toList());
-            grid.setRows(list);
-            grid.setTotal(tempResult.size());
-        }
+        PageInfo<ProcessDefinitionEntityVo> pageInfo = processEngineService.processList(processDefinitionEntityVo);
+        grid.setRows(pageInfo.getList());
+        grid.setTotal(pageInfo.getTotal());
         return grid;
     }
 

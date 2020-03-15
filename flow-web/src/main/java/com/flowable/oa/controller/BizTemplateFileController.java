@@ -8,18 +8,10 @@ import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
-import java.io.File;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -44,8 +45,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/bizTemplateFile")
 public class BizTemplateFileController {
 
-    @Value("${biz.file.path}")
-    private String bizFileRootPath;
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private BizTemplateFileService bizTemplateFileService;
@@ -56,8 +57,8 @@ public class BizTemplateFileController {
     @RequestMapping("/index")
     public String index(Model model) {
 
-        List<ProcessDefinitionEntityVo> tempResult = processEngineService.processList();
-        model.addAttribute("processList", tempResult);
+        PageInfo<ProcessDefinitionEntityVo> tempResult = processEngineService.processList(new ProcessDefinitionEntityVo());
+        model.addAttribute("processList", tempResult.getList());
         return "modules/template/bizTemplateFileList";
     }
 
@@ -100,7 +101,7 @@ public class BizTemplateFileController {
                     suffix = fileName.substring(fileName.lastIndexOf("."));
                 }
                 response.setHeader("Content-Disposition", "attachment;");
-                File inputFile = new File(bizFileRootPath + File.separator + templateFile.getId() + suffix);
+                File inputFile = new File(environment.getProperty("biz.file.path") + File.separator + templateFile.getId() + suffix);
                 if (inputFile.exists() && inputFile.isFile()) {
                     FileUtils.copyFile(inputFile, outputStream);
                 } else {
@@ -110,7 +111,7 @@ public class BizTemplateFileController {
                 FileUtils.copyFile(File.createTempFile("文件不存在!", ".txt"), outputStream);
             }
         } catch (Exception e) {
-            log.error("文件不存在 !{}", e);
+            log.error("文件不存在 !", e);
         }
     }
 

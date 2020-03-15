@@ -20,7 +20,7 @@ import java.io.IOException;
 @WebFilter(urlPatterns = "/*", displayName = "loginFilter")
 public class LoginFilter implements Filter {
 
-    private String[] ignoreUrl = new String[]{".js", ".css", "font-awesome", "images", "modules", "/login/login"};
+    private static final String[] IGNORE_URL = new String[]{".js", ".css", "font-awesome", "images", "modules", "/login/login"};
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -52,7 +52,7 @@ public class LoginFilter implements Filter {
 
     private boolean pass(String requestUrl) {
 
-        for (String path : ignoreUrl) {
+        for (String path : IGNORE_URL) {
             if (requestUrl.contains(path)) {
                 return true;
             }

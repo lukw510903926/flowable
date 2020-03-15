@@ -8,22 +8,16 @@ import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.BizInfoVo;
+import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 /**
  * <p>
@@ -49,11 +43,11 @@ public class BizInfoController {
     @RequestMapping("/biz/process/status")
     public RestResult<List<String>> getProcessStatus(ProcessDefinitionEntityImpl processDefinition) {
 
-        List<ProcessDefinition> processList = processEngineService.findProcessDefinition(null);
+        List<ProcessDefinitionEntityVo> processList = processEngineService.processList(processDefinition);
         return RestResult.success(this.getProcessStatus(processList, processDefinition));
     }
 
-    private List<String> getProcessStatus(List<ProcessDefinition> list, ProcessDefinition processDefinition) {
+    private List<String> getProcessStatus(List<ProcessDefinitionEntityVo> list, ProcessDefinition processDefinition) {
 
         List<String> status = new ArrayList<>();
         status.add(Constants.BIZ_TEMP);
@@ -66,7 +60,7 @@ public class BizInfoController {
             status.addAll(sets);
             status.add(Constants.BIZ_END);
         } else {
-            list = processEngineService.findProcessDefinition(processDefinition);
+            list = processEngineService.processList(processDefinition);
             if (CollectionUtils.isNotEmpty(list)) {
                 sets.addAll(this.processEngineService.loadProcessStatus(list.get(0).getId()));
             }

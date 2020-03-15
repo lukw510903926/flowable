@@ -7,20 +7,12 @@ import com.flowable.oa.core.service.IProcessEngineService;
 import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.LoginUser;
 import com.flowable.oa.core.util.WebUtil;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
-import org.flowable.engine.repository.ProcessDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +23,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -58,10 +59,10 @@ public class BizInfoController {
 
     @ResponseBody
     @RequestMapping("/biz/process/status")
-    public List<String> getProcessStatus(ProcessDefinitionEntityImpl processDefinition) {
+    public List<String> getProcessStatus(ProcessDefinitionEntityVo processDefinition) {
 
-        List<ProcessDefinition> processList = processEngineService.findProcessDefinition(null);
-        return this.getProcessStatus(processList, processDefinition);
+        PageInfo<ProcessDefinitionEntityVo> processList = processEngineService.processList(processDefinition);
+        return this.getProcessStatus(processList.getList(), processDefinition);
     }
 
     /**
@@ -75,17 +76,17 @@ public class BizInfoController {
         model.addAttribute("action", action);
         List<String> processList = new ArrayList<>();
         List<String> status = new ArrayList<>();
-        List<ProcessDefinition> processDefinitionList = processEngineService.findProcessDefinition(null);
-        if (CollectionUtils.isNotEmpty(processDefinitionList)) {
-            processDefinitionList.forEach(processDefinition -> processList.add(processDefinition.getName()));
+        PageInfo<ProcessDefinitionEntityVo> pageInfo = processEngineService.processList(null);
+        if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
+            pageInfo.getList().forEach(processDefinition -> processList.add(processDefinition.getName()));
         }
-        getProcessStatus(processDefinitionList, new ProcessDefinitionEntityImpl());
+        getProcessStatus(pageInfo.getList(), new ProcessDefinitionEntityVo());
         model.addAttribute("statusList", JSONObject.toJSON(status));
         model.addAttribute("processList", JSONObject.toJSON(processList));
         return "modules/biz/biz_list";
     }
 
-    private List<String> getProcessStatus(List<ProcessDefinition> list, ProcessDefinition processDefinition) {
+    private List<String> getProcessStatus(List<ProcessDefinitionEntityVo> list, ProcessDefinitionEntityVo processDefinition) {
 
         List<String> status = new ArrayList<>();
         status.add(Constants.BIZ_TEMP);
@@ -98,7 +99,7 @@ public class BizInfoController {
             status.addAll(sets);
             status.add(Constants.BIZ_END);
         } else {
-            list = processEngineService.findProcessDefinition(processDefinition);
+            list = processEngineService.processList(processDefinition).getList();
             if (CollectionUtils.isNotEmpty(list)) {
                 sets.addAll(this.processEngineService.loadProcessStatus(list.get(0).getId()));
             }

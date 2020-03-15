@@ -1,6 +1,7 @@
 package com.flowable.oa.core.vo;
 
 import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,7 +14,7 @@ import java.util.Date;
  * @since 2019/3/9 11:19
  **/
 @Data
-public class ProcessDefinitionEntityVo implements Serializable {
+public class ProcessDefinitionEntityVo extends BaseVo implements Serializable {
 
     private static final long serialVersionUID = -3155734440294240387L;
 
