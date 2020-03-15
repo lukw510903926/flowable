@@ -42,8 +42,9 @@ public class ActProcessController {
     public RestResult<DataGrid<ProcessDefinitionEntityVo>> processList(ProcessDefinitionEntityVo processDefinitionEntity) {
 
         DataGrid<ProcessDefinitionEntityVo> grid = new DataGrid<>();
-        List<ProcessDefinitionEntityVo> tempResult = processEngineService.processList(processDefinitionEntity);
-        grid.setRows(tempResult);
+        PageInfo<ProcessDefinitionEntityVo> tempResult = processEngineService.processList(processDefinitionEntity);
+        grid.setRows(tempResult.getList());
+        grid.setTotal(tempResult.getTotal());
         return RestResult.success(grid);
     }
 

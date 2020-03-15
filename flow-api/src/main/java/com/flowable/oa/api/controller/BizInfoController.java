@@ -12,8 +12,6 @@ import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
-import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,13 +39,13 @@ public class BizInfoController {
     private IBizInfoService bizInfoService;
 
     @RequestMapping("/biz/process/status")
-    public RestResult<List<String>> getProcessStatus(ProcessDefinitionEntityImpl processDefinition) {
+    public RestResult<List<String>> getProcessStatus(ProcessDefinitionEntityVo processDefinition) {
 
-        List<ProcessDefinitionEntityVo> processList = processEngineService.processList(processDefinition);
-        return RestResult.success(this.getProcessStatus(processList, processDefinition));
+        PageInfo<ProcessDefinitionEntityVo> processList = processEngineService.processList(processDefinition);
+        return RestResult.success(this.getProcessStatus(processList.getList(), processDefinition));
     }
 
-    private List<String> getProcessStatus(List<ProcessDefinitionEntityVo> list, ProcessDefinition processDefinition) {
+    private List<String> getProcessStatus(List<ProcessDefinitionEntityVo> list, ProcessDefinitionEntityVo processDefinition) {
 
         List<String> status = new ArrayList<>();
         status.add(Constants.BIZ_TEMP);
@@ -60,7 +58,7 @@ public class BizInfoController {
             status.addAll(sets);
             status.add(Constants.BIZ_END);
         } else {
-            list = processEngineService.processList(processDefinition);
+            list = processEngineService.processList(processDefinition).getList();
             if (CollectionUtils.isNotEmpty(list)) {
                 sets.addAll(this.processEngineService.loadProcessStatus(list.get(0).getId()));
             }
