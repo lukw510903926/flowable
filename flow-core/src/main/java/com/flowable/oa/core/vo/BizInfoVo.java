@@ -2,6 +2,7 @@ package com.flowable.oa.core.vo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -17,9 +18,12 @@ import java.util.Date;
 @EqualsAndHashCode
 public class BizInfoVo extends BaseVo implements Serializable {
 
-
-
     private static final long serialVersionUID = -9003521142344551524L;
+
+    /**
+     * 订单ID
+     */
+    private Integer id;
 
     /**
      * 工单号
@@ -81,7 +85,7 @@ public class BizInfoVo extends BaseVo implements Serializable {
     /**
      * 工单状态
      */
-    private String status ;
+    private String status;
 
     /**
      * 父工单id
