@@ -7,17 +7,9 @@ import com.flowable.oa.core.service.IBizInfoService;
 import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.IProcessExecuteService;
 import com.flowable.oa.core.service.IProcessVariableService;
-import com.flowable.oa.core.util.Constants;
-import com.flowable.oa.core.util.DataGrid;
-import com.flowable.oa.core.util.PageUtil;
-import com.flowable.oa.core.util.RestResult;
-import com.flowable.oa.core.util.WebUtil;
+import com.flowable.oa.core.util.*;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -26,12 +18,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -102,7 +95,7 @@ public class ProcessExecuteController {
             variable.setProcessDefinitionId(proDefId);
             variable.setTaskId(Constants.TASK_START);
             List<ProcessVariable> list = this.processVariableService.select(variable);
-            data.put("SYS_BUTTON", processExecuteService.loadStartButtons(proDefId));
+            data.put(Constants.SYS_BUTTON, processExecuteService.loadStartButtons(proDefId));
             data.put("processValBean", list);
             return RestResult.success(data);
         }

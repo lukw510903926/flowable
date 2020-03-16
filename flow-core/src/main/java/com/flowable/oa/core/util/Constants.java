@@ -27,6 +27,8 @@ public class Constants {
      */
     public final static String SIGN = "SIGN";
 
+    public static final String SYS_BUTTON = "SYS_BUTTON";
+
     /**
      * 处理标识
      */

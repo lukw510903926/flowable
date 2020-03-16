@@ -131,7 +131,7 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
     public List<Map<String, Object>> getAllTaskByProcessKey(String processId) {
 
         List<Map<String, Object>> result = new ArrayList<>();
-        InputStream inputStream = resourceRead(processId, "xml");
+        InputStream inputStream = this.resourceRead(processId, "xml");
         if (inputStream == null) {
             return result;
         }
@@ -241,30 +241,6 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
             throw new ServiceException("部署失败！", e);
         }
         return builder.toString();
-    }
-
-    /**
-     * 挂起、激活流程实例
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public String updateState(String state, String processDefinitionId) {
-
-        ProcessDefinition processDefinition = repositoryService.getProcessDefinition(processDefinitionId);
-        if (processDefinition.isSuspended() && state.equals("suspend")) {
-            return "挂起ID为[" + processDefinitionId + "]的流程中断，流程已挂起。";
-        } else if (!processDefinition.isSuspended() && state.equals("active")) {
-            return "激活ID为[" + processDefinitionId + "]的流程中断，流程已激活。";
-        }
-        if (state.equals("active")) {
-            repositoryService.activateProcessDefinitionById(processDefinitionId, true, null);
-            return "已激活ID为[" + processDefinitionId + "]的流程定义。";
-        } else if (state.equals("suspend")) {
-            repositoryService.suspendProcessDefinitionById(processDefinitionId, true, null);
-            return "已挂起ID为[" + processDefinitionId + "]的流程定义。";
-        }
-
-        return "无操作";
     }
 
     /**

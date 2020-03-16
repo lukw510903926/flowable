@@ -13,10 +13,6 @@ import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -31,6 +27,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -92,7 +93,7 @@ public class ProcessExecuteController {
         ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
         if (processDefinition != null) {
             data.put("baseTempId", processDefinition.getId());
-            data.put("SYS_BUTTON", processExecuteService.loadStartButtons(processDefinition.getId()));
+            data.put(Constants.SYS_BUTTON, processExecuteService.loadStartButtons(processDefinition.getId()));
             ProcessVariable variable = new ProcessVariable();
             variable.setProcessDefinitionId(processDefinition.getId());
             variable.setTaskId(Constants.TASK_START);

@@ -1,43 +1,15 @@
 package com.flowable.oa.core.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.flowable.oa.core.entity.BizFile;
-import com.flowable.oa.core.entity.BizInfo;
-import com.flowable.oa.core.entity.BizInfoConf;
-import com.flowable.oa.core.entity.BizLog;
-import com.flowable.oa.core.entity.ProcessVariable;
-import com.flowable.oa.core.entity.ProcessVariableInstance;
+import com.flowable.oa.core.entity.*;
 import com.flowable.oa.core.entity.auth.SystemRole;
 import com.flowable.oa.core.entity.auth.SystemUser;
-import com.flowable.oa.core.service.BizInfoConfService;
-import com.flowable.oa.core.service.IBizFileService;
-import com.flowable.oa.core.service.IBizInfoService;
-import com.flowable.oa.core.service.IBizLogService;
-import com.flowable.oa.core.service.IProcessDefinitionService;
-import com.flowable.oa.core.service.IProcessExecuteService;
-import com.flowable.oa.core.service.IProcessVariableService;
-import com.flowable.oa.core.service.IVariableInstanceService;
+import com.flowable.oa.core.service.*;
 import com.flowable.oa.core.service.auth.ISystemUserService;
-import com.flowable.oa.core.util.Constants;
-import com.flowable.oa.core.util.LoginUser;
-import com.flowable.oa.core.util.UploadFileUtil;
-import com.flowable.oa.core.util.WebUtil;
-import com.flowable.oa.core.util.WorkOrderUtil;
+import com.flowable.oa.core.util.*;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.vo.BizFileVo;
 import com.flowable.oa.core.vo.BizLogVo;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -47,11 +19,18 @@ import org.flowable.task.api.Task;
 import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author : yangqi
@@ -87,8 +66,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     @Autowired
     private IVariableInstanceService instanceService;
 
-    @Value("${biz.file.path}")
-    private String bizFileRootPath;
+    @Autowired
+    private Environment environment;
 
     @Override
     public Map<String, Object> loadBizLogInput(Long logId) {
@@ -319,6 +298,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
      */
     private Map<String, List<BizFileVo>> saveFile(MultiValueMap<String, MultipartFile> fileMap, Date now, BizInfo bizInfo, Task task) {
 
+        String bizFileRootPath = environment.getProperty("biz.file.path");
         Map<String, List<BizFileVo>> bizFileMap = new HashMap<>();
         if (MapUtils.isNotEmpty(fileMap)) {
             for (String fileCatalog : fileMap.keySet()) {
@@ -452,11 +432,11 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 buttons = new HashMap<>();
                 buttons.put("submit", "提交");
             }
-            result.put("SYS_BUTTON", buttons);
+            result.put(Constants.SYS_BUTTON, buttons);
         } else if (Constants.SIGN.equalsIgnoreCase(currentOp)) {
             Map<String, String> buttons = new HashMap<>(1);
             buttons.put(Constants.SIGN, "签收");
-            result.put("SYS_BUTTON", buttons);
+            result.put(Constants.SYS_BUTTON, buttons);
         }
         List<BizLogVo> bizLogVos = this.loadBizLog(bizInfo);
         this.loadBizFile(bizInfo, bizLogVos);
@@ -545,7 +525,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
             if (bean == null) {
                 throw new ServiceException("找不到附件");
             }
-            File file = UploadFileUtil.getUploadFile(bean, bizFileRootPath);
+            File file = UploadFileUtil.getUploadFile(bean, environment.getProperty("biz.file.path"));
             if (!file.exists()) {
                 throw new ServiceException("找不到附件");
             }

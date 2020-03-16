@@ -58,11 +58,6 @@ public interface IProcessEngineService {
     String deploy(String category, MultipartFile file);
 
     /**
-     * 挂起、激活流程实例
-     */
-    String updateState(String state, String processDefinitionId);
-
-    /**
      * 将部署的流程转换为模型
      *
      * @param procDefId

@@ -11,7 +11,10 @@ import org.flowable.engine.repository.Model;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -94,15 +97,6 @@ public class ActProcessController {
             processEngineService.deploy(null, file);
             processDefinitionService.copyVariables(processDefinition);
         }
-        return RestResult.success();
-    }
-
-    /**
-     * 挂起、激活流程实例
-     */
-    @RequestMapping("update/{state}")
-    public RestResult<Object> updateState(@PathVariable("state") String state, @RequestParam String processDefinitionId) {
-        processEngineService.updateState(state, processDefinitionId);
         return RestResult.success();
     }
 

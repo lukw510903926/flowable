@@ -56,7 +56,6 @@ public class BizInfoController {
                 list.forEach(entity -> sets.addAll(processEngineService.loadProcessStatus(entity.getId())));
             }
             status.addAll(sets);
-            status.add(Constants.BIZ_END);
         } else {
             list = processEngineService.processList(processDefinition).getList();
             if (CollectionUtils.isNotEmpty(list)) {
