@@ -7,17 +7,17 @@ import com.flowable.oa.core.service.auth.ISystemResourceService;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import com.github.pagehelper.PageInfo;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -52,6 +52,7 @@ public class SystemResourceServiceImpl extends BaseServiceImpl<SystemResource> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteBatch(List<Long> list) {
 
         if (CollectionUtils.isNotEmpty(list)) {
@@ -72,21 +73,16 @@ public class SystemResourceServiceImpl extends BaseServiceImpl<SystemResource> i
     @Override
     public PageInfo<SystemResource> list(PageInfo<SystemResource> pageInfo, SystemResource resource) {
 
-        Map<Long, SystemResource> cache = new HashMap<>();
         PageInfo<SystemResource> result = this.findByModel(pageInfo, resource, false);
         if (CollectionUtils.isNotEmpty(result.getList())) {
-            result.getList().forEach(entity -> {
-                Optional.ofNullable(entity.getParentId()).map(resourceId -> {
-                    SystemResource systemResource = cache.get(resourceId);
-                    systemResource = systemResource == null ? this.selectByKey(resourceId) : systemResource;
-                    if (systemResource != null) {
-                        cache.put(resourceId, systemResource);
-                        entity.setParentName(systemResource.getName());
-                        return systemResource.getName();
-                    }
-                    return null;
-                });
-            });
+            result.getList().forEach(entity -> Optional.ofNullable(entity.getParentId()).map(resourceId -> {
+                        SystemResource systemResource = this.selectByKey(resourceId);
+                        return Optional.ofNullable(systemResource).map(item -> {
+                            entity.setParentName(item.getName());
+                            return item.getName();
+                        }).orElse("");
+                    })
+            );
         }
         return result;
     }

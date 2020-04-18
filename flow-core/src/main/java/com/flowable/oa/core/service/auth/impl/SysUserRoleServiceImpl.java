@@ -3,13 +3,15 @@ package com.flowable.oa.core.service.auth.impl;
 import com.flowable.oa.core.entity.auth.SysUserRole;
 import com.flowable.oa.core.service.auth.ISysUserRoleService;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRole> implements ISysUserRoleService {
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(SysUserRole userRole) {
 
         SysUserRole entity = new SysUserRole();

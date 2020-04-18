@@ -5,10 +5,6 @@ import com.flowable.oa.core.service.auth.ISystemResourceService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * <p>
@@ -47,13 +48,13 @@ public class SystemResourceController {
     }
 
     @RequestMapping("/list")
-    public DataGrid<SystemResource> list(PageInfo<SystemResource> pageInfo, SystemResource resource) {
+    public RestResult<DataGrid<SystemResource>> list(PageInfo<SystemResource> pageInfo, SystemResource resource) {
 
         PageInfo<SystemResource> result = this.resourceService.list(pageInfo, resource);
         DataGrid<SystemResource> dataGrid = new DataGrid<>();
         dataGrid.setTotal(result.getTotal());
         dataGrid.setRows(result.getList());
-        return dataGrid;
+        return RestResult.success(dataGrid);
     }
 
     @GetMapping("/role/{roleId}")

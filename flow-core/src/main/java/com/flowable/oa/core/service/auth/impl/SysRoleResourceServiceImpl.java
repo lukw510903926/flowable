@@ -5,6 +5,7 @@ import com.flowable.oa.core.service.auth.ISysRoleResourceService;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class SysRoleResourceServiceImpl extends BaseServiceImpl<SysRoleResource> implements ISysRoleResourceService {
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void saveOrUpdate(SysRoleResource roleResource) {
 
         SysRoleResource entity = new SysRoleResource();

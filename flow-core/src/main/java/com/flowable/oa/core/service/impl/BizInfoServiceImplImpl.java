@@ -17,12 +17,6 @@ import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import com.flowable.oa.core.vo.BaseVo;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +24,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author : yangqi
@@ -63,6 +64,7 @@ public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public BizInfo copyBizInfo(Long bizId, String processInstanceId, Map<String, Object> variables) {
 
         BizInfo oldBiz = this.selectByKey(bizId);
