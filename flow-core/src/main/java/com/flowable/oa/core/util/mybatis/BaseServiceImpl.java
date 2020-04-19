@@ -3,16 +3,17 @@ package com.flowable.oa.core.util.mybatis;
 import com.flowable.oa.core.util.ReflectionUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 基础类
@@ -23,9 +24,9 @@ import tk.mybatis.mapper.entity.Example;
  **/
 public class BaseServiceImpl<T> implements IBaseService<T> {
 
-    private Class<?> entityClass;
+    private final Class<?> entityClass;
 
-    private List<Field> fields;
+    private final List<Field> fields;
 
     public BaseServiceImpl() {
         entityClass = ReflectionUtils.getClassGenricType(this.getClass());
