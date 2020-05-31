@@ -7,10 +7,10 @@ import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.engine.repository.Model;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,7 +41,7 @@ public class ActProcessController {
     /**
      * 流程定义列表
      */
-    @RequestMapping("list")
+    @GetMapping("list")
     public RestResult<DataGrid<ProcessDefinitionEntityVo>> processList(ProcessDefinitionEntityVo processDefinitionEntity) {
 
         DataGrid<ProcessDefinitionEntityVo> grid = new DataGrid<>();
@@ -54,7 +54,7 @@ public class ActProcessController {
     /**
      * 流程所有任务列表
      */
-    @RequestMapping("processTaskList")
+    @GetMapping("processTaskList")
     public RestResult<DataGrid<Map<String, Object>>> processTaskList(@RequestParam Map<String, Object> params) {
 
         DataGrid<Map<String, Object>> grid = new DataGrid<>();
@@ -68,7 +68,7 @@ public class ActProcessController {
     /**
      * 运行中的实例列表
      */
-    @RequestMapping("running")
+    @GetMapping("running")
     public RestResult<DataGrid<ProcessInstance>> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey) {
 
         DataGrid<ProcessInstance> grid = new DataGrid<>();
@@ -101,25 +101,11 @@ public class ActProcessController {
     }
 
     /**
-     * 将部署的流程转换为模型
-     *
-     * @param processDefinitionId
-     * @return
-     */
-    @RequestMapping("convert")
-    public RestResult<Object> convertToModel(@RequestParam String processDefinitionId) {
-
-        Model modelData = processEngineService.convertToModel(processDefinitionId);
-        String message = "转换模型成功，模型ID=" + modelData.getId();
-        return RestResult.success(message);
-    }
-
-    /**
      * 删除部署的流程，级联删除流程实例
      *
      * @param deploymentId 流程部署ID
      */
-    @RequestMapping("delete")
+    @PostMapping("delete")
     public RestResult<Object> delete(String deploymentId) {
         processEngineService.deleteDeployment(deploymentId);
         return RestResult.success();
@@ -131,7 +117,7 @@ public class ActProcessController {
      * @param procInsId 流程实例ID
      * @param reason    删除原因
      */
-    @RequestMapping("deleteProcIns")
+    @PostMapping("deleteProcIns")
     public RestResult<Object> deleteProcIns(String procInsId, String reason) {
 
         processEngineService.deleteProcIns(procInsId, reason);

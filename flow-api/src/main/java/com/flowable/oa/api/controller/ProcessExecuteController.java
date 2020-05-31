@@ -1,26 +1,31 @@
 package com.flowable.oa.api.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.ProcessVariable;
 import com.flowable.oa.core.service.IBizInfoService;
 import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.IProcessExecuteService;
 import com.flowable.oa.core.service.IProcessVariableService;
-import com.flowable.oa.core.util.*;
+import com.flowable.oa.core.util.Constants;
+import com.flowable.oa.core.util.DataGrid;
+import com.flowable.oa.core.util.PageUtil;
+import com.flowable.oa.core.util.RestResult;
+import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -39,19 +44,19 @@ import java.util.Map;
 @RequestMapping("/workflow")
 public class ProcessExecuteController {
 
-    @Autowired
+    @Resource
     private IProcessExecuteService processExecuteService;
 
-    @Autowired
+    @Resource
     private IProcessDefinitionService processDefinitionService;
 
-    @Autowired
+    @Resource
     private IBizInfoService bizInfoService;
 
-    @Autowired
+    @Resource
     private IProcessVariableService processVariableService;
 
-    @RequestMapping("/loadWorkLogInput")
+    @GetMapping("/loadWorkLogInput")
     public RestResult<Map<String, Object>> loadWorkLogInput(Long logId) {
         return RestResult.success(processExecuteService.loadBizLogInput(logId));
     }
@@ -67,7 +72,7 @@ public class ProcessExecuteController {
      *
      * @return
      */
-    @RequestMapping("/queryWorkOrder")
+    @GetMapping("/queryWorkOrder")
     public RestResult<DataGrid<BizInfo>> queryWorkOrder(@RequestBody BizInfoVo bizInfoVo) {
 
         PageInfo<BizInfo> helper = bizInfoService.findBizInfo(bizInfoVo, PageUtil.getPage(bizInfoVo));
@@ -83,7 +88,7 @@ public class ProcessExecuteController {
      * @return
      */
 
-    @RequestMapping("/create/{key}")
+    @PostMapping("/create/{key}")
     public RestResult<Map<String, Object>> create(@PathVariable("key") String key) {
 
         Map<String, Object> data = new HashMap<>();
@@ -109,19 +114,17 @@ public class ProcessExecuteController {
      * @param request
      * @return
      */
-    @RequestMapping("bizInfo/create")
-    public ResponseEntity<String> createBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
+    @PostMapping("bizInfo/create")
+    public RestResult<String> createBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
         WebUtil.getLoginUser(request);
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.TEXT_PLAIN);
-        Boolean startProc = MapUtils.getBoolean(params, "startProc");
+        boolean startProc = MapUtils.getBoolean(params, "startProc", false);
         BizInfo bean = processExecuteService.createBizDraft(params, request.getMultiFileMap(), startProc);
         String msg = "/biz/" + bean.getId();
         if (!startProc) {
             msg = "/biz/list/myWork";
         }
-        return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success(msg)), header, HttpStatus.OK);
+        return RestResult.success(msg);
     }
 
     /**
@@ -131,18 +134,16 @@ public class ProcessExecuteController {
      * @param request
      * @return
      */
-    @RequestMapping("/submit")
-    public ResponseEntity<String> submit(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
+    @PostMapping("/submit")
+    public RestResult<String> submit(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
         WebUtil.getLoginUser(request);
         processExecuteService.submit(params, request.getMultiFileMap());
-        return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), headers, HttpStatus.OK);
+        return RestResult.success();
     }
 
 
-    @RequestMapping("/bizInfo/delete")
+    @PostMapping("/bizInfo/delete")
     public RestResult<Object> deleteBizInfo(@RequestParam List<Serializable> ids) {
 
         bizInfoService.deleteByIds(ids);

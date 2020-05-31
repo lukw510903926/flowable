@@ -5,13 +5,16 @@ import com.flowable.oa.core.service.dict.IDictValueService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import java.io.Serializable;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -25,23 +28,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("dictValue")
 public class DictValueController {
 
-    @Autowired
+    @Resource
     private IDictValueService dictValueService;
 
-    @RequestMapping("/value/{valueId}")
+    @GetMapping("/value/{valueId}")
     public RestResult<DictValue> getById(@PathVariable("valueId") Integer valueId) {
 
         return RestResult.success(this.dictValueService.getById(valueId));
     }
 
-    @RequestMapping("save")
+    @PostMapping("save")
     public RestResult<Object> save(DictValue dictValue) {
 
         this.dictValueService.saveOrUpdate(dictValue);
         return RestResult.success();
     }
 
-    @RequestMapping("update")
+    @PostMapping("update")
     public RestResult<Object> update(DictValue dictValue) {
 
         if (dictValue.getId() != null) {
@@ -51,14 +54,14 @@ public class DictValueController {
         return RestResult.success();
     }
 
-    @RequestMapping("delete")
+    @PostMapping("delete")
     public RestResult<Object> delete(@RequestBody List<Serializable> list) {
 
         this.dictValueService.deleteByIds(list);
         return RestResult.success();
     }
 
-    @RequestMapping("list")
+    @GetMapping("list")
     public RestResult<DataGrid<DictValue>> findDictValue(PageInfo<DictValue> page, DictValue dictValue) {
 
         PageInfo<DictValue> helper = this.dictValueService.findByModel(page, dictValue, false);

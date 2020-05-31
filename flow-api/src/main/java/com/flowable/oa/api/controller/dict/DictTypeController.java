@@ -5,12 +5,15 @@ import com.flowable.oa.core.service.dict.IDictTypeService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -24,10 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("dictType")
 public class DictTypeController {
 
-    @Autowired
+    @Resource
     private IDictTypeService dictTypeService;
 
-    @RequestMapping("save")
+    @PostMapping("save")
     public RestResult<Object> save(DictType dictType) {
 
         this.dictTypeService.saveOrUpdate(dictType);
@@ -35,7 +38,7 @@ public class DictTypeController {
     }
 
 
-    @RequestMapping("update")
+    @PostMapping("update")
     public RestResult<Object> update(DictType dictType) {
 
         if (null != dictType.getId()) {
@@ -45,19 +48,19 @@ public class DictTypeController {
         return RestResult.success();
     }
 
-    @RequestMapping("delete")
+    @PostMapping("delete")
     public RestResult<Object> delete(@RequestBody List<Long> list) {
 
         this.dictTypeService.delete(list);
         return RestResult.success();
     }
 
-    @RequestMapping("get/{typeId}")
+    @GetMapping("get/{typeId}")
     public RestResult<DictType> getEdit(@PathVariable("typeId") Integer typeId) {
         return RestResult.success(this.dictTypeService.selectByKey(typeId));
     }
 
-    @RequestMapping("list")
+    @GetMapping("list")
     public RestResult<DataGrid<DictType>> findDictType(PageInfo<DictType> page, DictType dictType) {
 
         PageInfo<DictType> helper = this.dictTypeService.findByModel(page, dictType, true);

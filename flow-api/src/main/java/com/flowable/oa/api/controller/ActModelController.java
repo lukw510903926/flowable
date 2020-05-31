@@ -2,12 +2,13 @@ package com.flowable.oa.api.controller;
 
 import com.flowable.oa.core.service.IProcessModelService;
 import com.flowable.oa.core.util.RestResult;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 流程模型相关
@@ -29,7 +30,7 @@ public class ActModelController {
     /**
      * 根据Model部署流程
      */
-    @RequestMapping("deploy")
+    @PostMapping("deploy")
     public RestResult<Object> deploy(String id) {
 
         String deploy = processModelService.deploy(id);
@@ -39,7 +40,7 @@ public class ActModelController {
     /**
      * 导出model的xml文件
      */
-    @RequestMapping("export")
+    @PostMapping("export")
     public void export(String id, HttpServletResponse response) {
         processModelService.export(id, response);
     }

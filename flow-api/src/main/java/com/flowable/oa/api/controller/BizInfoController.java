@@ -13,9 +13,18 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -38,7 +47,7 @@ public class BizInfoController {
     @Autowired
     private IBizInfoService bizInfoService;
 
-    @RequestMapping("/biz/process/status")
+    @GetMapping("/biz/process/status")
     public RestResult<List<String>> getProcessStatus(ProcessDefinitionEntityVo processDefinition) {
 
         PageInfo<ProcessDefinitionEntityVo> processList = processEngineService.processList(processDefinition);
@@ -66,7 +75,7 @@ public class BizInfoController {
         return status;
     }
 
-    @RequestMapping("detail/{bizId}")
+    @GetMapping("detail/{bizId}")
     public RestResult<Map<String, Object>> getDraftBiz(@PathVariable("bizId") Long bizId) {
         return RestResult.success(processExecuteService.queryWorkOrder(bizId));
     }

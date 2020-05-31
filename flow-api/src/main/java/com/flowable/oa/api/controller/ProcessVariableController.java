@@ -5,16 +5,19 @@ import com.flowable.oa.core.service.IProcessVariableService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -39,8 +42,7 @@ public class ProcessVariableController {
      * @param page
      * @return
      */
-    @ResponseBody
-    @RequestMapping("processValList")
+    @GetMapping("processValList")
     public RestResult<DataGrid<ProcessVariable>> processValList(@RequestParam Map<String, Object> params, PageInfo<ProcessVariable> page) {
 
         DataGrid<ProcessVariable> grid = new DataGrid<>();
@@ -60,8 +62,7 @@ public class ProcessVariableController {
      *
      * @return
      */
-    @ResponseBody
-    @RequestMapping("getProcessValById/{variableId}")
+    @GetMapping("getProcessValById/{variableId}")
     public RestResult<Object> getProcessValById(@PathVariable("variableId") Integer variableId) {
 
         log.info("根据全局流程变量ID得到变量详情---getProcessValById");
@@ -74,8 +75,7 @@ public class ProcessVariableController {
      * @param list
      * @return
      */
-    @ResponseBody
-    @RequestMapping("deleteProcessValById")
+    @PostMapping("deleteProcessValById")
     public RestResult<Object> deleteProcessValById(@RequestParam List<Long> list) {
 
         processValService.deleteVariable(list);
@@ -87,9 +87,8 @@ public class ProcessVariableController {
      *
      * @return
      */
-    @ResponseBody
-    @RequestMapping("saveOrUpdate")
-    public RestResult<Object> saveOrUpdateProcessVal(ProcessVariable processValAbs) {
+    @PostMapping("saveOrUpdate")
+    public RestResult<Object> saveOrUpdateProcessVal(@RequestBody ProcessVariable processValAbs) {
 
         processValService.saveOrUpdate(processValAbs);
         return RestResult.success();
