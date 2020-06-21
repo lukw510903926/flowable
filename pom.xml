@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.flowable.oa</groupId>
-    <artifactId>flow-oa</artifactId>
+    <artifactId>flowable</artifactId>
     <version>1.0.0</version>
     <modules>
         <module>flow-core</module>
