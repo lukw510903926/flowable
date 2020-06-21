@@ -1,20 +1,20 @@
 package com.flowable.oa.core.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Data;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 附件表
  *
  * @author : lukewei
- * @project : tykj-oa
  * @createTime : 2018年1月31日 : 下午2:31:19
  * @description :
  */

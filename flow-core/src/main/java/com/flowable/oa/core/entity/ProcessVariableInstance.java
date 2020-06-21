@@ -1,8 +1,8 @@
 package com.flowable.oa.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.io.Serializable;
-import java.util.Date;
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,15 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import lombok.Data;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- * 流程全局实例（存储具体填写的值）
- *
- * @author : lukewei
- * @project : tykj-oa
- * @createTime : 2018年1月31日 : 下午2:34:09
- * @description :
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description :流程全局实例（存储具体填写的值）
+ * @since : 2020/6/21 20:46
  */
 @Data
 @Entity

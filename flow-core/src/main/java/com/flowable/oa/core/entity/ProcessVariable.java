@@ -1,16 +1,20 @@
 package com.flowable.oa.core.entity;
 
-import java.io.Serializable;
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Data;
+import java.io.Serializable;
 
 /**
- * 流程全局属性配置
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description : 流程全局属性配置
+ * @since : 2020/6/21 20:46
  */
 @Data
 @Entity

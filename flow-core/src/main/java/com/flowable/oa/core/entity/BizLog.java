@@ -1,7 +1,8 @@
 package com.flowable.oa.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.util.Date;
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,10 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import lombok.Data;
+import java.util.Date;
 
 /**
- * 流程日志
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description : 流程日志
+ * @since : 2020/6/21 20:48
  */
 @Data
 @Entity
