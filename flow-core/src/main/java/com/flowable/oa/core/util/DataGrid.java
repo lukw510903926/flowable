@@ -1,7 +1,6 @@
 package com.flowable.oa.core.util;
 
 import java.io.Serializable;
-import java.nio.channels.DatagramChannel;
 import java.util.List;
 
 /**
@@ -14,10 +13,9 @@ import java.util.List;
 
 public class DataGrid<T> implements Serializable {
 
-
     private static final long serialVersionUID = -6368482161778607423L;
 
-    private List<T> rows ;
+    private List<T> rows;
 
     private long total;
 

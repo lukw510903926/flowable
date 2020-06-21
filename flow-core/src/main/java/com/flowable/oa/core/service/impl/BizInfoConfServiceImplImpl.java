@@ -6,16 +6,16 @@ import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.LoginUser;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
-import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
+
 
 /**
  * @author : lukewei
- * @project : tykj-oa
  * @createTime : 2018年1月31日 : 下午3:12:55
  * @description :
  */

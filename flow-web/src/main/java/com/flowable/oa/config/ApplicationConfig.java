@@ -11,7 +11,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 系统配置
  *
  * @author : lukewei
- * @project : tykj-oa
  * @createTime : 2018年2月1日 : 下午12:39:36
  * @description :
  */

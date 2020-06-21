@@ -17,14 +17,13 @@ import java.util.Set;
  * 登录拦截器
  *
  * @author : lukewei
- * @project : tykj-oa
  * @createTime : 2018年2月1日 : 下午12:39:08
  * @description :
  */
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
         LoginUser loginUser = new LoginUser();
         loginUser.setUsername("admin");

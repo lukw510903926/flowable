@@ -1,11 +1,11 @@
 package com.flowable.oa.core.util;
 
-import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Date;
 
 /**
  * @author : lukewei
- * @project : tykj-oa
  * @createTime : 2018年1月31日 : 下午3:52:10
  * @description :
  */
@@ -49,7 +49,6 @@ public class WorkOrderUtil {
         log.info("workType : {}", workType);
         String workNumber = "OTHER-";
         workNumber = workNumber + DateUtils.formatDate(new Date(), "yyMMdd");
-        workNumber = workNumber + "-" + Math.round(Math.random() * 89999 + 10000);
-        return workNumber;
+        return workNumber + "-" + Math.round(Math.random() * 89999 + 10000);
     }
 }
