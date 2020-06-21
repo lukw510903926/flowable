@@ -12,13 +12,6 @@ import com.flowable.oa.core.util.ReflectionUtils;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.flowable.HistoryActivityFlow;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +43,14 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author : yangqi
@@ -243,11 +244,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         }).orElse(null);
     }
 
-    /**
-     * 获取流程运行PATH,以逗号开头，使用逗号分隔，根据历史任务的结束时间倒序排序
-     *
-     * @return @
-     */
+
     @Override
     public String getProcessPath(String processInstanceId) {
 
@@ -456,15 +453,6 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             links.stream().filter(li -> "candidate".equals(li.getType())).map(IdentityLink::getGroupId).filter(StringUtils::isNotEmpty).forEach(result::add);
         }
         return result;
-    }
-
-    @Override
-    public void interceptTask(String taskId) {
-
-        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-        List<String> groups = this.getTaskCandidateGroup(task);
-        groups.stream().filter(StringUtils::isNotBlank).forEach(group -> taskService.deleteCandidateGroup(task.getId(), group));
-        taskService.addCandidateUser(task.getId(), WebUtil.getLoginUsername());
     }
 
     private boolean assignmentTask(Task task, String toAssignment) {

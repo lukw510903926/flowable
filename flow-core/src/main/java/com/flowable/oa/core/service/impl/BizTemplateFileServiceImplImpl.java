@@ -8,12 +8,6 @@ import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.file.UploadHelper;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +16,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>
@@ -47,7 +48,6 @@ public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateF
     @Override
     public BizTemplateFile getBizTemplateFile(Map<String, String> params) {
 
-        log.info("params :{}", params);
         BizTemplateFile templateFile = new BizTemplateFile();
         templateFile.setFileName(params.get("fileName"));
         if (StringUtils.isNotBlank(params.get("bizId"))) {

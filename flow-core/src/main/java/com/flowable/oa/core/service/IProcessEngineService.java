@@ -21,22 +21,36 @@ import java.util.Set;
  **/
 public interface IProcessEngineService {
 
-
+    /**
+     * 获取流程节点
+     *
+     * @param processId
+     * @return
+     */
     Set<String> loadProcessStatus(String processId);
 
     /**
      * 流程定义列表
+     *
+     * @param processDefinition
+     * @return
      */
     PageInfo<ProcessDefinitionEntityVo> processList(ProcessDefinitionEntityVo processDefinition);
 
     /**
      * 流程定义列表
+     *
+     * @param page
+     * @param procInsId
+     * @param procDefKey
+     * @return
      */
     PageInfo<ProcessInstance> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey);
 
     /**
      * 根据流程key得到
      *
+     * @param processId
      * @return
      */
     List<Map<String, Object>> getAllTaskByProcessKey(String processId);
@@ -46,12 +60,14 @@ public interface IProcessEngineService {
      *
      * @param processDefinitionId 流程定义ID
      * @param resourceType        资源类型(xml|image)
+     * @return
      */
     InputStream resourceRead(String processDefinitionId, String resourceType);
 
     /**
      * 部署流程 - 保存
      *
+     * @param category
      * @param file
      * @return
      */
@@ -61,6 +77,7 @@ public interface IProcessEngineService {
      * 将部署的流程转换为模型
      *
      * @param procDefId
+     * @return
      */
     Model convertToModel(String procDefId);
 

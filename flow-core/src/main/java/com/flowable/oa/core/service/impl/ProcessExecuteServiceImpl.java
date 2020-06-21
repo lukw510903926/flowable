@@ -1,12 +1,28 @@
 package com.flowable.oa.core.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.flowable.oa.core.entity.*;
+import com.flowable.oa.core.entity.BizFile;
+import com.flowable.oa.core.entity.BizInfo;
+import com.flowable.oa.core.entity.BizInfoConf;
+import com.flowable.oa.core.entity.BizLog;
+import com.flowable.oa.core.entity.ProcessVariable;
+import com.flowable.oa.core.entity.ProcessVariableInstance;
 import com.flowable.oa.core.entity.auth.SystemRole;
 import com.flowable.oa.core.entity.auth.SystemUser;
-import com.flowable.oa.core.service.*;
+import com.flowable.oa.core.service.BizInfoConfService;
+import com.flowable.oa.core.service.IBizFileService;
+import com.flowable.oa.core.service.IBizInfoService;
+import com.flowable.oa.core.service.IBizLogService;
+import com.flowable.oa.core.service.IProcessDefinitionService;
+import com.flowable.oa.core.service.IProcessExecuteService;
+import com.flowable.oa.core.service.IProcessVariableService;
+import com.flowable.oa.core.service.IVariableInstanceService;
 import com.flowable.oa.core.service.auth.ISystemUserService;
-import com.flowable.oa.core.util.*;
+import com.flowable.oa.core.util.Constants;
+import com.flowable.oa.core.util.LoginUser;
+import com.flowable.oa.core.util.UploadFileUtil;
+import com.flowable.oa.core.util.WebUtil;
+import com.flowable.oa.core.util.WorkOrderUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.vo.BizFileVo;
 import com.flowable.oa.core.vo.BizLogVo;
@@ -25,11 +41,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -140,7 +158,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         bizInfo.setCreateTime(now);
         bizInfo.setTitle(MapUtils.getString(params, "base.workTitle"));
         bizInfoService.saveOrUpdate(bizInfo);
-        TaskEntityImpl task = new TaskEntityImpl(); // 开始节点没有任务对象
+        // 开始节点没有任务对象
+        TaskEntityImpl task = new TaskEntityImpl();
         task.setId(Constants.TASK_START);
         task.setName(MapUtils.getString(params, "base.handleName"));
         Map<String, List<BizFileVo>> fileMap = saveFile(multiValueMap, now, bizInfo, task);
@@ -501,45 +520,4 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
         }
     }
 
-    /**
-     * 下载或查看文件
-     *
-     * @param action
-     * @param id
-     * @return [文件类型, InputStream]
-     * @throws ServiceException
-     */
-    @Override
-    public Object[] downloadFile(String action, Long id) {
-
-        Object[] result = new Object[4];
-        if ("work".equalsIgnoreCase(action)) {
-            BizInfo bean = bizInfoService.selectByKey(id);
-            if (bean == null) {
-                throw new ServiceException("找不到工单");
-            }
-            result[0] = "IMAGE";
-            result[1] = processDefinitionService.viewProcessImage(bean.getProcessInstanceId());
-        } else {
-            BizFile bean = bizFileService.selectByKey(id);
-            if (bean == null) {
-                throw new ServiceException("找不到附件");
-            }
-            File file = UploadFileUtil.getUploadFile(bean, environment.getProperty("biz.file.path"));
-            if (!file.exists()) {
-                throw new ServiceException("找不到附件");
-            }
-            InputStream is = null;
-            try {
-                is = new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-                log.error("文件未找到 :", e);
-            }
-            result[0] = bean.getFileType();
-            result[1] = is;
-            result[2] = file.length();
-            result[3] = bean.getName();
-        }
-        return result;
-    }
 }

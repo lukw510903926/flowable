@@ -3,12 +3,13 @@ package com.flowable.oa.core.service;
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.BizLog;
 import com.flowable.oa.core.entity.ProcessVariable;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import org.flowable.task.api.Task;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -29,7 +30,6 @@ public interface IProcessExecuteService {
      *
      * @param logId
      * @return
-     * @
      */
     Map<String, Object> loadBizLogInput(Long logId);
 
@@ -38,7 +38,6 @@ public interface IProcessExecuteService {
      *
      * @param tempId
      * @return
-     * @
      */
     Map<String, String> loadStartButtons(String tempId);
 
@@ -47,9 +46,9 @@ public interface IProcessExecuteService {
      * 保存工单草稿
      *
      * @param params
-     * @param startProc 同时启动流程
+     * @param startProc     同时启动流程
+     * @param multiValueMap
      * @return
-     * @
      */
     BizInfo createBizDraft(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap, boolean startProc);
 
@@ -66,7 +65,6 @@ public interface IProcessExecuteService {
      * @param params
      * @param multiValueMap
      * @return
-     * @
      */
     BizInfo submit(Map<String, Object> params, MultiValueMap<String, MultipartFile> multiValueMap);
 
@@ -77,6 +75,7 @@ public interface IProcessExecuteService {
      * @param task
      * @param now
      * @param params
+     * @return
      */
     BizLog writeBizLog(BizInfo bizInfo, Task task, Date now, Map<String, Object> params);
 
@@ -92,20 +91,10 @@ public interface IProcessExecuteService {
     /**
      * 根据工单号查询工单信息，并且处理工单的处理权限
      *
+     * @param id
      * @return
-     * @
      */
     Map<String, Object> queryWorkOrder(Long id);
-
-    /**
-     * 下载或查看文件
-     *
-     * @param action
-     * @param id
-     * @return [文件类型, InputStream]
-     * @
-     */
-    Object[] downloadFile(String action, Long id);
 
     /**
      * 根据流程定义ID获取流程名
