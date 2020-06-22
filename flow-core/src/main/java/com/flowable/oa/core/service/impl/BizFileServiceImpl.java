@@ -11,6 +11,6 @@ import org.springframework.stereotype.Service;
  * @description :
  */
 @Service
-public class BizFileServiceImplImpl extends BaseServiceImpl<BizFile> implements IBizFileService {
+public class BizFileServiceImpl extends BaseServiceImpl<BizFile> implements IBizFileService {
 
 }

@@ -20,7 +20,7 @@ import java.util.List;
  * @description :
  */
 @Service
-public class BizInfoConfServiceImplImpl extends BaseServiceImpl<BizInfoConf> implements BizInfoConfService {
+public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> implements BizInfoConfService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)

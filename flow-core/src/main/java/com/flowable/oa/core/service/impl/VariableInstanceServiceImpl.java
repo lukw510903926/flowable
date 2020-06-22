@@ -5,11 +5,12 @@ import com.flowable.oa.core.entity.BizLog;
 import com.flowable.oa.core.entity.ProcessVariableInstance;
 import com.flowable.oa.core.service.IVariableInstanceService;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
 
 /**
  * @author : yangqi
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
  * @since : 2020/2/20 5:56 下午
  */
 @Service
-public class VariableInstanceServiceImplImpl extends BaseServiceImpl<ProcessVariableInstance> implements IVariableInstanceService {
+public class VariableInstanceServiceImpl extends BaseServiceImpl<ProcessVariableInstance> implements IVariableInstanceService {
 
     @Override
     public Map<String, ProcessVariableInstance> getVarMap(BizInfo bizInfo, String taskId, VariableLoadType type) {

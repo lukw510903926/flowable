@@ -34,7 +34,7 @@ import java.util.Optional;
  **/
 @Slf4j
 @Service
-public class BizTemplateFileServiceImplImpl extends BaseServiceImpl<BizTemplateFile> implements BizTemplateFileService {
+public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile> implements BizTemplateFileService {
 
     @Autowired
     private IBizInfoService bizInfoService;

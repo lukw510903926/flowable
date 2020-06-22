@@ -40,7 +40,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-public class BizInfoServiceImplImpl extends BaseServiceImpl<BizInfo> implements IBizInfoService {
+public class BizInfoServiceImpl extends BaseServiceImpl<BizInfo> implements IBizInfoService {
 
 
     @Autowired

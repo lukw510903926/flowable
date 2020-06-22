@@ -14,6 +14,6 @@ import org.springframework.stereotype.Service;
  * @since 2019/3/13 18:06
  **/
 @Service
-public class BizCounterUserServiceImplImpl extends BaseServiceImpl<BizCounterUser> implements BizCounterUserService {
+public class BizCounterUserServiceImpl extends BaseServiceImpl<BizCounterUser> implements BizCounterUserService {
 
 }

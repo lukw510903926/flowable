@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
  * @since : 2020/2/20 5:57 下午
  */
 @Service
-public class BizTimedTaskServiceImplImpl extends BaseServiceImpl<BizTimedTask> implements BizTimedTaskService {
+public class BizTimedTaskServiceImpl extends BaseServiceImpl<BizTimedTask> implements BizTimedTaskService {
 }

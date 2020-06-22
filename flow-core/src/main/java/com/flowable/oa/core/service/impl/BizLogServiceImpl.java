@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
  * @since : 2020/2/20 5:56 下午
  */
 @Service
-public class BizLogServiceImplImpl extends BaseServiceImpl<BizLog> implements IBizLogService {
+public class BizLogServiceImpl extends BaseServiceImpl<BizLog> implements IBizLogService {
 }
