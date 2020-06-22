@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,14 +63,14 @@ public class BizTemplateFileController {
     }
 
     @PostMapping("/download")
-    public void downloadTemplate(@RequestParam Map<String, String> params, HttpServletResponse response) {
+    public void downloadTemplate(@RequestBody BizTemplateFile templateFile, HttpServletResponse response) {
 
         try (OutputStream outputStream = response.getOutputStream()) {
             response.setContentType("application/octet-stream;charset=UTF-8");
-            BizTemplateFile templateFile = bizTemplateFileService.getBizTemplateFile(params);
-            if (templateFile != null) {
+            BizTemplateFile bizTemplateFile = bizTemplateFileService.getBizTemplateFile(templateFile);
+            if (bizTemplateFile != null) {
                 response.setHeader("Content-Disposition", "attachment;");
-                File inputFile = new File(templateFile.getFilePath());
+                File inputFile = new File(bizTemplateFile.getFilePath());
                 if (inputFile.exists() && inputFile.isFile()) {
                     FileUtils.copyFile(inputFile, outputStream);
                 } else {

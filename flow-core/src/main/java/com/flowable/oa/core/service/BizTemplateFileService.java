@@ -4,8 +4,6 @@ import com.flowable.oa.core.entity.BizTemplateFile;
 import com.flowable.oa.core.util.mybatis.IBaseService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
-
 /**
  * @author : yangqi
  * @email : lukewei@mockuai.com
@@ -25,8 +23,8 @@ public interface BizTemplateFileService extends IBaseService<BizTemplateFile> {
     /**
      * 获取模版
      *
-     * @param params
+     * @param templateFile
      * @return
      */
-    BizTemplateFile getBizTemplateFile(Map<String, String> params);
+    BizTemplateFile getBizTemplateFile(BizTemplateFile templateFile);
 }

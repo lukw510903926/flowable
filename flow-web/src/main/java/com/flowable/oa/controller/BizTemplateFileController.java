@@ -11,13 +11,14 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -44,9 +45,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/bizTemplateFile")
 public class BizTemplateFileController {
-
-    @Autowired
-    private Environment environment;
 
     @Autowired
     private BizTemplateFileService bizTemplateFileService;
@@ -87,21 +85,15 @@ public class BizTemplateFileController {
         return new ResponseEntity<>(JSONObject.toJSONString(RestResult.success()), responseHeaders, HttpStatus.OK);
     }
 
-    @ResponseBody
-    @RequestMapping("/download")
-    public void downloadTemplate(@RequestParam Map<String, String> params, HttpServletResponse response) {
+    @PostMapping("/download")
+    public void downloadTemplate(@RequestBody BizTemplateFile templateFile, HttpServletResponse response) {
 
         try (OutputStream outputStream = response.getOutputStream()) {
             response.setContentType("application/octet-stream;charset=UTF-8");
-            BizTemplateFile templateFile = bizTemplateFileService.getBizTemplateFile(params);
-            if (templateFile != null) {
-                String fileName = templateFile.getFileName();
-                String suffix = "";
-                if (fileName.lastIndexOf(".") != -1) {
-                    suffix = fileName.substring(fileName.lastIndexOf("."));
-                }
+            BizTemplateFile bizTemplateFile = bizTemplateFileService.getBizTemplateFile(templateFile);
+            if (bizTemplateFile != null) {
                 response.setHeader("Content-Disposition", "attachment;");
-                File inputFile = new File(environment.getProperty("biz.file.path") + File.separator + templateFile.getId() + suffix);
+                File inputFile = new File(bizTemplateFile.getFilePath());
                 if (inputFile.exists() && inputFile.isFile()) {
                     FileUtils.copyFile(inputFile, outputStream);
                 } else {

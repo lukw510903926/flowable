@@ -9,8 +9,6 @@ import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.file.UploadHelper;
 import com.flowable.oa.core.util.mybatis.BaseServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -46,17 +43,14 @@ public class BizTemplateFileServiceImpl extends BaseServiceImpl<BizTemplateFile>
     private UploadHelper uploadHelper;
 
     @Override
-    public BizTemplateFile getBizTemplateFile(Map<String, String> params) {
+    public BizTemplateFile getBizTemplateFile(BizTemplateFile templateFile) {
 
-        BizTemplateFile templateFile = new BizTemplateFile();
-        templateFile.setFileName(params.get("fileName"));
-        if (StringUtils.isNotBlank(params.get("bizId"))) {
-            BizInfo bizInfo = this.bizInfoService.selectByKey(MapUtils.getInteger(params, "bizId"));
+        Long bizId = templateFile.getBizId();
+        if (bizId != null) {
+            BizInfo bizInfo = this.bizInfoService.selectByKey(bizId);
             templateFile.setFlowName(Optional.ofNullable(bizInfo).map(BizInfo::getBizType).orElse(null));
         }
-        if (StringUtils.isNotEmpty(params.get("id"))) {
-            templateFile.setId(MapUtils.getLong(params, "id"));
-        }
+        templateFile.setId(templateFile.getId());
         return this.selectOne(templateFile);
     }
 

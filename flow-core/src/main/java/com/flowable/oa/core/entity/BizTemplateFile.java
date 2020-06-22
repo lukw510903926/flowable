@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -49,4 +50,7 @@ public class BizTemplateFile implements Serializable {
 
     @Column(name = "file_path")
     private String filePath;
+
+    @Transient
+    private Long bizId;
 }
