@@ -19,8 +19,8 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table(name = "t_counter_sign")
-public class Countersign implements Serializable {
+@Table(name = "t_biz_counter_sign")
+public class BizCounterSign implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
