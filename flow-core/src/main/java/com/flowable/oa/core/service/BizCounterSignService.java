@@ -10,6 +10,6 @@ import com.flowable.oa.core.util.mybatis.IBaseService;
  * @description :
  * @since : 2020/2/26 9:28 下午
  */
-public interface BizCountersignService extends IBaseService<BizCounterSign> {
+public interface BizCounterSignService extends IBaseService<BizCounterSign> {
 
 }
