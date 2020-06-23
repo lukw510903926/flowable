@@ -10,12 +10,14 @@ import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.FlowElement;
 import org.flowable.bpmn.model.Process;
-import org.flowable.bpmn.model.*;
+import org.flowable.bpmn.model.SubProcess;
+import org.flowable.bpmn.model.UserTask;
 import org.flowable.editor.constants.ModelDataJsonConstants;
 import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.engine.RepositoryService;
@@ -39,7 +41,12 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -64,9 +71,9 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
     public Set<String> loadProcessStatus(String processId) {
 
         Set<String> set = new HashSet<>();
-        List<Map<String, Object>> result = this.getAllTaskByProcessKey(processId);
+        List<UserTask> result = this.getAllTaskByProcessKey(processId);
         if (CollectionUtils.isNotEmpty(result)) {
-            result.forEach(entity -> set.add(MapUtils.getString(entity, "name")));
+            result.forEach(entity -> set.add(entity.getName()));
         }
         return set;
     }
@@ -79,12 +86,8 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
 
         ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery();
         if (processDefinition != null) {
-            if (StringUtils.isNotBlank(processDefinition.getName())) {
-                processDefinitionQuery.processDefinitionName(processDefinition.getName());
-            }
-            if (StringUtils.isNotBlank(processDefinition.getKey())) {
-                processDefinitionQuery.processDefinitionKey(processDefinition.getKey());
-            }
+            processDefinitionQuery.processDefinitionName(processDefinition.getName());
+            processDefinitionQuery.processDefinitionKey(processDefinition.getKey());
         }
         PageInfo<BaseVo> page = PageUtil.getPage(processDefinition);
         processDefinitionQuery.latestVersion().orderByProcessDefinitionKey().asc();
@@ -111,12 +114,8 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
     public PageInfo<ProcessInstance> runningList(PageInfo<ProcessInstance> page, String procInsId, String procDefKey) {
 
         ProcessInstanceQuery processInstanceQuery = runtimeService.createProcessInstanceQuery();
-        if (StringUtils.isNotBlank(procInsId)) {
-            processInstanceQuery.processInstanceId(procInsId);
-        }
-        if (StringUtils.isNotBlank(procDefKey)) {
-            processInstanceQuery.processDefinitionKey(procDefKey);
-        }
+        processInstanceQuery.processInstanceId(procInsId);
+        processInstanceQuery.processDefinitionKey(procDefKey);
         page.setTotal(processInstanceQuery.count());
         page.setList(processInstanceQuery.listPage(page.getStartRow(), page.getEndRow()));
         return page;
@@ -128,9 +127,9 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
      * @return
      */
     @Override
-    public List<Map<String, Object>> getAllTaskByProcessKey(String processId) {
+    public List<UserTask> getAllTaskByProcessKey(String processId) {
 
-        List<Map<String, Object>> result = new ArrayList<>();
+        List<UserTask> result = new ArrayList<>();
         InputStream inputStream = this.resourceRead(processId, "xml");
         if (inputStream == null) {
             return result;
@@ -160,15 +159,12 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
      *
      * @param result
      */
-    private void getAllUserTaskByFlowElements(Collection<FlowElement> flowElements, List<Map<String, Object>> result) {
+    private void getAllUserTaskByFlowElements(Collection<FlowElement> flowElements, List<UserTask> result) {
 
         for (FlowElement flowElement : flowElements) {
             if (flowElement instanceof UserTask) {
                 UserTask userTask = (UserTask) flowElement;
-                Map<String, Object> temp = new HashMap<>();
-                temp.put("id", userTask.getId());
-                temp.put("name", userTask.getName());
-                result.add(temp);
+                result.add(userTask);
             } else if (flowElement instanceof SubProcess) {
                 SubProcess subProcess = (SubProcess) flowElement;
                 getAllUserTaskByFlowElements(subProcess.getFlowElements(), result);

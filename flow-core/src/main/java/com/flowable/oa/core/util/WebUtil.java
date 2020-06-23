@@ -6,7 +6,11 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -40,7 +44,7 @@ public class WebUtil extends WebUtils {
      */
     public static HttpServletRequest getRequest() {
 
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
     }
 
     /**
@@ -50,7 +54,7 @@ public class WebUtil extends WebUtils {
      */
     public static HttpServletResponse getResponse() {
 
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getResponse();
     }
 
     public static String getLoginUserId() {
@@ -58,13 +62,13 @@ public class WebUtil extends WebUtils {
         return Optional.ofNullable(getLoginUser()).map(LoginUser::getId).orElse(null);
     }
 
-    public static String getLoginUsername(){
+    public static String getLoginUsername() {
 
         return Optional.ofNullable(getLoginUser()).map(LoginUser::getUsername).orElse(null);
     }
 
     public static void setSessionUser(LoginUser loginUser) {
-        setSessionAttribute(getRequest(),LOGIN_USER, loginUser);
+        setSessionAttribute(getRequest(), LOGIN_USER, loginUser);
     }
 
     public static void setToken(HttpServletRequest request, String token) {
@@ -87,8 +91,9 @@ public class WebUtil extends WebUtils {
     public static String getUrl(String href, String ctx) {
 
         String url = href;
-        if (!Pattern.matches("^(http://|https://|/).*", url))
+        if (!Pattern.matches("^(http://|https://|/).*", url)) {
             url = ctx + '/' + url;
+        }
         return url;
     }
 

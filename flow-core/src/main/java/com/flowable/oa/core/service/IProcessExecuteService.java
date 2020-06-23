@@ -23,8 +23,6 @@ import java.util.Map;
  **/
 public interface IProcessExecuteService {
 
-    String SYS_FORM_TYPE = "_SYS_FORM_TYPE";
-
     /**
      * 获取某个日志对应的输入数据
      *

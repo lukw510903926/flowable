@@ -7,6 +7,7 @@ import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +56,11 @@ public class ActProcessController {
      * 流程所有任务列表
      */
     @GetMapping("processTaskList")
-    public RestResult<DataGrid<Map<String, Object>>> processTaskList(@RequestParam Map<String, Object> params) {
+    public RestResult<DataGrid<UserTask>> processTaskList(@RequestParam Map<String, Object> params) {
 
-        DataGrid<Map<String, Object>> grid = new DataGrid<>();
+        DataGrid<UserTask> grid = new DataGrid<>();
         String processId = (String) params.get("processId");
-        List<Map<String, Object>> result = processEngineService.getAllTaskByProcessKey(processId);
+        List<UserTask> result = processEngineService.getAllTaskByProcessKey(processId);
         grid.setRows(result);
         grid.setTotal(result.size());
         return RestResult.success(grid);

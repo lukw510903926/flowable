@@ -2,13 +2,13 @@ package com.flowable.oa.core.service;
 
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
+import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.repository.Model;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -53,7 +53,7 @@ public interface IProcessEngineService {
      * @param processId
      * @return
      */
-    List<Map<String, Object>> getAllTaskByProcessKey(String processId);
+    List<UserTask> getAllTaskByProcessKey(String processId);
 
     /**
      * 读取资源，通过部署ID

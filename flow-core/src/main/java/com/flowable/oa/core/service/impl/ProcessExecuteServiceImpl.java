@@ -221,18 +221,19 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     private Map<String, Object> setVariables(BizInfo bizInfo, Map<String, Object> params, List<ProcessVariable> processValList) {
 
         String buttonId = MapUtils.getString(params, "base.buttonId");
+        String handleUser = MapUtils.getString(params, "handleUser");
         Map<String, Object> variables = new HashMap<>();
         // 设置流程参数
         for (ProcessVariable variable : processValList) {
-            if (variable.getIsProcessVariable() != null && variable.getIsProcessVariable()) {
+            boolean isProcessVariable = Optional.ofNullable(variable.getIsProcessVariable()).orElse(false);
+            if (!isProcessVariable) {
                 variables.put(variable.getName(), params.get(variable.getName()));
             }
         }
-        variables.put("SYS_FORMTYPE", params.get(IProcessExecuteService.SYS_FORM_TYPE));
         variables.put(Constants.SYS_BUTTON_VALUE, buttonId);
         variables.put(Constants.SYS_BIZ_CREATEUSER, bizInfo.getCreateUser());
         variables.put(Constants.SYS_BIZ_ID, bizInfo.getId());
-        variables.put(Constants.COUNTER_SIGN, this.getUserNames((String) params.get("handleUser")));
+        variables.put(Constants.COUNTER_SIGN, this.getUserNames(handleUser));
         return variables;
     }
 
@@ -259,7 +260,6 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 valueBean.setValue(value);
                 valueBean.setCreateTime(now);
                 valueBean.setHandleUser(WebUtil.getLoginUser().getUsername());
-                instanceService.saveOrUpdate(valueBean);
             } else {
                 valueBean = new ProcessVariableInstance();
                 valueBean.setProcessInstanceId(procInstId);
@@ -273,8 +273,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 valueBean.setBizId(bizInfo.getId());
                 taskId = Constants.TASK_START.equals(processVariable.getTaskId()) ? Constants.TASK_START : taskId;
                 valueBean.setTaskId(taskId);
-                instanceService.saveOrUpdate(valueBean);
             }
+            instanceService.saveOrUpdate(valueBean);
         }
     }
 

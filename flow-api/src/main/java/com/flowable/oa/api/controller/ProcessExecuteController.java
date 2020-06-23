@@ -10,7 +10,6 @@ import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.RestResult;
-import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.vo.BizInfoVo;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -117,7 +116,6 @@ public class ProcessExecuteController {
     @PostMapping("bizInfo/create")
     public RestResult<String> createBiz(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
-        WebUtil.getLoginUser(request);
         boolean startProc = MapUtils.getBoolean(params, "startProc", false);
         BizInfo bean = processExecuteService.createBizDraft(params, request.getMultiFileMap(), startProc);
         String msg = "/biz/" + bean.getId();
@@ -137,7 +135,6 @@ public class ProcessExecuteController {
     @PostMapping("/submit")
     public RestResult<String> submit(@RequestParam Map<String, Object> params, MultipartHttpServletRequest request) {
 
-        WebUtil.getLoginUser(request);
         processExecuteService.submit(params, request.getMultiFileMap());
         return RestResult.success();
     }
