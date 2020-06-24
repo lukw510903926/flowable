@@ -35,4 +35,12 @@ public class DataGrid<T> implements Serializable {
         this.total = total;
     }
 
+    public static <T> DataGrid<T> getGrid(List<T> list, long total){
+
+        DataGrid<T> dataGrid = new DataGrid<>();
+        dataGrid.setRows(list);
+        dataGrid.setTotal(total);
+        return dataGrid;
+    }
+
 }

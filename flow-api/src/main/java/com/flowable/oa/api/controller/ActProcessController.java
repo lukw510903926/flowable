@@ -95,7 +95,7 @@ public class ActProcessController {
         } else {
             String key = fileName.substring(0, fileName.indexOf('.'));
             ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
-            processEngineService.deploy(null, file);
+            processEngineService.deploy(file);
             processDefinitionService.copyVariables(processDefinition);
         }
         return RestResult.success();

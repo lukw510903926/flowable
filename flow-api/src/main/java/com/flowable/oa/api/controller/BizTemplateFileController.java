@@ -2,6 +2,7 @@ package com.flowable.oa.api.controller;
 
 import com.flowable.oa.core.entity.BizTemplateFile;
 import com.flowable.oa.core.service.BizTemplateFileService;
+import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.util.WebUtil;
 import com.github.pagehelper.PageInfo;
@@ -42,13 +43,11 @@ public class BizTemplateFileController {
     private BizTemplateFileService bizTemplateFileService;
 
     @GetMapping("/list")
-    public RestResult<Map<String, Object>> list(PageInfo<BizTemplateFile> page, BizTemplateFile file) {
+    public RestResult<DataGrid<BizTemplateFile>> list(PageInfo<BizTemplateFile> page, BizTemplateFile file) {
 
         PageInfo<BizTemplateFile> helper = this.bizTemplateFileService.findByModel(page, file, true);
-        Map<String, Object> data = new HashMap<>();
-        data.put("total", helper.getTotal());
-        data.put("rows", helper.getList());
-        return RestResult.success(data);
+        DataGrid<BizTemplateFile> grid = DataGrid.getGrid(helper.getList(), helper.getTotal());
+        return RestResult.success(grid);
     }
 
     @PostMapping("/upload")

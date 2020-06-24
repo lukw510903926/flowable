@@ -1,6 +1,5 @@
 package com.flowable.oa.controller;
 
-import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.IProcessEngineService;
 import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
@@ -8,20 +7,17 @@ import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.UserTask;
-import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
-import java.util.Map;
 
 /**
  * <p>
@@ -38,9 +34,6 @@ public class ActProcessController {
 
     @Autowired
     private IProcessEngineService processEngineService;
-
-    @Autowired
-    private IProcessDefinitionService processDefinitionService;
 
     /**
      * 流程定义列表
@@ -97,32 +90,6 @@ public class ActProcessController {
             response.setContentType("text/plain;charset=utf-8");
         }
         IOUtils.copy(resourceAsStream, response.getOutputStream());
-    }
-
-    /**
-     * 部署流程 - 保存
-     *
-     * @return
-     */
-    @PostMapping("/deploy")
-    public String deploy(MultipartHttpServletRequest request, Model model) {
-
-        MultipartFile file = request.getFile("file");
-        String fileName = file.getOriginalFilename();
-        boolean result = false;
-        String message;
-        if (StringUtils.isBlank(fileName)) {
-            message = "请选择要部署的流程文件";
-        } else {
-            String key = fileName.substring(0, fileName.indexOf("."));
-            ProcessDefinition processDefinition = processDefinitionService.getLatestProcDefByKey(key);
-            message = processEngineService.deploy(null, file);
-            processDefinitionService.copyVariables(processDefinition);
-            result = true;
-        }
-        model.addAttribute("result", result);
-        model.addAttribute("message", message);
-        return "modules/process/process_deploy";
     }
 
     /**

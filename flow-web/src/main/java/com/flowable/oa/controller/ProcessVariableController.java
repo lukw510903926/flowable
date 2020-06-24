@@ -7,6 +7,8 @@ import com.flowable.oa.core.util.RestResult;
 import com.github.pagehelper.PageInfo;
 import java.util.List;
 import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +27,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @email 13507615840@163.com
  * @since 19-2-15 下午11:09
  **/
+@Slf4j
 @Controller
 @RequestMapping("/processModelMgr")
 public class ProcessVariableController {
 
     @Autowired
     private IProcessVariableService processValService;
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * 得到流程全局变量列表 / 任务变量列表
@@ -66,7 +67,6 @@ public class ProcessVariableController {
     @RequestMapping("getProcessValById/{variableId}")
     public RestResult<Object> getProcessValById(@PathVariable("variableId") Integer variableId) {
 
-        logger.info("根据全局流程变量ID得到变量详情---getProcessValById");
         return RestResult.success(processValService.selectByKey(variableId));
     }
 

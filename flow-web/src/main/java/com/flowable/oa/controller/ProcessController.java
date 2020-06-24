@@ -1,7 +1,9 @@
 package com.flowable.oa.controller;
 
 import com.flowable.oa.core.service.IProcessEngineService;
+
 import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -66,13 +68,12 @@ public class ProcessController {
      * @return
      */
     @PostMapping("process/deploy")
-    public String deployProcess(MultipartHttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
-        MultipartFile file = request.getFile("file");
+    public String deployProcess(MultipartFile file, RedirectAttributes redirectAttributes, Model model) {
         String fileName = file.getOriginalFilename();
         if (StringUtils.isBlank(fileName)) {
             redirectAttributes.addFlashAttribute("message", "请选择要部署的流程文件");
         } else {
-            String message = processEngineService.deploy(null, file);
+            String message = processEngineService.deploy(file);
             redirectAttributes.addFlashAttribute("message", message);
             model.addAttribute("message", "success");
         }

@@ -3,8 +3,7 @@ package com.flowable.oa.controller;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,10 +20,9 @@ import java.util.Map;
  * @email yangqi@ywwl.com
  * @since 2018/10/16 10:16
  **/
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-    private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 所有异常报错
@@ -37,7 +35,7 @@ public class GlobalExceptionHandler {
     public RestResult<Map<String, Object>> allExceptionHandler(Exception exception) {
 
         Map<String, Object> map = WebUtil.getRequestParam();
-        logger.error("统一异常处理 :参数 : {},异常信息 : {}", map, exception);
+        log.error("统一异常处理 :参数 : {},异常信息 : {}", map, exception);
         return RestResult.fail(map, "操作失败!");
     }
 
@@ -47,7 +45,7 @@ public class GlobalExceptionHandler {
     public RestResult<Map<String,Object>> serviceException(ServiceException exception){
 
         Map<String, Object> params = WebUtil.getRequestParam();
-        logger.error("系统异常 : {}",exception);
+        log.error("系统异常 : ",exception);
         return RestResult.fail(params,exception.getMessage());
     }
 
@@ -63,7 +61,7 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> map = WebUtil.getRequestParam();
         String msg = "可以上传附件最大值 : " + exception.getMaxUploadSize() / 1024 / 1024 + "M";
-        logger.error("统一异常处理 :参数 : {},异常信息 : {}", map, exception);
+        log.error("统一异常处理 :参数 : {},异常信息 : {}", map, exception);
         return RestResult.parameter(map, msg);
     }
 }

@@ -202,7 +202,7 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String deploy(String category, MultipartFile file) {
+    public String deploy( MultipartFile file) {
 
         StringBuilder builder = new StringBuilder();
         String fileName = file.getOriginalFilename();
@@ -229,7 +229,7 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
                 builder.append("部署失败，没有流程。");
             } else {
                 list.forEach(entity -> {
-                    repositoryService.setProcessDefinitionCategory(entity.getId(), category);
+                    repositoryService.setProcessDefinitionCategory(entity.getId(),"");
                     builder.append("部署成功，流程ID=").append(entity.getId()).append("<br/>");
                 });
             }

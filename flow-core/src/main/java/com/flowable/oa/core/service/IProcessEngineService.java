@@ -67,11 +67,10 @@ public interface IProcessEngineService {
     /**
      * 部署流程 - 保存
      *
-     * @param category
      * @param file
      * @return
      */
-    String deploy(String category, MultipartFile file);
+    String deploy(MultipartFile file);
 
     /**
      * 将部署的流程转换为模型

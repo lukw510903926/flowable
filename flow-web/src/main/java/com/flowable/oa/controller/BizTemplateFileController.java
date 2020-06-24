@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.flowable.oa.core.entity.BizTemplateFile;
 import com.flowable.oa.core.service.BizTemplateFileService;
 import com.flowable.oa.core.service.IProcessEngineService;
+import com.flowable.oa.core.util.DataGrid;
 import com.flowable.oa.core.util.RestResult;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
@@ -62,13 +63,10 @@ public class BizTemplateFileController {
 
     @ResponseBody
     @RequestMapping("/list")
-    public Map<String, Object> list(PageInfo<BizTemplateFile> page, BizTemplateFile file) {
+    public DataGrid<BizTemplateFile> list(PageInfo<BizTemplateFile> page, BizTemplateFile file) {
 
         PageInfo<BizTemplateFile> helper = bizTemplateFileService.findByModel(page, file, true);
-        Map<String, Object> data = new HashMap<>();
-        data.put("total", helper.getTotal());
-        data.put("rows", helper.getList());
-        return data;
+        return DataGrid.getGrid(helper.getList(),helper.getTotal());
     }
 
     @ResponseBody

@@ -79,7 +79,6 @@ public class SystemResourceController {
 
         SystemResource resource = this.resourceService.selectByKey(resourceId);
         Optional.ofNullable(resource).map(SystemResource::getParentId)
-                .filter(Objects::nonNull)
                 .map(this.resourceService::selectByKey)
                 .map(entity -> {
                     resource.setParentName(entity.getName());
