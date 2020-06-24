@@ -110,6 +110,13 @@ public interface IProcessDefinitionService {
     List<Task> getNextTaskInfo(String processInstanceId);
 
     /**
+     * 获取下一个节点的流程定义key
+     * @param processInstanceId
+     * @return
+     */
+    String getNextTaskDefKey(String processInstanceId);
+
+    /**
      * 获取任务信息
      *
      * @param taskId 任务ID

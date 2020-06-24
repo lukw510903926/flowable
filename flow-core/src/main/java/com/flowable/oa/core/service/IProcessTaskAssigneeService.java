@@ -20,6 +20,16 @@ public interface IProcessTaskAssigneeService extends IBaseService<ProcessTaskAss
      */
     ProcessTaskAssignee getTaskAssignee(ProcessTaskAssignee processTaskAssignee);
 
+
+
+    /**
+     * 获取任务待办人
+     *
+     * @param processDefinitionId
+     * @param taskDefKey
+     * @return
+     */
+    ProcessTaskAssignee getTaskAssignee(String processDefinitionId,String taskDefKey );
     /**
      * 查询任务待办人列表
      *

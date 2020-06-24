@@ -39,6 +39,14 @@ public class ProcessTaskAssigneeServiceImpl extends BaseServiceImpl<ProcessTaskA
     }
 
     @Override
+    public ProcessTaskAssignee getTaskAssignee(String processDefinitionId, String taskDefKey) {
+        ProcessTaskAssignee processTaskAssignee = new ProcessTaskAssignee();
+        processTaskAssignee.setProcessDefinitionId(processDefinitionId);
+        processTaskAssignee.setTaskDefKey(taskDefKey);
+        return this.getTaskAssignee(processTaskAssignee);
+    }
+
+    @Override
     public PageInfo<ProcessTaskAssignee> queryList(PageInfo<ProcessTaskAssignee> pageInfo, ProcessTaskAssignee processTaskAssignee) {
         PageUtil.startPage(pageInfo);
         List<ProcessTaskAssignee> select = this.processTaskAssigneeMapper.select(processTaskAssignee);

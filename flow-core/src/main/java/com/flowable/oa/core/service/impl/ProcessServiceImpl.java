@@ -489,9 +489,9 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                     Task taskCopy = new TaskEntityImpl();
                     ReflectionUtils.copyBean(task, taskCopy);
                     if (StringUtils.isEmpty(task.getAssignee())) {
-                        List<String> list = getTaskCandidateGroup(task);
+                        List<String> list = this.getTaskCandidateGroup(task);
                         if (CollectionUtils.isNotEmpty(list)) {
-                            taskCopy.setAssignee(Constants.BIZ_GROUP + StringUtils.join(list.toArray(), ","));
+                            taskCopy.setAssignee(list.get(0));
                         }
                     }
                     taskList.add(taskCopy);
@@ -499,6 +499,12 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             }
         }
         return taskList;
+    }
+
+    @Override
+    public String getNextTaskDefKey(String processInstanceId) {
+        List<Task> nextTaskInfo = this.getNextTaskInfo(processInstanceId);
+        return CollectionUtils.isEmpty(nextTaskInfo) ? null : nextTaskInfo.get(0).getTaskDefinitionKey();
     }
 
     @Override

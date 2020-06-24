@@ -59,7 +59,7 @@ public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> impleme
             orCriteria.orEqualTo("taskAssignee", WebUtil.getLoginUsername());
             orCriteria.orIsNull("taskAssignee");
             if (CollectionUtils.isNotEmpty(loginUser.getRoles())) {
-                loginUser.getRoles().forEach(role -> orCriteria.orLike("taskAssignee", Constants.BIZ_GROUP + role));
+                loginUser.getRoles().forEach(role -> orCriteria.orEqualTo("taskAssignee", role));
             }
             example.and(orCriteria);
             List<BizInfoConf> list = this.selectByExample(example);

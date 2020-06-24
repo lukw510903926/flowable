@@ -1,22 +1,11 @@
 package com.flowable.oa.core.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.flowable.oa.core.entity.BizFile;
-import com.flowable.oa.core.entity.BizInfo;
-import com.flowable.oa.core.entity.BizInfoConf;
-import com.flowable.oa.core.entity.BizLog;
-import com.flowable.oa.core.entity.ProcessVariable;
-import com.flowable.oa.core.entity.ProcessVariableInstance;
+import com.flowable.oa.core.constants.HandleTypeEnum;
+import com.flowable.oa.core.entity.*;
 import com.flowable.oa.core.entity.auth.SystemRole;
 import com.flowable.oa.core.entity.auth.SystemUser;
-import com.flowable.oa.core.service.BizInfoConfService;
-import com.flowable.oa.core.service.IBizFileService;
-import com.flowable.oa.core.service.IBizInfoService;
-import com.flowable.oa.core.service.IBizLogService;
-import com.flowable.oa.core.service.IProcessDefinitionService;
-import com.flowable.oa.core.service.IProcessExecuteService;
-import com.flowable.oa.core.service.IProcessVariableService;
-import com.flowable.oa.core.service.IVariableInstanceService;
+import com.flowable.oa.core.service.*;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.Constants;
 import com.flowable.oa.core.util.LoginUser;
@@ -41,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -86,6 +76,9 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
 
     @Autowired
     private Environment environment;
+
+    @Resource
+    private IProcessTaskAssigneeService taskAssigneeService;
 
     @Override
     public Map<String, Object> loadBizLogInput(Long logId) {
@@ -295,8 +288,12 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 bizInfoConf.setBizId(bizId);
                 bizInfoConf.setCreateTime(new Date());
                 bizInfoConf.setTaskId(task.getId());
-                bizInfoConf.setTaskAssignee(task.getAssignee());
                 bizInfoConf.setBizId(bizId);
+                ProcessTaskAssignee taskAssignee = taskAssigneeService.getTaskAssignee(task.getProcessDefinitionId(), task.getTaskDefinitionKey());
+                String assignee = Optional.ofNullable(taskAssignee).map(ProcessTaskAssignee::getTaskAssignee).orElse(task.getAssignee());
+                Integer handleType = Optional.ofNullable(taskAssignee).map(ProcessTaskAssignee::getHandleType).orElse(HandleTypeEnum.ASSIGNEE.getType());
+                bizInfoConf.setTaskAssignee(assignee);
+                bizInfoConf.setHandleType(handleType);
                 this.bizInfoConfService.saveOrUpdate(bizInfoConf);
             });
             Task task = taskList.get(0);

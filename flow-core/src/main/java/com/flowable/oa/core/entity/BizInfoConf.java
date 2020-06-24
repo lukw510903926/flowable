@@ -1,6 +1,7 @@
 package com.flowable.oa.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.flowable.oa.core.constants.HandleTypeEnum;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -50,6 +51,14 @@ public class BizInfoConf implements Serializable, Cloneable {
      */
     @Column(length = 256, name = "task_assignee")
     private String taskAssignee;
+
+    /**
+     * 代办类型
+     *
+     * @see HandleTypeEnum
+     */
+    @Column(length = 4, name = "handle_type")
+    private Integer handleType;
 
     /**
      * 角色
