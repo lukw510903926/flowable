@@ -1,7 +1,9 @@
 package com.flowable.oa.core.service.impl;
 
+import com.flowable.oa.core.constants.HandleTypeEnum;
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.entity.auth.SystemRole;
+import com.flowable.oa.core.flow.BizTask;
 import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.IProcessVariableService;
 import com.flowable.oa.core.service.auth.ISystemRoleService;
@@ -477,21 +479,23 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     }
 
     @Override
-    public List<Task> getNextTaskInfo(String processInstanceId) {
+    public List<BizTask> getNextTaskInfo(String processInstanceId) {
 
-        List<Task> taskList = new ArrayList<>();
+        List<BizTask> taskList = new ArrayList<>();
         // 由于逻辑问题，当前先不处理下一步任务，只处理该任务是否已经结束
         ProcessInstance processInstance = this.getProcessInstance(processInstanceId);
         if (processInstance != null) {// 已经结束
             List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
             if (CollectionUtils.isNotEmpty(tasks)) {
                 for (Task task : tasks) {
-                    Task taskCopy = new TaskEntityImpl();
+                    BizTask taskCopy = new BizTask();
                     ReflectionUtils.copyBean(task, taskCopy);
+                    taskCopy.setHandleType(HandleTypeEnum.ASSIGNEE.getType());
                     if (StringUtils.isEmpty(task.getAssignee())) {
                         List<String> list = this.getTaskCandidateGroup(task);
                         if (CollectionUtils.isNotEmpty(list)) {
                             taskCopy.setAssignee(list.get(0));
+                            taskCopy.setHandleType(HandleTypeEnum.GROUP.getType());
                         }
                     }
                     taskList.add(taskCopy);
@@ -503,7 +507,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
 
     @Override
     public String getNextTaskDefKey(String processInstanceId) {
-        List<Task> nextTaskInfo = this.getNextTaskInfo(processInstanceId);
+        List<BizTask> nextTaskInfo = this.getNextTaskInfo(processInstanceId);
         return CollectionUtils.isEmpty(nextTaskInfo) ? null : nextTaskInfo.get(0).getTaskDefinitionKey();
     }
 

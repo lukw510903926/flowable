@@ -5,6 +5,7 @@ import com.flowable.oa.core.constants.HandleTypeEnum;
 import com.flowable.oa.core.entity.*;
 import com.flowable.oa.core.entity.auth.SystemRole;
 import com.flowable.oa.core.entity.auth.SystemUser;
+import com.flowable.oa.core.flow.BizTask;
 import com.flowable.oa.core.service.*;
 import com.flowable.oa.core.service.auth.ISystemUserService;
 import com.flowable.oa.core.util.Constants;
@@ -276,7 +277,7 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
     public void updateBizTaskInfo(BizInfo bizInfo) {
 
         Long bizId = bizInfo.getId();
-        List<Task> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
+        List<BizTask> taskList = processDefinitionService.getNextTaskInfo(bizInfo.getProcessInstanceId());
         this.bizInfoConfService.deleteByBizId(bizId);
         // 如果nextTaskInfo返回null，标示流程已结束
         if (CollectionUtils.isEmpty(taskList)) {
@@ -291,9 +292,8 @@ public class ProcessExecuteServiceImpl implements IProcessExecuteService {
                 bizInfoConf.setBizId(bizId);
                 ProcessTaskAssignee taskAssignee = taskAssigneeService.getTaskAssignee(task.getProcessDefinitionId(), task.getTaskDefinitionKey());
                 String assignee = Optional.ofNullable(taskAssignee).map(ProcessTaskAssignee::getTaskAssignee).orElse(task.getAssignee());
-                Integer handleType = Optional.ofNullable(taskAssignee).map(ProcessTaskAssignee::getHandleType).orElse(HandleTypeEnum.ASSIGNEE.getType());
                 bizInfoConf.setTaskAssignee(assignee);
-                bizInfoConf.setHandleType(handleType);
+                bizInfoConf.setHandleType(task.getHandleType());
                 this.bizInfoConfService.saveOrUpdate(bizInfoConf);
             });
             Task task = taskList.get(0);

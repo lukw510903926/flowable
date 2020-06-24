@@ -1,6 +1,7 @@
 package com.flowable.oa.core.service;
 
 import com.flowable.oa.core.entity.BizInfo;
+import com.flowable.oa.core.flow.BizTask;
 import com.flowable.oa.core.util.LoginUser;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -107,7 +108,7 @@ public interface IProcessDefinitionService {
      * @param processInstanceId
      * @return [任务ID, 任务KEY, 任务名, 待签收人/角色] @
      */
-    List<Task> getNextTaskInfo(String processInstanceId);
+    List<BizTask> getNextTaskInfo(String processInstanceId);
 
     /**
      * 获取下一个节点的流程定义key
