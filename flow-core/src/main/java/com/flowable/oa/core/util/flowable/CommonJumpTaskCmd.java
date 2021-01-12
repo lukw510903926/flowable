@@ -11,8 +11,8 @@ import org.flowable.engine.impl.persistence.entity.ExecutionEntityManager;
 import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.impl.util.ProcessDefinitionUtil;
 import org.flowable.identitylink.service.IdentityLinkService;
+import org.flowable.task.service.TaskService;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
-import org.flowable.task.service.impl.persistence.entity.TaskEntityManager;
 
 /**
  * <p>节点跳转指令
@@ -29,9 +29,8 @@ public class CommonJumpTaskCmd implements Command<Void> {
     public Void execute(CommandContext commandContext) {
 
         ExecutionEntityManager executionEntityManager = CommandContextUtil.getExecutionEntityManager();
-        TaskEntityManager taskEntityManager = org.flowable.task.service.impl.util.CommandContextUtil
-                .getTaskEntityManager();
-        TaskEntity taskEntity = taskEntityManager.findById(taskId);
+        TaskService taskService = CommandContextUtil.getTaskService();
+        TaskEntity taskEntity = taskService.getTask(taskId);
         ExecutionEntity executionEntity = executionEntityManager.findById(taskEntity.getExecutionId());
         IdentityLinkService identityLinkService = CommandContextUtil.getIdentityLinkService();
         identityLinkService.deleteIdentityLinksByTaskId(taskId);
@@ -40,7 +39,7 @@ public class CommonJumpTaskCmd implements Command<Void> {
         executionEntity.setCurrentFlowElement(targetFlowElement);
         FlowableEngineAgenda agenda = CommandContextUtil.getAgenda();
         agenda.planContinueProcessInCompensation(executionEntity);
-        taskEntityManager.delete(taskEntity, true);
+        taskService.deleteTask(taskEntity, true);
         return null;
     }
 
