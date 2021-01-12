@@ -9,6 +9,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.flowable.bpmn.model.UserTask;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,10 +62,11 @@ public class ActProcessController {
      */
     @ResponseBody
     @GetMapping("taskList/{processId}")
-    public DataGrid<Map<String, Object>> processTaskList(@PathVariable("processId") String processId) {
+    public DataGrid<UserTask> processTaskList(@PathVariable("processId") String processId) {
 
-        DataGrid<Map<String, Object>> grid = new DataGrid<>();
-        grid.setRows(processEngineService.getAllTaskByProcessKey(processId));
+        DataGrid<UserTask> grid = new DataGrid<>();
+        List<UserTask> userTasks = processEngineService.getAllTaskByProcessKey(processId);
+        grid.setRows(userTasks);
         return grid;
     }
 
