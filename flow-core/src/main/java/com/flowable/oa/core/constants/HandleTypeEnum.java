@@ -16,8 +16,14 @@ import java.util.Map;
 @AllArgsConstructor
 public enum HandleTypeEnum {
 
+    /**
+     * 待办人
+     */
     ASSIGNEE(1, "待办人"),
 
+    /**
+     * 角色待办
+     */
     GROUP(2, "角色待办");
 
     private int type;

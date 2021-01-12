@@ -49,22 +49,19 @@ public class BizInfoConfServiceImpl extends BaseServiceImpl<BizInfoConf> impleme
     @Override
     public BizInfoConf getMyWork(Long bizId) {
 
-        if (bizId != null) {
-            LoginUser loginUser = WebUtil.getLoginUser();
-            Example example = new Example(BizInfoConf.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("bizId", bizId);
+        LoginUser loginUser = WebUtil.getLoginUser();
+        Example example = new Example(BizInfoConf.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("bizId", bizId);
 
-            Example.Criteria orCriteria = example.createCriteria();
-            orCriteria.orEqualTo("taskAssignee", WebUtil.getLoginUsername());
-            orCriteria.orIsNull("taskAssignee");
-            if (CollectionUtils.isNotEmpty(loginUser.getRoles())) {
-                loginUser.getRoles().forEach(role -> orCriteria.orLike("taskAssignee", Constants.BIZ_GROUP + role));
-            }
-            example.and(orCriteria);
-            List<BizInfoConf> list = this.selectByExample(example);
-            return CollectionUtils.isEmpty(list) ? null : list.get(0);
+        Example.Criteria orCriteria = example.createCriteria();
+        orCriteria.orEqualTo("taskAssignee", WebUtil.getLoginUsername());
+        orCriteria.orIsNull("taskAssignee");
+        if (CollectionUtils.isNotEmpty(loginUser.getRoles())) {
+            loginUser.getRoles().forEach(role -> orCriteria.orLike("taskAssignee", Constants.BIZ_GROUP + role));
         }
-        return null;
+        example.and(orCriteria);
+        List<BizInfoConf> list = this.selectByExample(example);
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
 }
