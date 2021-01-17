@@ -25,6 +25,9 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 @Data
 public class CommonJumpTaskCmd implements Command<Void> {
 
+    private CommonJumpTaskCmd() {
+    }
+
     @Override
     public Void execute(CommandContext commandContext) {
 
@@ -53,9 +56,10 @@ public class CommonJumpTaskCmd implements Command<Void> {
      */
     private String targetNodeKey;
 
-    public CommonJumpTaskCmd(String taskId, String targetNodeKey) {
-
-        this.taskId = taskId;
-        this.targetNodeKey = targetNodeKey;
+    public static CommonJumpTaskCmd buildJumpTaskCmd(String taskId, String targetNodeKey) {
+        CommonJumpTaskCmd jumpTaskCmd = new CommonJumpTaskCmd();
+        jumpTaskCmd.setTaskId(taskId);
+        jumpTaskCmd.setTargetNodeKey(targetNodeKey);
+        return jumpTaskCmd;
     }
 }

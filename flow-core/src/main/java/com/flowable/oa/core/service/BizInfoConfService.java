@@ -22,5 +22,10 @@ public interface BizInfoConfService extends IBaseService<BizInfoConf> {
      */
     BizInfoConf getMyWork(Long bizId);
 
+    /**
+     * 删除
+     *
+     * @param bizId
+     */
     void deleteByBizId(Long bizId);
 }

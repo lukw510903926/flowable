@@ -9,8 +9,6 @@ import com.flowable.oa.core.service.IProcessDefinitionService;
 import com.flowable.oa.core.service.IProcessExecuteService;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.flowable.CommonJumpTaskCmd;
-import java.util.Date;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.flowable.engine.ManagementService;
@@ -18,6 +16,9 @@ import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.Map;
 
 
 /**
@@ -64,7 +65,7 @@ public class CommandServiceImpl implements CommandService {
             String targetTaskDefKey = MapUtils.getString(params, "base.taskDefKey");
             String taskId = conf.getTaskId();
             Task task = processDefinitionService.getTaskBean(taskId);
-            CommonJumpTaskCmd cmd = new CommonJumpTaskCmd(taskId, targetTaskDefKey);
+            CommonJumpTaskCmd cmd = CommonJumpTaskCmd.buildJumpTaskCmd(taskId, targetTaskDefKey);
             managementService.executeCommand(cmd);
             processExecuteService.updateBizTaskInfo(bizInfo);
             processExecuteService.writeBizLog(bizInfo, task, new Date(), params);

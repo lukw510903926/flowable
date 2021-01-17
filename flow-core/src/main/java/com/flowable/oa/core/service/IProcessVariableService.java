@@ -3,8 +3,9 @@ package com.flowable.oa.core.service;
 import com.flowable.oa.core.entity.ProcessVariable;
 import com.flowable.oa.core.util.mybatis.IBaseService;
 import com.github.pagehelper.PageInfo;
-import java.util.List;
 import org.flowable.engine.repository.ProcessDefinition;
+
+import java.util.List;
 
 /**
  * @author : yangqi
@@ -22,6 +23,13 @@ public interface IProcessVariableService extends IBaseService<ProcessVariable> {
      */
     void deleteVariable(List<Long> list);
 
+    /**
+     * 获取流程参数
+     *
+     * @param variable
+     * @param page
+     * @return
+     */
     PageInfo<ProcessVariable> findProcessVariables(ProcessVariable variable, PageInfo<ProcessVariable> page);
 
     /**
