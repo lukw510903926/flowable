@@ -73,7 +73,7 @@ biz.create = {
                 }, {
                     id: "mobile",
                     alias: "联系方式",
-                    value: createUser['mobile'] ? createUser['mobile'] && createUser['mobile'] != 'null' : ''
+                    value: createUser['mobile'] ? createUser['mobile'] && createUser['mobile'] !== 'null' : ''
                 }, {
                     id: "email",
                     alias: "邮箱"
@@ -155,7 +155,7 @@ biz.create = {
         div.html("<h2 class='white_tit'>工单信息</h2>");
         $content.append(div);
         div = $("<div class='listtable_wrap'>");
-        var table = $("<table cellpadding='0' cellspacing='0' class='listtable'></table>");
+        var table = $("<table cellpadding='0' class='listtable'></table>");
         div.append(table);
         $content.append(div);
         var view = biz.edit.getView({
