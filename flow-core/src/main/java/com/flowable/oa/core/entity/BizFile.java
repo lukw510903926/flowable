@@ -2,12 +2,7 @@ package com.flowable.oa.core.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -54,13 +49,13 @@ public class BizFile implements Serializable, Cloneable {
     /**
      * 附件类型，FILE,IMAGE (标记为文件或图标)
      */
-    @Column(length = 64, name = "filetype")
+    @Column(length = 64, name = "file_type")
     private String fileType;
 
     /**
      * 附件分类
      */
-    @Column(length = 64, name = "filecatalog")
+    @Column(length = 64, name = "file_catalog")
     private String fileCatalog;
 
     @Override

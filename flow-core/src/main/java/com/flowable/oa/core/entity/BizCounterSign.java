@@ -2,12 +2,7 @@ package com.flowable.oa.core.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -35,10 +30,10 @@ public class BizCounterSign implements Serializable {
     @Column(name = "biz_id")
     private String bizId;
 
-    @Column(name = "processinstance_id")
+    @Column(name = "process_instance_id")
     private String processInstanceId;
 
-    @Column(name = "processdefinition_id")
+    @Column(name = "process_definition_id")
     private String processDefinitionId;
 
     @Column(name = "task_assignee")

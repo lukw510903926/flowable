@@ -1,14 +1,10 @@
 package com.flowable.oa.core.entity;
 
+import lombok.Data;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import lombok.Data;
 
 /**
  * <p>
@@ -36,9 +32,6 @@ public class BizCounterUser implements Serializable {
 
     @Column(name = "name", length = 32)
     private String name;
-
-    @Column(name = "department", length = 32)
-    private String department;
 
     @Column(name = "biz_id", length = 32)
     private String bizId;
