@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flowable.oa.core.service.IProcessModelService;
 import com.flowable.oa.core.util.exception.ServiceException;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -17,7 +16,6 @@ import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.Model;
-import org.flowable.engine.repository.ModelQuery;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,21 +39,6 @@ public class ProcessModelServiceImpl implements IProcessModelService {
 
     @Autowired
     private RepositoryService repositoryService;
-
-    /**
-     * 流程模型列表
-     */
-    @Override
-    public PageInfo<Model> modelList(PageInfo<Model> page, String category) {
-
-        ModelQuery modelQuery = repositoryService.createModelQuery().latestVersion().orderByLastUpdateTime().desc();
-        if (StringUtils.isNotEmpty(category)) {
-            modelQuery.modelCategory(category);
-        }
-        page.setTotal(modelQuery.count());
-        page.setList(modelQuery.listPage(page.getStartRow(), page.getEndRow()));
-        return page;
-    }
 
     /**
      * 创建模型
@@ -113,7 +96,6 @@ public class ProcessModelServiceImpl implements IProcessModelService {
             ByteArrayInputStream in = new ByteArrayInputStream(bpmnBytes);
             Deployment deployment = repositoryService.createDeployment().name(modelData.getName())
                     .addInputStream(processName, in).deploy();
-            // .addString(processName, new String(bpmnBytes)).deploy();
 
             //设置流程分类
             List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery()
@@ -156,27 +138,4 @@ public class ProcessModelServiceImpl implements IProcessModelService {
 
     }
 
-    /**
-     * 更新Model分类
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateCategory(String id, String category) {
-
-        Model modelData = repositoryService.getModel(id);
-        modelData.setCategory(category);
-        repositoryService.saveModel(modelData);
-    }
-
-    /**
-     * 删除模型
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void delete(String id) {
-        repositoryService.deleteModel(id);
-    }
 }

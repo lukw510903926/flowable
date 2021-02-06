@@ -3,6 +3,7 @@ package com.flowable.oa.core.service;
 import com.flowable.oa.core.entity.BizInfo;
 import com.flowable.oa.core.flow.BizTask;
 import com.flowable.oa.core.util.LoginUser;
+import org.flowable.bpmn.model.FlowElement;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
@@ -36,7 +37,7 @@ public interface IProcessDefinitionService {
      * @param taskId 当前任务ID
      * @return @
      */
-    String getParentTask(String taskId);
+    List<FlowElement> getParentTask(String taskId);
 
     /**
      * 获取任务处理方式
@@ -112,6 +113,7 @@ public interface IProcessDefinitionService {
 
     /**
      * 获取下一个节点的流程定义key
+     *
      * @param processInstanceId
      * @return
      */

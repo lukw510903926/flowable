@@ -14,22 +14,13 @@ import com.flowable.oa.core.util.ReflectionUtils;
 import com.flowable.oa.core.util.WebUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
 import com.flowable.oa.core.util.flowable.HistoryActivityFlow;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.flowable.bpmn.model.Activity;
-import org.flowable.bpmn.model.BpmnModel;
-import org.flowable.bpmn.model.FlowElement;
-import org.flowable.bpmn.model.FlowElementsContainer;
-import org.flowable.bpmn.model.Gateway;
 import org.flowable.bpmn.model.Process;
-import org.flowable.bpmn.model.SequenceFlow;
-import org.flowable.bpmn.model.StartEvent;
-import org.flowable.engine.HistoryService;
-import org.flowable.engine.ProcessEngineConfiguration;
-import org.flowable.engine.RepositoryService;
-import org.flowable.engine.RuntimeService;
-import org.flowable.engine.TaskService;
+import org.flowable.bpmn.model.*;
+import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.impl.RepositoryServiceImpl;
@@ -47,12 +38,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author : yangqi
@@ -100,7 +87,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         String curreOp = null;
         Task task = null;
         if (CollectionUtils.isNotEmpty(taskList)) {
-            StringBuffer temp = new StringBuffer("(HANDLE)listSize:" + taskList.size() + "==>");
+            StringBuilder temp = new StringBuilder("(HANDLE)listSize:" + taskList.size() + "==>");
             taskList.forEach(t -> temp.append(t.getId()).append("::").append(t.getTaskDefinitionKey()).append(" || "));
             log.info("=========" + temp.toString());
             task = taskList.get(0);
@@ -110,7 +97,7 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
             if (CollectionUtils.isNotEmpty(roles)) {
                 taskList = taskService.createTaskQuery().taskCandidateGroupIn(roles).list();
                 if (CollectionUtils.isNotEmpty(taskList)) {
-                    StringBuffer temp = new StringBuffer("(SIGN)listSize:" + taskList.size() + "==>");
+                    StringBuilder temp = new StringBuilder("(SIGN)listSize:" + taskList.size() + "==>");
                     taskList.forEach(t -> temp.append(t.getId()).append("::").append(t.getTaskDefinitionKey()).append(" || "));
                     log.info("=========" + temp.toString());
                     task = taskList.get(0);
@@ -222,7 +209,6 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public ProcessInstance newProcessInstance(String id, Map<String, Object> variables) {
 
         return runtimeService.startProcessInstanceById(id, variables);
@@ -236,14 +222,12 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      * @return @
      */
     @Override
-    public String getParentTask(String taskId) {
+    public List<FlowElement> getParentTask(String taskId) {
 
         Activity activity = this.getCurrentActivity(taskId);
-        Optional<FlowElementsContainer> parent = Optional.ofNullable(activity.getParentContainer());
-        return parent.map(container -> {
-            List<FlowElement> list = new ArrayList<>(container.getFlowElements());
-            return list.get(0).getId();
-        }).orElse(null);
+        Collection<FlowElement> flowElements = Optional.ofNullable(activity).map(Activity::getParentContainer).map(FlowElementsContainer::getFlowElements)
+                .orElse(Collections.emptyList());
+        return Lists.newArrayList(flowElements);
     }
 
 
@@ -269,7 +253,6 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
      * @return @
      */
     @Override
-    @Transactional
     public boolean completeTask(BizInfo bizInfo, String taskId, Map<String, Object> variables) {
 
         try {
@@ -412,7 +395,8 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
                 }
             }
         } else {
-            flag = true; // 环节没设置签收角色
+            // 环节没设置签收角色
+            flag = true;
         }
 
         if (!flag) {
@@ -450,11 +434,10 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
     public List<String> getTaskCandidateGroup(Task task) {
 
         List<IdentityLink> links = taskService.getIdentityLinksForTask(task.getId());
-        List<String> result = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(links)) {
-            links.stream().filter(li -> "candidate".equals(li.getType())).map(IdentityLink::getGroupId).filter(StringUtils::isNotEmpty).forEach(result::add);
+            return links.stream().map(IdentityLink::getGroupId).filter(StringUtils::isNotBlank).collect(Collectors.toList());
         }
-        return result;
+        return Collections.emptyList();
     }
 
     private boolean assignmentTask(Task task, String toAssignment) {
@@ -629,7 +612,6 @@ public class ProcessServiceImpl implements IProcessDefinitionService {
         try {
             ProcessDiagramGenerator processDiagramGenerator = engineConfiguration.getProcessDiagramGenerator();
             return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getHighFlows(), true);
-//            return processDiagramGenerator.generateDiagram(bpmnModel, "PNG", historyActivityFlow.getActivitys(),true);
         } catch (Exception e) {
             log.error(" 显示流程实例图片失败 : ", e);
             throw new ServiceException("显示流程实例图片失败!");

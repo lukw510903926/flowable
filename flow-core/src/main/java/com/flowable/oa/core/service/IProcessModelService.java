@@ -1,6 +1,5 @@
 package com.flowable.oa.core.service;
 
-import com.github.pagehelper.PageInfo;
 import org.flowable.engine.repository.Model;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,15 +11,6 @@ import javax.servlet.http.HttpServletResponse;
  * @since : 2020/2/26 9:26 下午
  */
 public interface IProcessModelService {
-
-    /**
-     * 流程模型列表
-     *
-     * @param page
-     * @param category
-     * @return
-     */
-    PageInfo<Model> modelList(PageInfo<Model> page, String category);
 
     /**
      * 创建模型
@@ -49,19 +39,4 @@ public interface IProcessModelService {
      */
     void export(String id, HttpServletResponse response);
 
-    /**
-     * 更新Model分类
-     *
-     * @param id
-     * @param category
-     */
-    void updateCategory(String id, String category);
-
-    /**
-     * 删除模型
-     *
-     * @param id
-     * @return
-     */
-    void delete(String id);
 }

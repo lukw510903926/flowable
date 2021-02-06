@@ -3,7 +3,6 @@ package com.flowable.oa.core.service;
 import com.flowable.oa.core.vo.ProcessDefinitionEntityVo;
 import com.github.pagehelper.PageInfo;
 import org.flowable.bpmn.model.UserTask;
-import org.flowable.engine.repository.Model;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -71,14 +70,6 @@ public interface IProcessEngineService {
      * @return
      */
     String deploy(MultipartFile file);
-
-    /**
-     * 将部署的流程转换为模型
-     *
-     * @param procDefId
-     * @return
-     */
-    Model convertToModel(String procDefId);
 
     /**
      * 删除部署的流程，级联删除流程实例

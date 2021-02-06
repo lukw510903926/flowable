@@ -1,7 +1,5 @@
 package com.flowable.oa.core.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.flowable.oa.core.service.IProcessEngineService;
 import com.flowable.oa.core.util.PageUtil;
 import com.flowable.oa.core.util.exception.ServiceException;
@@ -13,18 +11,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
-import org.flowable.bpmn.model.BpmnModel;
-import org.flowable.bpmn.model.FlowElement;
 import org.flowable.bpmn.model.Process;
-import org.flowable.bpmn.model.SubProcess;
-import org.flowable.bpmn.model.UserTask;
-import org.flowable.editor.constants.ModelDataJsonConstants;
-import org.flowable.editor.language.json.converter.BpmnJsonConverter;
+import org.flowable.bpmn.model.*;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntityImpl;
 import org.flowable.engine.repository.Deployment;
-import org.flowable.engine.repository.Model;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -41,12 +33,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -134,7 +121,7 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
         if (inputStream == null) {
             return result;
         }
-        XMLInputFactory xif = XMLInputFactory.newInstance();
+        XMLInputFactory xif = XMLInputFactory.newFactory();
         InputStreamReader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         try {
             XMLStreamReader xtr = xif.createXMLStreamReader(in);
@@ -202,7 +189,7 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String deploy( MultipartFile file) {
+    public String deploy(MultipartFile file) {
 
         StringBuilder builder = new StringBuilder();
         String fileName = file.getOriginalFilename();
@@ -229,7 +216,7 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
                 builder.append("部署失败，没有流程。");
             } else {
                 list.forEach(entity -> {
-                    repositoryService.setProcessDefinitionCategory(entity.getId(),"");
+                    repositoryService.setProcessDefinitionCategory(entity.getId(), "");
                     builder.append("部署成功，流程ID=").append(entity.getId()).append("<br/>");
                 });
             }
@@ -237,46 +224,6 @@ public class ProcessEngineServiceImpl implements IProcessEngineService {
             throw new ServiceException("部署失败！", e);
         }
         return builder.toString();
-    }
-
-    /**
-     * 将部署的流程转换为模型
-     *
-     * @param procDefId
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Model convertToModel(String procDefId) {
-
-        try {
-            ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(procDefId).singleResult();
-            InputStream resource = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(), processDefinition.getResourceName());
-            XMLInputFactory xif = XMLInputFactory.newInstance();
-            InputStreamReader in = new InputStreamReader(resource, StandardCharsets.UTF_8);
-            XMLStreamReader xtr = xif.createXMLStreamReader(in);
-            BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
-            BpmnJsonConverter converter = new BpmnJsonConverter();
-            ObjectNode modelNode = converter.convertToJson(bpmnModel);
-            Model modelData = repositoryService.newModel();
-            modelData.setKey(processDefinition.getKey());
-            modelData.setName(processDefinition.getResourceName());
-            modelData.setCategory(processDefinition.getCategory());
-            modelData.setDeploymentId(processDefinition.getDeploymentId());
-            modelData.setVersion(Integer.parseInt(String.valueOf(repositoryService.createModelQuery().modelKey(modelData.getKey()).count() + 1)));
-
-            ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
-            modelObjectNode.put(ModelDataJsonConstants.MODEL_NAME, processDefinition.getName());
-            modelObjectNode.put(ModelDataJsonConstants.MODEL_REVISION, modelData.getVersion());
-            modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, processDefinition.getDescription());
-            modelData.setMetaInfo(modelObjectNode.toString());
-
-            repositoryService.saveModel(modelData);
-            repositoryService.addModelEditorSource(modelData.getId(), modelNode.toString().getBytes(StandardCharsets.UTF_8));
-            return modelData;
-        } catch (XMLStreamException e) {
-            log.error("将部署的流程转换为模型失败 : ", e);
-            throw new ServiceException("将部署的流程转换为模型失败");
-        }
     }
 
     /**
